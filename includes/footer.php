@@ -1,0 +1,186 @@
+<footer class="text-center text-lg-start">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <h4 class="text-white mb-4">SlapIA</h4>
+                <p class="text-secondary">
+                    <?php echo $lang === 'en' ? 'Excellence in AI training.<br>Level 1, Level 2 & Personalized Coaching.' : 'L\'excellence en formation IA.<br>Niveau 1, Niveau 2 & Accompagnement personnalisé.'; ?>
+                </p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="https://www.linkedin.com/in/lapierre-thomas/" target="_blank" class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-6 col-lg-2 offset-lg-2">
+                <h6 class="text-white fw-bold mb-4"><?php echo $lang === 'en' ? 'Explore' : 'Explorer'; ?></h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><a href="/formation" class="text-secondary text-decoration-none"><?php echo t('formations'); ?></a></li>
+                    <li class="mb-3"><a href="/entreprises" class="text-secondary text-decoration-none"><?php echo t('companies'); ?></a></li>
+                    <li class="mb-3"><a href="/how-it-works" class="text-secondary text-decoration-none"><?php echo t('how_it_works'); ?></a></li>
+                </ul>
+            </div>
+            
+            <div class="col-6 col-lg-2">
+                <h6 class="text-white fw-bold mb-4"><?php echo $lang === 'en' ? 'Legal' : 'Légal'; ?></h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><a href="/legal?section=terms" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Terms' : 'CGV'; ?></a></li>
+                    <li class="mb-3"><a href="/legal?section=privacy" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Privacy' : 'Confidentialité'; ?></a></li>
+                    <li class="mb-3"><a href="/legal?section=mentions" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Legal' : 'Mentions'; ?></a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-top border-secondary border-opacity-10 mt-5 pt-4 text-center">
+            <p class="text-secondary small mb-0">&copy; 2026 SlapIA Inc. <?php echo $lang === 'en' ? 'Designed with precision.' : 'Designed with precision.'; ?></p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- Page transitions handled by CSS View Transitions API ---
+        
+        // --- 1. Liquid Menu Logic ---
+        const activeBg = document.querySelector('.nav-active-bg');
+        const activeLink = document.querySelector('.dock-link.active');
+        const navContainer = document.querySelector('.dock-links-container');
+
+        function movePill(element) {
+            if (!element || !activeBg || !navContainer) return;
+
+            // Get coordinates relative to the container
+            const containerRect = navContainer.getBoundingClientRect();
+            const linkRect = element.getBoundingClientRect();
+
+            const left = linkRect.left - containerRect.left;
+            const top = linkRect.top - containerRect.top;
+            const width = linkRect.width;
+            const height = linkRect.height;
+
+            activeBg.style.opacity = '1';
+            activeBg.style.width = `${width}px`;
+            activeBg.style.height = `${height}px`; // Match height (minus padding usually handled by CSS, but exact is fine)
+            activeBg.style.transform = `translate(${left}px, ${top}px)`;
+        }
+
+        // Initialize position
+        if (activeLink) {
+            // Need a slight timeout to ensure fonts/layout are stable
+            setTimeout(() => movePill(activeLink), 50);
+        }
+
+        // --- 2. Spotlight Effect ---
+        const cards = document.querySelectorAll('.bento-card');
+        
+        document.addEventListener('mousemove', (e) => {
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // --- 3. Staggered Entry ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Add delay class based on index logic or fixed
+                    entry.target.classList.add('animate-enter');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.bento-card, .display-title, .hero-section p').forEach((el, i) => {
+            el.style.opacity = '0'; // Ensure hidden initially
+            el.classList.add('animate-enter');
+            // Stagger delays manually using style to avoid messy classes
+            el.style.animationDelay = `${i * 0.1}s`;
+        });
+    });
+</script>
+</body>
+</html>
+
+<!-- Live Visitor Counter Badge -->
+<div class="position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in" style="z-index: 9999; backdrop-filter: blur(10px);">
+    <span class="position-relative d-flex" style="width: 8px; height: 8px;">
+      <span class="position-absolute rounded-circle bg-success opacity-75" style="width: 100%; height: 100%; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+      <span class="position-relative d-inline-block rounded-circle bg-success" style="width: 100%; height: 100%;"></span>
+    </span>
+    <span class="text-white small fw-bold" style="font-size: 0.75rem;">
+        <span id="live-visitor-count">...</span> <?php echo $lang === "en" ? "viewing" : "visiteurs"; ?>
+    </span>
+</div>
+<script src="/assets/js/live-counter.js"></script>
+
+<style>
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+</style>
+
+<script src="/assets/js/matrix.js"></script>
+<script src="/assets/js/typewriter.js"></script>
+<script src="/assets/js/tilt.js"></script>
+<script src="/assets/js/console-egg.js"></script>
+<!-- Scroll Indicator (Static) -->
+<div id="scroll-indicator" class="scroll-indicator-glass">
+    <svg width="100%" height="100%" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5" />
+        <circle id="scroll-progress" cx="50" cy="50" r="45" fill="none" stroke="#bf5af2" stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" />
+    </svg>
+    <div class="arrow-icon">↑</div>
+</div>
+
+<style>
+    .scroll-indicator-glass {
+        position: fixed;
+        bottom: 110px; /* Adjusted spacing */
+        right: 24px;   /* Standard widget alignment to match chat */
+        width: 72px;   /* Increased to match chat bubble size */
+        height: 72px;
+        z-index: 10000;
+        cursor: pointer;
+        opacity: 0; 
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        border-radius: 50%;
+        background: rgba(15, 15, 15, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+    .scroll-indicator-glass.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    .scroll-indicator-glass:hover {
+        border-color: #bf5af2;
+        box-shadow: 0 0 20px rgba(191, 90, 242, 0.4);
+        transform: scale(1.05); /* Subtle scale */
+    }
+    .arrow-icon {
+        color: white;
+        font-size: 28px; /* Larger icon */
+        font-weight: bold;
+    }
+</style>
+
+<script src="/assets/js/scroll-indicator.js?v=FIXED"></script>
+<script src="/assets/js/emoji-rain.js"></script>

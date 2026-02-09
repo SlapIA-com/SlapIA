@@ -1,0 +1,1242 @@
+/* 
+   SlapIA - Premium Design System 
+   Inspiration: UmbrelOS, Apple, Linear
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Core Palette - Deep Space & Aurora */
+    --bg-deep: #000000;
+    --bg-surface: #0a0a0a;
+
+    /* The "Glow" Colors */
+    --accent-blue: #2997ff;
+    /* Apple Blue */
+    --accent-purple: #bf5af2;
+    /* Apple Purple */
+    --accent-cyan: #30d158;
+    /* Apple Greenish */
+
+    /* Omni-present Borders */
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.12);
+
+    /* Surfaces */
+    --glass-panel: rgba(20, 20, 20, 0.6);
+    --glass-panel-hover: rgba(30, 30, 30, 0.8);
+
+    /* Typography */
+    --text-primary: #ffffff;
+    --text-secondary: #98989d;
+    /* San Francisco Gray */
+    --text-tertiary: #6e6e73;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+    /* Subtle noise texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* 
+   The "Aurora" Background Effect 
+   Fixed position glowing orbs that sit behind content
+*/
+.aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.aurora-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: drift 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.orb-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--accent-blue);
+    top: -100px;
+    left: -100px;
+}
+
+.orb-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent-purple);
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -5s;
+}
+
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--accent-cyan);
+    top: 40%;
+    left: 40%;
+    opacity: 0.2;
+    filter: blur(100px);
+}
+
+@keyframes drift {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(30px, 50px);
+    }
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3,
+h4 {
+    letter-spacing: -0.025em;
+    /* Tight apple tracking */
+    font-weight: 700;
+}
+
+.display-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 1.05;
+    background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+}
+
+.text-gradient-purple {
+    background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Container & Navbar */
+.container {
+    max-width: 1100px;
+    /* Tighter container for focus */
+}
+
+/* The Floating Dock Navbar */
+.dock-nav {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 12px 24px;
+    border-radius: 100px;
+    /* Pill shape */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.dock-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dock-link:hover,
+.dock-link.active {
+    color: var(--text-primary);
+}
+
+.dock-brand {
+    font-weight: 700;
+    color: white;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 12px;
+    border-right: 1px solid var(--glass-border);
+    text-decoration: none;
+    white-space: nowrap;
+    /* Prevent line break on small screens */
+}
+
+.dock-brand:hover {
+    color: white;
+    text-decoration: none;
+}
+
+/* Bento Grid System */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+}
+
+.bento-card {
+    background: var(--glass-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
+    /* Large UmbelsOS radius */
+    padding: 32px;
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+}
+
+.bento-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: var(--glass-highlight);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.span-12 {
+    grid-column: span 12;
+}
+
+.span-6 {
+    grid-column: span 6;
+}
+
+.span-4 {
+    grid-column: span 4;
+}
+
+.span-8 {
+    grid-column: span 8;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN - All Platforms
+   ========================================= */
+
+/* Large Tablets & Small Desktops (max-width: 991px) */
+@media (max-width: 991px) {
+
+    .span-4,
+    .span-6,
+    .span-8 {
+        grid-column: span 12;
+    }
+
+    .display-title {
+        font-size: 3rem;
+    }
+
+    .dock-nav {
+        padding: 10px 16px;
+        gap: 16px;
+    }
+
+    .dock-link {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+    }
+
+    .bento-card {
+        padding: 24px;
+        border-radius: 24px;
+    }
+
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .display-title {
+        font-size: 2.5rem;
+        line-height: 1.1;
+    }
+
+    .dock-nav {
+        top: 12px;
+        padding: 8px 12px;
+        gap: 12px;
+        max-width: calc(100% - 24px);
+    }
+
+    .dock-brand {
+        font-size: 0.95rem;
+        padding-right: 10px;
+        gap: 6px;
+    }
+
+    .dock-brand i {
+        font-size: 1rem;
+    }
+
+    .bento-grid {
+        gap: 16px;
+    }
+
+    .bento-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    /* Touch-friendly buttons */
+    .btn-apple {
+        padding: 14px 24px;
+        font-size: 0.95rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-apple-glass {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Stack buttons on mobile */
+    .d-flex.gap-3 {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    /* Form inputs larger for touch */
+    .form-control {
+        font-size: 16px !important;
+        /* Prevents iOS zoom */
+        padding: 14px 16px !important;
+    }
+
+    /* Footer adjustments */
+    footer {
+        padding: 40px 0;
+        margin-top: 60px;
+    }
+
+    footer .row {
+        text-align: center;
+    }
+
+    footer .col-6 {
+        margin-bottom: 20px;
+    }
+
+    /* Icon boxes */
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+        border-radius: 16px;
+    }
+
+    /* Aurora orbs smaller on mobile */
+    .orb-1 {
+        width: 300px;
+        height: 300px;
+    }
+
+    .orb-2 {
+        width: 250px;
+        height: 250px;
+    }
+
+    .orb-3 {
+        width: 150px;
+        height: 150px;
+    }
+
+    /* Spacer for nav */
+    div[style*="height: 120px"] {
+        height: 100px !important;
+    }
+}
+
+/* Mobile Phones (max-width: 576px) */
+@media (max-width: 576px) {
+    .display-title {
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.35rem;
+    }
+
+    h4 {
+        font-size: 1.15rem;
+    }
+
+    .dock-nav {
+        top: 8px;
+        padding: 6px 10px;
+        gap: 8px;
+        border-radius: 50px;
+    }
+
+    .dock-brand {
+        font-size: 0.85rem;
+        padding-right: 8px;
+    }
+
+    .dock-link {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .bento-grid {
+        gap: 12px;
+    }
+
+    .bento-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    /* Disable hover transformations on touch devices */
+    .bento-card:hover {
+        transform: none;
+    }
+
+    .btn-apple:hover {
+        transform: none;
+    }
+
+    /* Better text sizing */
+    .lead {
+        font-size: 1rem;
+    }
+
+    .text-secondary.small {
+        font-size: 0.85rem;
+    }
+
+    /* Container padding */
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* Section padding */
+    section {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    /* Hero section specific */
+    section[style*="padding: 60px"] {
+        padding: 30px 0 60px !important;
+    }
+
+    /* Cards for grid display on small screens */
+    .row.g-3>.col-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* Extra Small Phones (max-width: 380px) */
+@media (max-width: 380px) {
+    .display-title {
+        font-size: 1.75rem;
+    }
+
+    .dock-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        border-radius: 20px;
+    }
+
+    .dock-brand {
+        border-right: none;
+        padding-right: 0;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+
+    .bento-card {
+        padding: 14px;
+    }
+
+    .btn-apple {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .icon-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+    }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+    .dock-nav {
+        top: 8px;
+        padding: 6px 12px;
+    }
+
+    div[style*="height: 120px"] {
+        height: 80px !important;
+    }
+
+    section[style*="padding: 60px"] {
+        padding: 20px 0 40px !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .bento-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-apple:hover {
+        transform: none;
+    }
+
+    /* Active states for touch */
+    .bento-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+
+    .btn-apple:active {
+        transform: scale(0.97);
+        background: #e5e5e7;
+    }
+
+    .dock-link:active {
+        opacity: 0.7;
+    }
+
+    /* Hide spotlight effect on touch */
+    .bento-card::after {
+        display: none;
+    }
+}
+
+/* High resolution screens */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .aurora-orb {
+        animation: none;
+    }
+}
+
+/* Apple-style Buttons */
+.btn-apple {
+    background: white;
+    color: black;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    transition: transform 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-apple:hover {
+    transform: scale(1.03);
+    background: #f5f5f7;
+    color: black;
+}
+
+.btn-apple-glass {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.btn-apple-glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* Feature Icons */
+.icon-box {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--glass-border);
+    margin-top: 80px;
+    padding: 60px 0;
+}
+
+/* =========================================
+   Advanced Animations
+   ========================================= */
+
+/* 2. Liquid Navbar Pill */
+.dock-nav {
+    position: fixed;
+    /* Ensure context */
+}
+
+.dock-links-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px;
+    border-radius: 100px;
+    border: 1px solid var(--glass-border);
+}
+
+.nav-liquid-pill {
+    position: absolute;
+    height: calc(100% - 12px);
+    top: 6px;
+    left: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 100px;
+    z-index: 0;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dock-link {
+    position: relative;
+    z-index: 1;
+    padding: 8px 20px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+    border-radius: 100px;
+}
+
+.dock-link.active {
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+/* 3. Staggered Entry Animation */
+.animate-enter {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: enterUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.delay-4 {
+    animation-delay: 0.4s;
+}
+
+@keyframes enterUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 4. Mouse Spotlight Effect */
+.bento-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.06),
+            transparent 40%);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    border-radius: inherit;
+}
+
+.bento-card:hover::after {
+    opacity: 1;
+}
+
+/* Testimonials / Reviews marquee */
+.reviews-marquee {
+    width: 100%;
+    overflow: hidden;
+}
+
+.reviews-inner {
+    display: flex;
+    /* gap removed to ensure perfect loop math */
+    align-items: center;
+    white-space: nowrap;
+    /* animated container that slides left (right -> left movement) */
+    animation: reviews-scroll 28s linear infinite;
+}
+
+.reviews-track {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    /* Spacing added here to be part of the width calculation */
+    padding-right: 36px;
+    gap: 36px;
+    flex: 0 0 auto;
+}
+
+.review-item {
+    min-width: 320px;
+    max-width: 380px;
+    background: linear-gradient(135deg, rgba(40, 40, 50, 0.8), rgba(20, 20, 30, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.review-item:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(50, 50, 70, 0.9), rgba(30, 30, 40, 1));
+    box-shadow: 0 12px 48px rgba(191, 90, 242, 0.2);
+    transform: translateY(-2px);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.review-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2997ff, #bf5af2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.review-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-info {
+    flex: 1;
+}
+
+.review-item strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.review-item .profession {
+    color: var(--accent-cyan);
+    font-size: 0.8rem;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.review-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 8px 0 0;
+    line-height: 1.5;
+    font-weight: 400;
+    white-space: normal;
+    /* Allow text to wrap */
+    overflow-wrap: break-word;
+    /* Prevent long words from overflowing */
+}
+
+/* Scrollable Review Content */
+.review-content-scroll {
+    max-height: 140px;
+    overflow-y: auto;
+    padding-right: 4px;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.review-content-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.review-content-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.review-content-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.company-name {
+    font-weight: 400;
+    opacity: 0.7;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+.review-stars {
+    color: #ffc857;
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.review-stars i {
+    margin-right: 2px;
+}
+
+@keyframes reviews-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 991px) {
+    .reviews-track {
+        animation-duration: 20s;
+    }
+}
+
+/* =========================================
+   Page Loader (Homepage Only)
+   ========================================= */
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+}
+
+#page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent-purple);
+    border-right-color: var(--accent-blue);
+    animation: spin 1s linear infinite;
+}
+
+.loader-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2em;
+    font-weight: 500;
+    text-transform: uppercase;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Entry Animations */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.content-loaded .fade-in-up {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-200 {
+    transition-delay: 0.2s;
+}
+
+.delay-400 {
+    transition-delay: 0.4s;
+}
+
+.delay-600 {
+    transition-delay: 0.6s;
+}
+
+
+/* Scroll Reveal */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+/* n8n Chat Widget Overrides */
+.n8n-chat-widget {
+    left: 20px !important;
+    right: auto !important;
+    bottom: 20px !important;
+    z-index: 10000 !important;
+}
+
+/* Carousel Navigation */
+.reviews-navigation {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+    /* Push to right if in flex container */
+}
+
+.nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* Updated Reviews Styles for JS Carousel */
+.reviews-marquee {
+    /* Remove overflow hidden from here if we want buttons outside, 
+       but typically we want the TRACK to be masked. 
+       Let's keep it but ensure structure supports it. */
+    overflow: hidden;
+    position: relative;
+    /* Mask edges for smooth fade */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.reviews-inner {
+    /* Remove animation */
+    animation: none !important;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    /* Center initially if needed, but transform handles it */
+}
+
+.reviews-track {
+    display: flex;
+    gap: 36px;
+    padding-right: 0;
+    /* Remove padding used for marquee math */
+    /* Init transform handled by JS */
+    width: max-content;
+    /* Allow it to be as wide as needed */
+}
+
+.review-item {
+    /* Fixed width is important for calculation */
+    width: 320px;
+    flex-shrink: 0;
+    /* Don't squash */
+}
+
+
+
+
+
+/* Interactive Form Validation */
+.form-control:valid {
+    border-color: rgba(46, 213, 115, 0.5) !important;
+    background: rgba(46, 213, 115, 0.05) !important;
+}
+
+.form-control:invalid:not(:placeholder-shown) {
+    border-color: rgba(255, 71, 87, 0.5) !important;
+    background: rgba(255, 71, 87, 0.05) !important;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Accordion Styles */
+.accordion-button::after {
+    display: none;
+}
+
+.accordion-button:not(.collapsed) .transition-icon {
+    transform: rotate(180deg);
+}
+
+.transition-icon {
+    transition: transform 0.3s ease;
+}
+
+
+/* Link Hover Effect */
+.hover-underline:hover {
+    text-decoration: underline !important;
+}
+
+/* Matrix Mode Overrides */
+body.matrix-mode {
+    font-family: "Courier New", monospace !important;
+    background-color: #000 !important;
+    color: #0F0 !important;
+}
+
+body.matrix-mode * {
+    border-color: #0F0 !important;
+}
+
+body.matrix-mode .bento-card,
+body.matrix-mode .navbar,
+body.matrix-mode footer {
+    background: rgba(0, 20, 0, 0.9) !important;
+    border: 1px solid #0F0 !important;
+    box-shadow: 0 0 10px #0F0;
+}
+
+body.matrix-mode h1,
+body.matrix-mode h2,
+body.matrix-mode h3,
+body.matrix-mode h4,
+body.matrix-mode h5,
+body.matrix-mode h6,
+body.matrix-mode p,
+body.matrix-mode a,
+body.matrix-mode span,
+body.matrix-mode i {
+    color: #0F0 !important;
+    text-shadow: 0 0 5px #0F0 !important;
+}
+
+body.matrix-mode .btn-apple {
+    background: #000 !important;
+    border: 1px solid #0F0 !important;
+    color: #0F0 !important;
+}
+
+body.matrix-mode .aurora-orb,
+body.matrix-mode .nav-active-bg {
+    display: none !important;
+}
+
+#matrix-canvas {
+    z-index: 0 !important;
+    opacity: 0.3;
+}
+
+
+/* Cursor Blink */
+.cursor-blink {
+    animation: blink 1s step-end infinite;
+    font-weight: 100;
+    color: var(--accent-purple);
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+/* Cursor Blink */
+.cursor-blink {
+    animation: blink 1s step-end infinite;
+    font-weight: 100;
+    color: var(--accent-purple);
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+/* Scroll Indicator Transitions */
+#scroll-indicator {
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+#scroll-indicator:hover {
+    transform: scale(1.1);
+}
+
+/* Emoji Rain */
+.falling-emoji {
+    position: fixed;
+    top: -50px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 99999;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}
+
+
+/* Cleaning up old Emoji Rain CSS if any conflict - New one uses inline styles/JS animations */
