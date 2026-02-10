@@ -9,7 +9,7 @@
             <div class="col-lg-8 mx-auto">
                 <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-25 mb-4" 
                      style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
-                    <span class="badge bg-info rounded-pill" style="font-size: 0.7rem;">TECH</span>
+                    <span class="badge bg-info rounded-pill" style="font-size: 0.7rem;"><?php echo t('tech_badge'); ?></span>
                     <span class="text-secondary small fw-medium"><?php echo t('built_with_passion'); ?></span>
                 </div>
                 <h1 class="display-title mb-3"><?php echo t('how_it_works'); ?></h1>
@@ -55,9 +55,9 @@
                         <h3 class="text-white mb-3"><?php echo t('ai_agent_title'); ?></h3>
                         <p class="text-secondary mb-4"><?php echo t('ai_agent_desc'); ?></p>
                         <ul class="list-unstyled text-secondary mb-0">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Webhook & API</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Google Gemini Pro</li>
-                            <li class="mb-0"><i class="fas fa-check text-success me-2"></i> CRM Auto-Sync</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> <?php echo t('tech_list_1'); ?></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> <?php echo t('tech_list_2'); ?></li>
+                            <li class="mb-0"><i class="fas fa-check text-success me-2"></i> <?php echo t('tech_list_3'); ?></li>
                         </ul>
                     </div>
                     <div class="col-lg-6">
@@ -82,7 +82,7 @@
                      <div class="col-lg-5 text-center mt-4 mt-lg-0">
                          <div class="p-4 rounded-3 border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.03);">
                             <div class="display-4 fw-bold text-white mb-2">100%</div>
-                            <p class="text-secondary small mb-3">Vérifiés par Notion</p>
+                            <p class="text-secondary small mb-3"><?php echo t('verified_by_notion'); ?></p>
                             <div class="d-flex justify-content-center gap-1 text-warning fs-5">
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>

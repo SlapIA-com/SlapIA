@@ -261,7 +261,7 @@ render_feature_card(
                     <p class="text-white opacity-75 small mb-3"><?php echo t('vip_mentoring'); ?></p>
                 </div>
                 <a href="formation#formation" class="text-white text-decoration-none small fw-bold">
-                    Réserver un créneau <i class="fas fa-arrow-right ms-2"></i>
+                    <?php echo t('book_slot'); ?> <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
 
@@ -317,42 +317,42 @@ render_feature_card(
                         <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-robot fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">ChatBot</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_chatbot'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 2 -->
                          <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-code-branch fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">Make / n8n</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_automation'); ?></h6>
                             </div>
                         </div>
                         <!-- App Icon 3 (Logique) -->
                          <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-sitemap fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">Logique</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_logic'); ?></h6>
                             </div>
                         </div>
                         <!-- App Icon 4 -->
                         <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-database fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">Notion / Airtable</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_database'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 5 -->
                          <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-code fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">Code</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_code'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 6 -->
                          <div class="col-4">
                             <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-plug fs-1 text-white mb-3 d-block"></i>
-                                <h6 class="text-white small m-0">APIs</h6>
+                                <h6 class="text-white small m-0"><?php echo t('tool_api'); ?></h6>
                             </div>
                         </div>
                     </div>

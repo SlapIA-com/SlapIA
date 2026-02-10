@@ -87,7 +87,7 @@ include '../includes/components.php';
         <div class="row justify-content-center mb-5">
             <div class="col-lg-10">
                 <div class="bento-card p-5">
-                    <h3 class="text-white text-center mb-4"><?php echo $lang === 'en' ? 'Trusted by' : 'Ils nous font confiance'; ?></h3>
+                    <h3 class="text-white text-center mb-4"><?php echo t('trusted_by'); ?></h3>
                     <div class="row g-4 align-items-center justify-content-center">
                         <div class="col-6 col-md-4 col-lg-3 text-center">
                             <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.05);">
@@ -95,7 +95,7 @@ include '../includes/components.php';
                                     <img src="/assets/img/hoshin.png" alt="Hoshin Partners" class="img-fluid rounded-circle" style="max-height: 80px; width: auto;">
                                 </div>
                                 <a href="https://www.linkedin.com/company/hoshin-partners/" target="_blank" class="text-white text-decoration-none fw-bold d-block mb-2 hover-text-primary">Hoshin Partners</a>
-                                <p class="text-secondary small mb-0">Cabinet de conseil en stratégie et transformation opérationnelle.</p>
+                                <p class="text-secondary small mb-0"><?php echo t('hoshin_desc'); ?></p>
                             </div>
                         </div>
                         <!-- Placeholders removed -->
@@ -107,7 +107,7 @@ include '../includes/components.php';
         <!-- Section Témoignages / Projets -->
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <h2 class="text-white text-center mb-4">Projets Réalisés</h2>
+                <h2 class="text-white text-center mb-4"><?php echo t('projects_realized'); ?></h2>
                 <div class="row g-4">
                     <!-- Projet : Automatisation ERP -->
                     <div class="col-md-6">
@@ -117,11 +117,11 @@ include '../includes/components.php';
                                     <i class="fas fa-cogs text-white"></i>
                                 </div>
                                 <div>
-                                    <h5 class="text-white mb-0">Automatisation Workflows</h5>
-                                    <span class="text-secondary small">Startup SaaS</span>
+                                    <h5 class="text-white mb-0"><?php echo t('project_workflow_title'); ?></h5>
+                                    <span class="text-secondary small"><?php echo t('project_saas_startup'); ?></span>
                                 </div>
                             </div>
-                            <p class="text-secondary">Automatisation complète des processus ERP : synchronisation des données, facturation automatique et reporting en temps réel.</p>
+                            <p class="text-secondary"><?php echo t('project_workflow_desc'); ?></p>
                             <div class="d-flex gap-2 flex-wrap">
                                 <span class="badge bg-primary bg-opacity-25 text-primary">Make</span>
                                 <span class="badge bg-success bg-opacity-25 text-success">Perplexity</span>
@@ -137,10 +137,10 @@ include '../includes/components.php';
         <div class="row justify-content-center mt-5">
             <div class="col-lg-8 text-center">
                 <div class="bento-card p-5" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
-                    <h3 class="text-white mb-3"><?php echo $lang === 'en' ? 'Ready to train your teams?' : 'Prêt à former vos équipes ?'; ?></h3>
-                    <p class="text-secondary mb-4"><?php echo $lang === 'en' ? 'Let\'s discuss your needs and build a custom program for your company.' : 'Discutons de vos besoins et construisons un programme sur mesure pour votre entreprise.'; ?></p>
+                    <h3 class="text-white mb-3"><?php echo t('ready_to_train'); ?></h3>
+                    <p class="text-secondary mb-4"><?php echo t('lets_discuss'); ?></p>
                     <a href="/contact" class="btn-apple">
-                        <?php echo $lang === 'en' ? 'Request a quote' : 'Demander un devis'; ?>
+                        <?php echo t('request_quote'); ?>
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
                         </svg>

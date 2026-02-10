@@ -17,15 +17,15 @@ include 'lang.php';
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:title" content="<?php echo $lang === 'en' ? 'SlapIA - Artificial Intelligence Training' : 'SlapIA - Formation Intelligence Artificielle'; ?>">
-    <meta property="og:description" content="<?php echo $lang === 'en' ? 'Become an AI expert with our structured paths. Private coaching, online courses, and continuous support.' : 'Devenez un expert de l\'IA avec nos parcours structurés. Accompagnement privé, cours en ligne et support continu.'; ?>">
+    <meta property="og:title" content="<?php echo t('meta_title'); ?>">
+    <meta property="og:description" content="<?php echo t('meta_description'); ?>">
     <meta property="og:image" content="https://<?php echo $_SERVER['HTTP_HOST']; ?>/assets/img/logo.svg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="twitter:title" content="<?php echo $lang === 'en' ? 'SlapIA - Artificial Intelligence Training' : 'SlapIA - Formation Intelligence Artificielle'; ?>">
-    <meta property="twitter:description" content="<?php echo $lang === 'en' ? 'Become an AI expert with our structured paths. Private coaching, online courses, and continuous support.' : 'Devenez un expert de l\'IA avec nos parcours structurés. Accompagnement privé, cours en ligne et support continu.'; ?>">
+    <meta property="twitter:title" content="<?php echo t('meta_title'); ?>">
+    <meta property="twitter:description" content="<?php echo t('meta_description'); ?>">
     <meta property="twitter:image" content="https://<?php echo $_SERVER['HTTP_HOST']; ?>/assets/img/logo.svg">
 
     <!-- n8n Chat Widget -->
@@ -36,7 +36,7 @@ include 'lang.php';
             webhookUrl: '<?php echo config('N8N_CHAT_WEBHOOK'); ?>'
         });
     </script>
-    <title><?php echo $lang === 'en' ? 'SlapIA - Artificial Intelligence Training' : 'SlapIA - Formation Intelligence Artificielle'; ?></title>
+    <title><?php echo t('meta_title'); ?></title>
     
     <!-- Bootstrap 5 (Grid Only primarily) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -182,7 +182,7 @@ include 'lang.php';
     <div id="page-loader">
         <div class="loader-content">
             <div class="loader-spinner"></div>
-            <div class="loader-text">Chargement</div>
+            <div class="loader-text"><?php echo t('loading_text'); ?></div>
         </div>
     </div>
     <script>
@@ -275,7 +275,7 @@ endif; ?>
             <a href="/entreprises" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'entreprises.php' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
             <a href="/expertise" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
         </div>
-        <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? 'Français' : 'English'; ?>">
+        <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>">
             <i class="fas fa-flag" style="margin-right: 6px;"></i> <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>
         </a>
         <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;">

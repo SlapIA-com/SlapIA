@@ -66,15 +66,15 @@
                         <!-- M1 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white">Découverte de l'IA</td>
-                            <td class="py-4">Apprendre à "parler" à l'IA pour obtenir des réponses précises et utiles immédiatement.</td>
+                            <td class="py-4 text-white"><?php echo t('m1_level1_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m1_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">ChatGPT</span></td>
                         </tr>
                         <!-- M2 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M2</td>
-                            <td class="py-4 text-white">Organiser ses idées</td>
-                            <td class="py-4">Transformer vos notes en une base de données propre que l'IA pourra utiliser.</td>
+                            <td class="py-4 text-white"><?php echo t('m2_level1_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m2_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
                                 <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Notion</span>
                                 <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25 ms-1">Airtable</span>
@@ -83,15 +83,15 @@
                         <!-- M3 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M3</td>
-                            <td class="py-4 text-white">Premiers Robots</td>
-                            <td class="py-4">Le b.a.-ba de l'automatisation : "Si je reçois un mail, alors crée une tâche".</td>
+                            <td class="py-4 text-white"><?php echo t('m3_level1_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m3_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">Make</span></td>
                         </tr>
                          <!-- M4 -->
                          <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M4</td>
-                            <td class="py-4 text-white">Automatisation Visuelle</td>
-                            <td class="py-4">Créer des enchaînements d'actions plus complexes en reliant des blocs entre eux.</td>
+                            <td class="py-4 text-white"><?php echo t('m4_level1_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m4_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">n8n</span></td>
                         </tr>
                     </tbody>
@@ -104,8 +104,8 @@
             <div class="d-flex align-items-center gap-4 mb-4">
                 <div class="d-flex justify-content-center align-items-center bg-info text-white rounded-3 fw-bold" style="width: 60px; height: 60px; font-size: 2rem;">2</div>
                 <div>
-                    <h2 class="text-white mb-1">Passer à la vitesse supérieure</h2>
-                    <p class="text-secondary mb-0">Créer des systèmes qui travaillent pour vous pendant que vous dormez.</p>
+                    <h2 class="text-white mb-1"><?php echo t('level_2_title'); ?></h2>
+                    <p class="text-secondary mb-0"><?php echo t('level_2_subtitle'); ?></p>
                 </div>
             </div>
 
@@ -113,9 +113,9 @@
                 <table class="table text-white mb-0" style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
                     <thead>
                         <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
-                            <th class="py-3 ps-0">Module</th>
+                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
                             <th class="py-3">Thématique</th>
-                            <th class="py-3">Ce que vous allez faire</th>
+                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
                             <th class="py-3 text-end pe-0">Outil(s)</th>
                         </tr>
                     </thead>
@@ -123,8 +123,8 @@
                         <!-- M1 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white">Tout connecter</td>
-                            <td class="py-4">Faire discuter vos applications entre elles (Gmail, Agenda, Excel) sans effort.</td>
+                            <td class="py-4 text-white"><?php echo t('m1_level2_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m1_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
                                 <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Airtable</span>
                                 <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25 ms-1">Notion</span>
@@ -133,8 +133,8 @@
                         <!-- M2 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M2</td>
-                            <td class="py-4 text-white">Échanges de données</td>
-                            <td class="py-4">Envoyer et recevoir des informations automatiquement en toute sécurité.</td>
+                            <td class="py-4 text-white"><?php echo t('m2_level2_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m2_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
                                 <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">Make</span>
                                 <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 ms-1">n8n</span>
@@ -143,15 +143,15 @@
                         <!-- M3 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M3</td>
-                            <td class="py-4 text-white">Cerveau Artificiel</td>
-                            <td class="py-4">Demander à l'IA d'analyser une info et d'agir seule (répondre à un mail, ranger un fichier).</td>
+                            <td class="py-4 text-white"><?php echo t('m3_level2_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m3_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">ChatGPT + Auto</span></td>
                         </tr>
                          <!-- M4 -->
                          <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M4</td>
-                            <td class="py-4 text-white">Gestion des imprévus</td>
-                            <td class="py-4">Apprendre à votre robot quoi faire si quelque chose ne se passe pas comme prévu.</td>
+                            <td class="py-4 text-white"><?php echo t('m4_level2_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m4_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-10">Logic</span></td>
                         </tr>
                     </tbody>
@@ -162,16 +162,16 @@
         <!-- Section 3: Accompagnement Personnalisé -->
         <div id="formation" class="row align-items-center mb-5">
             <div class="col-lg-5 mb-4 mb-lg-0">
-                <h2 class="display-6 fw-bold mb-3">On ne vous lâche pas.<br><span class="text-gradient-purple">Formation VIP</span></h2>
-                <p class="text-secondary mb-4">La théorie c'est bien, la pratique accompagnée c'est mieux. Nous sommes là au quotidien.</p>
+                <h2 class="display-6 fw-bold mb-3"><?php echo t('vip_title_prefix'); ?><br><span class="text-gradient-purple"><?php echo t('vip_coaching'); ?></span></h2>
+                <p class="text-secondary mb-4"><?php echo t('vip_desc'); ?></p>
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex gap-3">
                         <div class="icon-box rounded-circle bg-success bg-opacity-10 text-success border-success border-opacity-25 mb-0" style="width:40px; height:40px; font-size:1rem;">
                             <i class="fas fa-video"></i>
                         </div>
                         <div>
-                            <h5 class="text-white mb-1">Visio Quotidienne</h5>
-                            <p class="text-secondary small m-0">Points réguliers pour avancer sur vos blocages.</p>
+                            <h5 class="text-white mb-1"><?php echo t('daily_visio'); ?></h5>
+                            <p class="text-secondary small m-0"><?php echo t('daily_visio_desc'); ?></p>
                         </div>
                     </div>
                     <div class="d-flex gap-3">
@@ -179,8 +179,8 @@
                             <i class="fas fa-hands-helping"></i>
                         </div>
                         <div>
-                            <h5 class="text-white mb-1">Aide Technique</h5>
-                            <p class="text-secondary small m-0">On regarde votre écran et on corrige ensemble.</p>
+                            <h5 class="text-white mb-1"><?php echo t('tech_help'); ?></h5>
+                            <p class="text-secondary small m-0"><?php echo t('tech_help_desc'); ?></p>
                         </div>
                     </div>
                     <div class="d-flex gap-3">
@@ -188,8 +188,8 @@
                             <i class="fas fa-road"></i>
                         </div>
                         <div>
-                            <h5 class="text-white mb-1">Parcours Personnalisé</h5>
-                            <p class="text-secondary small m-0">On adapte le programme à vos objectifs spécifiques.</p>
+                            <h5 class="text-white mb-1"><?php echo t('custom_path'); ?></h5>
+                            <p class="text-secondary small m-0"><?php echo t('custom_path_desc'); ?></p>
                         </div>
                     </div>
                 </div>
@@ -199,11 +199,11 @@
                     <div class="mb-4">
                         <i class="fas fa-rocket text-warning fs-1"></i>
                     </div>
-                    <h3 class="text-white">Mentorat Intensif</h3>
-                    <p class="text-secondary mb-4 small">Pour ceux qui veulent des résultats immédiats.</p>
+                    <h3 class="text-white"><?php echo t('intensive_mentoring'); ?></h3>
+                    <p class="text-secondary mb-4 small"><?php echo t('intensive_mentoring_desc'); ?></p>
                     <div class="display-4 fw-bold text-white mb-0">60€<span class="fs-5 text-secondary fw-normal">/session</span></div>
-                    <p class="text-secondary small mb-4 fw-bold text-uppercase tracking-wider">1h par jour</p>
-                    <a href="/contact" class="btn-apple w-100 justify-content-center">Réserver un créneau</a>
+                    <p class="text-secondary small mb-4 fw-bold text-uppercase tracking-wider"><?php echo t('one_hour_per_day'); ?></p>
+                    <a href="/contact" class="btn-apple w-100 justify-content-center"><?php echo t('book_slot'); ?></a>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@
             <div class="col-lg-4">
                 <h4 class="text-white mb-4">SlapIA</h4>
                 <p class="text-secondary">
-                    <?php echo $lang === 'en' ? 'Excellence in AI training.<br>Level 1, Level 2 & Personalized Coaching.' : 'L\'excellence en formation IA.<br>Niveau 1, Niveau 2 & Accompagnement personnalisé.'; ?>
+                    <?php echo t('footer_desc'); ?>
                 </p>
                 <div class="d-flex gap-3 mt-4">
                     <a href="https://www.linkedin.com/in/lapierre-thomas/" target="_blank" class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
@@ -12,7 +12,7 @@
             </div>
             
             <div class="col-6 col-lg-2 offset-lg-2">
-                <h6 class="text-white fw-bold mb-4"><?php echo $lang === 'en' ? 'Explore' : 'Explorer'; ?></h6>
+                <h6 class="text-white fw-bold mb-4"><?php echo t('footer_explore'); ?></h6>
                 <ul class="list-unstyled">
                     <li class="mb-3"><a href="/formation" class="text-secondary text-decoration-none"><?php echo t('formations'); ?></a></li>
                     <li class="mb-3"><a href="/entreprises" class="text-secondary text-decoration-none"><?php echo t('companies'); ?></a></li>
@@ -21,17 +21,17 @@
             </div>
             
             <div class="col-6 col-lg-2">
-                <h6 class="text-white fw-bold mb-4"><?php echo $lang === 'en' ? 'Legal' : 'Légal'; ?></h6>
+                <h6 class="text-white fw-bold mb-4"><?php echo t('footer_legal'); ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-3"><a href="/legal?section=terms" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Terms' : 'CGV'; ?></a></li>
-                    <li class="mb-3"><a href="/legal?section=privacy" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Privacy' : 'Confidentialité'; ?></a></li>
-                    <li class="mb-3"><a href="/legal?section=mentions" class="text-secondary text-decoration-none"><?php echo $lang === 'en' ? 'Legal' : 'Mentions'; ?></a></li>
+                    <li class="mb-3"><a href="/legal?section=terms" class="text-secondary text-decoration-none"><?php echo t('nav_terms'); ?></a></li>
+                    <li class="mb-3"><a href="/legal?section=privacy" class="text-secondary text-decoration-none"><?php echo t('nav_privacy'); ?></a></li>
+                    <li class="mb-3"><a href="/legal?section=mentions" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
                 </ul>
             </div>
         </div>
         
         <div class="border-top border-secondary border-opacity-10 mt-5 pt-4 text-center">
-            <p class="text-secondary small mb-0">&copy; 2026 SlapIA Inc. <?php echo $lang === 'en' ? 'Designed with precision.' : 'Designed with precision.'; ?></p>
+            <p class="text-secondary small mb-0">&copy; 2026 SlapIA Inc. <?php echo t('designed_with_precision'); ?></p>
         </div>
     </div>
 </footer>
@@ -116,7 +116,7 @@
       <span class="position-relative d-inline-block rounded-circle bg-success" style="width: 100%; height: 100%;"></span>
     </span>
     <span class="text-white small fw-bold" style="font-size: 0.75rem;">
-        <span id="live-visitor-count">...</span> <?php echo $lang === "en" ? "viewing" : "visiteurs"; ?>
+        <span id="live-visitor-count">...</span> <?php echo t('live_counter_viewing'); ?>
     </span>
 </div>
 <script src="/assets/js/live-counter.js"></script>

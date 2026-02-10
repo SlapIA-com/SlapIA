@@ -4,7 +4,7 @@
 <div id="toastNotification" class="toast-notification">
     <div class="toast-content">
         <i class="fas fa-check-circle toast-icon"></i>
-        <span id="toastMessage">Votre message a été envoyé avec succès !</span>
+        <span id="toastMessage"><?php echo t('contact_toast_success'); ?></span>
         <button type="button" class="toast-close" onclick="closeToast()">&times;</button>
     </div>
     <div class="toast-progress">
@@ -134,8 +134,8 @@
     <div class="container">
         <div class="row justify-content-center text-center mb-5">
             <div class="col-lg-8">
-                <h1 class="display-title mb-3" style="font-size: 3rem;"><?php echo $lang === 'en' ? 'Let\'s talk about your project.' : 'Parlons de votre projet.'; ?></h1>
-                <p class="text-secondary lead"><?php echo $lang === 'en' ? 'Our team is ready to audit your needs and propose you the best AI strategy.' : 'Notre équipe est prête à auditer vos besoins et vous proposer la meilleure stratégie IA.'; ?></p>
+                <h1 class="display-title mb-3" style="font-size: 3rem;"><?php echo t('contact_title'); ?></h1>
+                <p class="text-secondary lead"><?php echo t('contact_subtitle'); ?></p>
             </div>
         </div>
 
@@ -145,15 +145,15 @@
                     <form id="contactForm">
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label for="prenom" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo $lang === 'en' ? 'First Name' : 'Prénom'; ?></label>
+                                <label for="prenom" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo t('form_firstname'); ?></label>
                                 <input type="text" id="prenom" name="prenom" required placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" style="background: rgba(255,255,255,0.02) !important;">
                             </div>
                             <div class="col-md-6">
-                                <label for="nom" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo $lang === 'en' ? 'Last Name' : 'Nom'; ?></label>
+                                <label for="nom" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo t('form_lastname'); ?></label>
                                 <input type="text" id="nom" name="nom" required placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" style="background: rgba(255,255,255,0.02) !important;">
                             </div>
                             <div class="col-12">
-                                <label for="email" class="text-secondary small fw-bold mb-2 text-uppercase">Email</label>
+                                <label for="email" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo t('form_email'); ?></label>
                                 <input type="email" id="email" name="email" required placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" style="background: rgba(255,255,255,0.02) !important;">
                             </div>
                             <div class="col-12">
@@ -174,10 +174,10 @@
                                 </div>
 
                                 <button type="submit" id="submitBtn" class="btn-apple w-100 justify-content-center">
-                                    <span id="btnText"><?php echo $lang === 'en' ? 'Send Request' : 'Envoyer la demande'; ?></span>
+                                    <span id="btnText"><?php echo t('form_send_btn'); ?></span>
                                     <span id="btnLoader" class="d-none">
                                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        <?php echo $lang === 'en' ? 'Sending...' : 'Envoi en cours...'; ?>
+                                        <?php echo t('form_sending'); ?>
                                     </span>
                                 </button>
                             </div>
@@ -251,7 +251,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     if (timeDiff < 3000) {
         // Submitted too fast (< 3 seconds)
         console.log('Spam detected (too fast)');
-        showToast(<?php echo json_encode($lang === 'en' ? 'Please wait a moment before sending.' : 'Veuillez patienter un instant avant d\'envoyer.'); ?>, true);
+        showToast(<?php echo json_encode(t('toast_wait')); ?>, true);
         return;
     }
 
@@ -292,14 +292,14 @@ document.getElementById('contactForm').addEventListener('submit', async function
         const result = await response.json();
         
         if (result.success) {
-            showToast(<?php echo json_encode($lang === 'en' ? 'Your message has been sent successfully! We will contact you soon.' : 'Votre message a été envoyé avec succès ! Nous vous recontacterons bientôt.'); ?>);
+            showToast(<?php echo json_encode(t('toast_success_long')); ?>);
             form.reset();
         } else {
-            showToast(result.error || <?php echo json_encode($lang === 'en' ? 'An error occurred. Please try again.' : 'Une erreur est survenue. Veuillez réessayer.'); ?>, true);
+            showToast(result.error || <?php echo json_encode(t('toast_error_generic')); ?>, true);
         }
     } catch (error) {
         console.error('Erreur:', error);
-        showToast(<?php echo json_encode($lang === 'en' ? 'Connection error. Please try again.' : 'Erreur de connexion. Veuillez réessayer.'); ?>, true);
+        showToast(<?php echo json_encode(t('toast_error_connection')); ?>, true);
     } finally {
         // Désactiver le loader
         submitBtn.disabled = false;
