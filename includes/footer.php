@@ -39,9 +39,14 @@
 </footer>
 
 <!-- Cookie Banner -->
-<div id="cookie-banner" class="cookie-banner">
-    <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
-    <button id="cookie-accept" class="cookie-btn"><?php echo t('cookie_banner_ok'); ?></button>
+<!-- Cookie Banner -->
+<div id="cookie-banner" class="cookie-overlay">
+    <div class="cookie-modal glass-effect">
+        <div class="cookie-icon">🍪</div>
+        <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
+        <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
+        <button id="cookie-accept" class="cookie-btn"><?php echo t('cookie_banner_ok'); ?></button>
+    </div>
 </div>
 
 <!-- Scripts -->

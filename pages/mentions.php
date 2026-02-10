@@ -28,7 +28,7 @@
                         <ul class="list-unstyled">
                             <li class="mb-2"><strong><?php echo t('legal_label_name'); ?></strong> Thomas Lapierre</li>
                             <li class="mb-2"><strong><?php echo t('legal_label_address'); ?></strong> <?php echo t('legal_value_address_placeholder'); ?></li>
-                            <li class="mb-2"><strong><?php echo t('legal_label_email'); ?></strong> contact@javabien.ovh</li>
+                            <li class="mb-2"><strong><?php echo t('legal_label_email'); ?></strong> contact@slapia.com</li>
                         </ul>
                     </div>
 
@@ -49,7 +49,7 @@
                     <div class="text-secondary">
                         <p>
                             <strong><?php echo t('hosting_provider'); ?></strong><br>
-                            Synology NAS / Local Host<br>
+                            GNL Solution<br>
                             <?php echo t('infrastructure_by'); ?>
                         </p>
                     </div>
