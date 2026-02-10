@@ -72,7 +72,7 @@
                         <?php echo $lang === 'en' ? 'Master AI tools to boost individual productivity. Automate daily tasks and enhance cognitive abilities.' : 'Maîtrise des outils d\'IA pour booster la productivité individuelle. Automatisation des tâches quotidiennes et augmentation des capacités cognitives.'; ?>
                     </p>
                     <div class="d-inline-block px-3 py-1 rounded-pill bg-white bg-opacity-10 text-white small">
-                        <i class="fas fa-check-circle me-2 text-success"></i>Prangins, Nov 2025
+                        <i class="fas fa-check-circle me-2 text-success"></i>Nyon, Dec 2025
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                         <?php echo $lang === 'en' ? 'Strategic deployment of AI at organizational scale. Transformation of business processes and integration of AI in the value chain.' : 'Déploiement stratégique de l\'IA à l\'échelle organisationnelle. Transformation des processus métiers et intégration de l\'IA dans la chaîne de valeur.'; ?>
                     </p>
                     <div class="d-inline-block px-3 py-1 rounded-pill bg-white bg-opacity-10 text-white small">
-                        <i class="fas fa-check-circle me-2 text-success"></i>Prangins, Nov 2026
+                        <i class="fas fa-check-circle me-2 text-success"></i>Nyon, Dec 2025
                     </div>
                 </div>
             </div>
