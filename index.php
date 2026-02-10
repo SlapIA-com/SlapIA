@@ -98,10 +98,10 @@ $na_display = ($lang === 'en') ? 'N/A' : 'N.A';
 if ($stats['nombre'] > 0) {
     $nombre = (int)$stats['nombre'];
     if ($lang === 'en') {
-        $formatted = $nombre >= 500 ? '+' . number_format($nombre, 0, '.', ',') . ' learners trained' : 'Based on ' . number_format($nombre, 0, '.', ',') . ' learner' . ($nombre > 1 ? 's' : '');
+        $formatted = $nombre >= 500 ? '+' . number_format($nombre, 0, '.', ',') . ' learners trained' : 'Based on ' . number_format($nombre, 0, '.', ',') . ' of our trained customers' . ($nombre > 1 ? 's' : '');
     }
     else {
-        $formatted = $nombre >= 500 ? '+' . number_format($nombre, 0, ',', ' ') . ' apprenant' . ($nombre > 1 ? 's' : '') . ' formés' : 'Basé sur ' . number_format($nombre, 0, ',', ' ') . ' apprenant' . ($nombre > 1 ? 's' : '');
+        $formatted = $nombre >= 500 ? '+' . number_format($nombre, 0, ',', ' ') . ' apprenant' . ($nombre > 1 ? 's' : '') . ' formés' : 'Basé sur ' . number_format($nombre, 0, ',', ' ') . ' de nos clients formés' . ($nombre > 1 ? 's' : '');
     }
     echo $formatted;
 }
