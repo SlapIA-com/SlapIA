@@ -223,6 +223,7 @@
 <script src="/assets/js/typewriter.js"></script>
 <script src="/assets/js/tilt.js"></script>
 <script src="/assets/js/console-egg.js"></script>
+<script src="/assets/js/tracker.js"></script>
 <!-- Scroll Indicator (Static) -->
 <div id="scroll-indicator" class="scroll-indicator-glass">
     <svg width="100%" height="100%" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
