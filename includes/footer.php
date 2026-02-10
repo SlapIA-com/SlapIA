@@ -93,29 +93,6 @@
                     </label>
                 </div>
 
-                <!-- Analytics -->
-                <div class="cookie-preference-item">
-                    <div class="cookie-pref-info text-start">
-                        <h4><?php echo t('cookie_analytics_title'); ?></h4>
-                        <p><?php echo t('cookie_analytics_desc'); ?></p>
-                    </div>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" id="cookie-toggle-analytics">
-                        <span class="cookie-slider"></span>
-                    </label>
-                </div>
-
-                <!-- Marketing -->
-                <div class="cookie-preference-item">
-                    <div class="cookie-pref-info text-start">
-                        <h4><?php echo t('cookie_marketing_title'); ?></h4>
-                        <p><?php echo t('cookie_marketing_desc'); ?></p>
-                    </div>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" id="cookie-toggle-marketing">
-                        <span class="cookie-slider"></span>
-                    </label>
-                </div>
             </div>
 
             <button id="cookie-save" class="cookie-btn cookie-btn-primary mt-2"><?php echo t('cookie_save'); ?></button>
@@ -220,10 +197,8 @@
 
 <script src="/assets/js/matrix.js"></script>
 <script src="/assets/js/cookie-banner.js"></script>
-<script src="/assets/js/typewriter.js"></script>
 <script src="/assets/js/tilt.js"></script>
 <script src="/assets/js/console-egg.js"></script>
-<script src="/assets/js/tracker.js"></script>
 <!-- Scroll Indicator (Static) -->
 <div id="scroll-indicator" class="scroll-indicator-glass">
     <svg width="100%" height="100%" viewBox="0 0 100 100" style="transform: rotate(-90deg);">

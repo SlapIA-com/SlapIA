@@ -27,15 +27,7 @@ function loadEnv($path)
 // le fichier n’existe pas et loadEnv() ne fera rien.
 loadEnv(__DIR__ . '/../.env');
 
-// Obfuscated Notion Analytics ID (Base64)
-// Use this to prevent plaintext ID in repo.
-if (!getenv('NOTION_ANALYTICS_DB_ID')) {
-    $obfuscated_id = 'MzAzYjIwNzEzYjZmODA2ZmE3MzdjNDg4MDI5YWZjYjg=';
-    $decoded_id = base64_decode($obfuscated_id);
-    putenv("NOTION_ANALYTICS_DB_ID=$decoded_id");
-    $_ENV['NOTION_ANALYTICS_DB_ID'] = $decoded_id;
-    $_SERVER['NOTION_ANALYTICS_DB_ID'] = $decoded_id;
-}
+
 
 /**
  * Récupère une valeur de configuration en privilégiant les variables d’environnement.

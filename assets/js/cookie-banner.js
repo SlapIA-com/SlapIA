@@ -57,8 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const fullConsent = {
                 necessary: true,
                 preferences: true,
-                analytics: true,
-                marketing: true,
                 timestamp: new Date().toISOString()
             };
             saveAndClose(fullConsent);
@@ -71,8 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const minConsent = {
                 necessary: true,
                 preferences: false,
-                analytics: false,
-                marketing: false,
                 timestamp: new Date().toISOString()
             };
             saveAndClose(minConsent);
@@ -101,8 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const customConsent = {
                 necessary: true,
                 preferences: togglePreferences ? togglePreferences.checked : false,
-                analytics: toggleAnalytics ? toggleAnalytics.checked : false,
-                marketing: toggleMarketing ? toggleMarketing.checked : false,
                 timestamp: new Date().toISOString()
             };
             saveAndClose(customConsent);
@@ -125,12 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyConsent(consent) {
         // Logic to initialize scripts based on consent
-        if (consent.analytics) {
-            // Init Google Analytics / Matomo
-        }
-        if (consent.marketing) {
-            // Init Facebook Pixel / Ads
-        }
+        // Analytics & Marketing removed as per user request.
         // Preferences (Language) are handled by PHP on next request based on cookie
     }
 
