@@ -9,7 +9,7 @@
                 <div class="position-relative d-inline-block">
                     <!-- Placeholder for profile picture -->
                     <div class="rounded-circle p-1 bg-gradient-to-br from-primary to-purple d-inline-block mb-4">
-                        <img src="https://media.licdn.com/dms/image/v2/D4E03AQE-NUxrnrMhFg/profile-displayphoto-scale_200_200/B4EZxB2qISJsAY-/0/1770631374087?e=1772064000&v=beta&t=snAU6XsB7PFU44R0es5dtbEwoZg8NHCa7NIwkG7VYW8" alt="Thomas Lapierre" class="rounded-circle shadow-lg" style="width: 160px; height: 160px; border: 4px solid var(--bg-deep);">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E03AQH5AN2bQQZUmg/profile-displayphoto-scale_200_200/B4EZxB5vFqHgAY-/0/1770632181103?e=1772064000&v=beta&t=HlsFwMEbWP2R-5vASKRrxq2ElWNQqAHU7JJKXaIwOH4" alt="Thomas Lapierre" class="rounded-circle shadow-lg" style="width: 160px; height: 160px; border: 4px solid var(--bg-deep);">
                     </div>
                 </div>
                 <h1 class="display-title mb-2" style="font-size: 3rem;">Thomas Lapierre</h1>
