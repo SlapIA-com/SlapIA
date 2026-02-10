@@ -7,28 +7,38 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.slapia.com/formation.php</loc>
+    <loc>https://www.slapia.com/formation</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.slapia.com/entreprises.php</loc>
+    <loc>https://www.slapia.com/entreprises</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.slapia.com/expertise.php</loc>
+    <loc>https://www.slapia.com/expertise</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.slapia.com/contact.php</loc>
+    <loc>https://www.slapia.com/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.slapia.com/legal.php</loc>
+    <loc>https://www.slapia.com/mentions-legales</loc>
     <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.slapia.com/politique-confidentialite</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.slapia.com/cgv</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
