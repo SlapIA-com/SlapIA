@@ -19,8 +19,8 @@ if (!$consent || !isset($consent['analytics']) || $consent['analytics'] !== true
 
 // 2. Configuration
 define('NOTION_API_KEY', config('NOTION_API_KEY'));
-// ID de la base de données "Logs Visiteurs" (À REMPLACER PAR L'ID RÉEL)
-define('NOTION_ANALYTICS_DB_ID', config('NOTION_ANALYTICS_DB_ID', 'VOTRE_ID_ICI'));
+// ID de la base de données "Logs Visiteurs"
+define('NOTION_ANALYTICS_DB_ID', config('NOTION_ANALYTICS_DB_ID'));
 
 
 // 3. Récupération des données
