@@ -55,6 +55,15 @@ function getAnalytics($limit = 100)
 }
 
 $logs = getAnalytics(100);
+
+// Check if error
+$notion_error = null;
+if (isset($logs['error'])) {
+    $notion_error = $logs['error'];
+    $logs = [];
+
+}
+
 $stats = [
     'total_views' => count($logs),
     'unique_visitors' => 0,
@@ -101,9 +110,9 @@ arsort($stats['top_pages']);
             <span class="badge bg-secondary">Last 100 Hits</span>
         </div>
 
-        <?php if (isset($logs['error'])): ?>
+        <?php if ($notion_error): ?>
             <div class="alert alert-warning">
-                <strong>Attention:</strong> Notion Database ID non configuré. Veuillez l'ajouter dans config.php ou .env.
+                <strong>Attention:</strong> <?php echo htmlspecialchars($notion_error); ?> (Veuillez configurer NOTION_ANALYTICS_DB_ID).
             </div>
         <?php
 endif; ?>
