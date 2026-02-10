@@ -21,8 +21,24 @@ if (!isset($_SESSION['language'])) {
 // Check if language change is requested
 if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'])) {
     $_SESSION['language'] = $_GET['lang'];
-    // Set cookie for 1 year
-    setcookie('lang', $_GET['lang'], time() + (365 * 24 * 60 * 60), '/', '', true, true);
+
+    // Check for cookie consent before setting the cookie
+    $canSetCookie = false;
+    if (isset($_COOKIE['slapia_consent'])) {
+        $consent = json_decode($_COOKIE['slapia_consent'], true);
+        if (isset($consent['preferences']) && $consent['preferences'] === true) {
+            $canSetCookie = true;
+        }
+    }
+
+    if ($canSetCookie) {
+        // Set cookie for 1 year
+        setcookie('lang', $_GET['lang'], time() + (365 * 24 * 60 * 60), '/', '', true, true);
+    }
+    else {
+    // If consent is missing/denied, we might want to expire the cookie if it exists?
+    // But for now, we just don't set/refresh it.
+    }
 }
 
 $lang = $_SESSION['language'];

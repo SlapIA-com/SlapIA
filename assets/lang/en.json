@@ -230,6 +230,20 @@
     "what_you_will_do": "What you will do",
     "your_email": "Your email",
     "your_name": "Your name",
-    "cookie_banner_text": "🍪 We respect your privacy. This site uses <strong>no advertising cookies</strong>, only functional cookies for your convenience.",
-    "cookie_banner_ok": "Got it! (Yum)"
+    "cookie_banner_text": "🍪 We respect your privacy. This site uses cookies for proper functioning and, with your consent, for audience analysis.",
+    "cookie_banner_ok": "Accept All",
+    "cookie_accept_all": "Accept All",
+    "cookie_deny_all": "Deny All",
+    "cookie_customize": "Customize",
+    "cookie_preferences_title": "Cookie Preferences",
+    "cookie_save": "Save Choices",
+    "cookie_necessary_title": "Necessary",
+    "cookie_necessary_desc": "Essential for the site to work (e.g., security, cart). Cannot be disabled.",
+    "cookie_analytics_title": "Analytics",
+    "cookie_analytics_desc": "Helps us understand how the site is used.",
+    "cookie_marketing_title": "Marketing",
+    "cookie_marketing_desc": "Used for targeted ads (we don't have any, but for GDPR example).",
+    "cookie_policy_link": "Privacy Policy",
+    "cookie_preferences_category_title": "Preferences",
+    "cookie_preferences_category_desc": "Allows saving your choices (e.g., Language)."
 }

@@ -230,6 +230,20 @@
     "what_you_will_do": "Ce que vous allez faire",
     "your_email": "Votre email",
     "your_name": "Votre nom",
-    "cookie_banner_text": "🍪 Nous respectons votre vie privée. Ce site n'utilise <strong>aucun cookie publicitaire</strong>, seulement des cookies fonctionnels pour votre confort.",
-    "cookie_banner_ok": "Compris ! (Miam)"
+    "cookie_banner_text": "🍪 Nous respectons votre vie privée. Ce site utilise des cookies pour assurer son bon fonctionnement et, avec votre accord, pour analyser l'audience.",
+    "cookie_banner_ok": "Tout accepter",
+    "cookie_accept_all": "Tout accepter",
+    "cookie_deny_all": "Tout refuser",
+    "cookie_customize": "Personnaliser",
+    "cookie_preferences_title": "Préférences Cookies",
+    "cookie_save": "Enregistrer mes choix",
+    "cookie_necessary_title": "Nécessaires",
+    "cookie_necessary_desc": "Indispensables au fonctionnement du site (ex: sécurité, panier). Ne peut être désactivé.",
+    "cookie_analytics_title": "Mesure d'audience",
+    "cookie_analytics_desc": "Nous aide à comprendre comment le site est utilisé.",
+    "cookie_marketing_title": "Marketing",
+    "cookie_marketing_desc": "Utilisé pour des publicités ciblées (nous n'en avons pas, mais c'est pour l'exemple RGPD).",
+    "cookie_policy_link": "Politique de confidentialité",
+    "cookie_preferences_category_title": "Préférences",
+    "cookie_preferences_category_desc": "Permet de sauvegarder vos choix (ex: Langue)."
 }

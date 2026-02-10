@@ -51,7 +51,9 @@ include 'lang.php';
     
     <!-- Custom Design System -->
     <!-- Custom Design System -->
+    <!-- Custom Design System -->
     <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/cookie-banner.css" rel="stylesheet">
 
     <!-- Mobile Menu Styles -->
     <style>
