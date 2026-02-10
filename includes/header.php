@@ -14,6 +14,11 @@ include 'lang.php';
     <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
     <link rel="apple-touch-icon" href="/assets/img/logo.svg">
 
+    <!-- Alternate Languages (SE0) -->
+    <link rel="alternate" hreflang="fr" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>?lang=fr" />
+    <link rel="alternate" hreflang="en" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">

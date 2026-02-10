@@ -20,8 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Check sequence
-        if (input === secretCode && !isMatrixActive) {
-            activateMatrix();
+        if (input === secretCode) {
+            if (!isMatrixActive) {
+                activateMatrix();
+            } else {
+                deactivateMatrix();
+            }
+            input = ''; // Reset buffer
         }
     });
 
@@ -63,6 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Play sound if possible (optional, keeping it silent for now)
         console.log("Welcome to the Real World.");
+    }
+
+    function deactivateMatrix() {
+        isMatrixActive = false;
+        document.body.classList.remove('matrix-mode');
+
+        if (canvas) {
+            canvas.remove();
+            canvas = null;
+        }
+
+        if (matrixInterval) {
+            clearInterval(matrixInterval);
+            matrixInterval = null;
+        }
+
+        window.removeEventListener('resize', resizeCanvas);
+        console.log("Blue pill swallowed.");
     }
 
     function resizeCanvas() {

@@ -7,6 +7,11 @@
     RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
     # Remove .php extension and check in pages/ directory
+    # Specific Legal Pages Rewrites
+    RewriteRule ^mentions-legales$ pages/mentions.php [L,QSA]
+    RewriteRule ^politique-confidentialite$ pages/privacy.php [L,QSA]
+    RewriteRule ^cgv$ pages/terms.php [L,QSA]
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
     RewriteRule ^([^/]+)$ pages/$1.php [L,QSA]

@@ -23,9 +23,9 @@
             <div class="col-6 col-lg-2">
                 <h6 class="text-white fw-bold mb-4"><?php echo t('footer_legal'); ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-3"><a href="/legal?section=terms" class="text-secondary text-decoration-none"><?php echo t('nav_terms'); ?></a></li>
-                    <li class="mb-3"><a href="/legal?section=privacy" class="text-secondary text-decoration-none"><?php echo t('nav_privacy'); ?></a></li>
-                    <li class="mb-3"><a href="/legal?section=mentions" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
+                    <li class="mb-3"><a href="/cgv" class="text-secondary text-decoration-none"><?php echo t('nav_terms'); ?></a></li>
+                    <li class="mb-3"><a href="/politique-confidentialite" class="text-secondary text-decoration-none"><?php echo t('nav_privacy'); ?></a></li>
+                    <li class="mb-3"><a href="/mentions-legales" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
                 </ul>
             </div>
         </div>
@@ -35,6 +35,14 @@
         </div>
     </div>
 </footer>
+
+</footer>
+
+<!-- Cookie Banner -->
+<div id="cookie-banner" class="cookie-banner">
+    <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
+    <button id="cookie-accept" class="cookie-btn"><?php echo t('cookie_banner_ok'); ?></button>
+</div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -131,6 +139,7 @@
 </style>
 
 <script src="/assets/js/matrix.js"></script>
+<script src="/assets/js/cookie-banner.js"></script>
 <script src="/assets/js/typewriter.js"></script>
 <script src="/assets/js/tilt.js"></script>
 <script src="/assets/js/console-egg.js"></script>
