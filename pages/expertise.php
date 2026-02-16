@@ -64,7 +64,7 @@
                         <i class="fas fa-user-astronaut fs-2"></i>
                     </div>
                     <div class="cert-image mb-3">
-                        <img src="https://media.licdn.com/dms/image/v2/D4D2DAQHJNmGfpCrp2w/profile-treasury-document-images_800/B4DZwdTY_IHMAc-/1/1770018150201?e=1770854400&v=beta&t=n2IJGkhd-EUlUg-jZ0CeB5fFx4mhC8wcR3ZT8u-1SDs" alt="Certification Niveau 1" style="max-width:100%; height:auto; border-radius:8px;">
+                        <img src="../assets/img/Formation_iA_Niveau_1_Entreprise.jpg" alt="Certification Niveau 1" style="max-width:100%; height:auto; border-radius:8px;">
                     </div>
                     <h3 class="text-white mb-2"><?php echo t('cert_level_1_title'); ?></h3>
                     <p class="text-primary fw-bold text-uppercase small tracking-wide mb-4"><?php echo t('cert_level_1_subtitle'); ?></p>
@@ -83,7 +83,7 @@
                         <i class="fas fa-rocket fs-2"></i>
                     </div>
                     <div class="cert-image mb-3">
-                        <img src="https://media.licdn.com/dms/image/v2/D4D2DAQFAZ8mycPyVag/profile-treasury-document-images_800/B4DZwdScgZIUAc-/1/1770017902538?e=1770854400&v=beta&t=otZlz3fJz65gsenqReI5t4QKSAAbl43oMk43RcRD_8Q" alt="Certification Niveau 2" style="max-width:100%; height:auto; border-radius:8px;">
+                        <img src="../assets/img/Formation_iA_Niveau_2_Entreprise.jpg" alt="Certification Niveau 2" style="max-width:100%; height:auto; border-radius:8px;">
                     </div>
                     <h3 class="text-white mb-2"><?php echo t('cert_level_2_title'); ?></h3>
                     <p class="text-white-50 fw-bold text-uppercase small tracking-wide mb-4"><?php echo t('cert_level_2_subtitle'); ?></p>
