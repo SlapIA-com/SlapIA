@@ -110,6 +110,8 @@
     "legal_label_ape": "Code APE (NAF) :",
     "legal_label_tva": "N° TVA Intracommunautaire :",
     "legal_label_form": "Forme Juridique :",
+    "legal_value_form": "Micro-Entreprise",
+    "legal_value_activity": "Formation continue d'adultes",
     "legal_value_name": "SlapIA",
     "legal_developed_by": "Développé par l'équipe SlapIA",
     "hosting_address": "GNL Solution, 20 rue Gustave Courbet 25000 Besançon",

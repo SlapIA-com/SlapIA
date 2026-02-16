@@ -110,6 +110,8 @@
     "legal_label_ape": "APE Code (NAF):",
     "legal_label_tva": "VAT Number:",
     "legal_label_form": "Legal Form:",
+    "legal_value_form": "Micro-Enterprise",
+    "legal_value_activity": "Continuing Education for Adults",
     "legal_value_name": "SlapIA",
     "legal_developed_by": "Developed by the SlapIA team",
     "hosting_address": "GNL Solution, 20 rue Gustave Courbet 25000 Besançon, France",
