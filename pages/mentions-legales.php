@@ -18,9 +18,7 @@
                     <div class="text-secondary mb-4">
                         <ul class="list-unstyled">
                             <li class="mb-2"><strong><?php echo t('legal_label_name'); ?></strong> SlapIA</li>
-                            <li class="mb-2"><strong><?php echo t('legal_label_address'); ?></strong> <?php echo t('legal_value_address'); ?></li>
-                            <li class="mb-2"><strong><?php echo t('legal_label_email'); ?></strong> <?php echo t('legal_value_email'); ?></li>
-                            <li class="mb-2"><strong><?php echo t('legal_label_phone'); ?></strong> <?php echo t('legal_value_phone'); ?></li>
+                            <li class="mb-2">Développé par l'équipe SlapIA</li>
                         </ul>
                     </div>
 
