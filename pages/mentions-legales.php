@@ -5,36 +5,12 @@
         
         <h1 class="display-title mb-5 text-center"><?php echo t('legal_meta_title'); ?></h1>
 
-        <div class="row g-4 d-flex align-items-stretch">
-            <!-- Sidebar Navigation -->
-            <div class="col-lg-3">
-                <div class="sticky-top" style="top: 120px;">
-                    <div class="bento-card p-3">
-                        <div class="d-flex flex-column gap-1">
-                            <a href="formation" class="btn text-start text-secondary hover-white mb-2 d-flex align-items-center py-2 px-3 rounded-3 transition-all">
-                                <i class="fas fa-arrow-left me-2"></i> <?php echo t('formations'); ?>
-                            </a>
-                            
-                            <hr class="border-secondary opacity-25 my-2">
-                            
-                            <button class="btn text-start text-white py-2 px-3 rounded-3 transition-all nav-item-legal active" id="btn-mentions" onclick="showSection('mentions')">
-                                <?php echo t('legal_notice_title'); ?>
-                            </button>
-                            <button class="btn text-start text-secondary hover-white py-2 px-3 rounded-3 transition-all nav-item-legal" id="btn-privacy" onclick="showSection('privacy')">
-                                <?php echo t('privacy_policy_title'); ?>
-                            </button>
-                            <button class="btn text-start text-secondary hover-white py-2 px-3 rounded-3 transition-all nav-item-legal" id="btn-terms" onclick="showSection('terms')">
-                                <?php echo t('terms_title'); ?>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div class="row g-4 justify-content-center">
+            
             <!-- Content -->
-            <div class="col-lg-9">
+            <div class="col-lg-8">
                 <!-- MENTIONS LEGALES -->
-                <div id="mentions" class="legal-section bento-card mb-5 scroll-reveal" style="display: block;">
+                <div id="mentions" class="legal-section bento-card mb-5 scroll-reveal">
                     <h3 class="text-white mb-4"><?php echo t('legal_notice_title'); ?></h3>
                     
                     <!-- 1. EDITEUR -->
@@ -65,14 +41,16 @@
                     <div class="text-secondary">
                         <p>
                             <strong><?php echo t('hosting_provider'); ?></strong><br>
-                            GNL Solution<br>
+                            GNL Solution, 20 rue Gustave Courbet 25000 Besançon.<br>
+                            contact@gnl-solution.fr<br>
+                            03.65.67.01.69<br>
                             <?php echo t('infrastructure_by'); ?>
                         </p>
                     </div>
                 </div>
 
                 <!-- PRIVACY POLICY -->
-                <div id="privacy" class="legal-section bento-card mb-5 scroll-reveal" style="display: none;">
+                <div id="privacy" class="legal-section bento-card mb-5 scroll-reveal">
                     <h3 class="text-white mb-4"><?php echo t('privacy_policy_title'); ?></h3>
                     <div class="text-secondary">
                         <div class="alert alert-dark border border-secondary border-opacity-25" role="alert">
@@ -96,7 +74,7 @@
                 </div>
 
                 <!-- TERMS -->
-                <div id="terms" class="legal-section bento-card mb-5 scroll-reveal" style="display: none;">
+                <div id="terms" class="legal-section bento-card mb-5 scroll-reveal">
                     <h3 class="text-white mb-4"><?php echo t('terms_title'); ?></h3>
                     <div class="text-secondary">
                         <p><strong><?php echo t('terms_services_label'); ?></strong> <?php echo t('terms_services_text'); ?></p>
@@ -112,44 +90,17 @@
 </section>
 
 <script>
-function showSection(sectionId) {
-    // Hide all sections
-    document.querySelectorAll('.legal-section').forEach(el => {
-        el.style.display = 'none';
-        el.classList.remove('fade-in-up'); // Reset animation
-    });
-    
-    // Deactivate all buttons
-    document.querySelectorAll('.nav-item-legal').forEach(btn => {
-        btn.classList.remove('active', 'text-white', 'bg-white', 'bg-opacity-10');
-        btn.classList.add('text-secondary');
-    });
-    
-    // Show selected section
-    const selectedSection = document.getElementById(sectionId);
-    if (selectedSection) {
-        selectedSection.style.display = 'block';
-        // Force reflow for animation restart
-        void selectedSection.offsetWidth; 
-        selectedSection.classList.add('fade-in-up');
-    }
-    
-    // Activate button
-    const activeBtn = document.getElementById('btn-' + sectionId);
-    if (activeBtn) {
-        activeBtn.classList.remove('text-secondary');
-        activeBtn.classList.add('active', 'text-white', 'bg-white', 'bg-opacity-10');
-    }
-    
-    // Update URL hash without scrolling
-    history.pushState(null, null, '#' + sectionId);
-}
-
-// Handle hash on load
+// Handle hash on load to scroll to correct section
 document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash.substring(1); // Remove #
     if (hash && ['mentions', 'privacy', 'terms'].includes(hash)) {
-        showSection(hash);
+        const element = document.getElementById(hash);
+        if(element) {
+            // Small delay to ensure layout is ready
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
     }
 });
 </script>

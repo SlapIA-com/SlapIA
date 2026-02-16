@@ -1189,8 +1189,6 @@ body.matrix-mode .nav-active-bg {
 .cursor-blink {
     animation: blink 1s step-end infinite;
     font-weight: 100;
-    color: var(--accent-purple);
-    -webkit-text-fill-color: var(--accent-purple);
 }
 
 @keyframes blink {
