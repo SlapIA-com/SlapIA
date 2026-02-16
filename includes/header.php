@@ -256,8 +256,7 @@ endif; ?>
     <a href="/expertise" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>">
         <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
     </a>
-    <?php $mobileCurrent = basename($_SERVER['PHP_SELF']); ?>
-    <a href="<?php echo $mobileCurrent . '?lang=' . ($lang === 'en' ? 'fr' : 'en'); ?>" class="mobile-menu-link" onclick="toggleMobileMenu()">
+    <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="mobile-menu-link" onclick="toggleMobileMenu()">
         <i class="fas fa-flag"></i> <?php echo $lang === 'en' ? 'FR' : 'EN'; ?>
     </a>
     <div class="mobile-contact-btn">

@@ -363,4 +363,5 @@ render_feature_card(
 </section>
 
 <script src="assets/js/carousel.js"></script>
+<script src="assets/js/typewriter.js"></script>
 <?php include 'includes/footer.php'; ?>
