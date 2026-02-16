@@ -225,7 +225,7 @@ include 'lang.php';
                 });
             }, observerOptions);
 
-            const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up');
+            const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
             hiddenElements.forEach((el) => observer.observe(el));
         });
     </script>

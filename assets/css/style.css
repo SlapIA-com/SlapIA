@@ -125,13 +125,14 @@ h4 {
     line-height: 1.05;
     background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
 }
 
 .text-gradient-purple {
     background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -981,12 +982,24 @@ footer {
     transform: translateY(0);
 }
 
+.delay-100 {
+    transition-delay: 0.1s;
+}
+
 .delay-200 {
     transition-delay: 0.2s;
 }
 
+.delay-300 {
+    transition-delay: 0.3s;
+}
+
 .delay-400 {
     transition-delay: 0.4s;
+}
+
+.delay-500 {
+    transition-delay: 0.5s;
 }
 
 .delay-600 {
@@ -995,15 +1008,37 @@ footer {
 
 
 /* Scroll Reveal */
+/* Scroll Reveal - Apple Style (Blur + Slide) */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: translateY(40px) scale(0.98);
+    filter: blur(10px);
+    /* The "Apple" blur effect */
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
 }
 
 .scroll-reveal.is-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+/* Scroll Scale - For larger cards (Pop effect) */
+.scroll-scale {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+    filter: blur(10px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
+}
+
+.scroll-scale.is-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
 }
 
 

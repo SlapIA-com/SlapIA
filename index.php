@@ -52,7 +52,7 @@ $stats = getSatisfactionStats(true);
         <div class="bento-grid">
             
             <!-- Main Feature Card - Formation IA (Large) -->
-            <div class="bento-card span-8 d-flex flex-column justify-content-between scroll-reveal" style="min-height: 400px; background: linear-gradient(to bottom right, rgba(20,20,20,0.8), rgba(0,0,0,0.9));">
+            <div class="bento-card span-8 d-flex flex-column justify-content-between scroll-scale" style="min-height: 400px; background: linear-gradient(to bottom right, rgba(20,20,20,0.8), rgba(0,0,0,0.9));">
                 <div>
                     <div class="icon-box text-white border-0" style="background: var(--accent-blue);">
                         <i class="fas fa-brain"></i>
@@ -75,7 +75,7 @@ $stats = getSatisfactionStats(true);
             </div>
 
             <!-- Side Card (Stats) -->
-            <div class="bento-card span-4 d-flex flex-column justify-content-center align-items-center text-center position-relative scroll-reveal delay-200">
+            <div class="bento-card span-4 d-flex flex-column justify-content-center align-items-center text-center position-relative scroll-scale delay-100">
                 <div class="position-absolute top-2 end-2">
                 </div>
                 <div class="position-relative mb-3">
@@ -134,7 +134,7 @@ if (function_exists('getNotionReviews')) {
 }
 if (!empty($reviews)):
 ?>
-            <div class="bento-card span-12 scroll-reveal" style="padding:18px 24px;">
+            <div class="bento-card span-12 scroll-scale delay-200" style="padding:18px 24px;">
                 <div class="d-flex align-items-center justify-content-end mb-3">
                      <div class="reviews-navigation">
                          <button id="prev-review" class="nav-btn" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
@@ -230,7 +230,7 @@ endif; ?>
             <!-- Bottom Row Cards - 3 Parcours -->
             <?php
 render_feature_card(
-    'span-4 scroll-reveal',
+    'span-4 scroll-scale',
     'fas fa-seedling',
     'text-primary',
     'background: rgba(41, 151, 255, 0.1);',
@@ -242,7 +242,7 @@ render_feature_card(
 
             <?php
 render_feature_card(
-    'span-4 scroll-reveal delay-200',
+    'span-4 scroll-scale delay-100',
     'fas fa-rocket',
     'text-info',
     'background: rgba(13, 202, 240, 0.1);',
@@ -252,7 +252,7 @@ render_feature_card(
 );
 ?>
 
-            <div class="bento-card span-4 d-flex flex-column justify-content-between scroll-reveal delay-400" style="background: linear-gradient(135deg, var(--accent-purple), #7000ff);">
+            <div class="bento-card span-4 d-flex flex-column justify-content-between scroll-scale delay-200" style="background: linear-gradient(135deg, var(--accent-purple), #7000ff);">
                 <div>
                     <div class="icon-box text-white border-0 mb-3" style="background: rgba(255,255,255,0.2);">
                         <i class="fas fa-user-tie"></i>
@@ -307,7 +307,7 @@ render_feature_card(
             </div>
             
             <!-- Graphic Element representing App Grid - Outils -->
-            <div class="col-lg-7 scroll-reveal delay-200">
+            <div class="col-lg-7">
                 <div class="position-relative">
                     <!-- Glow behind -->
                     <div class="position-absolute top-50 start-50 translate-middle" style="width: 300px; height: 300px; background: var(--accent-blue); filter: blur(100px); opacity: 0.2;"></div>
@@ -315,43 +315,43 @@ render_feature_card(
                     <div class="row g-3">
                         <!-- App Icon 1 -->
                         <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
-                                <i class="fas fa-robot fs-1 text-white mb-3 d-block"></i>
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal" style="background: rgba(255,255,255,0.03);">
+                                <i class="fab fa-python fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_chatbot'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 2 -->
                          <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
-                                <i class="fas fa-code-branch fs-1 text-white mb-3 d-block"></i>
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal delay-100" style="background: rgba(255,255,255,0.03);">
+                                <i class="fas fa-project-diagram fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_automation'); ?></h6>
                             </div>
                         </div>
                         <!-- App Icon 3 (Logique) -->
                          <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
-                                <i class="fas fa-sitemap fs-1 text-white mb-3 d-block"></i>
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal delay-200" style="background: rgba(255,255,255,0.03);">
+                                <i class="fas fa-server fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_logic'); ?></h6>
                             </div>
                         </div>
                         <!-- App Icon 4 -->
                         <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal delay-300" style="background: rgba(255,255,255,0.03);">
                                 <i class="fas fa-database fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_database'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 5 -->
                          <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
-                                <i class="fas fa-code fs-1 text-white mb-3 d-block"></i>
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal delay-400" style="background: rgba(255,255,255,0.03);">
+                                <i class="fas fa-laptop-code fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_code'); ?></h6>
                             </div>
                         </div>
                          <!-- App Icon 6 -->
                          <div class="col-4">
-                            <div class="bento-card p-3 text-center h-100 border-0" style="background: rgba(255,255,255,0.03);">
-                                <i class="fas fa-plug fs-1 text-white mb-3 d-block"></i>
+                            <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal delay-500" style="background: rgba(255,255,255,0.03);">
+                                <i class="fas fa-network-wired fs-1 text-white mb-3 d-block"></i>
                                 <h6 class="text-white small m-0"><?php echo t('tool_api'); ?></h6>
                             </div>
                         </div>
