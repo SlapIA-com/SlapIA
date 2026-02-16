@@ -17,8 +17,8 @@
                     <h5 class="text-white mb-3 mt-4"><?php echo t('legal_section_editor'); ?></h5>
                     <div class="text-secondary mb-4">
                         <ul class="list-unstyled">
-                            <li class="mb-2"><strong><?php echo t('legal_label_name'); ?></strong> SlapIA</li>
-                            <li class="mb-2">Développé par l'équipe SlapIA</li>
+                            <li class="mb-2"><strong><?php echo t('legal_label_name'); ?></strong> <?php echo t('legal_value_name'); ?></li>
+                            <li class="mb-2"><?php echo t('legal_developed_by'); ?></li>
                         </ul>
                     </div>
 
@@ -39,9 +39,9 @@
                     <div class="text-secondary">
                         <p>
                             <strong><?php echo t('hosting_provider'); ?></strong><br>
-                            GNL Solution, 20 rue Gustave Courbet 25000 Besançon.<br>
-                            contact@gnl-solution.fr<br>
-                            03.65.67.01.69<br>
+                            <?php echo t('hosting_address'); ?><br>
+                            <?php echo t('hosting_email'); ?><br>
+                            <?php echo t('hosting_phone'); ?><br>
                             <?php echo t('infrastructure_by'); ?>
                         </p>
                     </div>
