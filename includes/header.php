@@ -197,7 +197,6 @@ include 'lang.php';
             const loader = document.getElementById('page-loader');
             const content = document.body;
             
-            // Minimum load time of 800ms to prevent flickering
             setTimeout(function() {
                 loader.classList.add('hidden');
                 content.classList.add('content-loaded');
@@ -208,29 +207,31 @@ include 'lang.php';
                 }, 800);
             }, 800);
         });
-
-        // Scroll Reveal
-        document.addEventListener('DOMContentLoaded', function() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -20px 0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
-            hiddenElements.forEach((el) => observer.observe(el));
-        });
     </script>
 <?php
 endif; ?>
+
+<script>
+    // Scroll Reveal - Global
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -20px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
+        hiddenElements.forEach((el) => observer.observe(el));
+    });
+</script>
 
 <!-- The Aurora Background -->
 <div class="aurora-bg">
