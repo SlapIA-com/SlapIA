@@ -30,6 +30,17 @@
         
         <div class="border-top border-secondary border-opacity-10 mt-5 pt-4 text-center">
             <p class="text-secondary small mb-0">&copy; 2026 SlapIA Inc. <?php echo t('designed_with_precision'); ?></p>
+            
+            <!-- Mobile Static Visitor Counter -->
+            <div class="static-visitor-counter d-md-none mt-3 d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-10 bg-dark bg-opacity-50">
+                <span class="position-relative d-flex" style="width: 6px; height: 6px;">
+                  <span class="position-absolute rounded-circle bg-success opacity-75" style="width: 100%; height: 100%; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+                  <span class="position-relative d-inline-block rounded-circle bg-success" style="width: 100%; height: 100%;"></span>
+                </span>
+                <span class="text-secondary small fw-medium" style="font-size: 0.7rem;">
+                    <span id="static-live-visitor-count">...</span> <?php echo t('live_counter_viewing'); ?>
+                </span>
+            </div>
         </div>
     </div>
 </footer>
@@ -172,8 +183,8 @@
 </body>
 </html>
 
-<!-- Live Visitor Counter Badge -->
-<div class="position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in" style="z-index: 9999; backdrop-filter: blur(10px);">
+<!-- Live Visitor Counter Badge (Floating - Desktop) -->
+<div class="floating-visitor-counter position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in" style="z-index: 9999; backdrop-filter: blur(10px);">
     <span class="position-relative d-flex" style="width: 8px; height: 8px;">
       <span class="position-absolute rounded-circle bg-success opacity-75" style="width: 100%; height: 100%; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
       <span class="position-relative d-inline-block rounded-circle bg-success" style="width: 100%; height: 100%;"></span>
