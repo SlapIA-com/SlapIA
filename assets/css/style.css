@@ -628,14 +628,14 @@ h4 {
 */
 @media (max-width: 768px) {
 
-    /* Hide floating visitor counter on mobile to reduce clutter */
+    /* Adjust Floating Visitor Counter for Mobile */
     .floating-visitor-counter {
-        display: none !important;
-    }
-
-    /* Ensure static counter in footer is visible properly */
-    .static-visitor-counter {
-        display: inline-flex !important;
+        bottom: 20px !important;
+        left: 20px !important;
+        margin: 0 !important;
+        /* Override bootstrap m-3 */
+        transform: scale(0.9);
+        transform-origin: bottom left;
     }
 
     /* Adjust Scroll Indicator position to be reachable but not overlapping chat */

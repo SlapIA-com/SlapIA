@@ -4,11 +4,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Target both desktop (floating) and mobile (static) counters
-    const counterElements = [
-        document.getElementById('live-visitor-count'),
-        document.getElementById('static-live-visitor-count')
-    ];
+    const counterElement = document.getElementById('live-visitor-count');
+    if (!counterElement) return;
 
     async function fetchCount() {
         try {
@@ -21,18 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.count !== undefined) {
-                counterElements.forEach(el => {
-                    if (el) {
-                        // Simple animation effect
-                        if (el.textContent !== data.count.toString()) {
-                            el.style.opacity = '0';
-                            setTimeout(() => {
-                                el.textContent = data.count;
-                                el.style.opacity = '1';
-                            }, 300);
-                        }
-                    }
-                });
+                // Simple animation effect
+                if (counterElement.textContent !== data.count.toString()) {
+                    counterElement.style.opacity = '0';
+                    setTimeout(() => {
+                        counterElement.textContent = data.count;
+                        counterElement.style.opacity = '1';
+                    }, 300);
+                }
             }
         } catch (e) {
             console.error('Counter error', e);
