@@ -8,9 +8,9 @@
 
     # Remove .php extension and check in pages/ directory
     # Specific Legal Pages Rewrites
-    RewriteRule ^mentions-legales$ pages/mentions.php [L,QSA]
-    RewriteRule ^politique-confidentialite$ pages/privacy.php [L,QSA]
-    RewriteRule ^cgv$ pages/terms.php [L,QSA]
+    RewriteRule ^mentions-legales$ pages/mentions-legales.php [L,QSA]
+    RewriteRule ^politique-confidentialite$ pages/mentions-legales.php [L,R=301]
+    RewriteRule ^cgv$ pages/mentions-legales.php [L,R=301]
 
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
