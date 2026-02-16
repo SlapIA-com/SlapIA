@@ -155,7 +155,7 @@
     "money_saved": "Potential Savings / Month",
     "my_background": "My Background",
     "my_specialization": "My Specialization",
-    "nav_mentions": "Legal Mentions",
+    "nav_mentions": "Legal Notice",
     "nav_privacy": "Privacy",
     "nav_terms": "Terms",
     "notion_cms_desc": "Instead of using a standard SQL database (MySQL) for frequently changing content, we use Notion. This is called a 'Headless' architecture.<br><br><strong>How it works?</strong><br>1. We collect contact requests, write reviews, articles, and track statistics directly in Notion databases (as seen in the photo).<br>2. A PHP script connects to the Notion API in real-time.<br>3. The site caches this data for instant loading.<br><br>This allows managing the entire site without ever touching the code for simple updates.",

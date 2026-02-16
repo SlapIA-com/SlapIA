@@ -155,7 +155,7 @@
     "money_saved": "Économies Potentielles / Mois",
     "my_background": "Mon Parcours",
     "my_specialization": "Ma Spécialisation",
-    "nav_mentions": "Mentions",
+    "nav_mentions": "Mentions légales",
     "nav_privacy": "Confidentialité",
     "nav_terms": "CGV",
     "notion_cms_desc": "Au lieu d'utiliser une base de données SQL standard (MySQL) pour le contenu qui change souvent, nous utilisons Notion. C'est ce qu'on appelle une architecture 'Headless'.<br><br><strong>Comment ça marche ?</strong><br>1. Nous collectons les demandes de contact, les avis sont récupérer depuis l'ERP, les articles et suivons les statistiques directement dans des bases de données Notion (comme sur la photo).<br>2. Un script PHP se connecte à l'API Notion en temps réel.<br>3. Le site met en cache ces données pour un chargement instantané.<br><br>Cela permet de gérer tout le site sans jamais toucher au code pour les mises à jour simples.",

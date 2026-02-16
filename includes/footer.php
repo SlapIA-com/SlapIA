@@ -23,9 +23,7 @@
             <div class="col-6 col-lg-2">
                 <h6 class="text-white fw-bold mb-4"><?php echo t('footer_legal'); ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-3"><a href="/mentions-legales#terms" class="text-secondary text-decoration-none"><?php echo t('nav_terms'); ?></a></li>
-                    <li class="mb-3"><a href="/mentions-legales#privacy" class="text-secondary text-decoration-none"><?php echo t('nav_privacy'); ?></a></li>
-                    <li class="mb-3"><a href="/mentions-legales#mentions" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
+                    <li class="mb-3"><a href="/mentions-legales" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
                 </ul>
             </div>
         </div>

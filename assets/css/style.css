@@ -1229,4 +1229,13 @@ body.matrix-mode .nav-active-bg {
 }
 
 
+/* Utility Classes */
+.hover-white:hover {
+    color: white !important;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
 /* Cleaning up old Emoji Rain CSS if any conflict - New one uses inline styles/JS animations */

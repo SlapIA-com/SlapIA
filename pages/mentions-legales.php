@@ -8,18 +8,26 @@
         <div class="row g-4 d-flex align-items-stretch">
             <!-- Sidebar Navigation -->
             <div class="col-lg-3">
-                <div class="d-flex flex-column gap-2 sticky-top" style="top: 120px;">
-                    <a href="formation" class="btn btn-apple-glass text-start mb-3"><i class="fas fa-arrow-left me-2"></i> <?php echo t('formations'); ?></a>
-                    
-                    <button class="btn btn-apple-glass text-start active" id="btn-mentions" onclick="showSection('mentions')">
-                        <?php echo t('legal_notice_title'); ?>
-                    </button>
-                    <button class="btn btn-apple-glass text-start" id="btn-privacy" onclick="showSection('privacy')">
-                        <?php echo t('privacy_policy_title'); ?>
-                    </button>
-                    <button class="btn btn-apple-glass text-start" id="btn-terms" onclick="showSection('terms')">
-                        <?php echo t('terms_title'); ?>
-                    </button>
+                <div class="sticky-top" style="top: 120px;">
+                    <div class="bento-card p-3">
+                        <div class="d-flex flex-column gap-1">
+                            <a href="formation" class="btn text-start text-secondary hover-white mb-2 d-flex align-items-center py-2 px-3 rounded-3 transition-all">
+                                <i class="fas fa-arrow-left me-2"></i> <?php echo t('formations'); ?>
+                            </a>
+                            
+                            <hr class="border-secondary opacity-25 my-2">
+                            
+                            <button class="btn text-start text-white py-2 px-3 rounded-3 transition-all nav-item-legal active" id="btn-mentions" onclick="showSection('mentions')">
+                                <?php echo t('legal_notice_title'); ?>
+                            </button>
+                            <button class="btn text-start text-secondary hover-white py-2 px-3 rounded-3 transition-all nav-item-legal" id="btn-privacy" onclick="showSection('privacy')">
+                                <?php echo t('privacy_policy_title'); ?>
+                            </button>
+                            <button class="btn text-start text-secondary hover-white py-2 px-3 rounded-3 transition-all nav-item-legal" id="btn-terms" onclick="showSection('terms')">
+                                <?php echo t('terms_title'); ?>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -112,7 +120,10 @@ function showSection(sectionId) {
     });
     
     // Deactivate all buttons
-    document.querySelectorAll('.btn-apple-glass').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.nav-item-legal').forEach(btn => {
+        btn.classList.remove('active', 'text-white', 'bg-white', 'bg-opacity-10');
+        btn.classList.add('text-secondary');
+    });
     
     // Show selected section
     const selectedSection = document.getElementById(sectionId);
@@ -126,7 +137,8 @@ function showSection(sectionId) {
     // Activate button
     const activeBtn = document.getElementById('btn-' + sectionId);
     if (activeBtn) {
-        activeBtn.classList.add('active');
+        activeBtn.classList.remove('text-secondary');
+        activeBtn.classList.add('active', 'text-white', 'bg-white', 'bg-opacity-10');
     }
     
     // Update URL hash without scrolling
