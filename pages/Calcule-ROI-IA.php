@@ -72,12 +72,23 @@ include_once '../includes/lang.php';
         @media (max-width: 768px) {
             body {
                 padding: 10px !important;
-                align-items: flex-start; /* Allow scrolling if content is tall */
-                overflow-y: auto; /* Enable vertical scroll on mobile */
+                align-items: flex-start; /* Allow scrolling from top */
+                /* Restore natural scrolling */
+                overflow: visible !important; 
+                height: auto !important;
             }
+            /* Ensure the html container also allows scrolling */
+            html {
+                overflow: visible !important;
+                height: auto !important;
+            }
+            
             .bento-card {
                 padding: 20px !important;
                 border-radius: 24px;
+                /* Ensure no fixed height causes internal scroll */
+                height: auto !important; 
+                margin-bottom: 20px;
             }
             .display-4 {
                 font-size: 2.5rem; /* Smaller hero numbers */
@@ -105,6 +116,16 @@ include_once '../includes/lang.php';
         <div class="aurora-orb orb-1"></div>
         <div class="aurora-orb orb-2"></div>
         <div class="aurora-orb orb-3"></div>
+    </div>
+    <?php
+endif; ?>
+
+    <!-- Discover SlapIA Button (Only if not embedded) -->
+    <?php if (!isset($_GET['embed'])): ?>
+    <div class="position-absolute top-0 start-0 p-4 z-3">
+        <a href="https://www.slapia.com" class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+            <i class="fas fa-arrow-left"></i> <span>Découvrir SlapIA</span>
+        </a>
     </div>
     <?php
 endif; ?>

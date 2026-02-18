@@ -6,7 +6,7 @@
             <div class="position-absolute top-50 start-50 translate-middle" style="width: 50%; height: 50%; background: var(--accent-purple); filter: blur(120px); opacity: 0.15; pointer-events: none;"></div>
             
             <!-- Share Button (Top Right) -->
-            <div class="position-absolute top-0 end-0 p-4">
+            <div class="position-absolute top-0 end-0 p-4 z-3">
                 <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal()" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
                     <i class="fas fa-share-alt"></i> <span class="d-none d-sm-inline"><?php echo t('share'); ?></span>
                 </button>
