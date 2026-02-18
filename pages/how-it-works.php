@@ -1,4 +1,9 @@
-<?php include '../includes/header.php'; ?>
+<?php
+
+$page_title = t('how_it_works') . " - SlapIA";
+$page_description = t('tech_stack_desc');
+$page_image = '/assets/img/logo.png';
+include '../includes/header.php'; ?>
 <?php include '../includes/components.php'; ?>
 
 <section class="py-5 mt-5">

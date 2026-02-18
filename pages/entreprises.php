@@ -1,5 +1,8 @@
 <?php
 
+$page_title = t('companies') . " - SlapIA";
+$page_description = t('training_for_companies') . " - " . t('level_2_title');
+$page_image = '/assets/img/Formation_iA_Niveau_2_Entreprise.jpg';
 include '../includes/header.php';
 
 include '../includes/components.php';

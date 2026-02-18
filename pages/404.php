@@ -1,4 +1,9 @@
-<?php include '../includes/header.php'; ?>
+<?php
+
+$page_title = "404 - " . t('page_not_found') . " - SlapIA";
+$page_description = t('page_not_found');
+$page_image = '/assets/img/logo.png';
+include '../includes/header.php'; ?>
 
 <section class="py-5 d-flex align-items-center" style="min-height: 60vh;">
     <div class="container text-center">

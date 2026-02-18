@@ -1,4 +1,9 @@
-<?php include '../includes/header.php'; ?>
+<?php
+
+$page_title = t('contact_title') . " - SlapIA";
+$page_description = t('contact_subtitle');
+$page_image = '/assets/img/logo.png';
+include '../includes/header.php'; ?>
 
 <!-- Toast Notification -->
 <div id="toastNotification" class="toast-notification">

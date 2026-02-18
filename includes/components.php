@@ -91,4 +91,29 @@ function render_project_card($title, $client, $desc, $badges, $iconColorStart, $
     $content = ob_get_clean();
     render_bento_card('p-4 h-100', $content);
 }
+
+/**
+ * Render Star Rating HTML
+ */
+function render_stars_html($note)
+{
+    $note = floatval($note);
+    if ($note <= 0)
+        return '';
+    $full = floor($note);
+    $half = ($note - $full) >= 0.25 && ($note - $full) < 0.75 ? 1 : 0;
+    if (($note - $full) >= 0.75) {
+        $full += 1;
+        $half = 0;
+    }
+    $empty = 5 - $full - $half;
+    $out = '';
+    for ($i = 0; $i < $full; $i++)
+        $out .= '<i class="fas fa-star"></i>';
+    if ($half)
+        $out .= '<i class="fas fa-star-half-alt"></i>';
+    for ($i = 0; $i < $empty; $i++)
+        $out .= '<i class="far fa-star"></i>';
+    return $out;
+}
 ?>

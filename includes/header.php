@@ -20,18 +20,28 @@ include 'lang.php';
     <link rel="alternate" hreflang="x-default" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>" />
 
     <!-- Open Graph / Facebook -->
+    <?php
+$meta_title = isset($page_title) ? $page_title : t('meta_title');
+$meta_description = isset($page_description) ? $page_description : t('meta_description');
+$meta_image = isset($page_image) ? $page_image : "https://" . $_SERVER['HTTP_HOST'] . "/assets/img/logo.png";
+
+// Ensure image URL is absolute
+if (strpos($meta_image, 'http') === false) {
+    $meta_image = "https://" . $_SERVER['HTTP_HOST'] . $meta_image;
+}
+?>
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:title" content="<?php echo t('meta_title'); ?>">
-    <meta property="og:description" content="<?php echo t('meta_description'); ?>">
-    <meta property="og:image" content="https://<?php echo $_SERVER['HTTP_HOST']; ?>/assets/img/logo.svg">
+    <meta property="og:title" content="<?php echo $meta_title; ?>">
+    <meta property="og:description" content="<?php echo $meta_description; ?>">
+    <meta property="og:image" content="<?php echo $meta_image; ?>">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="twitter:title" content="<?php echo t('meta_title'); ?>">
-    <meta property="twitter:description" content="<?php echo t('meta_description'); ?>">
-    <meta property="twitter:image" content="https://<?php echo $_SERVER['HTTP_HOST']; ?>/assets/img/logo.svg">
+    <meta property="twitter:title" content="<?php echo $meta_title; ?>">
+    <meta property="twitter:description" content="<?php echo $meta_description; ?>">
+    <meta property="twitter:image" content="<?php echo $meta_image; ?>">
 
     <!-- n8n Chat Widget -->
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
@@ -41,7 +51,7 @@ include 'lang.php';
             webhookUrl: '<?php echo config('N8N_CHAT_WEBHOOK'); ?>'
         });
     </script>
-    <title><?php echo t('meta_title'); ?></title>
+    <title><?php echo $meta_title; ?></title>
     
     <!-- Bootstrap 5 (Grid Only primarily) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">

@@ -1,4 +1,9 @@
-<?php include '../includes/header.php'; ?>
+<?php
+
+$page_title = t('expertise') . " - SlapIA";
+$page_description = t('comprehensive_expertise') . " - " . t('technical_expertise_desc');
+$page_image = '/assets/img/logo.png';
+include '../includes/header.php'; ?>
 
 <section class="py-5 mt-5">
     <div class="container">
