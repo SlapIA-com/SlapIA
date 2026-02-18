@@ -116,7 +116,6 @@ include '../includes/header.php'; ?>
                             <h2 class="text-white mb-2"><?php echo t('roi_title'); ?></h2>
                             <p class="text-secondary mb-4"><?php echo t('roi_subtitle'); ?></p>
                             
-                            <!-- Inputs -->
                             <div class="d-flex flex-column gap-4">
                                 <!-- Team Size -->
                                 <div>
@@ -134,15 +133,6 @@ include '../includes/header.php'; ?>
                                         <span class="text-primary fw-bold" id="roi-salary-value">3 500€</span>
                                     </div>
                                     <input type="range" class="form-range" id="roi-salary" min="2000" max="10000" value="3500" step="100">
-                                </div>
-
-                                <!-- Repetitive Tasks -->
-                                <div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <label for="roi-repetitive" class="text-white small fw-bold"><?php echo t('roi_label_repetitive'); ?></label>
-                                        <span class="text-primary fw-bold" id="roi-repetitive-value">5h</span>
-                                    </div>
-                                    <input type="range" class="form-range" id="roi-repetitive" min="1" max="20" value="5" step="0.5">
                                 </div>
                             </div>
                         </div>
