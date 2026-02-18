@@ -5,23 +5,24 @@
             <!-- Background Glow -->
             <div class="position-absolute top-50 start-50 translate-middle" style="width: 50%; height: 50%; background: var(--accent-purple); filter: blur(120px); opacity: 0.15; pointer-events: none;"></div>
             
-            <!-- Top Right Actions -->
-            <div class="position-absolute top-0 end-0 p-4 z-3 d-flex gap-2">
+            <!-- Top Right Actions (Desktop Only) -->
+            <div class="position-absolute top-0 end-0 p-4 z-3 d-none d-md-flex gap-2">
                 <!-- Embed Button -->
-                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('embed')" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('embed')" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); color: white;">
                     <i class="fas fa-code"></i> <span class="d-none d-sm-inline"><?php echo t('share_embed'); ?></span>
                 </button>
 
                 <!-- Share Button -->
-                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('share')" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('share')" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); color: white;">
                     <i class="fas fa-share-alt"></i> <span class="d-none d-sm-inline"><?php echo t('share'); ?></span>
                 </button>
             </div>
             <style>
                 .share-btn-hover:hover {
-                    background: rgba(255,255,255,0.2) !important;
+                    background: rgba(255,255,255,0.3) !important;
                     color: white !important;
-                    border-color: rgba(255,255,255,0.3) !important;
+                    border-color: rgba(255,255,255,0.5) !important;
+                    box-shadow: 0 0 15px rgba(255,255,255,0.1);
                 }
             </style>
 
@@ -29,6 +30,16 @@
                 <div class="col-lg-5 mb-4 mb-lg-0">
                     <h2 class="text-white mb-2"><?php echo t('roi_title'); ?></h2>
                     <p class="text-secondary mb-4"><?php echo t('roi_subtitle'); ?></p>
+                    
+                    <!-- Mobile Actions (Visible below title on mobile) -->
+                    <div class="d-flex d-md-none gap-2 mb-4">
+                        <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" onclick="openShareModal('embed')" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; flex: 1; justify-content: center;">
+                            <i class="fas fa-code"></i> <?php echo t('share_embed'); ?>
+                        </button>
+                        <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" onclick="openShareModal('share')" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; flex: 1; justify-content: center;">
+                            <i class="fas fa-share-alt"></i> <?php echo t('share'); ?>
+                        </button>
+                    </div>
                     
                     <div class="d-flex flex-column gap-4">
                         <!-- Team Size -->

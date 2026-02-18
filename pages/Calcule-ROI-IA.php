@@ -12,6 +12,10 @@ include_once '../includes/lang.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex"> <!-- Prevent indexing of this standalone component -->
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
+    <link rel="apple-touch-icon" href="/assets/img/logo.svg">
+    
     <!-- Open Graph / Discord Embeds -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://slapia.com/Calcule-ROI-IA">
