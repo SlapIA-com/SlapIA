@@ -5,9 +5,15 @@
             <!-- Background Glow -->
             <div class="position-absolute top-50 start-50 translate-middle" style="width: 50%; height: 50%; background: var(--accent-purple); filter: blur(120px); opacity: 0.15; pointer-events: none;"></div>
             
-            <!-- Share Button (Top Right) -->
-            <div class="position-absolute top-0 end-0 p-4 z-3">
-                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal()" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+            <!-- Top Right Actions -->
+            <div class="position-absolute top-0 end-0 p-4 z-3 d-flex gap-2">
+                <!-- Embed Button -->
+                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('embed')" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                    <i class="fas fa-code"></i> <span class="d-none d-sm-inline"><?php echo t('share_embed'); ?></span>
+                </button>
+
+                <!-- Share Button -->
+                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal('share')" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
                     <i class="fas fa-share-alt"></i> <span class="d-none d-sm-inline"><?php echo t('share'); ?></span>
                 </button>
             </div>
@@ -188,7 +194,7 @@
 let currentUrl = '';
 let embedCode = '';
 
-function openShareModal() {
+function openShareModal(mode = 'share') {
     // Generate URL
     const host = window.location.protocol + '//' + window.location.host;
     const path = '/Calcule-ROI-IA'; // The standalone page
@@ -197,7 +203,8 @@ function openShareModal() {
     const shareText = "<?php echo t('roi_subtitle'); ?>";
 
     // Try Native Share API first (Mobile iOS/Android & Desktop Safari/Edge)
-    if (navigator.share) {
+    // ONLY if mode is 'share' (not embed)
+    if (mode === 'share' && navigator.share) {
         navigator.share({
             title: shareTitle,
             text: shareText,
@@ -206,11 +213,6 @@ function openShareModal() {
         .then(() => console.log('Successful share'))
         .catch((error) => {
             console.log('Error sharing', error);
-            // If user cancelled or error, we could fallback or just do nothing.
-            // But if it's not supported, we enter the fallback below.
-            // However, navigator.share usually returns promise.
-            // If we want to fallback ON ERROR, we can do it here, 
-            // but usually 'AbortError' means user cancelled, so we shouldn't open modal then.
         });
         return; // Stop here if we used native share
     }
@@ -220,10 +222,10 @@ function openShareModal() {
     modal.style.display = 'flex';
     
     // Embed code (Force transparent background)
-    embedCode = `<iframe src="${currentUrl}?embed=true" width="100%" height="650" frameborder="0" style="border-radius: 12px;"></iframe>`;
+    embedCode = `<iframe src="${currentUrl}?embed=true" width="100%" height="750" frameborder="0" scrolling="no" style="border-radius: 12px;"></iframe>`;
 
-    // Reset UI to Link mode
-    toggleEmbedMode(false);
+    // Set UI mode (Link or Embed)
+    toggleEmbedMode(mode === 'embed');
 
     // Update Social Links
     const text = "Découvrez le calculateur ROI IA de SlapIA";

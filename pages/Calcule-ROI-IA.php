@@ -44,6 +44,20 @@ include_once '../includes/lang.php';
             padding: 20px;
             margin: 0;
             overflow: hidden; 
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Ensure html doesn't scroll either */
+        html {
+            overflow: hidden;
+            scrollbar-width: none;
         }
         /* Override specifically for the standalone page */
         .bento-card {
@@ -62,8 +76,9 @@ include_once '../includes/lang.php';
             box-shadow: none !important;
         }
 
-        /* Remove the outer row margins from the component when embedded */
-        .container-fluid > .row {
+        /* Remove the outer row margins from the component when embedded/standalone */
+        .container-fluid > .row,
+        .row.mb-5.pb-5 {
             margin: 0 !important;
             padding: 0 !important;
         }
