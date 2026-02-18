@@ -3,6 +3,13 @@
     RewriteEngine On
     Redirect 301 /accompagnement /formation
 
+    # Force https://www.slapia.com for all domains (.fr, .com, non-www)
+    # Exclude localhost for development
+    RewriteCond %{HTTP_HOST} !^www\.slapia\.com$ [NC]
+    RewriteCond %{HTTP_HOST} !^localhost$ [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1$ [NC]
+    RewriteRule ^(.*)$ https://www.slapia.com/$1 [R=301,L]
+
     # Prevent potential loops
     RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
