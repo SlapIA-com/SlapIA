@@ -47,46 +47,12 @@ include '../includes/components.php';
             </div>
         </div>
 
-        <!-- ROI Calculator -->
+        <!-- ROI Calculator (Embedded) -->
         <div class="row justify-content-center mb-5">
-            <div class="col-lg-10">
-                <div class="bento-card p-5">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 mb-4 mb-lg-0">
-                            <h3 class="text-white mb-2"><?php echo t('roi_title'); ?></h3>
-                            <p class="text-secondary mb-4"><?php echo t('roi_subtitle'); ?></p>
-                            
-                            <div class="mb-4">
-                                <label for="roi-employees" class="text-white small fw-bold mb-2 d-flex justify-content-between">
-                                    <?php echo t('collabs'); ?> <span id="roi-employees-value" class="text-primary">10</span>
-                                </label>
-                                <input type="range" class="form-range" id="roi-employees" min="1" max="500" value="10">
-                            </div>
-
-                            <div class="mb-0">
-                                <label for="roi-salary" class="text-white small fw-bold mb-2 d-flex justify-content-between">
-                                    <?php echo t('avg_salary'); ?> <span id="roi-salary-value" class="text-primary">1800€</span>
-                                </label>
-                                <input type="range" class="form-range" id="roi-salary" min="1400" max="6000" step="50" value="1800">
-                            </div>
-                        </div>
-                        <div class="col-lg-5 offset-lg-1">
-                            <div class="p-4 rounded-3 border border-success border-opacity-25" style="background: rgba(16, 185, 129, 0.05);">
-                                <div class="mb-4 text-center">
-                                    <span class="d-block text-secondary small text-uppercase mb-1"><?php echo t('hours_saved'); ?></span>
-                                    <span id="roi-result-hours" class="display-4 fw-bold text-white">0</span>
-                                </div>
-                                <div class="text-center">
-                                    <span class="d-block text-secondary small text-uppercase mb-1"><?php echo t('money_saved'); ?></span>
-                                    <span id="roi-result-money" class="display-4 fw-bold text-success">0€</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-lg-12">
+                <iframe src="/pages/roi.php" width="100%" height="650" frameborder="0" style="border-radius: 24px; overflow: hidden; background: transparent;"></iframe>
             </div>
         </div>
-        <script src="/assets/js/roi-calculator.js"></script>
 
         <!-- Section Logos Entreprises -->
         <div class="row justify-content-center mb-5">
