@@ -1,4 +1,6 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
 
 $page_title = t('expertise') . " - SlapIA";
 $page_description = t('comprehensive_expertise') . " - " . t('technical_expertise_desc');

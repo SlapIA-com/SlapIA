@@ -1,4 +1,6 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
 
 $page_title = t('legal_meta_title') . " - SlapIA";
 $page_description = t('legal_notice_title');

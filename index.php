@@ -1,4 +1,6 @@
 <?php
+include_once 'includes/config.php';
+include_once 'includes/lang.php';
 $page_title = t('meta_title');
 $page_description = t('meta_description');
 $page_image = '/assets/img/logo.png';

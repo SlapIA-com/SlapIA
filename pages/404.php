@@ -1,4 +1,6 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
 
 $page_title = "404 - " . t('page_not_found') . " - SlapIA";
 $page_description = t('page_not_found');

@@ -1,7 +1,7 @@
 <?php
 
-include 'config.php';
-include 'lang.php';
+include_once 'config.php';
+include_once 'lang.php';
 
 ?>
 <!DOCTYPE html>

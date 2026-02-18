@@ -1,4 +1,6 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
 
 $page_title = t('how_it_works') . " - SlapIA";
 $page_description = t('tech_stack_desc');

@@ -1,4 +1,6 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
 
 $page_title = t('formations') . " - SlapIA";
 $page_description = t('cert_level_1_desc') . " " . t('cert_level_2_desc');
