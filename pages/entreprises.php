@@ -50,7 +50,7 @@ include '../includes/components.php';
         <!-- ROI Calculator (Embedded) -->
         <div class="row justify-content-center mb-5">
             <div class="col-lg-12">
-                <iframe src="/Calcule-ROI-IA?embed=true" width="100%" height="750" frameborder="0" scrolling="no" style="border-radius: 24px; overflow: hidden; background: transparent;"></iframe>
+                <iframe src="/Calcule-ROI-IA?embed=true&internal=1" width="100%" height="750" frameborder="0" scrolling="no" style="border-radius: 24px; overflow: hidden; background: transparent;"></iframe>
             </div>
         </div>
 

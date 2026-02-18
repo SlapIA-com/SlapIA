@@ -138,7 +138,7 @@ endif; ?>
     <!-- Discover SlapIA Button (Only if not embedded) -->
     <?php if (!isset($_GET['embed'])): ?>
     <div class="position-absolute top-0 start-0 p-4 z-3">
-        <a href="https://www.slapia.com" class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+        <a href="https://www.slapia.com" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
             <i class="fas fa-arrow-left"></i> <span>Découvrir SlapIA</span>
         </a>
     </div>

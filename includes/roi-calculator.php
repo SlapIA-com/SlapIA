@@ -102,39 +102,6 @@
                     </div>
                     <small class="text-secondary" style="font-size:0.75rem;"><?php echo t('share_embed'); ?></small>
                 </div>
-
-                <!-- WhatsApp -->
-                <a href="#" id="share-whatsapp" target="_blank" class="text-decoration-none text-center share-item">
-                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #25D366;">
-                        <i class="fab fa-whatsapp text-white fs-4"></i>
-                    </div>
-                    <small class="text-secondary" style="font-size:0.75rem;">WhatsApp</small>
-                </a>
-
-                <!-- X / Twitter -->
-                <a href="#" id="share-twitter" target="_blank" class="text-decoration-none text-center share-item">
-                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #000;">
-                        <i class="fab fa-x-twitter text-white fs-4"></i>
-                    </div>
-                    <small class="text-secondary" style="font-size:0.75rem;">X</small>
-                </a>
-
-                <!-- LinkedIn -->
-                <a href="#" id="share-linkedin" target="_blank" class="text-decoration-none text-center share-item">
-                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #0077b5;">
-                        <i class="fab fa-linkedin-in text-white fs-4"></i>
-                    </div>
-                    <small class="text-secondary" style="font-size:0.75rem;">LinkedIn</small>
-                </a>
-
-                <!-- Email -->
-                <a href="#" id="share-email" class="text-decoration-none text-center share-item">
-                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle mx-auto" style="width: 50px; height: 50px;">
-                        <i class="fas fa-envelope text-white fs-4"></i>
-                    </div>
-                    <small class="text-secondary" style="font-size:0.75rem;">Email</small>
-                </a>
-
             </div>
         </div>
 
