@@ -104,6 +104,78 @@ include '../includes/header.php'; ?>
             </div>
         </div>
 
+        <!-- ROI Calculator Section -->
+        <div class="row mb-5 pb-5">
+            <div class="col-lg-12">
+                <div class="bento-card p-4 p-md-5 position-relative overflow-hidden">
+                    <!-- Background Glow -->
+                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 50%; height: 50%; background: var(--accent-purple); filter: blur(120px); opacity: 0.15; pointer-events: none;"></div>
+                    
+                    <div class="row align-items-center position-relative z-1">
+                        <div class="col-lg-5 mb-4 mb-lg-0">
+                            <h2 class="text-white mb-2"><?php echo t('roi_title'); ?></h2>
+                            <p class="text-secondary mb-4"><?php echo t('roi_subtitle'); ?></p>
+                            
+                            <!-- Inputs -->
+                            <div class="d-flex flex-column gap-4">
+                                <!-- Team Size -->
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <label for="roi-employees" class="text-white small fw-bold"><?php echo t('roi_label_team'); ?></label>
+                                        <span class="text-primary fw-bold" id="roi-employees-value">5</span>
+                                    </div>
+                                    <input type="range" class="form-range" id="roi-employees" min="1" max="50" value="5" step="1">
+                                </div>
+
+                                <!-- Salary -->
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <label for="roi-salary" class="text-white small fw-bold"><?php echo t('roi_label_salary'); ?></label>
+                                        <span class="text-primary fw-bold" id="roi-salary-value">3 500€</span>
+                                    </div>
+                                    <input type="range" class="form-range" id="roi-salary" min="2000" max="10000" value="3500" step="100">
+                                </div>
+
+                                <!-- Repetitive Tasks -->
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <label for="roi-repetitive" class="text-white small fw-bold"><?php echo t('roi_label_repetitive'); ?></label>
+                                        <span class="text-primary fw-bold" id="roi-repetitive-value">5h</span>
+                                    </div>
+                                    <input type="range" class="form-range" id="roi-repetitive" min="1" max="20" value="5" step="0.5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 offset-lg-1">
+                            <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                <!-- Time Savings (Hero Metric) -->
+                                <div class="text-center mb-4 pb-4 border-bottom border-secondary border-opacity-25">
+                                    <div class="icon-box mx-auto text-white bg-gradient-to-br from-primary to-info mb-3" style="width: 60px; height: 60px; border-radius: 50%;">
+                                        <i class="fas fa-clock fs-3"></i>
+                                    </div>
+                                    <h3 class="display-4 fw-bold text-white mb-0" id="roi-result-hours">0</h3>
+                                    <p class="text-secondary text-uppercase small tracking-wide fw-bold"><?php echo t('roi_result_time'); ?></p>
+                                </div>
+
+                                <!-- Money Savings -->
+                                <div class="text-center">
+                                    <h4 class="text-success fw-bold mb-0" id="roi-result-money">0€</h4>
+                                    <p class="text-secondary text-uppercase small tracking-wide fw-bold mb-0"><?php echo t('roi_result_money'); ?></p>
+                                </div>
+                                
+                                <div class="mt-4 text-center">
+                                    <small class="text-secondary opacity-50 fst-italic" style="font-size: 0.7rem;">
+                                        <i class="fas fa-info-circle me-1"></i> <?php echo t('roi_disclaimer'); ?>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- CTA Section -->
         <div class="text-center pb-5">
             <div class="bento-card d-inline-block p-5 text-center">
@@ -116,4 +188,5 @@ include '../includes/header.php'; ?>
     </div>
 </section>
 
+<script src="../assets/js/roi-calculator.js"></script>
 <?php include '../includes/footer.php'; ?>

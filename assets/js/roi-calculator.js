@@ -1,45 +1,50 @@
 /**
  * AI ROI Calculator
- * Estimates savings based on team size and average salary.
+ * Estimates savings based on team size, average salary, and repetitive tasks.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     const employeesInput = document.getElementById('roi-employees');
     const salaryInput = document.getElementById('roi-salary');
+    const repetitiveInput = document.getElementById('roi-repetitive');
 
     const employeesValue = document.getElementById('roi-employees-value');
     const salaryValue = document.getElementById('roi-salary-value');
+    const repetitiveValue = document.getElementById('roi-repetitive-value');
 
     const resultHours = document.getElementById('roi-result-hours');
     const resultMoney = document.getElementById('roi-result-money');
 
-    if (!employeesInput || !salaryInput) return;
+    if (!employeesInput || !salaryInput || !repetitiveInput) return;
 
     function calculateROI() {
+        // Inputs
         const employees = parseInt(employeesInput.value);
         const salary = parseInt(salaryInput.value);
+        const repetitiveHours = parseFloat(repetitiveInput.value);
 
-        // Update UI values
+        // Update UI Input Values
         employeesValue.textContent = employees;
-        salaryValue.textContent = salary.toLocaleString() + '€';
+        salaryValue.textContent = salary.toLocaleString('fr-FR') + '€';
+        repetitiveValue.textContent = repetitiveHours + 'h';
 
-        // Assumptions:
-        // - AI saves ~5-10% of time (Conservative "No BS" estimate)
-        // - ~8 hours/month per person (approx 2h/week)
+        // Calculation assumptions
+        const EFFICIENCY_GAIN = 0.40; // 40% gain on repetitive tasks
+        const WEEKS_PER_YEAR = 47; // 52 weeks - 5 weeks vacation
 
-        // Assumptions:
-        // - AI saves ~1-2% of time (Ultra-conservative / safe bet)
-        // - ~2 hours/month per person (30min/week)
+        // Hours Saved Calculation
+        // (Repetitive Hours * Efficiency) * Team Size * Weeks
+        const weeklyHoursSaved = (repetitiveHours * EFFICIENCY_GAIN) * employees;
+        const totalHoursSaved = Math.round(weeklyHoursSaved * WEEKS_PER_YEAR);
 
-        const hoursSavedPerPerson = 2; // "Réduit à fond"
-        const totalHoursSaved = employees * hoursSavedPerPerson;
-
-        const hourlyRate = salary / 160; // Approximate monthly hours
-        const moneySaved = Math.round(totalHoursSaved * hourlyRate);
+        // Money Saved Calculation
+        // Hourly rate = Salary / 151.67 (standard monthly hours in France) or 160 simplified
+        const hourlyRate = salary / 151.67;
+        const totalMoneySaved = Math.round(totalHoursSaved * hourlyRate);
 
         // Animate Numbers
         animateValue(resultHours, parseInt(resultHours.textContent.replace(/\D/g, '')) || 0, totalHoursSaved, 500);
-        animateValue(resultMoney, parseInt(resultMoney.textContent.replace(/\D/g, '')) || 0, moneySaved, 500);
+        animateValue(resultMoney, parseInt(resultMoney.textContent.replace(/\D/g, '')) || 0, totalMoneySaved, 500);
     }
 
     function animateValue(obj, start, end, duration) {
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const current = Math.floor(progress * (end - start) + start);
 
             // Format currency if money
-            obj.innerHTML = obj.id.includes('money') ? current.toLocaleString() + '€' : current;
+            obj.innerHTML = obj.id.includes('money') ? current.toLocaleString('fr-FR') + '€' : current.toLocaleString('fr-FR');
 
             if (progress < 1) {
                 window.requestAnimationFrame(step);
@@ -59,8 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(step);
     }
 
+    // Event Listeners
     employeesInput.addEventListener('input', calculateROI);
     salaryInput.addEventListener('input', calculateROI);
+    repetitiveInput.addEventListener('input', calculateROI);
 
     // Initial calc
     calculateROI();
