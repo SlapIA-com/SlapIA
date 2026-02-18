@@ -7,8 +7,10 @@
                     <?php echo t('footer_desc'); ?>
                 </p>
                 <div class="d-flex gap-3 mt-4">
-                    <a href="https://www.linkedin.com/in/lapierre-thomas/" target="_blank" class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
+                    <a href="https://www.linkedin.com/company/slapia/" target="_blank" class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
+                    <a href="https://github.com/SlapIA-com" target="_blank" class="text-secondary hover-white"><i class="fab fa-github fs-5"></i></a>
                 </div>
+                
             </div>
             
             <div class="col-6 col-lg-2 offset-lg-2">
