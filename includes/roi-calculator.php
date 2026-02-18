@@ -67,48 +67,77 @@
     </div>
 </div>
 
-<!-- Share Modal (Hidden by default) -->
+<!-- Share Modal (YouTube Style) -->
 <div id="shareModal" class="share-modal-overlay" style="display: none;">
-    <div class="share-modal-content bento-card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="text-white m-0"><?php echo t('share_roi_title'); ?></h5>
-            <button class="btn btn-sm btn-icon text-secondary" onclick="closeShareModal()">
+    <div class="share-modal-content bento-card p-0 overflow-hidden">
+        <!-- Header -->
+        <div class="p-3 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+            <h5 class="text-white m-0 fs-6"><?php echo t('share'); ?></h5>
+            <button class="btn btn-sm btn-icon text-secondary p-0" onclick="closeShareModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <!-- Tabs -->
-        <ul class="nav nav-pills mb-3" id="shareTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active btn-sm" id="link-tab" data-bs-toggle="tab" data-bs-target="#link" type="button" role="tab" aria-selected="true">
-                    <i class="fas fa-link me-2"></i> <?php echo t('share_link'); ?>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link btn-sm" id="embed-tab" data-bs-toggle="tab" data-bs-target="#embed" type="button" role="tab" aria-selected="false">
-                    <i class="fas fa-code me-2"></i> <?php echo t('share_embed'); ?>
-                </button>
-            </li>
-        </ul>
+        <!-- Social Icons Row -->
+        <div class="p-4 overflow-auto">
+            <div class="d-flex gap-4 justify-content-start" style="/* min-width: max-content; */">
+                
+                <!-- Embed Button -->
+                <div class="text-center share-item" onclick="toggleEmbedMode(true)" style="cursor: pointer;">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center bg-dark border border-secondary border-opacity-25 rounded-circle mx-auto" style="width: 50px; height: 50px;">
+                        <i class="fas fa-code text-white"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;"><?php echo t('share_embed'); ?></small>
+                </div>
 
-        <div class="tab-content" id="shareTabsContent">
-            <!-- Link -->
-            <div class="tab-pane fade show active" id="link" role="tabpanel">
-                <div class="input-group">
-                    <input type="text" class="form-control bg-dark border-secondary text-white" id="share-link-input" readonly value="https://slapia.com/pages/roi.php">
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('share-link-input')">
-                        <i class="far fa-copy"></i>
-                    </button>
-                </div>
+                <!-- WhatsApp -->
+                <a href="#" id="share-whatsapp" target="_blank" class="text-decoration-none text-center share-item">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #25D366;">
+                        <i class="fab fa-whatsapp text-white fs-4"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">WhatsApp</small>
+                </a>
+
+                <!-- X / Twitter -->
+                <a href="#" id="share-twitter" target="_blank" class="text-decoration-none text-center share-item">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #000;">
+                        <i class="fab fa-x-twitter text-white fs-4"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">X</small>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="#" id="share-linkedin" target="_blank" class="text-decoration-none text-center share-item">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #0077b5;">
+                        <i class="fab fa-linkedin-in text-white fs-4"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">LinkedIn</small>
+                </a>
+
+                <!-- Email -->
+                <a href="#" id="share-email" class="text-decoration-none text-center share-item">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle mx-auto" style="width: 50px; height: 50px;">
+                        <i class="fas fa-envelope text-white fs-4"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">Email</small>
+                </a>
+
             </div>
-            <!-- Embed -->
-            <div class="tab-pane fade" id="embed" role="tabpanel">
-                <div class="position-relative">
-                    <textarea class="form-control bg-dark border-secondary text-white" id="share-embed-input" rows="4" readonly><iframe src="https://slapia.com/pages/roi.php" width="100%" height="600" frameborder="0" style="border-radius: 12px;"></iframe></textarea>
-                    <button class="btn btn-sm btn-outline-secondary position-absolute bottom-0 end-0 m-2" type="button" onclick="copyToClipboard('share-embed-input')">
-                        <i class="far fa-copy"></i> <?php echo t('copy'); ?>
-                    </button>
-                </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="p-3 bg-black bg-opacity-25 border-top border-secondary border-opacity-25">
+            <div class="d-flex align-items-center gap-2 p-2 rounded-3 border border-secondary border-opacity-25" style="background: rgba(0,0,0,0.3);">
+                <input type="text" class="form-control bg-transparent border-0 text-white shadow-none p-0 ps-2" id="share-input" readonly value="Loading..." style="font-size: 0.9rem; text-overflow: ellipsis;">
+                <button class="btn btn-primary rounded-pill px-3 py-1 fw-bold" style="font-size: 0.85rem;" onclick="copyShareInput()">
+                    <?php echo t('copy'); ?>
+                </button>
+            </div>
+            <!-- Back to Link mode (Hidden by default) -->
+            <div id="back-to-link" class="text-center mt-2" style="display: none;">
+                <button class="btn btn-link text-secondary btn-sm text-decoration-none" onclick="toggleEmbedMode(false)">
+                    <i class="fas fa-link me-1"></i> <?php echo t('share_link'); ?>
+                </button>
             </div>
         </div>
     </div>
@@ -121,8 +150,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     z-index: 9999;
     display: flex;
     justify-content: center;
@@ -131,39 +160,85 @@
 }
 .share-modal-content {
     width: 90%;
-    max-width: 500px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 520px;
+    background: #1e1e1e; /* YouTube-ish dark */
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     animation: slideUp 0.3s ease-out;
+}
+.share-icon-btn {
+    transition: transform 0.2s, background 0.2s;
+}
+.share-item:hover .share-icon-btn {
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
 
 <script>
+let currentUrl = '';
+let embedCode = '';
+
 function openShareModal() {
-    document.getElementById('shareModal').style.display = 'flex';
-    // Update input values with current domain logic if needed
-    const currentHost = window.location.protocol + '//' + window.location.host;
-    const roiPath = '/pages/roi.php'; // Adjust based on deployment
-    document.getElementById('share-link-input').value = currentHost + roiPath;
-    document.getElementById('share-embed-input').value = `<iframe src="${currentHost}${roiPath}" width="100%" height="600" frameborder="0" style="border-radius: 12px; overflow: hidden;"></iframe>`;
+    const modal = document.getElementById('shareModal');
+    modal.style.display = 'flex';
+    
+    // Calculate URLs
+    const host = window.location.protocol + '//' + window.location.host;
+    const path = '/pages/roi.php'; // The standalone page
+    currentUrl = host + path;
+    
+    // Embed code
+    embedCode = `<iframe src="${currentUrl}" width="100%" height="650" frameborder="0" style="border-radius: 12px;"></iframe>`;
+
+    // Reset UI to Link mode
+    toggleEmbedMode(false);
+
+    // Update Social Links
+    const text = "Découvrez le calculateur ROI IA de SlapIA";
+    document.getElementById('share-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(text + ' ' + currentUrl)}`;
+    document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
+    document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
+    document.getElementById('share-email').href = `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(currentUrl)}`;
 }
+
 function closeShareModal() {
     document.getElementById('shareModal').style.display = 'none';
 }
-function copyToClipboard(elementId) {
-    const copyText = document.getElementById(elementId);
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); // Mobile
-    navigator.clipboard.writeText(copyText.value).then(() => {
-        // Simple visual feedback
-        const btn = copyText.nextElementSibling || copyText.parentElement.querySelector('button');
-        const originalIcon = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check text-success"></i>';
-        setTimeout(() => { btn.innerHTML = originalIcon; }, 2000);
+
+function toggleEmbedMode(isEmbed) {
+    const input = document.getElementById('share-input');
+    const backBtn = document.getElementById('back-to-link');
+    
+    if (isEmbed) {
+        input.value = embedCode;
+        backBtn.style.display = 'block';
+    } else {
+        input.value = currentUrl;
+        backBtn.style.display = 'none';
+    }
+}
+
+function copyShareInput() {
+    const input = document.getElementById('share-input');
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = input.nextElementSibling;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Copié !';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+        setTimeout(() => { 
+            btn.innerHTML = originalText; 
+            btn.classList.add('btn-primary'); 
+            btn.classList.remove('btn-success');
+        }, 2000);
     });
 }
+
 // Close on outside click
 document.getElementById('shareModal').addEventListener('click', function(e) {
     if (e.target === this) closeShareModal();

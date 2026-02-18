@@ -20,25 +20,32 @@ include_once '../includes/lang.php';
     
     <style>
         body {
-            background: transparent; /* Allows embedding on different backgrounds if iframe allows */
+            background: transparent;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 0; /* Remove padding to let iframe control spacing */
             margin: 0;
+            overflow: hidden; /* Prevent scrollbars if possible */
         }
-        /* Override specifically for the standalone page to look good */
+        /* Override specifically for the standalone page */
         .bento-card {
             width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
+            border-radius: 0; /* Optional: if we want to fill the iframe completely, or keep it if iframe has padding */
+            /* max-width removed to fill iframe */
+        }
+        
+        /* Remove the outer row margins from the component when embedded */
+        .container-fluid > .row {
+            margin: 0 !important;
+            padding: 0 !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid">
+    <div style="width: 100%;">
         <?php include '../includes/roi-calculator.php'; ?>
     </div>
 
