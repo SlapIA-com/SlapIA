@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculation assumptions
         // Base: 160 hours / month
-        // Efficiency Gain: 20% of Total Time (Conservative but impactful) -> ~32h / month / person
+        // Efficiency Gain: 6% of Total Time (Realistic average) -> ~9.6h / month / person
         const MONTHLY_HOURS = 160;
-        const EFFICIENCY_GAIN = 0.20;
-        const MONTHS_PER_YEAR = 11; // 1 full month vacation excluded ? Or 12? Let's say 11 active months
+        const EFFICIENCY_GAIN = 0.06;
+        const MONTHS_PER_YEAR = 11; // 11 active months
 
         // Hours Saved Calculation
         const hoursSavedPerPersonPerMonth = MONTHLY_HOURS * EFFICIENCY_GAIN; // 32
