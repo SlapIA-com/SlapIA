@@ -7,10 +7,17 @@
             
             <!-- Share Button (Top Right) -->
             <div class="position-absolute top-0 end-0 p-4">
-                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2" onclick="openShareModal()" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);">
+                <button class="btn btn-sm btn-outline-light rounded-pill d-flex align-items-center gap-2 share-btn-hover" onclick="openShareModal()" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
                     <i class="fas fa-share-alt"></i> <span class="d-none d-sm-inline"><?php echo t('share'); ?></span>
                 </button>
             </div>
+            <style>
+                .share-btn-hover:hover {
+                    background: rgba(255,255,255,0.2) !important;
+                    color: white !important;
+                    border-color: rgba(255,255,255,0.3) !important;
+                }
+            </style>
 
             <div class="row align-items-center position-relative z-1">
                 <div class="col-lg-5 mb-4 mb-lg-0">
@@ -182,13 +189,35 @@ let currentUrl = '';
 let embedCode = '';
 
 function openShareModal() {
-    const modal = document.getElementById('shareModal');
-    modal.style.display = 'flex';
-    
-    // Calculate URLs
+    // Generate URL
     const host = window.location.protocol + '//' + window.location.host;
     const path = '/Calcule-ROI-IA'; // The standalone page
     currentUrl = host + path;
+    const shareTitle = "<?php echo t('roi_title'); ?> - SlapIA";
+    const shareText = "<?php echo t('roi_subtitle'); ?>";
+
+    // Try Native Share API first (Mobile iOS/Android & Desktop Safari/Edge)
+    if (navigator.share) {
+        navigator.share({
+            title: shareTitle,
+            text: shareText,
+            url: currentUrl
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => {
+            console.log('Error sharing', error);
+            // If user cancelled or error, we could fallback or just do nothing.
+            // But if it's not supported, we enter the fallback below.
+            // However, navigator.share usually returns promise.
+            // If we want to fallback ON ERROR, we can do it here, 
+            // but usually 'AbortError' means user cancelled, so we shouldn't open modal then.
+        });
+        return; // Stop here if we used native share
+    }
+
+    // Fallback: Custom Modal
+    const modal = document.getElementById('shareModal');
+    modal.style.display = 'flex';
     
     // Embed code (Force transparent background)
     embedCode = `<iframe src="${currentUrl}?embed=true" width="100%" height="650" frameborder="0" style="border-radius: 12px;"></iframe>`;
