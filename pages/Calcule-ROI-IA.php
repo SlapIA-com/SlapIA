@@ -35,7 +35,8 @@ include_once '../includes/lang.php';
     
     <style>
         body {
-            background-color: #000 !important; /* Force black background */
+            /* If 'embed' param is present, transparent. Else, let style.css handle the background (noise + color). */
+            background-color: <?php echo isset($_GET['embed']) ? 'transparent !important' : ''; ?>;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -66,9 +67,47 @@ include_once '../includes/lang.php';
             margin: 0 !important;
             padding: 0 !important;
         }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px !important;
+                align-items: flex-start; /* Allow scrolling if content is tall */
+                overflow-y: auto; /* Enable vertical scroll on mobile */
+            }
+            .bento-card {
+                padding: 20px !important;
+                border-radius: 24px;
+            }
+            .display-4 {
+                font-size: 2.5rem; /* Smaller hero numbers */
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            /* Adjust stacking if needed */
+            .col-lg-5, .col-lg-6 {
+                margin-bottom: 2rem;
+            }
+            /* Share modal adjustments */
+            .share-modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Aurora Background (Only if not embedded) -->
+    <?php if (!isset($_GET['embed'])): ?>
+    <div class="aurora-bg">
+        <div class="aurora-orb orb-1"></div>
+        <div class="aurora-orb orb-2"></div>
+        <div class="aurora-orb orb-3"></div>
+    </div>
+    <?php
+endif; ?>
 
     <div style="width: 100%;">
         <?php include '../includes/roi-calculator.php'; ?>

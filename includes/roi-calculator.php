@@ -190,8 +190,8 @@ function openShareModal() {
     const path = '/Calcule-ROI-IA'; // The standalone page
     currentUrl = host + path;
     
-    // Embed code
-    embedCode = `<iframe src="${currentUrl}" width="100%" height="650" frameborder="0" style="border-radius: 12px;"></iframe>`;
+    // Embed code (Force transparent background)
+    embedCode = `<iframe src="${currentUrl}?embed=true" width="100%" height="650" frameborder="0" style="border-radius: 12px;"></iframe>`;
 
     // Reset UI to Link mode
     toggleEmbedMode(false);
