@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const hoursSavedPerPersonPerMonth = MONTHLY_HOURS * EFFICIENCY_GAIN; // 32
         const totalHoursSavedPerYear = Math.round(hoursSavedPerPersonPerMonth * employees * MONTHS_PER_YEAR);
 
-        // Money Saved Calculation
+        // Money Saved Calculation - Adjusted to be more conservative (75% of hourly rate equivalent)
         const hourlyRate = salary / MONTHLY_HOURS;
-        const totalMoneySaved = Math.round(totalHoursSavedPerYear * hourlyRate);
+        const totalMoneySaved = Math.round(totalHoursSavedPerYear * hourlyRate * 0.75);
 
         // Animate Numbers
         animateValue(resultHours, parseInt(resultHours.textContent.replace(/\D/g, '')) || 0, totalHoursSavedPerYear, 500);
