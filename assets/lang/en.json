@@ -186,7 +186,7 @@
     "roi_label_repetitive": "Repetitive Tasks / Week / Person",
     "roi_result_time": "Hours Saved / Year",
     "roi_result_money": "Potential Savings / Year",
-    "roi_disclaimer": "Based on an estimated 6% productivity gain (Realistic average).",
+    "roi_disclaimer": "Based on an average gain of 1h/day per employee (Source: Adecco/Microsoft 2024 Study).",
     "share": "Share",
     "share_roi_title": "Share Calculator",
     "share_link": "Direct Link",

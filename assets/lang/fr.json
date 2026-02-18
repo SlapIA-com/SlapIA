@@ -186,7 +186,7 @@
     "roi_label_repetitive": "Tâches répétitives / semaine / pers.",
     "roi_result_time": "Heures Gagnées / An",
     "roi_result_money": "Économies Potentielles / An",
-    "roi_disclaimer": "Basé sur un gain de productivité estimé à 6% (Moyenne réaliste).",
+    "roi_disclaimer": "Basé sur un gain moyen d'1h/jour par collaborateur (Source : Étude Adecco/Microsoft 2024).",
     "share": "Partager",
     "share_roi_title": "Partager le Calculateur",
     "share_link": "Lien Direct",

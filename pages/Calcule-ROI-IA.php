@@ -35,12 +35,12 @@ include_once '../includes/lang.php';
     
     <style>
         body {
-            background: transparent;
+            background-color: #000 !important; /* Force black background */
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px; /* Restore padding to show the card effect */
+            padding: 20px;
             margin: 0;
             overflow: hidden; 
         }
@@ -48,14 +48,17 @@ include_once '../includes/lang.php';
         .bento-card {
             width: 100%;
             height: 100%;
-            border-radius: 32px; /* Restore rounded corners */
+            max-width: 900px; /* Restrict width to look like a card */
+            border-radius: 32px;
             margin: 0 auto;
+            background: #0a0a0a; /* Ensure dark card background */
+            border: 1px solid rgba(255, 255, 255, 0.08); /* Subtle border */
         }
         
         /* Disable hover zoom effect as requested */
         .bento-card:hover {
             transform: none !important;
-            box-shadow: none !important; /* Optional: remove shadow change too if desired, keeping just transform off is safer */
+            box-shadow: none !important;
         }
 
         /* Remove the outer row margins from the component when embedded */

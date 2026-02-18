@@ -26,18 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculation assumptions
         // Base: 160 hours / month
-        // Efficiency Gain: 6% of Total Time (Realistic average) -> ~9.6h / month / person
+        // 12.5% efficiency gain = ~1 hour saved per 8-hour workday (Adecco Group / Microsoft 2024 studies)
         const MONTHLY_HOURS = 160;
-        const EFFICIENCY_GAIN = 0.06;
+        const EFFICIENCY_GAIN = 0.125;
         const MONTHS_PER_YEAR = 11; // 11 active months
 
         // Hours Saved Calculation
-        const hoursSavedPerPersonPerMonth = MONTHLY_HOURS * EFFICIENCY_GAIN; // 32
+        const hoursSavedPerPersonPerMonth = MONTHLY_HOURS * EFFICIENCY_GAIN;
         const totalHoursSavedPerYear = Math.round(hoursSavedPerPersonPerMonth * employees * MONTHS_PER_YEAR);
 
-        // Money Saved Calculation - Adjusted to be more conservative (75% of hourly rate equivalent)
+        // Money Saved Calculation - Direct calculation based on the study without arbitrary reduction
         const hourlyRate = salary / MONTHLY_HOURS;
-        const totalMoneySaved = Math.round(totalHoursSavedPerYear * hourlyRate * 0.75);
+        const totalMoneySaved = Math.round(totalHoursSavedPerYear * hourlyRate);
 
         // Animate Numbers
         animateValue(resultHours, parseInt(resultHours.textContent.replace(/\D/g, '')) || 0, totalHoursSavedPerYear, 500);
