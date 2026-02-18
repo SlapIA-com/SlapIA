@@ -18,6 +18,9 @@
     RewriteRule ^mentions-legales$ pages/mentions-legales.php [L,QSA]
     RewriteRule ^politique-confidentialite$ pages/mentions-legales.php [L,R=301]
     RewriteRule ^cgv$ pages/mentions-legales.php [L,R=301]
+    
+    # ROI Calculator
+    RewriteRule ^Calcule-ROI-IA$ pages/Calcule-ROI-IA.php [L,QSA]
 
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f

@@ -187,7 +187,7 @@ function openShareModal() {
     
     // Calculate URLs
     const host = window.location.protocol + '//' + window.location.host;
-    const path = '/pages/roi.php'; // The standalone page
+    const path = '/Calcule-ROI-IA'; // The standalone page
     currentUrl = host + path;
     
     // Embed code

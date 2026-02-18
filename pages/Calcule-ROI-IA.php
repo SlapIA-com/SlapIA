@@ -11,6 +11,21 @@ include_once '../includes/lang.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex"> <!-- Prevent indexing of this standalone component -->
+    
+    <!-- Open Graph / Discord Embeds -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://slapia.com/Calcule-ROI-IA">
+    <meta property="og:title" content="<?php echo t('roi_title'); ?> - SlapIA">
+    <meta property="og:description" content="<?php echo t('roi_subtitle'); ?> | <?php echo t('roi_disclaimer'); ?>">
+    <meta property="og:image" content="https://slapia.com/assets/img/logo.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://slapia.com/Calcule-ROI-IA">
+    <meta property="twitter:title" content="<?php echo t('roi_title'); ?> - SlapIA">
+    <meta property="twitter:description" content="<?php echo t('roi_subtitle'); ?> | <?php echo t('roi_disclaimer'); ?>">
+    <meta property="twitter:image" content="https://slapia.com/assets/img/logo.png">
+
     <title><?php echo t('roi_title'); ?> - SlapIA</title>
     
     <!-- CSS Dependencies -->
@@ -25,17 +40,24 @@ include_once '../includes/lang.php';
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0; /* Remove padding to let iframe control spacing */
+            padding: 20px; /* Restore padding to show the card effect */
             margin: 0;
-            overflow: hidden; /* Prevent scrollbars if possible */
+            overflow: hidden; 
         }
         /* Override specifically for the standalone page */
         .bento-card {
             width: 100%;
-            border-radius: 0; /* Optional: if we want to fill the iframe completely, or keep it if iframe has padding */
-            /* max-width removed to fill iframe */
+            height: 100%;
+            border-radius: 32px; /* Restore rounded corners */
+            margin: 0 auto;
         }
         
+        /* Disable hover zoom effect as requested */
+        .bento-card:hover {
+            transform: none !important;
+            box-shadow: none !important; /* Optional: remove shadow change too if desired, keeping just transform off is safer */
+        }
+
         /* Remove the outer row margins from the component when embedded */
         .container-fluid > .row {
             margin: 0 !important;
