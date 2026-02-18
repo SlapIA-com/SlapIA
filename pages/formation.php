@@ -4,7 +4,7 @@ include_once '../includes/lang.php';
 
 $page_title = t('formations') . " - SlapIA";
 $page_description = t('cert_level_1_desc') . " " . t('cert_level_2_desc');
-$page_image = '/assets/img/Formation_iA_Niveau_1_Entreprise.jpg';
+$page_image = '/assets/img/logo.png';
 include '../includes/header.php'; ?>
 
 <section class="py-5 mt-5">
