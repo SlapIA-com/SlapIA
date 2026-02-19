@@ -261,7 +261,6 @@
 
 <!-- Swup.js for App-like Navigation -->
 <script src="https://unpkg.com/swup@4"></script>
-<script src="https://unpkg.com/@swup/slide-theme@2"></script>
 <script src="https://unpkg.com/@swup/scroll-plugin@3"></script>
 <script src="/assets/js/animations.js"></script>
 <script src="/assets/js/app-transition.js"></script>

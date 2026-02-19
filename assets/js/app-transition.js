@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const swup = new Swup({
         containers: ['#swup'],
         plugins: [
-            new SwupSlideTheme(),
             new SwupScrollPlugin({
                 doScrollingRightAway: false,
                 animateScroll: true,
