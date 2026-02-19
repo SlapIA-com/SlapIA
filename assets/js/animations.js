@@ -26,12 +26,18 @@ function initScrollReveal() {
     }, 2000);
 }
 
-// Auto-init on load
+// Auto-init logic
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initScrollReveal);
 } else {
+    // DOM already loaded, run immediately
     initScrollReveal();
 }
+
+// Global fallback to force visibility if script loads late
+window.onload = function () {
+    setTimeout(initScrollReveal, 100);
+};
 
 // Expose to window for Swup
 window.initScrollReveal = initScrollReveal;

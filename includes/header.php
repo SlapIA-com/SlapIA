@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="nav-spacer" style="height: 120px;"></div>
 
 <!-- Main Content Container for Swup -->
-<main id="swup" class="transition-fade">
+<main id="swup" class="swup-transition-main">
 
 
     <!-- Schema.org Organization -->
