@@ -1334,20 +1334,38 @@ body.matrix-mode .nav-active-bg {
 /* Cleaning up old Emoji Rain CSS if any conflict - New one uses inline styles/JS animations */
 
 /* =========================================
-   Swup Fade Theme (Custom Implementation)
+   Swup Slide Theme (Custom Custom Implementation)
    ========================================= */
 .swup-transition-main {
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transform-origin: center top;
 }
 
 html.is-animating .swup-transition-main {
     opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    /* Subtle slide down/up effect preferred over full side slide to avoid layout thrashing */
 }
 
-/* Ensure no flicker on load */
-html.is-changing .swup-transition-main {
-    transition: opacity 0.3s ease-in-out;
+/* If the user explicitly wants SIDE slide, effective side slide requires container handling which Swup defaults don't always do perfectly without the plugin.
+   However, a "Slide Up/Down" (Apple style) is often what users mean by modern "slide" transitions without the jarring horizontal movement.
+   Let's try a very clean Slide Up Fade. */
+
+html.is-leaving .swup-transition-main {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+}
+
+html.is-rendering .swup-transition-main {
+    transform: translate3d(0, -20px, 0);
+    /* Start slightly above */
+}
+
+/* Fix for Scroll Reveal firing too early */
+.swup-transition-main .scroll-reveal {
+    opacity: 0;
 }
 
 /* =========================================
