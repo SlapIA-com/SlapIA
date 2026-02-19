@@ -50,71 +50,82 @@
 <script src="/assets/js/carousel.js"></script>
 <script src="/assets/js/typewriter.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // ... (Keep existing inline scripts for Liquid Menu, Spotlight, Staggered Entry) ...
+<!-- Cookie Banner Inner Content (Moved from inside script) -->
+<div id="cookie-banner-content" style="display:none;"> <!-- Hidden by default, JS moves it or usage implies it's inside #cookie-banner -->
+    <!-- Actually, looking at the code structure, this seems to be the content intended for #cookie-banner container defined above -->
+    
+    <!-- View 1: Main -->
+    <div id="cookie-view-main" class="cookie-view">
+        <div class="cookie-icon">🍪</div>
+        <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
+        <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
+        
+        <div class="cookie-actions">
+            <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
+            <button id="cookie-deny-all" class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
+            <button id="cookie-customize" class="cookie-link-btn"><?php echo t('cookie_customize'); ?></button>
+        </div>
+        
+        <div class="mt-3">
+            <a href="/mentions-legales#privacy" class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
+        </div>
+    </div>
 
-        <div id="cookie-view-main" class="cookie-view">
-            <div class="cookie-icon">🍪</div>
-            <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
-            <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
-            
-            <div class="cookie-actions">
-                <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
-                <button id="cookie-deny-all" class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
-                <button id="cookie-customize" class="cookie-link-btn"><?php echo t('cookie_customize'); ?></button>
-            </div>
-            
-            <div class="mt-3">
-                <a href="/mentions-legales#privacy" class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
-            </div>
+    <!-- View 2: Preferences -->
+    <div id="cookie-view-preferences" class="cookie-view hidden">
+        <div class="d-flex align-items-center mb-4">
+            <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3" style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none;"><i class="fas fa-arrow-left"></i></button>
+            <h3 class="cookie-title mb-0 text-start"><?php echo t('cookie_preferences_title'); ?></h3>
         </div>
 
-        <!-- View 2: Preferences -->
-        <div id="cookie-view-preferences" class="cookie-view hidden">
-            <div class="d-flex align-items-center mb-4">
-                <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3" style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none;"><i class="fas fa-arrow-left"></i></button>
-                <h3 class="cookie-title mb-0 text-start"><?php echo t('cookie_preferences_title'); ?></h3>
+        <div class="cookie-preferences-list">
+            <!-- Necessary -->
+            <div class="cookie-preference-item">
+                <div class="cookie-pref-info text-start">
+                    <h4><?php echo t('cookie_necessary_title'); ?></h4>
+                    <p><?php echo t('cookie_necessary_desc'); ?></p>
+                </div>
+                <label class="cookie-toggle">
+                    <input type="checkbox" checked disabled>
+                    <span class="cookie-slider"></span>
+                </label>
             </div>
 
-            <div class="cookie-preferences-list">
-                <!-- Necessary -->
-                <div class="cookie-preference-item">
-                    <div class="cookie-pref-info text-start">
-                        <h4><?php echo t('cookie_necessary_title'); ?></h4>
-                        <p><?php echo t('cookie_necessary_desc'); ?></p>
-                    </div>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" checked disabled>
-                        <span class="cookie-slider"></span>
-                    </label>
+            <!-- Preferences (Language) -->
+            <div class="cookie-preference-item">
+                <div class="cookie-pref-info text-start">
+                    <h4><?php echo t('cookie_preferences_category_title'); ?></h4>
+                    <p><?php echo t('cookie_preferences_category_desc'); ?></p>
                 </div>
-
-                <!-- Preferences (Language) -->
-                <div class="cookie-preference-item">
-                    <div class="cookie-pref-info text-start">
-                        <h4><?php echo t('cookie_preferences_category_title'); ?></h4>
-                        <p><?php echo t('cookie_preferences_category_desc'); ?></p>
-                    </div>
-                    <label class="cookie-toggle">
-                        <input type="checkbox" id="cookie-toggle-preferences" checked>
-                        <span class="cookie-slider"></span>
-                    </label>
-                </div>
-
+                <label class="cookie-toggle">
+                    <input type="checkbox" id="cookie-toggle-preferences" checked>
+                    <span class="cookie-slider"></span>
+                </label>
             </div>
 
-            <button id="cookie-save" class="cookie-btn cookie-btn-primary mt-2"><?php echo t('cookie_save'); ?></button>
         </div>
 
+        <button id="cookie-save" class="cookie-btn cookie-btn-primary mt-2"><?php echo t('cookie_save'); ?></button>
     </div>
 </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Javascript logic for animations/etc used to be here or is below.
+        // We removed the invalid HTML.
+        
+        // Inject the content into the main banner if needed, or if the JS expects it there.
+        // The cookie-banner.js likely handles the logic if elements exist.
+        // We'll leave the HTML in the DOM (above).
+        
+        // Move content into #cookie-banner if it's empty?
+        const bannerContainer = document.getElementById('cookie-banner');
+        const contentSource = document.getElementById('cookie-banner-content');
+        if (bannerContainer && contentSource && bannerContainer.innerHTML.trim() === '') {
+             bannerContainer.innerHTML = contentSource.innerHTML;
+        }
+        
+    });
         
         // --- Page transitions handled by CSS View Transitions API ---
         
