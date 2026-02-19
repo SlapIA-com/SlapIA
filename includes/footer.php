@@ -1,3 +1,4 @@
+</main>
 <footer class="text-center text-lg-start">
     <div class="container">
         <div class="row g-5">

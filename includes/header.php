@@ -193,37 +193,15 @@ if (strpos($meta_image, 'http') === false) {
         }
     </style>
 </head>
-<body id="swup">
+</head>
+<body>
 
-<?php if (basename($_SERVER['PHP_SELF']) == 'index.php'): ?>
-    <div id="page-loader">
-        <div class="loader-content">
-            <div class="loader-spinner"></div>
-            <div class="loader-text"><?php echo t('loading_text'); ?></div>
-        </div>
-    </div>
-    <script>
-        window.addEventListener('load', function() {
-            const loader = document.getElementById('page-loader');
-            const content = document.body;
-            
-            setTimeout(function() {
-                loader.classList.add('hidden');
-                content.classList.add('content-loaded');
-                
-                // Remove loader from DOM after animation
-                setTimeout(function() {
-                    loader.style.display = 'none';
-                }, 800);
-            }, 800);
-        });
-    </script>
-<?php
-endif; ?>
+<?php // Loader removed as per user request ?>
 
 <script>
     // Scroll Reveal - Global
     document.addEventListener('DOMContentLoaded', function() {
+        // ... (Keep existing intersection observer logic) ...
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -20px 0px'
@@ -389,6 +367,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Spacer for fixed nav -->
 <div class="nav-spacer" style="height: 120px;"></div>
+
+<!-- Main Content Container for Swup -->
+<main id="swup" class="transition-fade">
 
 
     <!-- Schema.org Organization -->
