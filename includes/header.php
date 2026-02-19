@@ -193,7 +193,7 @@ if (strpos($meta_image, 'http') === false) {
         }
     </style>
 </head>
-<body>
+<body id="swup">
 
 <?php if (basename($_SERVER['PHP_SELF']) == 'index.php'): ?>
     <div id="page-loader">

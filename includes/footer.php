@@ -249,3 +249,9 @@
 
 <script src="/assets/js/scroll-indicator.js?v=FIXED"></script>
 <script src="/assets/js/emoji-rain.js"></script>
+
+<!-- Swup.js for App-like Navigation -->
+<script src="https://unpkg.com/swup@4"></script>
+<script src="https://unpkg.com/@swup/slide-theme@2"></script>
+<script src="https://unpkg.com/@swup/scroll-plugin@3"></script>
+<script src="/assets/js/app-transition.js"></script>

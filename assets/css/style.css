@@ -1332,3 +1332,25 @@ body.matrix-mode .nav-active-bg {
 }
 
 /* Cleaning up old Emoji Rain CSS if any conflict - New one uses inline styles/JS animations */
+
+/* =========================================
+   Swup Slide Theme (Custom Implementation)
+   ========================================= */
+.swup-transition-main {
+    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s;
+    opacity: 1;
+}
+
+html.is-animating .swup-transition-main {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+html.is-leaving .swup-transition-main {
+    transform: translateY(-20px);
+}
+
+/* Ensure no flicker on load */
+html.is-changing .swup-transition-main {
+    transition: none;
+}
