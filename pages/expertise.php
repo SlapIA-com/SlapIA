@@ -16,7 +16,7 @@ include '../includes/header.php'; ?>
                 <div class="position-relative d-inline-block">
                     <!-- Placeholder for profile picture -->
                     <div class="rounded-circle p-1 bg-gradient-to-br from-primary to-purple d-inline-block mb-4">
-                        <img src="https://media.licdn.com/dms/image/v2/D4E03AQH5AN2bQQZUmg/profile-displayphoto-scale_200_200/B4EZxB5vFqHgAY-/0/1770632181103?e=1772064000&v=beta&t=HlsFwMEbWP2R-5vASKRrx2ElWNQqAHU7JJKXaIwOH4" alt="Thomas Lapierre" class="rounded-circle shadow-lg" style="width: 160px; height: 160px; border: 4px solid var(--bg-deep);">
+                        <img src="../assets/img/Thomas-Lapierre.jpg" alt="Thomas Lapierre" class="rounded-circle shadow-lg" style="width: 160px; height: 160px; border: 4px solid var(--bg-deep);">
                     </div>
                 </div>
                 <h1 class="display-title mb-2" style="font-size: 3rem;">Thomas Lapierre</h1>
