@@ -40,20 +40,6 @@
 <!-- Cookie Banner -->
 <!-- Cookie Banner (GDPR Regulatory) -->
 <div id="cookie-banner" class="cookie-overlay">
-   <!-- ... (cookie banner content implied/kept) ... -->
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Global Scripts -->
-<script src="/assets/js/carousel.js"></script>
-<script src="/assets/js/typewriter.js"></script>
-
-<!-- Cookie Banner Inner Content (Moved from inside script) -->
-<div id="cookie-banner-content" style="display:none;"> <!-- Hidden by default, JS moves it or usage implies it's inside #cookie-banner -->
-    <!-- Actually, looking at the code structure, this seems to be the content intended for #cookie-banner container defined above -->
-    
     <!-- View 1: Main -->
     <div id="cookie-view-main" class="cookie-view">
         <div class="cookie-icon">🍪</div>
@@ -109,22 +95,16 @@
     </div>
 </div>
 
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Global Scripts -->
+<script src="/assets/js/carousel.js"></script>
+<script src="/assets/js/typewriter.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Javascript logic for animations/etc used to be here or is below.
-        // We removed the invalid HTML.
-        
-        // Inject the content into the main banner if needed, or if the JS expects it there.
-        // The cookie-banner.js likely handles the logic if elements exist.
-        // We'll leave the HTML in the DOM (above).
-        
-        // Move content into #cookie-banner if it's empty?
-        const bannerContainer = document.getElementById('cookie-banner');
-        const contentSource = document.getElementById('cookie-banner-content');
-        if (bannerContainer && contentSource && bannerContainer.innerHTML.trim() === '') {
-             bannerContainer.innerHTML = contentSource.innerHTML;
-        }
-        
+    // Liquid Glass Navigation Pill Effect (iOS 26 style)
+    document.addEventListener('DOMContentLoaded', function() {
         // --- Page transitions handled by CSS View Transitions API ---
         
         // --- 1. Liquid Menu Logic ---

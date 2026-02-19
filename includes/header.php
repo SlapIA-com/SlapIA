@@ -224,7 +224,7 @@ if (strpos($meta_image, 'http') === false) {
     <a href="/expertise" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>">
         <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
     </a>
-    <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="mobile-menu-link" onclick="toggleMobileMenu()">
+    <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="mobile-menu-link" onclick="toggleMobileMenu()" data-no-swup>
         <i class="fas fa-flag"></i> <?php echo $lang === 'en' ? 'FR' : 'EN'; ?>
     </a>
     <div class="mobile-contact-btn">
@@ -249,7 +249,7 @@ if (strpos($meta_image, 'http') === false) {
             <a href="/entreprises" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'entreprises.php' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
             <a href="/expertise" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
         </div>
-        <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>">
+        <a href="?lang=<?php echo $lang === 'en' ? 'fr' : 'en'; ?>" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>" data-no-swup>
             <i class="fas fa-flag" style="margin-right: 6px;"></i> <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>
         </a>
         <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;">

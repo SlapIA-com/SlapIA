@@ -1,16 +1,13 @@
 <?php
-include_once __DIR__ . '/includes/config.php';
-include_once __DIR__ . '/includes/lang.php';
+include_once 'includes/config.php';
+include_once 'includes/lang.php';
 
-$page_title = "404 - System Failure";
-$page_description = "Error 404: Page not found.";
-$page_image = '/assets/img/logo.png';
+$page_title = "404 - " . t('page_not_found') . " - SlapIA";
+$page_description = t('page_not_found');
+include 'includes/header.php';
 
-include __DIR__ . '/includes/header.php';
 ?>
 
-<!-- Custom Terminal CSS Override for Integration -->
-<link rel="stylesheet" href="/assets/css/terminal.css">
 <style>
     /* Override rigid terminal styles to fit in layout */
     body {
