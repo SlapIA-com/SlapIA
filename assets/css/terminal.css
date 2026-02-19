@@ -7,17 +7,15 @@
     --font-stack: 'Fira Code', 'Courier New', monospace;
 }
 
-body {
-    margin: 0;
-    padding: 0;
+body.terminal-mode {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-stack);
-    height: 100vh;
-    overflow: hidden;
-    font-size: 16px;
-    line-height: 1.5;
 }
+
+/* Allow standard body to behave normally, specific styles moved to .terminal-section if needed, 
+   but since 404 includes header, body style comes from main css. 
+   We just need to ensure terminal vars are available. */
 
 .terminal-container {
     padding: 40px;

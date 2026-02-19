@@ -125,8 +125,6 @@
              bannerContainer.innerHTML = contentSource.innerHTML;
         }
         
-    });
-        
         // --- Page transitions handled by CSS View Transitions API ---
         
         // --- 1. Liquid Menu Logic ---

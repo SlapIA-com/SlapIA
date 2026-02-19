@@ -292,16 +292,20 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Liquid Glass Navigation Pill Effect (iOS 26 style)
+// Liquid Glass Navigation Pill Effect (iOS 26 style)
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.querySelector('.dock-links-container');
     const pill = document.querySelector('.nav-liquid-pill');
     const links = document.querySelectorAll('.dock-links-container .dock-link');
     
-    if (!container || !pill || links.length === 0) return;
+    if (!container || !pill) return;
     
-    // Position pill on active link
-    function positionPill(element, animate = true) {
+    // Position pill on active link (Exposed globally for Swup)
+    window.moveNavPill = function(element, animate = true) {
         if (!element) return;
+        
+        // Ensure container and pill are fresh references if needed, 
+        // though typically they are outside swup and static.
         
         const containerRect = container.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
@@ -318,27 +322,29 @@ document.addEventListener('DOMContentLoaded', function() {
         pill.style.left = left + 'px';
         pill.style.width = width + 'px';
         pill.style.opacity = '1';
-    }
+    };
     
     // Initialize on active link
     const activeLink = document.querySelector('.dock-links-container .dock-link.active');
     if (activeLink) {
-        setTimeout(() => positionPill(activeLink, false), 50);
+        setTimeout(() => window.moveNavPill(activeLink, false), 50);
     }
     
     // Click animation - slide to clicked link before navigation
     links.forEach(link => {
         link.addEventListener('click', function(e) {
-            if (!this.classList.contains('active')) {
-                positionPill(this, true);
-            }
+            // Update active state visually immediately for responsiveness
+            links.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            window.moveNavPill(this, true);
         });
     });
     
     // Handle window resize
     window.addEventListener('resize', () => {
-        if (activeLink) {
-            positionPill(activeLink, false);
+        const currentActive = document.querySelector('.dock-links-container .dock-link.active');
+        if (currentActive) {
+            window.moveNavPill(currentActive, false);
         }
     });
 });

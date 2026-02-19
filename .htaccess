@@ -32,7 +32,8 @@
     RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
     # Custom Error Pages
-    ErrorDocument 404 /pages/404.php
+    # Custom Error Pages
+    ErrorDocument 404 /404.php
 </IfModule>
 
 <IfModule mod_headers.c>

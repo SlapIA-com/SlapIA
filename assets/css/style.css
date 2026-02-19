@@ -961,74 +961,7 @@ footer {
 /* =========================================
    Page Loader (Homepage Only)
    ========================================= */
-#page-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
-}
-
-#page-loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.loader-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.loader-spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--accent-purple);
-    border-right-color: var(--accent-blue);
-    animation: spin 1s linear infinite;
-}
-
-.loader-text {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    letter-spacing: 0.2em;
-    font-weight: 500;
-    text-transform: uppercase;
-    animation: pulse 2s infinite ease-in-out;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 0.6;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
+/* Page Loader styles removed */
 
 /* Entry Animations */
 .fade-in-up {

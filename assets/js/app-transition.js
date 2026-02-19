@@ -58,21 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 7. Move Pill
-        const pill = document.querySelector('.nav-liquid-pill');
-        const container = document.querySelector('.dock-links-container');
-
-        if (activeLink && pill && container) {
-            const containerRect = container.getBoundingClientRect();
-            const elementRect = activeLink.getBoundingClientRect();
-            const left = elementRect.left - containerRect.left;
-            const width = elementRect.width;
-
-            pill.style.left = left + 'px';
-            pill.style.width = width + 'px';
-            pill.style.opacity = '1';
-        } else if (pill) {
-            pill.style.opacity = '0';
+        // 7. Move Pill (using global function from header)
+        if (window.moveNavPill && activeLink) {
+            window.moveNavPill(activeLink, true);
+        } else if (document.querySelector('.nav-liquid-pill')) {
+            // Hide if no active link found (e.g. 404 page if not in menu)
+            // But usually we want to keep it on Home if 404? 
+            // Actually 404 has home button so it's fine.
+            // If activeLink is null, let's fade out pill
+            document.querySelector('.nav-liquid-pill').style.opacity = '0';
         }
 
     });

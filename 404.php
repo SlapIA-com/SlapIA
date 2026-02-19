@@ -1,20 +1,39 @@
 <?php
 include_once __DIR__ . '/includes/config.php';
 include_once __DIR__ . '/includes/lang.php';
-// Fallback if lang not set
-if (!isset($lang))
-    $lang = 'fr';
+
+$page_title = "404 - System Failure";
+$page_description = "Error 404: Page not found.";
+$page_image = '/assets/img/logo.png';
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - System Failure</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/terminal.css">
-</head>
-<body>
+
+<!-- Custom Terminal CSS Override for Integration -->
+<link rel="stylesheet" href="/assets/css/terminal.css">
+<style>
+    /* Override rigid terminal styles to fit in layout */
+    body {
+        overflow-y: auto !important; /* Allow scrolling for footer */
+        height: auto !important;
+    }
+    .terminal-section {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #0c0c0c; /* Ensure match */
+        position: relative;
+    }
+    .terminal-container {
+        position: relative; /* Not fixed anymore */
+        height: auto;
+        padding: 60px 20px;
+    }
+    /* Fix Z-index to show behind nav if needed, or normal flow */
+</style>
+
+<main class="terminal-section">
     <div class="terminal-container">
         <div class="scanline"></div>
         <div class="terminal-content">
@@ -25,15 +44,16 @@ if (!isset($lang))
             </div>
             
             <div id="choice-buttons" class="hidden">
-                <a href="/" class="cmd-btn">[ Y ] REBOOT SYSTEM</a>
-                <a href="/contact" class="cmd-btn">[ N ] REPORT BUG</a>
+                <a href="/" class="cmd-btn">[ Y ] <?php echo t('home'); ?> (REBOOT)</a>
+                <!-- Report button removed as requested -->
             </div>
         </div>
     </div>
-    
-    <script>
-        const LANG = "<?php echo $lang; ?>";
-    </script>
-    <script src="/assets/js/terminal.js"></script>
-</body>
-</html>
+</main>
+
+<script>
+    const LANG = "<?php echo $lang; ?>";
+</script>
+<script src="/assets/js/terminal.js"></script>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
