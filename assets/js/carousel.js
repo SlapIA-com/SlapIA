@@ -3,7 +3,7 @@
  * Handles left/right navigation and seamless looping.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initCarousels() {
     const track = document.querySelector('.reviews-track');
     const container = document.querySelector('.reviews-inner');
     const items = document.querySelectorAll('.review-item');
@@ -12,23 +12,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!track || !container || items.length === 0) return;
 
+    // cleanup previous listeners if any (simple approach: clone and replace nodes to strip listeners, or just leave them if they don't leak much)
+    // For now, since Swup replaces the DOM, we don't need to cleanup old listeners on elements that are gone.
+    // BUT if we re-init on the same page (rare), we might double up. 
+    // Since we only call this on contentReplaced (new DOM), it's fine.
+
     // Configuration
-    const itemWidth = 320; // Width of card
-    const gap = 36; // Gap between cards
+    const itemWidth = 320;
+    const gap = 36;
     const totalWidth = itemWidth + gap;
     let isTransitioning = false;
     let autoPlayInterval;
 
-    // Clone items for infinite loop
-    // We need enough clones to fill the screen width at least once
-    const itemsToClone = items.length;
+    // Verify if clones already exist (to prevent double cloning on re-init if keeping DOM)
+    // Swup replaces DOM, so we are fresh.
 
-    // Clone Start (for going left from start) and End (for going right from end)
+    // Clone items
+    const itemsToClone = items.length;
     const clonesStart = [];
     const clonesEnd = [];
 
-    // Simple cloning strategy: clone all items and append/prepend
-    // Ideally we only need a few, but cloning all is safer for small counts
     items.forEach(item => {
         const cloneS = item.cloneNode(true);
         cloneS.classList.add('clone');
@@ -39,18 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clonesEnd.push(cloneE);
     });
 
-    // Append/Prepend clones
     clonesEnd.forEach(clone => track.appendChild(clone));
-    // For prepend, we need to reverse the order to keep sequence correct if we were doing specific logic, 
-    // but here we just want a block of items before. 
-    // Actually, to seemingly go "left" from item 1 to item N, we need item N, N-1... before item 1.
     clonesStart.reverse().forEach(clone => track.insertBefore(clone, track.firstChild));
 
-    // Current Index (visual). 
-    // Original items start at index = items.length (since we prepended items.length clones)
     let currentIndex = items.length;
 
-    // Initial Position
     const updatePosition = (index, animate = true) => {
         if (!animate) {
             track.style.transition = 'none';
@@ -61,10 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         track.style.transform = `translateX(${translateX}px)`;
     };
 
-    // Set initial position without animation
     updatePosition(currentIndex, false);
 
-    // Navigation Logic
     const move = (direction) => {
         if (isTransitioning) return;
         isTransitioning = true;
@@ -78,41 +72,43 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePosition(currentIndex, true);
     };
 
-    // Handle Transition End for Loop Reset
-    track.addEventListener('transitionend', () => {
+    // Use named function for event listener to allow removal if needed
+    const handleTransitionEnd = () => {
         isTransitioning = false;
-
         const totalOriginalItems = items.length;
-
-        // If we moved past the last original item (into end clones)
         if (currentIndex >= totalOriginalItems * 2) {
-            // Jump back to the first original item
             currentIndex = totalOriginalItems;
             updatePosition(currentIndex, false);
         }
-
-        // If we moved before the first original item (into start clones)
         if (currentIndex < totalOriginalItems) {
-            // Jump forward to the last original item
             currentIndex = totalOriginalItems * 2 - 1;
             updatePosition(currentIndex, false);
         }
-    });
+    };
 
-    // Event Listeners
-    if (nextBtn) nextBtn.addEventListener('click', () => {
-        stopAutoPlay();
-        move('next');
-        startAutoPlay();
-    });
+    track.addEventListener('transitionend', handleTransitionEnd);
 
-    if (prevBtn) prevBtn.addEventListener('click', () => {
-        stopAutoPlay();
-        move('prev');
-        startAutoPlay();
-    });
+    if (nextBtn) {
+        // Clone to strip old listeners
+        const newNext = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newNext, nextBtn);
+        newNext.addEventListener('click', () => {
+            stopAutoPlay();
+            move('next');
+            startAutoPlay();
+        });
+    }
 
-    // Auto Play
+    if (prevBtn) {
+        const newPrev = prevBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+        newPrev.addEventListener('click', () => {
+            stopAutoPlay();
+            move('prev');
+            startAutoPlay();
+        });
+    }
+
     const startAutoPlay = () => {
         clearInterval(autoPlayInterval);
         autoPlayInterval = setInterval(() => {
@@ -124,10 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(autoPlayInterval);
     };
 
-    // Start
     startAutoPlay();
 
-    // Pause on hover
     container.addEventListener('mouseenter', stopAutoPlay);
     container.addEventListener('mouseleave', startAutoPlay);
-});
+}
+
+// Auto-init
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCarousels);
+} else {
+    initCarousels();
+}
+
+window.initCarousels = initCarousels;

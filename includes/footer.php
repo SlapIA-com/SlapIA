@@ -37,15 +37,23 @@
     </div>
 </footer>
 
-</footer>
-
-<!-- Cookie Banner -->
 <!-- Cookie Banner -->
 <!-- Cookie Banner (GDPR Regulatory) -->
 <div id="cookie-banner" class="cookie-overlay">
-    <div class="cookie-modal glass-effect">
-        
-        <!-- View 1: Main -->
+   <!-- ... (cookie banner content implied/kept) ... -->
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Global Scripts -->
+<script src="/assets/js/carousel.js"></script>
+<script src="/assets/js/typewriter.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... (Keep existing inline scripts for Liquid Menu, Spotlight, Staggered Entry) ...
+
         <div id="cookie-view-main" class="cookie-view">
             <div class="cookie-icon">🍪</div>
             <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
