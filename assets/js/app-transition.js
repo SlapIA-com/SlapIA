@@ -39,15 +39,38 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Re-init Carousels
         if (window.initCarousels) window.initCarousels();
 
-        // 6. Update Body Class or Active Links
-        // Dock active link update
-        const path = window.location.pathname;
-        document.querySelectorAll('.dock-link').forEach(link => {
+        // 6. Update Active Links
+        const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";
+        const links = document.querySelectorAll('.dock-link');
+        let activeLink = null;
+
+        links.forEach(link => {
             link.classList.remove('active');
-            if (link.getAttribute('href') === path || (path === '/' && link.getAttribute('href') === 'index.php')) {
+            // Normalize link href too
+            const linkHref = link.getAttribute('href').replace(/\/$/, "").replace("/index.php", "") || "/";
+
+            if (linkHref === currentPath) {
                 link.classList.add('active');
+                activeLink = link;
             }
         });
+
+        // 7. Move Pill
+        const pill = document.querySelector('.nav-liquid-pill');
+        const container = document.querySelector('.dock-links-container');
+
+        if (activeLink && pill && container) {
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = activeLink.getBoundingClientRect();
+            const left = elementRect.left - containerRect.left;
+            const width = elementRect.width;
+
+            pill.style.left = left + 'px';
+            pill.style.width = width + 'px';
+            pill.style.opacity = '1';
+        } else if (pill) {
+            pill.style.opacity = '0';
+        }
 
     });
 });

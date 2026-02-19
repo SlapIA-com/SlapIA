@@ -16,14 +16,18 @@ function initScrollReveal() {
     const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
     hiddenElements.forEach((el) => observer.observe(el));
 
-    // Safety fallback: Force visible after 2 seconds if something blocked the observer
+    // Safety fallback: Force visible after 500ms if something blocked the observer
     setTimeout(() => {
         hiddenElements.forEach(el => {
-            if (getComputedStyle(el).opacity === '0') {
+            // Check if still hidden
+            const style = window.getComputedStyle(el);
+            if (style.opacity === '0' || style.visibility === 'hidden') {
                 el.classList.add('is-visible');
+                el.style.opacity = '1'; // Brute force
+                el.style.transform = 'translateY(0) scale(1)';
             }
         });
-    }, 2000);
+    }, 500);
 }
 
 // Auto-init logic
