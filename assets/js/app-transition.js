@@ -23,20 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 2. Re-init Scroll Reveal
-        if (window.initScrollReveal) {
-            window.initScrollReveal();
-        }
+        try {
+            if (window.initScrollReveal) window.initScrollReveal();
+        } catch (e) { console.error("ScrollReveal init failed", e); }
 
         // 3. Re-init Aurora if needed (it is fixed bg, so maybe remains?)
         // Aurora is outside #swup likely, so it stays.
 
         // 4. Re-init Typewriter if on home
-        if (document.getElementById('typewriter-text') && window.initTypewriter) {
-            window.initTypewriter();
-        }
+        try {
+            if (document.getElementById('typewriter-text') && window.initTypewriter) {
+                window.initTypewriter();
+            }
+        } catch (e) { console.error("Typewriter init failed", e); }
 
         // 5. Re-init Carousels
-        if (window.initCarousels) window.initCarousels();
+        try {
+            if (window.initCarousels) window.initCarousels();
+        } catch (e) { console.error("Carousel init failed", e); }
 
         // 6. Update Active Links
         const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";

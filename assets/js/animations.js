@@ -1,5 +1,4 @@
 function initScrollReveal() {
-    // 1. Reset any stuck elements immediately (Swup might have cloned state)
     const allRevealElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
 
     // Create new observer
@@ -11,43 +10,35 @@ function initScrollReveal() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Add class to trigger CSS transition
                 entry.target.classList.add('is-visible');
-                // Stop observing once visible
                 observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
     allRevealElements.forEach((el) => {
-        // Ensure clean state if not already visible (Swup might preserve classes if cached)
-        // If it was already visible in a previous page view (and cache usage), we might want to keep it?
-        // Actually, for a "slide in" feel, we want them to animate again.
-        // But Swup replaces the container, so elements are new.
-
-        // Remove 'is-visible' just in case data was cached improperly or cloned
+        // Prepare element for animation
         el.classList.remove('is-visible');
-
-        // Force opacity 0 via inline style to ensure it starts hidden, then remove it to let CSS take over
-        // el.style.opacity = '0'; 
-        // Actually, CSS handles opacity: 0 by default for these classes.
-
         observer.observe(el);
+
+        // IMMEDIATE CHECK: If element is already in viewport (e.g. top of page), reveal it NOW.
+        // Waiting for observer callback can sometimes delay "above fold" content too much.
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 50) { // Slight buffer
+            el.classList.add('is-visible');
+            observer.unobserve(el);
+        }
     });
 
-    // Safety fallback: Ensure everything is visible after a safe delay
-    // This catches cases where IntersectionObserver fails or elements are stuck
+    // Safety fallback: Force visible after 500ms
     setTimeout(() => {
         allRevealElements.forEach(el => {
             if (!el.classList.contains('is-visible')) {
-                // Check if it's actually in viewport
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight) {
-                    el.classList.add('is-visible');
-                }
+                // If reasonably close to viewport or simply standard fallback
+                el.classList.add('is-visible');
             }
         });
-    }, 1000); // 1s fallback
+    }, 500);
 }
 
 // Auto-init logic
