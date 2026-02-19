@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Re-initialize scripts after content replacement
-    swup.on('contentReplaced', function () {
+    swup.hooks.on('content:replace', function () {
         // 1. Re-init Mobile Menu
         const menuBtn = document.querySelector('.mobile-menu-btn');
         if (menuBtn) {

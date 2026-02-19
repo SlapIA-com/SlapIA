@@ -30,6 +30,7 @@ try {
 
     // Start session to uniquely identify the browser/device
     if (session_status() === PHP_SESSION_NONE) {
+        // Suppress warnings if headers already sent (though we are at top)
         @session_start();
     }
 
