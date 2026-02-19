@@ -40,58 +40,60 @@
 <!-- Cookie Banner -->
 <!-- Cookie Banner (GDPR Regulatory) -->
 <div id="cookie-banner" class="cookie-overlay">
-    <!-- View 1: Main -->
-    <div id="cookie-view-main" class="cookie-view">
-        <div class="cookie-icon">🍪</div>
-        <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
-        <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
-        
-        <div class="cookie-actions">
-            <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
-            <button id="cookie-deny-all" class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
-            <button id="cookie-customize" class="cookie-link-btn"><?php echo t('cookie_customize'); ?></button>
-        </div>
-        
-        <div class="mt-3">
-            <a href="/mentions-legales#privacy" class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
-        </div>
-    </div>
-
-    <!-- View 2: Preferences -->
-    <div id="cookie-view-preferences" class="cookie-view hidden">
-        <div class="d-flex align-items-center mb-4">
-            <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3" style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none;"><i class="fas fa-arrow-left"></i></button>
-            <h3 class="cookie-title mb-0 text-start"><?php echo t('cookie_preferences_title'); ?></h3>
+    <div class="cookie-modal">
+        <!-- View 1: Main -->
+        <div id="cookie-view-main" class="cookie-view">
+            <div class="cookie-icon">🍪</div>
+            <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
+            <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
+            
+            <div class="cookie-actions">
+                <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
+                <button id="cookie-deny-all" class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
+                <button id="cookie-customize" class="cookie-link-btn"><?php echo t('cookie_customize'); ?></button>
+            </div>
+            
+            <div class="mt-3">
+                <a href="/mentions-legales#privacy" class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
+            </div>
         </div>
 
-        <div class="cookie-preferences-list">
-            <!-- Necessary -->
-            <div class="cookie-preference-item">
-                <div class="cookie-pref-info text-start">
-                    <h4><?php echo t('cookie_necessary_title'); ?></h4>
-                    <p><?php echo t('cookie_necessary_desc'); ?></p>
-                </div>
-                <label class="cookie-toggle">
-                    <input type="checkbox" checked disabled>
-                    <span class="cookie-slider"></span>
-                </label>
+        <!-- View 2: Preferences -->
+        <div id="cookie-view-preferences" class="cookie-view hidden">
+            <div class="d-flex align-items-center mb-4">
+                <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3" style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;"><i class="fas fa-arrow-left"></i></button>
+                <h3 class="cookie-title mb-0 text-start" style="font-size: 1.25rem;"><?php echo t('cookie_preferences_title'); ?></h3>
             </div>
 
-            <!-- Preferences (Language) -->
-            <div class="cookie-preference-item">
-                <div class="cookie-pref-info text-start">
-                    <h4><?php echo t('cookie_preferences_category_title'); ?></h4>
-                    <p><?php echo t('cookie_preferences_category_desc'); ?></p>
+            <div class="cookie-preferences-list">
+                <!-- Necessary -->
+                <div class="cookie-preference-item">
+                    <div class="cookie-pref-info text-start">
+                        <h4><?php echo t('cookie_necessary_title'); ?></h4>
+                        <p><?php echo t('cookie_necessary_desc'); ?></p>
+                    </div>
+                    <label class="cookie-toggle">
+                        <input type="checkbox" checked disabled>
+                        <span class="cookie-slider"></span>
+                    </label>
                 </div>
-                <label class="cookie-toggle">
-                    <input type="checkbox" id="cookie-toggle-preferences" checked>
-                    <span class="cookie-slider"></span>
-                </label>
+
+                <!-- Preferences (Language) -->
+                <div class="cookie-preference-item">
+                    <div class="cookie-pref-info text-start">
+                        <h4><?php echo t('cookie_preferences_category_title'); ?></h4>
+                        <p><?php echo t('cookie_preferences_category_desc'); ?></p>
+                    </div>
+                    <label class="cookie-toggle">
+                        <input type="checkbox" id="cookie-toggle-preferences" checked>
+                        <span class="cookie-slider"></span>
+                    </label>
+                </div>
+
             </div>
 
+            <button id="cookie-save" class="cookie-btn cookie-btn-primary mt-2"><?php echo t('cookie_save'); ?></button>
         </div>
-
-        <button id="cookie-save" class="cookie-btn cookie-btn-primary mt-2"><?php echo t('cookie_save'); ?></button>
     </div>
 </div>
 
