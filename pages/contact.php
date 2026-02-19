@@ -166,6 +166,9 @@ include '../includes/header.php'; ?>
                             <div class="col-12">
                                 <label for="message" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo t('message'); ?></label>
                                 <textarea id="message" name="message" required minlength="20" placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" rows="4" style="background: rgba(255,255,255,0.02) !important;"></textarea>
+                                <div class="d-flex justify-content-end mt-1">
+                                    <small id="charCount" class="text-secondary" style="font-size: 0.8rem; opacity: 0.7;">0 / 20 min</small>
+                                </div>
                             </div>
                             <div class="col-12 mt-4">
                                 <!-- Cloudflare Turnstile (Visible Security) -->
@@ -329,6 +332,28 @@ document.getElementById('contactForm').addEventListener('submit', async function
         btnLoader.classList.add('d-none');
     }
 });
+
+// Character Counter Logic
+const messageInput = document.getElementById('message');
+const charCountDisplay = document.getElementById('charCount');
+const minLength = 20;
+
+if (messageInput && charCountDisplay) {
+    messageInput.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCountDisplay.textContent = `${currentLength} / ${minLength} min`;
+        
+        if (currentLength >= minLength) {
+            charCountDisplay.classList.remove('text-secondary');
+            charCountDisplay.classList.add('text-success');
+            charCountDisplay.style.fontWeight = 'bold';
+        } else {
+            charCountDisplay.classList.add('text-secondary');
+            charCountDisplay.classList.remove('text-success');
+            charCountDisplay.style.fontWeight = 'normal';
+        }
+    });
+}
 </script>
 
 <?php include '../includes/footer.php'; ?>
