@@ -2,77 +2,115 @@ document.addEventListener('DOMContentLoaded', () => {
     const output = document.getElementById('terminal-output');
     const buttons = document.getElementById('choice-buttons');
     const inputLine = document.querySelector('.input-line');
+    const promptSpan = inputLine.querySelector('.prompt');
+    const cursor = inputLine.querySelector('.cursor');
 
-    // Dialogues
-    const linesFR = [
-        { text: "Microsoft Windows [Version 10.0.19045.3693]", delay: 100 },
-        { text: "(c) Microsoft Corporation. All rights reserved.", delay: 300 },
-        { text: "", delay: 500 },
-        { text: "C:\\Users\\Visitor> python3 connect_neural_link.py", delay: 1000, type: true },
-        { text: "Initialisation du Core IA...", delay: 2000, color: "text-white" },
-        { text: "Connexion établie.", delay: 3000, color: "text-green" },
-        { text: "", delay: 3200 },
-        { text: "ERREUR 404 : PAGE INTROUVABLE", delay: 3500, color: "text-red" },
-        { text: "Analyse du problème en cours...", delay: 4000 },
-        { text: "[WARNING] L'utilisateur semble perdu dans le cyberespace.", delay: 5000, color: "text-yellow" },
-        { text: "SlapIA Assistant : \"Ne vous inquiétez pas. C'est juste un glitch dans la matrice.\"", delay: 6500, color: "text-white" },
-        { text: "Voulez-vous retourner à la réalité ?", delay: 8000 }
-    ];
+    // Content configuration
+    const config = {
+        fr: {
+            header: [
+                "Microsoft Windows [Version 10.0.19045.3693]",
+                "(c) Microsoft Corporation. All rights reserved."
+            ],
+            command: "python3 connect_neural_link.py",
+            logs: [
+                { text: "Initialisation du Core IA...", delay: 800, color: "text-white" },
+                { text: "Chargement des modules cognitifs...", delay: 400 },
+                { text: "Connexion à la base de connaissances...", delay: 400 },
+                { text: "ERREUR CRITIQUE : CHEMIN INTROUVABLE (404)", delay: 600, color: "text-red" },
+                { text: "Analyse de la singularité...", delay: 1000 },
+                { text: "[WARNING] L'utilisateur a dérivé hors du spectre connu.", delay: 800, color: "text-yellow" },
+                { text: "SlapIA Security : \"Ne panequez pas. Ce n'est qu'un pixel mort.\"", delay: 1500, color: "text-green" }
+            ]
+        },
+        en: {
+            header: [
+                "Microsoft Windows [Version 10.0.19045.3693]",
+                "(c) Microsoft Corporation. All rights reserved."
+            ],
+            command: "python3 connect_neural_link.py",
+            logs: [
+                { text: "Initializing AI Core...", delay: 800, color: "text-white" },
+                { text: "Loading cognitive modules...", delay: 400 },
+                { text: "Connecting to knowledge base...", delay: 400 },
+                { text: "CRITICAL ERROR : PATH NOT FOUND (404)", delay: 600, color: "text-red" },
+                { text: "Analyzing singularity...", delay: 1000 },
+                { text: "[WARNING] User has drifted outside known spectrum.", delay: 800, color: "text-yellow" },
+                { text: "SlapIA Security : \"Don't panic. It's just a dead pixel.\"", delay: 1500, color: "text-green" }
+            ]
+        }
+    };
 
-    const linesEN = [
-        { text: "Microsoft Windows [Version 10.0.19045.3693]", delay: 100 },
-        { text: "(c) Microsoft Corporation. All rights reserved.", delay: 300 },
-        { text: "", delay: 500 },
-        { text: "C:\\Users\\Visitor> python3 connect_neural_link.py", delay: 1000, type: true },
-        { text: "Initializing AI Core...", delay: 2000, color: "text-white" },
-        { text: "Connection established.", delay: 3000, color: "text-green" },
-        { text: "", delay: 3200 },
-        { text: "ERROR 404 : PAGE NOT FOUND", delay: 3500, color: "text-red" },
-        { text: "Analyzing issue...", delay: 4000 },
-        { text: "[WARNING] User appears lost in cyberspace.", delay: 5000, color: "text-yellow" },
-        { text: "SlapIA Assistant : \"Don't worry. It's just a glitch in the matrix.\"", delay: 6500, color: "text-white" },
-        { text: "Do you want to return to reality?", delay: 8000 }
-    ];
+    const currentLang = (typeof LANG !== 'undefined' && LANG === 'en') ? 'en' : 'fr';
+    const data = config[currentLang];
 
-    const lines = (typeof LANG !== 'undefined' && LANG === 'en') ? linesEN : linesFR;
+    // Helper: Wait function
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    let totalDelay = 0;
-
-    lines.forEach((line, index) => {
-        setTimeout(() => {
-            const p = document.createElement('p');
-            if (line.color) p.classList.add(line.color);
-
-            if (line.type) {
-                // Simulate typing input command
-                inputLine.style.display = 'block';
-                typeWriter(inputLine.querySelector('.prompt'), line.text, 50, () => {
-                    inputLine.style.display = 'none'; // Hide input line effectively after type
-                    p.textContent = line.text;
-                    output.appendChild(p);
-                });
-            } else {
-                p.textContent = line.text;
-                output.appendChild(p);
-                window.scrollTo(0, document.body.scrollHeight);
-            }
-        }, line.delay);
-        totalDelay = Math.max(totalDelay, line.delay);
-    });
-
-    // Show buttons at the end
-    setTimeout(() => {
-        buttons.classList.remove('hidden');
-        // Small reflow to trigger transition
-        void buttons.offsetWidth;
-        buttons.classList.add('visible');
-    }, totalDelay + 500);
-
-    // Simple Typewriter helper (not used for main texts to save time, only simulating input)
-    function typeWriter(element, text, speed, callback) {
-        // Not implemented fully here for simplicity in this simplified script
-        // We just pretend for the command line part if needed, 
-        // but for now the script above appends lines. 
-        // To make it cooler, we can just append.
+    // Helper: Typewriter effect
+    async function typeText(element, text, speed = 50) {
+        for (let char of text) {
+            element.textContent += char;
+            await wait(speed + (Math.random() * 20)); // Subtle typing variance
+        }
     }
+
+    // Helper: Append log line
+    function appendLog(text, color) {
+        const p = document.createElement('p');
+        p.textContent = text;
+        if (color) p.classList.add(color);
+        output.appendChild(p);
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Main Sequence
+    async function runSequence() {
+        // 1. Static Header
+        for (let line of data.header) {
+            appendLog(line, 'text-secondary');
+            await wait(200);
+        }
+        await wait(500);
+
+        // 2. Command Line Typing
+        inputLine.style.display = 'block'; // Show "C:\Users... >"
+        await wait(500);
+
+        // Remove the default prompt text from HTML if we want to type it, 
+        // OR just type the command AFTER the prompt. 
+        // HTML has: <span class="prompt">C:\Users\Visitor></span><span class="cursor">_</span>
+        // We will type into a new span or just append text node before cursor.
+        const cmdSpan = document.createElement('span');
+        // Insert before cursor
+        inputLine.insertBefore(cmdSpan, cursor);
+
+        await typeText(cmdSpan, data.command, 40);
+        await wait(300);
+
+        // "Enter" key simulation
+        inputLine.style.display = 'none'; // Hide the active input line
+        // Append the full command line to history
+        const historyLine = document.createElement('p');
+        historyLine.textContent = `C:\\Users\\Visitor> ${data.command}`;
+        output.appendChild(historyLine);
+
+        await wait(500);
+
+        // 3. System Logs
+        for (let log of data.logs) {
+            appendLog(log.text, log.color);
+            await wait(log.delay);
+        }
+
+        // 4. Show Buttons
+        await wait(1000);
+        buttons.classList.remove('hidden');
+        void buttons.offsetWidth; // force reflow
+        buttons.classList.add('visible');
+    }
+
+    // Start
+    runSequence();
+
 });
