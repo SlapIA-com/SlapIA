@@ -1,8 +1,6 @@
 <?php
 include_once __DIR__ . '/includes/config.php';
 include_once __DIR__ . '/includes/lang.php';
-include_once __DIR__ . '/includes/config.php';
-include_once __DIR__ . '/includes/lang.php';
 // Fallback if lang not set
 if (!isset($lang))
     $lang = 'fr';

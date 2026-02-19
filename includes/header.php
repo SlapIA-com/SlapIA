@@ -198,28 +198,7 @@ if (strpos($meta_image, 'http') === false) {
 
 <?php // Loader removed as per user request ?>
 
-<script>
-    // Scroll Reveal - Global
-    document.addEventListener('DOMContentLoaded', function() {
-        // ... (Keep existing intersection observer logic) ...
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -20px 0px'
-        };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
-        hiddenElements.forEach((el) => observer.observe(el));
-    });
-</script>
 
 <!-- The Aurora Background -->
 <div class="aurora-bg">

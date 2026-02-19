@@ -24,16 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 2. Re-init Scroll Reveal
-        const hiddenElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    // observer.unobserve(entry.target); 
-                }
-            });
-        }, { threshold: 0.1 });
-        hiddenElements.forEach((el) => observer.observe(el));
+        if (window.initScrollReveal) {
+            window.initScrollReveal();
+        }
 
         // 3. Re-init Aurora if needed (it is fixed bg, so maybe remains?)
         // Aurora is outside #swup likely, so it stays.
