@@ -1,0 +1,257 @@
+/* 404 Error Page - Premium Style */
+
+body.error-404 {
+    overflow: hidden;
+    /* Prevent scrolling if possible */
+    background: #050505;
+}
+
+.error-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Background Gradients */
+.error-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.error-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: floatBlob 10s infinite alternate;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: #7000ff;
+}
+
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: #bf5af2;
+    animation-delay: -5s;
+}
+
+@keyframes floatBlob {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(30px, 50px);
+    }
+}
+
+/* Large 404 Text */
+.big-404 {
+    font-size: 15vw;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2rem;
+    background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0.1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
+    user-select: none;
+    text-shadow: 0 0 50px rgba(191, 90, 242, 0.2);
+}
+
+/* Mini CMD Window */
+.mini-cmd-window {
+    width: 90%;
+    max-width: 600px;
+    height: 350px;
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(0, 0, 0, 0.5);
+    /* Outer stroke */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.5s;
+    transition: transform 0.3s ease;
+}
+
+.mini-cmd-window:hover {
+    transform: translateY(25px) scale(1.01);
+    border-color: rgba(191, 90, 242, 0.3);
+}
+
+/* Window Header */
+.cmd-header {
+    height: 36px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+}
+
+.cmd-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-red {
+    background: #ff5f56;
+}
+
+.dot-yellow {
+    background: #ffbd2e;
+}
+
+.dot-green {
+    background: #27c93f;
+}
+
+.cmd-title {
+    flex-grow: 1;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    font-family: monospace;
+    margin-right: 42px;
+    /* Balance the dots */
+}
+
+/* CMD Content */
+.cmd-body {
+    flex-grow: 1;
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.95rem;
+    color: #eee;
+    overflow-y: auto;
+    text-align: left;
+    /* Ensure left alignment */
+}
+
+.cmd-line {
+    margin-bottom: 4px;
+    line-height: 1.4;
+    word-break: break-all;
+}
+
+.cmd-input-area {
+    display: flex;
+    margin-top: 10px;
+    color: #bf5af2;
+    /* Purple prompt */
+}
+
+.cmd-prompt {
+    margin-right: 8px;
+}
+
+.cmd-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 18px;
+    background: #bf5af2;
+    margin-left: 2px;
+    vertical-align: middle;
+    opacity: 0;
+}
+
+.cmd-cursor.blinking {
+    animation: blink 1s infinite step-end;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Home Button */
+.return-home-btn {
+    margin-top: 40px;
+    padding: 12px 30px;
+    border-radius: 30px;
+    background: white;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 4s;
+    /* Show after typing mostly done */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.return-home-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .big-404 {
+        font-size: 25vw;
+    }
+
+    .mini-cmd-window {
+        height: 300px;
+        width: 95%;
+    }
+}
