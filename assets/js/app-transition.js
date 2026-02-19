@@ -32,10 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Aurora is outside #swup likely, so it stays.
 
         // 4. Re-init Typewriter if on home
-        if (document.getElementById('typewriter-text')) {
-            // Assuming typewriter.js exposes a global init function or just re-run it
-            // Better: reload the script or extract logic to a function
-            if (window.initTypewriter) window.initTypewriter();
+        if (document.getElementById('typewriter-text') && window.initTypewriter) {
+            window.initTypewriter();
         }
 
         // 5. Re-init Carousels
