@@ -33,6 +33,24 @@
     --text-tertiary: #6e6e73;
 }
 
+/* Accessibility: Focus Styles */
+:focus-visible {
+    outline: 2px solid var(--accent-purple);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.btn-apple:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dock-link:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
 html,
 body {
     max-width: 100%;

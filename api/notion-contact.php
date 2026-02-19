@@ -45,6 +45,40 @@ try {
     $message = $input['message'] ?? '';
     $honeypot = $input['website_check'] ?? '';
 
+    // --- Rate Limiting (5 requests / hour / IP) --- 
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $rateLimitFile = sys_get_temp_dir() . '/slapia_ratelimit_' . md5($ip) . '.json';
+    $limitTime = 3600; // 1 hour
+    $maxRequests = 5;
+
+    $rateData = ['count' => 0, 'startTime' => time()];
+    if (file_exists($rateLimitFile)) {
+        $json = json_decode(file_get_contents($rateLimitFile), true);
+        if ($json) {
+            if (time() - $json['startTime'] < $limitTime) {
+                $rateData = $json;
+            }
+            else {
+                // Reset after 1 hour
+                $rateData = ['count' => 0, 'startTime' => time()];
+            }
+        }
+    }
+
+    if ($rateData['count'] >= $maxRequests) {
+        ob_clean();
+        http_response_code(429); // Too Many Requests
+        echo json_encode(['success' => false, 'error' => 'Trop de tentatives. Veuillez réessayer plus tard.']);
+        exit;
+    }
+
+    // Increment and save (only if not honeycomb)
+    if (empty($honeypot)) {
+        $rateData['count']++;
+        file_put_contents($rateLimitFile, json_encode($rateData));
+    }
+    // ----------------------------------------------
+
     // Honeypot Spam Check
     if (!empty($honeypot)) {
         ob_clean();

@@ -280,7 +280,7 @@ endif; ?>
 <!-- Floating Dock Navbar -->
 <nav class="dock-nav">
     <a href="/" class="dock-brand">
-        <img src="/assets/img/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;"> SlapIA
+        <img src="/assets/img/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy"> SlapIA
     </a>
     
     <!-- Right: Navigation & Action -->

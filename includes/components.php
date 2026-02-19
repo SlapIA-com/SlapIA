@@ -116,4 +116,124 @@ function render_stars_html($note)
         $out .= '<i class="far fa-star"></i>';
     return $out;
 }
+/**
+ * Renders the Satisfaction Stats Card
+ */
+function render_satisfaction_card($stats, $lang = 'fr')
+{
+    $percent = $stats['pourcentage'];
+    $strokeOffset = $percent !== 'N.A' ? (339.292 - (339.292 * $percent / 100)) : 339.292;
 ?>
+    <div class="bento-card span-4 d-flex flex-column justify-content-center align-items-center text-center position-relative scroll-scale delay-100">
+        <div class="position-relative mb-3">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--accent-purple)" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="<?php echo $strokeOffset; ?>" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="position-absolute top-50 start-50 translate-middle">
+                <span class="h2 fw-bold m-0 d-block text-white"><?php echo $percent !== 'N.A' ? $percent . '%' : 'N.A'; ?></span>
+            </div>
+        </div>
+        <h5 class="text-white"><?php echo t('satisfaction'); ?></h5>
+        <p class="text-secondary small mb-2">
+            <?php
+    if ($stats['nombre'] > 0) {
+        $nombre = (int)$stats['nombre'];
+        if ($lang === 'en') {
+            echo $nombre >= 500 ? '+' . number_format($nombre, 0, '.', ',') . ' learners trained' : 'Based on ' . number_format($nombre, 0, '.', ',') . ' reviews';
+        }
+        else {
+            echo $nombre >= 500 ? '+' . number_format($nombre, 0, ',', ' ') . ' apprenants formés' : 'Basé sur ' . number_format($nombre, 0, ',', ' ') . ' avis';
+        }
+    }
+    else {
+        echo t('based_on_learners');
+    }
+?>
+        </p>
+        <small class="text-secondary-50 mt-2 d-block opacity-50" style="font-size: 0.7rem;">
+            <i class="fas fa-clock"></i> <?php echo t('last_updated'); ?> <?php echo date('H:i'); ?>
+        </small>
+    </div>
+    <?php
+}
+
+/**
+ * Renders the Reviews Section (Marquee)
+ */
+function render_reviews_section($reviews)
+{
+    if (empty($reviews))
+        return;
+?>
+    <div class="bento-card span-12 scroll-scale delay-200" style="padding:18px 24px;">
+        <div class="d-flex align-items-center justify-content-end mb-3">
+             <div class="reviews-navigation">
+                 <button id="prev-review" class="nav-btn" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+                 <button id="next-review" class="nav-btn" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+             </div>
+        </div>
+        <div class="reviews-marquee">
+            <div class="reviews-inner">
+                <div class="reviews-track">
+                <?php foreach ($reviews as $r):
+        $prenom = htmlspecialchars($r['prenom'] ?? '');
+        $nom = htmlspecialchars($r['nom'] ?? '');
+        $prof = htmlspecialchars($r['profession'] ?? '');
+        $avis = htmlspecialchars($r['avis'] ?? '');
+        $note = isset($r['note']) ? floatval($r['note']) : 0;
+        $photo = $r['photo'] ?? null;
+        $linkedin = $r['linkedin'] ?? '';
+        $name = trim($prenom . ' ' . $nom);
+        $initials = strtoupper(($prenom ? $prenom[0] : '') . ($nom ? $nom[0] : ''));
+        if (empty($avis))
+            continue;
+?>
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-avatar">
+                                <?php if ($photo): ?>
+                                    <img src="<?php echo htmlspecialchars($photo); ?>" alt="<?php echo $name; ?>" loading="lazy"/>
+                                <?php
+        else: ?>
+                                    <?php echo $initials; ?>
+                                <?php
+        endif; ?>
+                            </div>
+                            <div class="review-info">
+                                <?php if (!empty($linkedin)): ?>
+                                    <a href="<?php echo htmlspecialchars($linkedin); ?>" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none hover-underline">
+                                        <strong><?php echo $name; ?></strong>
+                                    </a>
+                                <?php
+        else: ?>
+                                    <strong><?php echo $name; ?></strong>
+                                <?php
+        endif; ?>
+                                
+                                <?php if (!empty($prof)): ?>
+                                    <div class="profession">
+                                        <?php
+            echo $prof;
+            if (isset($r['status']) && $r['status'] === 'Entreprise' && !empty($r['entreprise'])) {
+                echo ' <span class="company-name">chez ' . htmlspecialchars($r['entreprise']) . '</span>';
+            }
+?>
+                                    </div>
+                                <?php
+        endif; ?>
+                            </div>
+                        </div>
+                        <div class="review-content-scroll">
+                            <p class="review-text"><?php echo $avis; ?></p>
+                        </div>
+                        <div class="review-stars"><?php echo function_exists('render_stars_html') ? render_stars_html($note) : ''; ?></div>
+                    </div>
+                <?php
+    endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
