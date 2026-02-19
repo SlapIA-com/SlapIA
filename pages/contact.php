@@ -165,7 +165,7 @@ include '../includes/header.php'; ?>
                             </div>
                             <div class="col-12">
                                 <label for="message" class="text-secondary small fw-bold mb-2 text-uppercase"><?php echo t('message'); ?></label>
-                                <textarea id="message" name="message" required placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" rows="4" style="background: rgba(255,255,255,0.02) !important;"></textarea>
+                                <textarea id="message" name="message" required minlength="20" placeholder=" " class="form-control bg-transparent text-white border-secondary border-opacity-25 rounded-3 py-3" rows="4" style="background: rgba(255,255,255,0.02) !important;"></textarea>
                             </div>
                             <div class="col-12 mt-4">
                                 <!-- Cloudflare Turnstile (Visible Security) -->
@@ -259,6 +259,21 @@ document.getElementById('contactForm').addEventListener('submit', async function
         // Submitted too fast (< 3 seconds)
         console.log('Spam detected (too fast)');
         showToast(<?php echo json_encode(t('toast_wait')); ?>, true);
+        return;
+    }
+
+    // Content Security Check
+    const messageContent = document.getElementById('message').value.toLowerCase();
+    const forbiddenWords = ['caca', 'connard', 'pute', 'salope', 'batard', 'encule', 'merde', 'chiotte', 'bite', 'couille'];
+    const hasForbiddenWord = forbiddenWords.some(word => messageContent.includes(word));
+
+    if (hasForbiddenWord) {
+        showToast("Veuillez rester poli et professionnel.", true);
+        return;
+    }
+
+    if (messageContent.length < 20) {
+        showToast("Votre message est trop court (min. 20 caractères).", true);
         return;
     }
 

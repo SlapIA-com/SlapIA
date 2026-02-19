@@ -92,13 +92,26 @@ try {
         }
     }
 
-    if (!empty($honeypot)) {
+
+    // Content Security Check
+    $messageContent = strtolower($message);
+    $forbiddenWords = ['caca', 'connard', 'pute', 'salope', 'batard', 'encule', 'merde', 'chiotte', 'bite', 'couille'];
+    foreach ($forbiddenWords as $word) {
+        if (strpos($messageContent, $word) !== false) {
+            ob_clean();
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Veuillez rester poli et professionnel.']);
+            exit;
+        }
+    }
+
+    if (strlen($message) < 20) {
         ob_clean();
-        // Return success to fool the bot, but do nothing
-        http_response_code(200);
-        echo json_encode(['success' => true, 'message' => 'Message sent successfully']);
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Votre message est trop court (min. 20 caractères).']);
         exit;
     }
+
 
     // Validation
     if (empty($prenom) || empty($nom) || empty($email) || empty($message)) {
