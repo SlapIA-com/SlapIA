@@ -63,10 +63,10 @@ include '../includes/header.php'; ?>
                 <table class="table text-white mb-0" style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
                     <thead>
                         <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
-                            <th class="py-3 ps-0">Module</th>
-                            <th class="py-3">Thématique</th>
-                            <th class="py-3">Ce que vous allez faire</th>
-                            <th class="py-3 text-end pe-0">Outil(s)</th>
+                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
+                            <th class="py-3"><?php echo t('thematique'); ?></th>
+                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
+                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,9 +120,9 @@ include '../includes/header.php'; ?>
                     <thead>
                         <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
                             <th class="py-3 ps-0"><?php echo t('module'); ?></th>
-                            <th class="py-3">Thématique</th>
+                            <th class="py-3"><?php echo t('thematique'); ?></th>
                             <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
-                            <th class="py-3 text-end pe-0">Outil(s)</th>
+                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
                         </tr>
                     </thead>
                     <tbody>

@@ -243,6 +243,8 @@
     "vip_mentoring": "Mentorat VIP 1-to-1, visio quotidienne, aide technique personnalisée.",
     "vip_title_prefix": "On ne vous lâche pas.",
     "vscode_desc": "L'environnement de développement (IDE) est VS Code, optimisé avec des extensions IA (Github Copilot). L'architecture suit le modèle MVC (Modèle-Vue-Contrôleur) pour séparer la logique, les données et l'affichage. Le routage est dynamique et les assets sont versionnés.",
+    "thematique": "Thématique",
+    "tools": "Outil(s)",
     "what_you_will_do": "Ce que vous allez faire",
     "your_email": "Votre email",
     "your_name": "Votre nom",
