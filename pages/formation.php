@@ -69,6 +69,7 @@ include '../includes/header.php'; ?>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="#niveau1" class="btn btn-outline-primary rounded-pill px-4"><?php echo t('level_1'); ?></a>
                 <a href="#niveau2" class="btn btn-outline-info rounded-pill px-4"><?php echo t('level_2'); ?></a>
+                <a href="#niveau3" class="btn btn-outline-warning rounded-pill px-4"><?php echo t('level_3'); ?></a>
                 <a href="#formation" class="btn btn-outline-light rounded-pill px-4"><?php echo t('vip_coaching'); ?></a>
             </div>
         </div>
@@ -182,6 +183,69 @@ include '../includes/header.php'; ?>
                             <td class="py-4 text-white"><?php echo t('m4_level2_theme'); ?></td>
                             <td class="py-4"><?php echo t('m4_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-10">Logic</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Niveau 3 -->
+        <div id="niveau3" class="bento-card p-4 p-md-5 mb-5">
+            <div class="d-flex align-items-center gap-4 mb-4">
+                <div class="d-flex justify-content-center align-items-center text-white rounded-3 fw-bold" style="width: 60px; height: 60px; font-size: 2rem; background: linear-gradient(135deg, #f59e0b, #ef4444);"><?php echo t('level_3_number'); ?></div>
+                <div>
+                    <h2 class="text-white mb-1"><?php echo t('level_3_title'); ?></h2>
+                    <p class="text-secondary mb-0"><?php echo t('level_3_subtitle'); ?></p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table text-white mb-0" style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
+                    <thead>
+                        <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
+                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
+                            <th class="py-3"><?php echo t('thematique'); ?></th>
+                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
+                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- M1 -->
+                        <tr class="align-middle border-bottom border-light border-opacity-10">
+                            <td class="py-4 ps-0 fw-bold text-white">M1</td>
+                            <td class="py-4 text-white"><?php echo t('m1_level3_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m1_level3_desc'); ?></td>
+                            <td class="py-4 text-end pe-0">
+                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">n8n</span>
+                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">Make</span>
+                            </td>
+                        </tr>
+                        <!-- M2 -->
+                        <tr class="align-middle border-bottom border-light border-opacity-10">
+                            <td class="py-4 ps-0 fw-bold text-white">M2</td>
+                            <td class="py-4 text-white"><?php echo t('m2_level3_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m2_level3_desc'); ?></td>
+                            <td class="py-4 text-end pe-0">
+                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">n8n</span>
+                            </td>
+                        </tr>
+                        <!-- M3 -->
+                        <tr class="align-middle border-bottom border-light border-opacity-10">
+                            <td class="py-4 ps-0 fw-bold text-white">M3</td>
+                            <td class="py-4 text-white"><?php echo t('m3_level3_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m3_level3_desc'); ?></td>
+                            <td class="py-4 text-end pe-0">
+                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">Make</span>
+                            </td>
+                        </tr>
+                        <!-- M4 -->
+                        <tr class="align-middle border-bottom border-light border-opacity-10">
+                            <td class="py-4 ps-0 fw-bold text-white">M4</td>
+                            <td class="py-4 text-white"><?php echo t('m4_level3_theme'); ?></td>
+                            <td class="py-4"><?php echo t('m4_level3_desc'); ?></td>
+                            <td class="py-4 text-end pe-0">
+                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Synthèse</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
