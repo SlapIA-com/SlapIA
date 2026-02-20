@@ -97,30 +97,20 @@ if (function_exists('getNotionReviews')) {
 render_reviews_section($reviews);
 ?>
 
-            <!-- Bottom Row Cards - 3 Parcours -->
+            <!-- Bottom Row Cards - 2 Parcours -->
             <?php
 render_feature_card(
-    'span-4 scroll-scale',
-    'fas fa-seedling',
+    'span-6 scroll-scale',
+    'fas fa-building',
     'text-primary',
     'background: rgba(41, 151, 255, 0.1);',
-    'level_1_foundations',
-    'discover_ai',
-['url' => 'formation#niveau1', 'text_key' => 'learn_more']
-);
-
-render_feature_card(
-    'span-4 scroll-scale delay-100',
-    'fas fa-rocket',
-    'text-info',
-    'background: rgba(13, 202, 240, 0.1);',
-    'level_2_expert',
-    'advanced_connections',
-['url' => 'formation#niveau2', 'text_key' => 'learn_more']
+    'training_for_companies',
+    'train_teams',
+['url' => 'entreprises', 'text_key' => 'learn_more']
 );
 ?>
 
-            <div class="bento-card span-4 d-flex flex-column justify-content-between scroll-scale delay-200" style="background: linear-gradient(135deg, var(--accent-purple), #7000ff);">
+            <div class="bento-card span-6 d-flex flex-column justify-content-between scroll-scale delay-100" style="background: linear-gradient(135deg, var(--accent-purple), #7000ff);">
                 <div>
                     <div class="icon-box text-white border-0 mb-3" style="background: rgba(255,255,255,0.2);">
                         <i class="fas fa-user-tie"></i>
