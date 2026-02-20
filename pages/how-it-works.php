@@ -6,7 +6,37 @@ $page_title = t('how_it_works') . " - SlapIA";
 $page_description = t('tech_stack_desc');
 $page_image = '/assets/img/logo.png';
 include '../includes/header.php'; ?>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Comment fonctionne SlapIA — Stack Technique",
+  "description": "Découvrez la stack technique de SlapIA : PHP, Notion comme CMS, n8n pour l'automatisation IA, et les agents autonomes.",
+  "url": "https://www.slapia.com/how-it-works",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Stack Technique PHP & VS Code",
+      "text": "Le site est construit avec PHP vanilla, structuré et déployé via VS Code et Git."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Notion comme CMS headless",
+      "text": "Les avis clients et données de satisfaction sont stockés dans Notion et récupérés via l'API Notion en temps réel."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Agent IA Autonome n8n",
+      "text": "Un agent IA (Gemini Pro) orchestre les automatisations via n8n : qualification des prospects, réponses automatiques et synchronisation CRM."
+    }
+  ]
+}
+</script>
+
 <?php include '../includes/components.php'; ?>
+
+
 
 <section class="py-5 mt-5">
     <div class="container">

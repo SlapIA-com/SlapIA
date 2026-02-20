@@ -10,6 +10,29 @@ include '../includes/header.php';
 include '../includes/components.php';
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Formation IA pour Entreprises — SlapIA",
+  "description": "Formations sur-mesure en intelligence artificielle pour équipes et entreprises. Audit IA, déploiement d'agents autonomes, accompagnement transformation digitale.",
+  "provider": {
+    "@type": "Organization",
+    "name": "SlapIA",
+    "url": "https://www.slapia.com"
+  },
+  "serviceType": ["Formation IA B2B", "Audit IA", "Automatisation", "Conseil IT"],
+  "areaServed": "FR",
+  "url": "https://www.slapia.com/entreprises",
+  "offers": {
+    "@type": "Offer",
+    "category": "B2B"
+  }
+}
+</script>
+
+
+
 <section class="py-5 mt-5">
     <div class="container">
         <div class="row justify-content-center text-center mb-5">

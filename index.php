@@ -6,7 +6,7 @@ $page_description = t('meta_description');
 $page_image = '/assets/img/logo.png';
 include 'includes/header.php';
 include 'includes/components.php';
-include 'api/notion-satisfaction.php';
+include_once 'api/notion-satisfaction.php';
 
 // Redirection si URL avec anciens paramètres
 if (isset($_GET['refresh_stats'])) {
@@ -15,8 +15,10 @@ if (isset($_GET['refresh_stats'])) {
     exit;
 }
 
-// Récupérer les stats (force refresh)
-$stats = getSatisfactionStats(true);
+// Appels Notion en parallèle (curl_multi) — ~50% plus rapide
+$notionData = fetchBothNotionData($lang ?? 'fr', 20);
+$stats = $notionData['stats'];
+$reviews = $notionData['reviews'];
 ?>
 
 <!-- Hero Section -->

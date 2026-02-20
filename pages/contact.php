@@ -7,6 +7,28 @@ $page_description = t('contact_subtitle');
 $page_image = '/assets/img/logo.png';
 include '../includes/header.php'; ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact SlapIA",
+  "description": "Contactez SlapIA pour une formation IA, un audit ou un projet d'automatisation.",
+  "url": "https://www.slapia.com/contact",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "SlapIA",
+    "url": "https://www.slapia.com",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "availableLanguage": ["fr", "en"]
+    }
+  }
+}
+</script>
+
+
+
 <!-- Toast Notification -->
 <div id="toastNotification" class="toast-notification">
     <div class="toast-content">

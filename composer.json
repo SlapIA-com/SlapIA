@@ -1,0 +1,26 @@
+{
+    "name": "slapia/website",
+    "description": "SlapIA website",
+    "type": "project",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SlapIA\\": "src/"
+        },
+        "files": [
+            "includes/config.php",
+            "includes/lang.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SlapIA\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

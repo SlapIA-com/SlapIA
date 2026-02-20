@@ -7,6 +7,30 @@ $page_description = t('cert_level_1_desc') . " " . t('cert_level_2_desc');
 $page_image = '/assets/img/logo.png';
 include '../includes/header.php'; ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Formation IA & Automatisation — SlapIA",
+  "description": "Formation complète en intelligence artificielle et automatisation avec n8n. 3 niveaux : collaborateur augmenté, entreprise augmentée, expert automatisation.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "SlapIA",
+    "url": "https://www.slapia.com",
+    "logo": "https://www.slapia.com/assets/img/logo.svg"
+  },
+  "url": "https://www.slapia.com/formation",
+  "educationalLevel": ["Beginner", "Intermediate", "Advanced"],
+  "teaches": ["Intelligence Artificielle", "Automatisation", "n8n", "Prompting", "AI Agents"],
+  "inLanguage": "fr",
+  "offers": {
+    "@type": "Offer",
+    "category": "Paid"
+  }
+}
+</script>
+
+
 <section class="py-5 mt-5">
     <div class="container">
         

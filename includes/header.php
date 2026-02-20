@@ -9,7 +9,14 @@ include_once 'lang.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
+    <!-- DNS Prefetch & Preconnect for external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://api.notion.com">
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
     <link rel="apple-touch-icon" href="/assets/img/logo.svg">
@@ -56,8 +63,9 @@ if (strpos($meta_image, 'http') === false) {
     </script>
     <title><?php echo $meta_title; ?></title>
     
-    <!-- Bootstrap 5 (Grid Only primarily) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 — Grid + Utilities (~60 Ko vs ~200 Ko full bundle) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-grid.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-utilities.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

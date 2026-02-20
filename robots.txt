@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block API endpoints from indexing
+Disallow: /api/
+Disallow: /includes/
+Disallow: /assets/lang/
+
+# Sitemap location
+Sitemap: https://www.slapia.com/sitemap.xml

@@ -7,6 +7,37 @@ $page_description = t('comprehensive_expertise') . " - " . t('technical_expertis
 $page_image = '/assets/img/logo.png';
 include '../includes/header.php'; ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Thomas Lapierre",
+  "jobTitle": "Expert IA & Consultant IT",
+  "url": "https://www.slapia.com/expertise",
+  "sameAs": "https://www.linkedin.com/in/lapierre-thomas/",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "SlapIA",
+    "url": "https://www.slapia.com"
+  },
+  "knowsAbout": ["Intelligence Artificielle", "Automatisation", "n8n", "PHP", "Consulting IT", "Formation IA"],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "Certification Hoshin Niveau 1 — Le Collaborateur Augmenté",
+      "dateCreated": "2025-12"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "Certification Hoshin Niveau 2 — L'Entreprise Augmentée",
+      "dateCreated": "2025-12"
+    }
+  ]
+}
+</script>
+
+
+
 <section class="py-5 mt-5">
     <div class="container">
         
