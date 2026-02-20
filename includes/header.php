@@ -63,7 +63,8 @@ if (strpos($meta_image, 'http') === false) {
     </script>
     <title><?php echo $meta_title; ?></title>
     
-    <!-- Bootstrap 5 — Grid + Utilities (~60 Ko vs ~200 Ko full bundle) -->
+    <!-- Bootstrap 5 — Reboot + Grid + Utilities (vs ~200 Ko full bundle) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-reboot.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-grid.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap-utilities.min.css" rel="stylesheet">
     
