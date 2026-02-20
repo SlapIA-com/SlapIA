@@ -249,7 +249,6 @@
     "your_email": "Votre email",
     "your_name": "Votre nom",
     "cookie_banner_text": "🍪 Nous respectons votre vie privée. Ce site utilise des cookies pour assurer son bon fonctionnement et, avec votre accord, pour analyser l'audience.",
-    "cookie_banner_ok": "Tout accepter",
     "cookie_accept_all": "Tout accepter",
     "cookie_deny_all": "Tout refuser",
     "cookie_customize": "Personnaliser",
@@ -263,5 +262,7 @@
     "cookie_marketing_desc": "Utilisé pour des publicités ciblées (nous n'en avons pas, mais c'est pour l'exemple RGPD).",
     "cookie_policy_link": "Politique de confidentialité",
     "cookie_preferences_category_title": "Préférences",
-    "cookie_preferences_category_desc": "Permet de sauvegarder vos choix (ex: Langue)."
+    "cookie_preferences_category_desc": "Permet de sauvegarder vos choix (ex: Langue).",
+    "toast_profanity": "Veuillez rester poli et professionnel.",
+    "toast_too_short": "Votre message est trop court (min. 20 caractères)."
 }

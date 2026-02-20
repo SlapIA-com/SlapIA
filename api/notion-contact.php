@@ -20,7 +20,12 @@ ob_start();
 
 try {
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
+    // Restrict CORS to production domain only
+    $allowedOrigin = 'https://slapia.com';
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if ($origin === $allowedOrigin || strpos($origin, 'localhost') !== false) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
     header('Access-Control-Allow-Methods: POST');
     header('Access-Control-Allow-Headers: Content-Type');
 
@@ -236,18 +241,19 @@ try {
         ]);
     }
     else {
-        http_response_code($httpCode);
+        http_response_code($httpCode >= 400 ? $httpCode : 500);
         echo json_encode([
             'success' => false,
-            'error' => $responseData['message'] ?? 'Erreur Notion',
-            'details' => $responseData
+            'error' => 'Une erreur est survenue. Veuillez réessayer plus tard.'
         ]);
     }
 
 }
 catch (Throwable $e) {
     ob_clean();
+    // Log internal error server-side only — never expose to client
+    error_log('[SlapIA Contact API] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Erreur serveur interne: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Erreur serveur interne. Veuillez réessayer plus tard.']);
 }
 ?>

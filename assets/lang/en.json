@@ -249,7 +249,6 @@
     "your_email": "Your email",
     "your_name": "Your name",
     "cookie_banner_text": "🍪 We respect your privacy. This site uses cookies for proper functioning and, with your consent, for audience analysis.",
-    "cookie_banner_ok": "Accept All",
     "cookie_accept_all": "Accept All",
     "cookie_deny_all": "Deny All",
     "cookie_customize": "Customize",
@@ -263,5 +262,7 @@
     "cookie_marketing_desc": "Used for targeted ads (we don't have any, but for GDPR example).",
     "cookie_policy_link": "Privacy Policy",
     "cookie_preferences_category_title": "Preferences",
-    "cookie_preferences_category_desc": "Allows saving your choices (e.g., Language)."
+    "cookie_preferences_category_desc": "Allows saving your choices (e.g., Language).",
+    "toast_profanity": "Please remain polite and professional.",
+    "toast_too_short": "Your message is too short (min. 20 characters)."
 }

@@ -271,12 +271,12 @@ document.getElementById('contactForm').addEventListener('submit', async function
     const hasForbiddenWord = forbiddenWords.some(word => messageContent.includes(word));
 
     if (hasForbiddenWord) {
-        showToast("Veuillez rester poli et professionnel.", true);
+        showToast(<?php echo json_encode(t('toast_profanity')); ?>, true);
         return;
     }
 
     if (messageContent.length < 20) {
-        showToast("Votre message est trop court (min. 20 caractères).", true);
+        showToast(<?php echo json_encode(t('toast_too_short')); ?>, true);
         return;
     }
 
