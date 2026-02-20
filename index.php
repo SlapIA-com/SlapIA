@@ -19,6 +19,8 @@ if (isset($_GET['refresh_stats'])) {
 $notionData = fetchBothNotionData($lang ?? 'fr', 20);
 $stats = $notionData['stats'];
 $reviews = $notionData['reviews'];
+
+
 ?>
 
 <!-- Hero Section -->
