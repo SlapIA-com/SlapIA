@@ -15,10 +15,9 @@ if (isset($_GET['refresh_stats'])) {
     exit;
 }
 
-// Appels Notion en parallèle (curl_multi) — ~50% plus rapide
-$notionData = fetchBothNotionData($lang ?? 'fr', 20);
-$stats = $notionData['stats'];
-$reviews = $notionData['reviews'];
+// Appels Notion
+$stats = getSatisfactionStats(true);
+$reviews = getNotionReviews(20, $lang ?? 'fr');
 
 
 ?>
