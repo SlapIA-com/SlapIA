@@ -213,7 +213,21 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
             window.moveNavPill(this, true);
         });
+
+        // Hover: pill follows cursor in real-time
+        link.addEventListener('mouseenter', function() {
+            window.moveNavPill(this, true);
+        });
     });
+
+    // Mouseleave on container: return pill to active link
+    container.addEventListener('mouseleave', () => {
+        const currentActive = document.querySelector('.dock-links-container .dock-link.active');
+        if (currentActive) {
+            window.moveNavPill(currentActive, true);
+        }
+    });
+
     
     // Handle window resize
     window.addEventListener('resize', () => {
