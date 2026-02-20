@@ -65,7 +65,7 @@ include '../includes/header.php'; ?>
                         <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
                             <th class="py-3 ps-0">Module</th>
                             <th class="py-3">Thématique</th>
-                            <th class="py-3">Contenu Clé</th>
+                            <th class="py-3">Ce que vous allez faire</th>
                             <th class="py-3 text-end pe-0">Outil(s)</th>
                         </tr>
                     </thead>
@@ -75,7 +75,7 @@ include '../includes/header.php'; ?>
                             <td class="py-4 ps-0 fw-bold text-white">M1</td>
                             <td class="py-4 text-white"><?php echo t('m1_level1_theme'); ?></td>
                             <td class="py-4"><?php echo t('m1_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">ChatGPT</span></td>
+                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
                         </tr>
                         <!-- M2 -->
                         <tr class="align-middle border-bottom border-light border-opacity-10">
@@ -84,7 +84,6 @@ include '../includes/header.php'; ?>
                             <td class="py-4"><?php echo t('m2_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
                                 <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Notion</span>
-                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25 ms-1">Airtable</span>
                             </td>
                         </tr>
                         <!-- M3 -->
@@ -92,14 +91,14 @@ include '../includes/header.php'; ?>
                             <td class="py-4 ps-0 fw-bold text-white">M3</td>
                             <td class="py-4 text-white"><?php echo t('m3_level1_theme'); ?></td>
                             <td class="py-4"><?php echo t('m3_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">Make</span></td>
+                            <td class="py-4 text-end pe-0"><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">ChatGPT</span></td>
                         </tr>
                          <!-- M4 -->
                          <tr class="align-middle border-bottom border-light border-opacity-10">
                             <td class="py-4 ps-0 fw-bold text-white">M4</td>
                             <td class="py-4 text-white"><?php echo t('m4_level1_theme'); ?></td>
                             <td class="py-4"><?php echo t('m4_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">n8n</span></td>
+                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -107,7 +106,7 @@ include '../includes/header.php'; ?>
         </div>
 
         <!-- Niveau 2 -->
-        <div id="niveau2" class="bento-card p-4 p-md-5 mb-5" style="border-color: rgba(41, 151, 255, 0.3);">
+        <div id="niveau2" class="bento-card p-4 p-md-5 mb-5">
             <div class="d-flex align-items-center gap-4 mb-4">
                 <div class="d-flex justify-content-center align-items-center bg-info text-white rounded-3 fw-bold" style="width: 60px; height: 60px; font-size: 2rem;">2</div>
                 <div>
@@ -133,8 +132,7 @@ include '../includes/header.php'; ?>
                             <td class="py-4 text-white"><?php echo t('m1_level2_theme'); ?></td>
                             <td class="py-4"><?php echo t('m1_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
-                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Airtable</span>
-                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25 ms-1">Notion</span>
+                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span>
                             </td>
                         </tr>
                         <!-- M2 -->
@@ -143,8 +141,8 @@ include '../includes/header.php'; ?>
                             <td class="py-4 text-white"><?php echo t('m2_level2_theme'); ?></td>
                             <td class="py-4"><?php echo t('m2_level2_desc'); ?></td>
                             <td class="py-4 text-end pe-0">
-                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">Make</span>
-                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 ms-1">n8n</span>
+                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Notion</span>
+                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">ChatGPT</span>
                             </td>
                         </tr>
                         <!-- M3 -->
@@ -152,7 +150,7 @@ include '../includes/header.php'; ?>
                             <td class="py-4 ps-0 fw-bold text-white">M3</td>
                             <td class="py-4 text-white"><?php echo t('m3_level2_theme'); ?></td>
                             <td class="py-4"><?php echo t('m3_level2_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">ChatGPT + Auto</span></td>
+                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
                         </tr>
                          <!-- M4 -->
                          <tr class="align-middle border-bottom border-light border-opacity-10">
