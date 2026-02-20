@@ -205,30 +205,16 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => window.moveNavPill(activeLink, false), 50);
     }
     
-    // Click animation - slide to clicked link before navigation
+    // Pill moves only on click / page navigation
     links.forEach(link => {
         link.addEventListener('click', function(e) {
-            // Update active state visually immediately for responsiveness
             links.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
             window.moveNavPill(this, true);
         });
-
-        // Hover: pill follows cursor in real-time
-        link.addEventListener('mouseenter', function() {
-            window.moveNavPill(this, true);
-        });
     });
-
-    // Mouseleave on container: return pill to active link
-    container.addEventListener('mouseleave', () => {
-        const currentActive = document.querySelector('.dock-links-container .dock-link.active');
-        if (currentActive) {
-            window.moveNavPill(currentActive, true);
-        }
-    });
-
     
+
     // Handle window resize
     window.addEventListener('resize', () => {
         const currentActive = document.querySelector('.dock-links-container .dock-link.active');
