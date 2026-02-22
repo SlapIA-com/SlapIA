@@ -1,5 +1,5 @@
 function initScrollReveal() {
-    const allRevealElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale');
+    const allRevealElements = document.querySelectorAll('.scroll-reveal, .fade-in-up, .scroll-scale, .stagger-row');
 
     // Create new observer
     const observerOptions = {
