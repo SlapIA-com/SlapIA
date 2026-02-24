@@ -240,7 +240,7 @@ html.is-rendering .swup-transition-main {
 }
 
 /* Fix for Scroll Reveal firing too early with Swup */
-.swup-transition-main .scroll-reveal {
+.swup-transition-main .scroll-reveal:not(.is-visible) {
     opacity: 0;
 }
 
