@@ -219,24 +219,29 @@
 
 /* 9. Swup Slide Theme overrides (Minimalist page transition) */
 .swup-transition-main {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* 0.5s timing matches the nav-liquid-pill transition time */
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
     transform-origin: center top;
 }
 
 html.is-animating .swup-transition-main {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px) scale(0.99);
+    filter: blur(4px);
 }
 
 html.is-leaving .swup-transition-main {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px) scale(0.99);
+    filter: blur(4px);
 }
 
 html.is-rendering .swup-transition-main {
-    transform: translateY(-10px);
+    transform: translateY(-15px) scale(0.99);
+    filter: blur(4px);
 }
 
 /* Fix for Scroll Reveal firing too early with Swup */
