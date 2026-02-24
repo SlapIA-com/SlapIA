@@ -136,10 +136,18 @@ function tryExtractRatingFromProperty($key, $prop) {
 }
 
 /**
- * Récupère les statistiques de satisfaction depuis Notion
+ * Récupère les statistiques de satisfaction depuis Notion (avec cache de 1 heure)
  * @return array Tableau contenant le pourcentage moyen et le nombre de réponses
  */
 function getSatisfactionStats($forceRefresh = false) {
+    $cacheFile = sys_get_temp_dir() . '/notion_stats_' . md5(NOTION_DATABASE_ID) . '.json';
+    $cacheTime = 3600; // 1 heure
+
+    // Utiliser le cache si disponible et récent
+    if (!$forceRefresh && file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
+        $cachedData = json_decode(file_get_contents($cacheFile), true);
+        if ($cachedData) return $cachedData;
+    }
 
     // Utiliser la pagination pour récupérer tous les résultats
     $allResults = [];
@@ -249,6 +257,11 @@ function getSatisfactionStats($forceRefresh = false) {
         }
     }
     
+    // Sauvegarder dans le cache
+    if (isset($result) && (!isset($result['error']) || !$result['error'])) {
+        file_put_contents($cacheFile, json_encode($result));
+    }
+    
     return $result;
 }
 
@@ -322,12 +335,21 @@ function convertToPercentage($rating) {
 }
 
 /**
- * Récupère des avis (reviews) depuis la même base Notion.
+ * Récupère des avis (reviews) depuis la même base Notion (avec cache de 1 heure).
  * Tente d'extraire les colonnes communes : Prenom, Nom, Profession, Avis/Comment, Note/Rating
  * Traduit les avis selon la langue fournie
  * Retourne un tableau d'items : ['prenom','nom','profession','avis','note','photo']
  */
 function getNotionReviews($limit = 20, $lang = 'fr') {
+    $cacheFile = sys_get_temp_dir() . '/notion_reviews_' . md5(NOTION_DATABASE_ID . '_' . $lang . '_' . $limit) . '.json';
+    $cacheTime = 3600; // 1 heure
+
+    // Utiliser le cache si disponible et récent
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
+        $cachedData = json_decode(file_get_contents($cacheFile), true);
+        if ($cachedData && is_array($cachedData)) return $cachedData;
+    }
+
     $allResults = [];
     $startCursor = null;
     $fetched = 0;
@@ -507,6 +529,11 @@ function getNotionReviews($limit = 20, $lang = 'fr') {
         if (count($reviews) >= $limit) break;
      }
  
+     // Sauvegarder dans le cache si on a récupéré des résultats
+     if (!empty($reviews)) {
+         file_put_contents($cacheFile, json_encode($reviews));
+     }
+
      return $reviews;
  }
  
