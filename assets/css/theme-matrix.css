@@ -1,0 +1,53 @@
+/* 
+   SlapIA - Matrix Theme 
+   Extracted from style.css
+*/
+
+/* Matrix Mode Overrides */
+body.matrix-mode {
+    font-family: "Courier New", monospace !important;
+    background-color: #000 !important;
+    color: #0F0 !important;
+}
+
+body.matrix-mode * {
+    border-color: #0F0 !important;
+}
+
+body.matrix-mode .bento-card,
+body.matrix-mode .navbar,
+body.matrix-mode footer {
+    background: rgba(0, 20, 0, 0.9) !important;
+    border: 1px solid #0F0 !important;
+    box-shadow: 0 0 10px #0F0;
+}
+
+body.matrix-mode h1,
+body.matrix-mode h2,
+body.matrix-mode h3,
+body.matrix-mode h4,
+body.matrix-mode h5,
+body.matrix-mode h6,
+body.matrix-mode p,
+body.matrix-mode a,
+body.matrix-mode span,
+body.matrix-mode i {
+    color: #0F0 !important;
+    text-shadow: 0 0 5px #0F0 !important;
+}
+
+body.matrix-mode .btn-apple {
+    background: #000 !important;
+    border: 1px solid #0F0 !important;
+    color: #0F0 !important;
+}
+
+body.matrix-mode .aurora-orb,
+body.matrix-mode .nav-active-bg {
+    display: none !important;
+}
+
+#matrix-canvas {
+    z-index: 0 !important;
+    opacity: 0.3;
+}

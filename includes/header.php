@@ -72,6 +72,9 @@ if (strpos($meta_image, 'http') === false) {
     <!-- Custom Design System -->
     <link href="/assets/css/header.css?v=2.1" rel="stylesheet">
     <link href="/assets/css/footer.css?v=2.1" rel="stylesheet">
+    <link href="/assets/css/animations.css?v=2.1" rel="stylesheet">
+    <link href="/assets/css/reviews.css?v=2.1" rel="stylesheet">
+    <link href="/assets/css/theme-matrix.css?v=2.1" rel="stylesheet">
     <link href="/assets/css/style.css?v=2.1" rel="stylesheet">
 </head>
 <body>
