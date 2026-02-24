@@ -567,23 +567,6 @@ body {
 .form-control:invalid:not(:placeholder-shown) {
     border-color: rgba(255, 71, 87, 0.5) !important;
     background: rgba(255, 71, 87, 0.05) !important;
-    animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-5px);
-    }
-
-    75% {
-        transform: translateX(5px);
-    }
 }
 
 /* Accordion Styles */

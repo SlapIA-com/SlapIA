@@ -1,43 +1,93 @@
 /* 
-   SlapIA - Animations Styles
-   Extracted from style.css
+   SlapIA - Minimal Animations Styles
+   Clean, performant and subtle animations.
 */
 
-/* 3. Staggered Entry Animation */
-.animate-enter {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: enterUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-.delay-1 {
-    animation-delay: 0.1s;
-}
-
-.delay-2 {
-    animation-delay: 0.2s;
-}
-
-.delay-3 {
-    animation-delay: 0.3s;
-}
-
-.delay-4 {
-    animation-delay: 0.4s;
-}
-
-@keyframes enterUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 5. Staggered Table Rows Animation */
-.stagger-row {
+/* 1. Base Entry Animations (Fade & Slight Slide) */
+.animate-enter,
+.fade-in-up {
     opacity: 0;
     transform: translateY(15px);
-    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+.animate-enter.is-visible,
+.content-loaded .fade-in-up,
+.fade-in-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. Scroll Reveal Animations */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    /* Removed heavy blur for a cleaner, snappier look */
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 3. Scale Reveal Animations (For cards) */
+.scroll-scale {
+    opacity: 0;
+    transform: scale(0.97) translateY(10px);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.scroll-scale.is-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* 4. Delays utility classes */
+.delay-1,
+.delay-100 {
+    transition-delay: 100ms;
+    animation-delay: 100ms;
+}
+
+.delay-2,
+.delay-200 {
+    transition-delay: 200ms;
+    animation-delay: 200ms;
+}
+
+.delay-3,
+.delay-300 {
+    transition-delay: 300ms;
+    animation-delay: 300ms;
+}
+
+.delay-4,
+.delay-400 {
+    transition-delay: 400ms;
+    animation-delay: 400ms;
+}
+
+.delay-5,
+.delay-500 {
+    transition-delay: 500ms;
+    animation-delay: 500ms;
+}
+
+.delay-6,
+.delay-600 {
+    transition-delay: 600ms;
+    animation-delay: 600ms;
+}
+
+/* 5. Staggered Table Rows */
+.stagger-row {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .stagger-row.is-visible {
@@ -45,7 +95,6 @@
     transform: translateY(0);
 }
 
-/* Loop to generate delays for up to 20 rows */
 .stagger-row:nth-child(1) {
     transition-delay: 50ms;
 }
@@ -86,7 +135,7 @@
     transition-delay: 500ms;
 }
 
-/* 4. Mouse Spotlight Effect */
+/* 6. Mouse Spotlight Effect (Cards interaction) */
 .bento-card::after {
     content: "";
     position: absolute;
@@ -94,13 +143,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.06),
+    background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.04),
             transparent 40%);
     z-index: 2;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s;
+    transition: opacity 0.4s;
     border-radius: inherit;
 }
 
@@ -108,76 +157,7 @@
     opacity: 1;
 }
 
-/* Entry Animations */
-.fade-in-up {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.content-loaded .fade-in-up {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.delay-100 {
-    transition-delay: 0.1s;
-}
-
-.delay-200 {
-    transition-delay: 0.2s;
-}
-
-.delay-300 {
-    transition-delay: 0.3s;
-}
-
-.delay-400 {
-    transition-delay: 0.4s;
-}
-
-.delay-500 {
-    transition-delay: 0.5s;
-}
-
-.delay-600 {
-    transition-delay: 0.6s;
-}
-
-/* Scroll Reveal - Apple Style (Blur + Slide) */
-.scroll-reveal {
-    opacity: 0;
-    transform: translateY(40px) scale(0.98);
-    filter: blur(10px);
-    /* The "Apple" blur effect */
-    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 1s cubic-bezier(0.16, 1, 0.3, 1),
-        filter 1s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform, filter;
-}
-
-.scroll-reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-}
-
-/* Scroll Scale - For larger cards (Pop effect) */
-.scroll-scale {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-    filter: blur(10px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform, filter;
-}
-
-.scroll-scale.is-visible {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: blur(0);
-}
-
-/* Cursor Blink */
+/* 7. Cursor Blink (Typewriter) */
 .cursor-blink {
     animation: blink 1s step-end infinite;
     font-weight: 100;
@@ -189,7 +169,7 @@
     }
 }
 
-/* Emoji Rain */
+/* 8. Emoji Rain (If activated) */
 .falling-emoji {
     position: fixed;
     top: -50px;
@@ -205,33 +185,49 @@
     }
 }
 
-/* =========================================
-   Swup Slide Theme (Custom Custom Implementation)
-   ========================================= */
+/* 9. Swup Slide Theme overrides (Minimalist page transition) */
 .swup-transition-main {
-    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: opacity 0.3s ease, transform 0.3s ease;
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     transform-origin: center top;
 }
 
 html.is-animating .swup-transition-main {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
-    /* Subtle slide down/up effect preferred over full side slide to avoid layout thrashing */
+    transform: translateY(10px);
 }
 
 html.is-leaving .swup-transition-main {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
+    transform: translateY(10px);
 }
 
 html.is-rendering .swup-transition-main {
-    transform: translate3d(0, -20px, 0);
-    /* Start slightly above */
+    transform: translateY(-10px);
 }
 
-/* Fix for Scroll Reveal firing too early */
+/* Fix for Scroll Reveal firing too early with Swup */
 .swup-transition-main .scroll-reveal {
     opacity: 0;
+}
+
+/* 10. Form Validation Animation (Replaces shake) */
+.form-control:invalid:not(:placeholder-shown) {
+    animation: subtlePulse 0.4s ease;
+}
+
+@keyframes subtlePulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.98);
+        border-color: rgba(255, 71, 87, 0.8);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
