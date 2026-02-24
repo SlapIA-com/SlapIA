@@ -123,7 +123,7 @@
 <script src="/assets/js/live-counter.js?v=2.1"></script>
 <script src="/assets/js/matrix.js?v=2.1"></script>
 <script src="/assets/js/cookie-banner.js?v=2.1"></script>
-<script src="/assets/js/tilt.js?v=2.1"></script>
+    <!-- Removed tilt.js as requested -->
 <script src="/assets/js/console-egg.js?v=2.1"></script>
 <script src="/assets/js/scroll-indicator.js?v=2.1"></script>
 <script src="/assets/js/emoji-rain.js?v=2.1"></script>

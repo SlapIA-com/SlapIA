@@ -6,10 +6,21 @@
 /* 1. Base Entry Animations (Fade & Slight Slide) */
 .animate-enter,
 .fade-in-up {
-    opacity: 0;
-    transform: translateY(15px);
-    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: opacity, transform;
+    /* If no JS adds .is-visible, element might stay hidden. 
+       We add a fallback animation for immediate elements that don't rely on JS observer */
+    animation: simpleFadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes simpleFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-enter.is-visible,
@@ -17,20 +28,36 @@
 .fade-in-up.is-visible {
     opacity: 1;
     transform: translateY(0);
+    animation: none;
+    /* override keyframe if JS hits first */
 }
 
 /* 2. Scroll Reveal Animations */
 .scroll-reveal {
+    /* Base state is visible if JS not active, but we rely on JS to add .is-visible */
     opacity: 0;
     transform: translateY(20px);
-    /* Removed heavy blur for a cleaner, snappier look */
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform;
+}
+
+/* Fallback: if JS takes too long to add .is-visible, show it anyway after short delay */
+@keyframes fallbackShow {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scroll-reveal:not(.is-visible) {
+    animation: fallbackShow 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s;
+    /* Force show after 1s */
 }
 
 .scroll-reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
+    animation: none;
 }
 
 /* 3. Scale Reveal Animations (For cards) */
@@ -41,9 +68,14 @@
     will-change: opacity, transform;
 }
 
+.scroll-scale:not(.is-visible) {
+    animation: fallbackShow 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.2s;
+}
+
 .scroll-scale.is-visible {
     opacity: 1;
     transform: scale(1) translateY(0);
+    animation: none;
 }
 
 /* 4. Delays utility classes */
