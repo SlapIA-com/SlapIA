@@ -8,29 +8,35 @@
                     <?php echo t('footer_desc'); ?>
                 </p>
                 <div class="d-flex gap-3 mt-4">
-                    <a href="https://www.linkedin.com/company/slapia/" target="_blank" class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
-                    <a href="https://github.com/SlapIA-com" target="_blank" class="text-secondary hover-white"><i class="fab fa-github fs-5"></i></a>
+                    <a href="https://www.linkedin.com/company/slapia/" target="_blank"
+                        class="text-secondary hover-white"><i class="fab fa-linkedin fs-5"></i></a>
+                    <a href="https://github.com/SlapIA-com" target="_blank" class="text-secondary hover-white"><i
+                            class="fab fa-github fs-5"></i></a>
                 </div>
-                
+
             </div>
-            
+
             <div class="col-6 col-lg-2 offset-lg-2">
                 <h6 class="text-white fw-bold mb-4"><?php echo t('footer_explore'); ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-3"><a href="/formation" class="text-secondary text-decoration-none"><?php echo t('formations'); ?></a></li>
-                    <li class="mb-3"><a href="/entreprises" class="text-secondary text-decoration-none"><?php echo t('companies'); ?></a></li>
-                    <li class="mb-3"><a href="/how-it-works" class="text-secondary text-decoration-none"><?php echo t('how_it_works'); ?></a></li>
+                    <li class="mb-3"><a href="/formation"
+                            class="text-secondary text-decoration-none"><?php echo t('formations'); ?></a></li>
+                    <li class="mb-3"><a href="/entreprises"
+                            class="text-secondary text-decoration-none"><?php echo t('companies'); ?></a></li>
+                    <li class="mb-3"><a href="/how-it-works"
+                            class="text-secondary text-decoration-none"><?php echo t('how_it_works'); ?></a></li>
                 </ul>
             </div>
-            
+
             <div class="col-6 col-lg-2">
                 <h6 class="text-white fw-bold mb-4"><?php echo t('footer_legal'); ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-3"><a href="/mentions-legales" class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
+                    <li class="mb-3"><a href="/mentions-legales"
+                            class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
                 </ul>
             </div>
         </div>
-        
+
         <div class="border-top border-secondary border-opacity-10 mt-5 pt-4 text-center">
             <p class="text-secondary small mb-0">&copy; 2026 SlapIA Inc. <?php echo t('designed_with_precision'); ?></p>
         </div>
@@ -45,23 +51,29 @@
             <div class="cookie-icon">🍪</div>
             <h3 class="cookie-title"><?php echo t('cookies_title'); ?></h3>
             <p class="cookie-text"><?php echo t('cookie_banner_text'); ?></p>
-            
+
             <div class="cookie-actions">
-                <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
-                <button id="cookie-deny-all" class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
+                <button id="cookie-accept-all"
+                    class="cookie-btn cookie-btn-primary"><?php echo t('cookie_accept_all'); ?></button>
+                <button id="cookie-deny-all"
+                    class="cookie-btn cookie-btn-secondary"><?php echo t('cookie_deny_all'); ?></button>
                 <button id="cookie-customize" class="cookie-link-btn"><?php echo t('cookie_customize'); ?></button>
             </div>
-            
+
             <div class="mt-3">
-                <a href="/mentions-legales#privacy" class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
+                <a href="/mentions-legales#privacy"
+                    class="text-white-50 small text-decoration-none hover-white"><?php echo t('cookie_policy_link'); ?></a>
             </div>
         </div>
 
         <!-- View 2: Preferences -->
         <div id="cookie-view-preferences" class="cookie-view hidden">
             <div class="d-flex align-items-center mb-4">
-                <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3" style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;"><i class="fas fa-arrow-left"></i></button>
-                <h3 class="cookie-title mb-0 text-start" style="font-size: 1.25rem;"><?php echo t('cookie_preferences_title'); ?></h3>
+                <button id="cookie-back" class="btn btn-sm btn-circle text-white me-3"
+                    style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;"><i
+                        class="fas fa-arrow-left"></i></button>
+                <h3 class="cookie-title mb-0 text-start" style="font-size: 1.25rem;">
+                    <?php echo t('cookie_preferences_title'); ?></h3>
             </div>
 
             <div class="cookie-preferences-list">
@@ -97,10 +109,13 @@
 </div>
 
 <!-- Live Visitor Counter Badge (Floating) -->
-<div class="floating-visitor-counter position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in" style="z-index: 9999; backdrop-filter: blur(10px);">
+<div class="floating-visitor-counter position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in"
+    style="z-index: 9999; backdrop-filter: blur(10px);">
     <span class="position-relative d-flex" style="width: 8px; height: 8px;">
-      <span class="position-absolute rounded-circle bg-success opacity-75" style="width: 100%; height: 100%; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
-      <span class="position-relative d-inline-block rounded-circle bg-success" style="width: 100%; height: 100%;"></span>
+        <span class="position-absolute rounded-circle bg-success opacity-75"
+            style="width: 100%; height: 100%; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+        <span class="position-relative d-inline-block rounded-circle bg-success"
+            style="width: 100%; height: 100%;"></span>
     </span>
     <span class="text-white small fw-bold" style="font-size: 0.75rem;">
         <span id="live-visitor-count">...</span> <?php echo t('live_counter_viewing'); ?>
@@ -111,7 +126,8 @@
 <div id="scroll-indicator" class="scroll-indicator-glass">
     <svg width="100%" height="100%" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
         <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5" />
-        <circle id="scroll-progress" cx="50" cy="50" r="45" fill="none" stroke="#bf5af2" stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" />
+        <circle id="scroll-progress" cx="50" cy="50" r="45" fill="none" stroke="#bf5af2" stroke-width="5"
+            stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" />
     </svg>
     <div class="arrow-icon">↑</div>
 </div>
@@ -123,10 +139,11 @@
 <script src="/assets/js/live-counter.js?v=2.1"></script>
 <script src="/assets/js/matrix.js?v=2.1"></script>
 <script src="/assets/js/cookie-banner.js?v=2.1"></script>
-    <!-- Removed tilt.js as requested -->
+<!-- Removed tilt.js as requested -->
 <script src="/assets/js/console-egg.js?v=2.1"></script>
 <script src="/assets/js/scroll-indicator.js?v=2.1"></script>
 <script src="/assets/js/emoji-rain.js?v=2.1"></script>
+<script src="/assets/js/interactions.js?v=1.0"></script>
 
 <!-- Swup.js for App-like Navigation (pinned versions) -->
 <script src="https://unpkg.com/swup@4.6.0/dist/Swup.umd.js"></script>
@@ -136,7 +153,7 @@
 
 <script>
     // Spotlight Effect on bento cards
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const cards = document.querySelectorAll('.bento-card');
         document.addEventListener('mousemove', (e) => {
             cards.forEach(card => {
@@ -149,4 +166,5 @@
 </script>
 
 </body>
+
 </html>

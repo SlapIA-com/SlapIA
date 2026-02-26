@@ -268,3 +268,91 @@ html.is-rendering .swup-transition-main {
         transform: scale(1);
     }
 }
+
+/* 11. Custom Cursor Aura */
+.custom-cursor {
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(191, 90, 242, 0.5) 0%, rgba(191, 90, 242, 0) 70%);
+    pointer-events: none;
+    z-index: 10000;
+    mix-blend-mode: screen;
+    opacity: 0; /* Hidden until first move */
+    transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s;
+}
+
+.custom-cursor.cursor-hover {
+    width: 80px;
+    height: 80px;
+    top: -40px;
+    left: -40px;
+    background: radial-gradient(circle, rgba(41, 151, 255, 0.4) 0%, rgba(41, 151, 255, 0) 70%);
+}
+
+/* 12. Infinite Marquee */
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    width: 100%;
+    padding: 30px 0;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.marquee-content {
+    display: inline-flex;
+    gap: 4rem;
+    animation: marquee 25s linear infinite;
+}
+
+.marquee-content:hover {
+    animation-play-state: paused;
+}
+
+.marquee-item {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.marquee-item:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* 13. Shimmer Badge */
+.shimmer-badge {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer-badge::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: rotate(30deg) translateX(-100%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(30deg) translateX(-100%); }
+    20% { transform: rotate(30deg) translateX(50%); }
+    100% { transform: rotate(30deg) translateX(50%); }
+}
