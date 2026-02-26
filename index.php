@@ -63,8 +63,9 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
         <!-- Sequence of logos (Set 1) -->
         <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-secondary" style="font-size: 1.2rem;"></i> Make
-        </div>
+        <div class="marquee-item"><img
+                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
+                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
@@ -82,8 +83,9 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
         <!-- Sequence of logos (Set 2) -->
         <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-secondary" style="font-size: 1.2rem;"></i> Make
-        </div>
+        <div class="marquee-item"><img
+                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
+                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
@@ -101,8 +103,9 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
         <!-- Sequence of logos (Set 3) -->
         <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-secondary" style="font-size: 1.2rem;"></i> Make
-        </div>
+        <div class="marquee-item"><img
+                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
+                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
@@ -120,8 +123,9 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
         <!-- Sequence of logos (Set 4 - ensuring it never runs out of content mid-animation on wide screens) -->
         <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-secondary" style="font-size: 1.2rem;"></i> Make
-        </div>
+        <div class="marquee-item"><img
+                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
+                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
