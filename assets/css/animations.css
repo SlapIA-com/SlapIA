@@ -281,7 +281,8 @@ html.is-rendering .swup-transition-main {
     pointer-events: none;
     z-index: 10000;
     mix-blend-mode: screen;
-    opacity: 0; /* Hidden until first move */
+    opacity: 0;
+    /* Hidden until first move */
     transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s;
 }
 
@@ -307,8 +308,9 @@ html.is-rendering .swup-transition-main {
 .marquee-content {
     display: inline-flex;
     gap: 4rem;
-    padding-right: 4rem; /* Add padding to match gap so the loop is seamless */
-    animation: marquee 25s linear infinite;
+    padding-right: 4rem;
+    /* Add padding to match gap so the loop is seamless */
+    animation: marquee 50s linear infinite;
 }
 
 .marquee-content:hover {
@@ -330,8 +332,13 @@ html.is-rendering .swup-transition-main {
 }
 
 @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* 13. Shimmer Badge */
@@ -353,7 +360,15 @@ html.is-rendering .swup-transition-main {
 }
 
 @keyframes shimmer {
-    0% { transform: rotate(30deg) translateX(-100%); }
-    20% { transform: rotate(30deg) translateX(50%); }
-    100% { transform: rotate(30deg) translateX(50%); }
+    0% {
+        transform: rotate(30deg) translateX(-100%);
+    }
+
+    20% {
+        transform: rotate(30deg) translateX(50%);
+    }
+
+    100% {
+        transform: rotate(30deg) translateX(50%);
+    }
 }
