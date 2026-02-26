@@ -23,17 +23,7 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 ?>
 
 <!-- Hero Section -->
-<section class="text-center position-relative py-5 overflow-hidden">
-    <!-- Accent orbs for the Hero background -->
-    <div class="position-absolute top-50 start-50 translate-middle w-100 h-100"
-        style="z-index:-1; pointer-events:none;">
-        <div class="aurora-orb"
-            style="background: var(--accent-blue); width: 600px; height: 600px; top: -20%; left: -10%; opacity: 0.5;">
-        </div>
-        <div class="aurora-orb"
-            style="background: var(--accent-purple); width: 500px; height: 500px; bottom: -20%; right: -10%; animation-delay: -5s; opacity: 0.4;">
-        </div>
-    </div>
+<section class="text-center position-relative py-5">
 
     <div class="container" style="padding-top: 20px; padding-bottom: 60px;">
         <!-- Floating Badge -->
@@ -44,8 +34,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
             <span class="text-secondary small fw-medium"><?php echo t('complete_training'); ?></span>
         </div>
 
-        <h1 class="display-title mb-4">
-            <span class="stagger-text d-inline-block"><?php echo t('master_ai'); ?></span> <br>
+        <h1 class="display-title mb-4 fade-in-up delay-200">
+            <?php echo t('master_ai'); ?> <br>
             <span class="text-gradient-purple" id="typewriter-text"
                 data-phrases='["<?php echo t('typewriter_1'); ?>", "<?php echo t('typewriter_2'); ?>", "<?php echo t('typewriter_3'); ?>"]'>
                 <?php echo t('typewriter_1'); ?>
@@ -69,24 +59,48 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 <!-- Infinite Marquee Section -->
 <div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5"
     style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
-    <div class="marquee-content">
+    <div class="marquee-content fade-in-up delay-600">
         <!-- Sequence of logos -->
-        <div class="marquee-item"><i class="fas fa-robot text-primary opacity-75"></i> OpenAI</div>
-        <div class="marquee-item"><i class="fab fa-python text-warning opacity-75"></i> Python</div>
-        <div class="marquee-item"><i class="fas fa-network-wired text-info opacity-75"></i> n8n</div>
-        <div class="marquee-item" style="color: #bf5af2;"><i class="fas fa-brain opacity-75"></i> DeepSeek</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-success opacity-75"></i> Make</div>
-        <div class="marquee-item"><i class="fas fa-database text-danger opacity-75"></i> Notion</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary opacity-75"></i> API & Webhooks</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
+                alt="OpenAI" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> OpenAI</div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"
+                style="height:28px;"> Python</div>
+        <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
+                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
+        <div class="marquee-item"><img src="https://uxio.fr/1000logos/DeepSeek-Logo-500x281.png"
+                onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="DeepSeek"
+                style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
+            DeepSeek</div>
+        <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
+                onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
+        </div>
 
         <!-- Duplicate for infinite scroll -->
-        <div class="marquee-item"><i class="fas fa-robot text-primary opacity-75"></i> OpenAI</div>
-        <div class="marquee-item"><i class="fab fa-python text-warning opacity-75"></i> Python</div>
-        <div class="marquee-item"><i class="fas fa-network-wired text-info opacity-75"></i> n8n</div>
-        <div class="marquee-item" style="color: #bf5af2;"><i class="fas fa-brain opacity-75"></i> DeepSeek</div>
-        <div class="marquee-item"><i class="fas fa-project-diagram text-success opacity-75"></i> Make</div>
-        <div class="marquee-item"><i class="fas fa-database text-danger opacity-75"></i> Notion</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary opacity-75"></i> API & Webhooks</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
+                alt="OpenAI" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> OpenAI</div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"
+                style="height:28px;"> Python</div>
+        <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
+                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
+        <div class="marquee-item"><img src="https://uxio.fr/1000logos/DeepSeek-Logo-500x281.png"
+                onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="DeepSeek"
+                style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
+            DeepSeek</div>
+        <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
+                onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
+        </div>
     </div>
 </div>
 
