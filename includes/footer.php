@@ -73,7 +73,8 @@
                     style="background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;"><i
                         class="fas fa-arrow-left"></i></button>
                 <h3 class="cookie-title mb-0 text-start" style="font-size: 1.25rem;">
-                    <?php echo t('cookie_preferences_title'); ?></h3>
+                    <?php echo t('cookie_preferences_title'); ?>
+                </h3>
             </div>
 
             <div class="cookie-preferences-list">
@@ -147,13 +148,13 @@
 
 <!-- Swup.js for App-like Navigation (pinned versions) -->
 <script src="https://unpkg.com/swup@4.6.0/dist/Swup.umd.js"></script>
-<script src="https://unpkg.com/@swup/scroll-plugin@3.0.7/dist/SwupScrollPlugin.umd.js"></script>
+<script src="https://unpkg.com/@swup/scroll-plugin@3.3.4/dist/SwupScrollPlugin.umd.js"></script>
 <script src="/assets/js/animations.js?v=2.1"></script>
 <script src="/assets/js/app-transition.js?v=2.1"></script>
 
 <script>
     // Spotlight Effect on bento cards
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', functio n () {
         const cards = document.querySelectorAll('.bento-card');
         document.addEventListener('mousemove', (e) => {
             cards.forEach(card => {

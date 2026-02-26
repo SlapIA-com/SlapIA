@@ -68,7 +68,7 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 style="height:28px;"> Python</div>
         <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img src="https://uxio.fr/1000logos/DeepSeek-Logo-500x281.png"
+        <div class="marquee-item"><img src="https://logowik.com/content/uploads/images/deepseek-ai4298.logowik.com.webp"
                 onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
                 alt="DeepSeek"
                 style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
@@ -89,7 +89,7 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 style="height:28px;"> Python</div>
         <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img src="https://uxio.fr/1000logos/DeepSeek-Logo-500x281.png"
+        <div class="marquee-item"><img src="https://logowik.com/content/uploads/images/deepseek-ai4298.logowik.com.webp"
                 onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
                 alt="DeepSeek"
                 style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
