@@ -154,7 +154,7 @@
 
 <script>
     // Spotlight Effect on bento cards
-    document.addEventListener('DOMContentLoaded', functio n () {
+    document.addEventListener('DOMContentLoaded', function () {
         const cards = document.querySelectorAll('.bento-card');
         document.addEventListener('mousemove', (e) => {
             cards.forEach(card => {

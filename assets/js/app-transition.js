@@ -1,15 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Basic Swup Initialization
+    const swupPlugins = [];
+    if (typeof SwupScrollPlugin !== 'undefined') {
+        swupPlugins.push(new SwupScrollPlugin({
+            doScrollingRightAway: false,
+            animateScroll: true,
+            scrollFriction: 0.3,
+            scrollAcceleration: 0.04,
+        }));
+    }
+
     const swup = new Swup({
         containers: ['#swup'],
-        plugins: [
-            new SwupScrollPlugin({
-                doScrollingRightAway: false,
-                animateScroll: true,
-                scrollFriction: 0.3,
-                scrollAcceleration: 0.04,
-            })
-        ]
+        plugins: swupPlugins
     });
 
     // Re-initialize scripts after content replacement

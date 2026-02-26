@@ -57,9 +57,9 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 </section>
 
 <!-- Infinite Marquee Section -->
-<div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5"
+<div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5 fade-in-up delay-600"
     style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
-    <div class="marquee-content fade-in-up delay-600">
+    <div class="marquee-content">
         <!-- Sequence of logos -->
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
                 alt="OpenAI" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> OpenAI</div>
