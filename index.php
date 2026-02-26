@@ -60,48 +60,79 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 <div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5 fade-in-up delay-600"
     style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
     <div class="marquee-content">
-        <!-- Sequence of logos -->
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="OpenAI" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> OpenAI</div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"
-                style="height:28px;"> Python</div>
-        <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
+        <!-- Sequence of logos (Set 1) -->
+        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img src="https://logowik.com/content/uploads/images/deepseek-ai4298.logowik.com.webp"
-                onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
-                alt="DeepSeek"
-                style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
-            DeepSeek</div>
         <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
                 onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
                 alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+                alt="Gemini" style="height:28px;"> Gemini</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
+                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
         <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
         </div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
+                style="height:28px;"> Visual Studio Code</div>
 
-        <!-- Duplicate for infinite scroll -->
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="OpenAI" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> OpenAI</div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"
-                style="height:28px;"> Python</div>
-        <div class="marquee-item"><img src="https://asset.brandfetch.io/idf8G0yL7Q/iddH4V2iN6.svg" alt="n8n"
+        <!-- Sequence of logos (Set 2) -->
+        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
                 style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img src="https://logowik.com/content/uploads/images/deepseek-ai4298.logowik.com.webp"
-                onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg'; this.style.filter='brightness(0) invert(1)';"
-                alt="DeepSeek"
-                style="height:28px; width:auto; object-fit:contain; filter: brightness(0) invert(1); opacity:0.8; mix-blend-mode: screen;">
-            DeepSeek</div>
         <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
                 onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
                 alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+                alt="Gemini" style="height:28px;"> Gemini</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
+                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
         <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
         </div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
+                style="height:28px;"> Visual Studio Code</div>
+
+        <!-- Sequence of logos (Set 3) -->
+        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
+                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
+        <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
+                onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+                alt="Gemini" style="height:28px;"> Gemini</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
+                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
+        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
+        </div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
+                style="height:28px;"> Visual Studio Code</div>
+
+        <!-- Sequence of logos (Set 4 - ensuring it never runs out of content mid-animation on wide screens) -->
+        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
+                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
+        <div class="marquee-item"><img src="https://k60.kn3.net/make-logo.png"
+                onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg'; this.style.filter='brightness(0) invert(1)';"
+                alt="Make" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+                alt="Gemini" style="height:28px;"> Gemini</div>
+        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
+                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
+        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
+        </div>
+        <div class="marquee-item"><img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
+                style="height:28px;"> Visual Studio Code</div>
     </div>
+</div>
 </div>
 
 <!-- Main Bento Grid Interface -->

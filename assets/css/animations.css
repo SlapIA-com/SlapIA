@@ -307,6 +307,7 @@ html.is-rendering .swup-transition-main {
 .marquee-content {
     display: inline-flex;
     gap: 4rem;
+    padding-right: 4rem; /* Add padding to match gap so the loop is seamless */
     animation: marquee 25s linear infinite;
 }
 
