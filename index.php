@@ -68,7 +68,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+        <div class="marquee-item"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
                 alt="Gemini" style="height:28px;"> Gemini</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
                 alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
@@ -88,7 +89,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+        <div class="marquee-item"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
                 alt="Gemini" style="height:28px;"> Gemini</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
                 alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
@@ -108,7 +110,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+        <div class="marquee-item"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
                 alt="Gemini" style="height:28px;"> Gemini</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
                 alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
@@ -128,7 +131,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                 alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
                 alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg"
+        <div class="marquee-item"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
                 alt="Gemini" style="height:28px;"> Gemini</div>
         <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
                 alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
