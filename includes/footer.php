@@ -3,7 +3,10 @@
     <div class="container">
         <div class="row g-5">
             <div class="col-lg-4">
-                <h4 class="text-white mb-4">SlapIA</h4>
+                <h4 class="text-white mb-4 d-flex align-items-center">
+                    <img src="/assets/img/logo.svg" alt="SlapIA Logo" style="height: 28px; width: auto; margin-right: 10px;">
+                    SlapIA
+                </h4>
                 <p class="text-secondary">
                     <?php echo t('footer_desc'); ?>
                 </p>

@@ -123,6 +123,27 @@ include '../includes/components.php';
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Projet : Automatisation Veille technologique -->
+                    <div class="col-md-6">
+                        <div class="bento-card p-4 h-100">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                    <i class="fas fa-rss text-white"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-white mb-0"><?php echo t('project_watch_title'); ?></h5>
+                                    <span class="text-secondary small"><?php echo t('project_watch_subtitle'); ?></span>
+                                </div>
+                            </div>
+                            <p class="text-secondary"><?php echo t('project_watch_desc'); ?></p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-danger bg-opacity-25 text-danger">n8n</span>
+                                <span class="badge bg-info bg-opacity-25 text-info">Gemini</span>
+                                <span class="badge bg-light bg-opacity-25 text-light">Notion</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
