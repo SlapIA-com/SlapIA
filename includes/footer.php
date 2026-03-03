@@ -148,6 +148,7 @@
 <script src="/assets/js/scroll-indicator.js?v=2.1"></script>
 <script src="/assets/js/emoji-rain.js?v=2.1"></script>
 <script src="/assets/js/interactions.js?v=1.0"></script>
+<script src="/assets/js/lightbox.js?v=1.0"></script>
 
 <!-- Swup.js for App-like Navigation (pinned versions) -->
 <script src="https://unpkg.com/swup@4.6.0/dist/Swup.umd.js"></script>

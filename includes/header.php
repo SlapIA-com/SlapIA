@@ -76,6 +76,7 @@ if (strpos($meta_image, 'http') === false) {
     <link href="/assets/css/reviews.css?v=2.1" rel="stylesheet">
     <link href="/assets/css/theme-matrix.css?v=2.1" rel="stylesheet">
     <link href="/assets/css/style.css?v=2.1" rel="stylesheet">
+    <link href="/assets/css/lightbox.css?v=1.0" rel="stylesheet">
 </head>
 <body>
 
