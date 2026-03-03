@@ -279,5 +279,7 @@
     "cookie_preferences_category_title": "Préférences",
     "cookie_preferences_category_desc": "Permet de sauvegarder vos choix (ex: Langue).",
     "toast_profanity": "Veuillez rester poli et professionnel.",
-    "toast_too_short": "Votre message est trop court (min. 20 caractères)."
+    "toast_too_short": "Votre message est trop court (min. 20 caractères).",
+    "latest_linkedin_posts": "Derniers Posts LinkedIn",
+    "follow_us_linkedin": "Suivre sur LinkedIn"
 }

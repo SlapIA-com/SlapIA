@@ -279,5 +279,7 @@
     "cookie_preferences_category_title": "Preferences",
     "cookie_preferences_category_desc": "Allows saving your choices (e.g., Language).",
     "toast_profanity": "Please remain polite and professional.",
-    "toast_too_short": "Your message is too short (min. 20 characters)."
+    "toast_too_short": "Your message is too short (min. 20 characters).",
+    "latest_linkedin_posts": "Latest LinkedIn Posts",
+    "follow_us_linkedin": "Follow on LinkedIn"
 }
