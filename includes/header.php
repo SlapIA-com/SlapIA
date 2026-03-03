@@ -61,6 +61,10 @@ if (strpos($meta_image, 'http') === false) {
             webhookUrl: '<?php echo config('N8N_CHAT_WEBHOOK'); ?>'
         });
     </script>
+
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
     <title><?php echo $meta_title; ?></title>
     
     <!-- Bootstrap 5 -->

@@ -54,7 +54,7 @@ try {
     $ip = $_SERVER['REMOTE_ADDR'];
     $rateLimitFile = sys_get_temp_dir() . '/slapia_ratelimit_' . md5($ip) . '.json';
     $limitTime = 3600; // 1 hour
-    $maxRequests = 5;
+    $maxRequests = 15;
 
     $rateData = ['count' => 0, 'startTime' => time()];
     if (file_exists($rateLimitFile)) {
@@ -62,8 +62,7 @@ try {
         if ($json) {
             if (time() - $json['startTime'] < $limitTime) {
                 $rateData = $json;
-            }
-            else {
+            } else {
                 // Reset after 1 hour
                 $rateData = ['count' => 0, 'startTime' => time()];
             }
@@ -239,8 +238,7 @@ try {
             'success' => true,
             'message' => 'Contact enregistré avec succès dans Notion'
         ]);
-    }
-    else {
+    } else {
         http_response_code($httpCode >= 400 ? $httpCode : 500);
         echo json_encode([
             'success' => false,
@@ -248,8 +246,7 @@ try {
         ]);
     }
 
-}
-catch (Throwable $e) {
+} catch (Throwable $e) {
     ob_clean();
     // Log internal error server-side only — never expose to client
     error_log('[SlapIA Contact API] ' . $e->getMessage());
