@@ -148,35 +148,6 @@ include '../includes/header.php'; ?>
             </div>
         </div>
 
-        <!-- LinkedIn Posts Section (Widget) -->
-        <div class="row mb-5 pb-5">
-            <div class="col-lg-10 mx-auto">
-                <div class="bento-card p-4 p-md-5">
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                        <h3 class="text-white mb-0"><i class="fab fa-linkedin text-primary me-2"></i>
-                            <?php echo t('latest_linkedin_posts'); ?>
-                        </h3>
-                        <a href="https://www.linkedin.com/company/slapia/" target="_blank"
-                            class="btn btn-sm btn-outline-light rounded-pill px-3">
-                            <?php echo t('follow_us_linkedin'); ?> <i class="fas fa-external-link-alt ms-1 small"></i>
-                        </a>
-                    </div>
-
-                    <div class="linkedin-widget-container rounded-3 mt-4" style="min-height: 400px;">
-                        <!-- ============================================== -->
-                        <!-- ⚠️ WIDGET CODE HERE / CODE DU WIDGET ICI ⚠️ -->
-                        <!-- ============================================== -->
-
-                        <!-- Elfsight LinkedIn Feed | Untitled LinkedIn Feed -->
-                        <script src="https://elfsightcdn.com/platform.js" async></script>
-                        <div class="elfsight-app-3c302d21-d21d-4a96-9045-e35eebb584b2" data-elfsight-app-lazy></div>
-
-                        <!-- FIN DU WIDGET -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- CTA Section -->
         <div class="text-center pb-5">
             <div class="bento-card d-inline-block p-5 text-center">
