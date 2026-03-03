@@ -162,8 +162,7 @@ include '../includes/header.php'; ?>
                         </a>
                     </div>
 
-                    <div class="linkedin-widget-container rounded-3 p-4 text-center"
-                        style="min-height: 400px; background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                    <div class="linkedin-widget-container rounded-3 mt-4" style="min-height: 400px;">
                         <!-- ============================================== -->
                         <!-- ⚠️ WIDGET CODE HERE / CODE DU WIDGET ICI ⚠️ -->
                         <!-- ============================================== -->
