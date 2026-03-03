@@ -168,8 +168,9 @@ include '../includes/header.php'; ?>
                         <!-- ⚠️ WIDGET CODE HERE / CODE DU WIDGET ICI ⚠️ -->
                         <!-- ============================================== -->
 
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.2.10/iframeResizer.min.js"></script>
-                        <iframe onload="iFrameResize(this)" src="https://3c302d21d21d4a969045e35eebb584b2.elf.site" style="border:none;width:100%;"></iframe>
+                        <!-- Elfsight LinkedIn Feed | Untitled LinkedIn Feed -->
+                        <script src="https://elfsightcdn.com/platform.js" async></script>
+                        <div class="elfsight-app-3c302d21-d21d-4a96-9045-e35eebb584b2" data-elfsight-app-lazy></div>
 
                         <!-- FIN DU WIDGET -->
                     </div>
