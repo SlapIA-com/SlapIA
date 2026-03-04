@@ -281,5 +281,22 @@
     "toast_profanity": "Veuillez rester poli et professionnel.",
     "toast_too_short": "Votre message est trop court (min. 20 caractères).",
     "latest_linkedin_posts": "Derniers Posts LinkedIn",
-    "follow_us_linkedin": "Suivre sur LinkedIn"
+    "follow_us_linkedin": "Suivre sur LinkedIn",
+    "hero_stat_trained": "Formés",
+    "hero_stat_levels": "Parcours",
+    "hero_stat_teams": "Équipes",
+    "hero_stat_certification": "Certifié",
+    "terminal_line_1": "slapia --init formation-ia",
+    "terminal_line_2": "Niveau 1 : Fondations IA ........... OK",
+    "terminal_line_3": "Niveau 2 : Automatisation .......... OK",
+    "terminal_line_4": "Prêt à transformer votre business ✨",
+    "why_badge": "Pourquoi SlapIA",
+    "why_title": "Une approche qui fait la différence.",
+    "why_subtitle": "Nous ne faisons pas de la formation classique. Nous construisons des compétences concrètes, applicables dès le premier jour.",
+    "number_trained": "Personnes Formées",
+    "number_levels": "Niveaux de Formation",
+    "number_support": "Support Disponible",
+    "cta_badge": "Commencez Maintenant",
+    "cta_title": "Prêt à passer au niveau supérieur ?",
+    "cta_description": "Rejoignez nos formations et transformez votre approche de l'IA. Du débutant à l'expert, on vous accompagne."
 }

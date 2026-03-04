@@ -281,5 +281,22 @@
     "toast_profanity": "Please remain polite and professional.",
     "toast_too_short": "Your message is too short (min. 20 characters).",
     "latest_linkedin_posts": "Latest LinkedIn Posts",
-    "follow_us_linkedin": "Follow on LinkedIn"
+    "follow_us_linkedin": "Follow on LinkedIn",
+    "hero_stat_trained": "Trained",
+    "hero_stat_levels": "Courses",
+    "hero_stat_teams": "Teams",
+    "hero_stat_certification": "Certified",
+    "terminal_line_1": "slapia --init ai-training",
+    "terminal_line_2": "Level 1: AI Foundations ............ OK",
+    "terminal_line_3": "Level 2: Automation ................ OK",
+    "terminal_line_4": "Ready to transform your business ✨",
+    "why_badge": "Why SlapIA",
+    "why_title": "An approach that makes the difference.",
+    "why_subtitle": "We don't do traditional training. We build concrete skills, applicable from day one.",
+    "number_trained": "People Trained",
+    "number_levels": "Training Levels",
+    "number_support": "Support Available",
+    "cta_badge": "Get Started Now",
+    "cta_title": "Ready to level up?",
+    "cta_description": "Join our training and transform your approach to AI. From beginner to expert, we've got you covered."
 }

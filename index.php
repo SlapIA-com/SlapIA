@@ -22,10 +22,32 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 
 ?>
 
-<!-- Hero Section -->
-<section class="text-center position-relative py-5">
+<!-- Subtle Grid Background -->
+<div class="grid-bg"></div>
 
-    <div class="container" style="padding-top: 20px; padding-bottom: 60px;">
+<!-- ============================================
+     HERO SECTION - Premium Enterprise
+     ============================================ -->
+<section class="hero-premium text-center position-relative">
+    <!-- Animated gradient mesh -->
+    <div class="hero-gradient-mesh"></div>
+
+    <!-- Floating particles -->
+    <div class="hero-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
+
         <!-- Floating Badge -->
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-25 mb-4 fade-in-up"
             style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
@@ -34,146 +56,133 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
             <span class="text-secondary small fw-medium"><?php echo t('complete_training'); ?></span>
         </div>
 
-        <h1 class="display-title mb-4 fade-in-up delay-200">
+        <!-- Main Title -->
+        <h1 class="hero-title-xl mb-4 fade-in-up delay-200">
             <?php echo t('master_ai'); ?> <br>
-            <span class="text-gradient-purple" id="typewriter-text"
+            <span class="text-gradient-animated" id="typewriter-text"
                 data-phrases='["<?php echo t('typewriter_1'); ?>", "<?php echo t('typewriter_2'); ?>", "<?php echo t('typewriter_3'); ?>"]'>
                 <?php echo t('typewriter_1'); ?>
             </span>
             <span class="cursor-blink">|</span>
         </h1>
 
-        <p class="text-secondary mx-auto mb-5 fade-in-up delay-400"
-            style="max-width: 600px; font-size: 1.25rem; line-height: 1.6;">
+        <!-- Sub-description -->
+        <p class="hero-description mx-auto mb-0 fade-in-up delay-400">
             <?php echo t('structured_paths'); ?>
         </p>
 
-        <div class="d-flex justify-content-center gap-3 fade-in-up delay-600">
-            <a href="formation" class="btn-apple">
+        <!-- Dual CTA -->
+        <div class="hero-cta-group fade-in-up delay-600">
+            <a href="formation" class="btn-primary-glow">
                 <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
             </a>
+            <a href="entreprises" class="btn-outline-glass">
+                <i class="fas fa-building"></i> <?php echo t('companies'); ?>
+            </a>
+        </div>
+
+        <!-- Hero Stats Bar -->
+        <div class="hero-stats-bar fade-in-up delay-600">
+            <div class="hero-stat">
+                <div class="hero-stat-number"><?php echo ($stats['nombre'] > 0) ? '+' . (int)$stats['nombre'] : '50+'; ?></div>
+                <div class="hero-stat-label"><?php echo t('hero_stat_trained'); ?></div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number"><?php echo ($stats['pourcentage'] !== 'N.A') ? $stats['pourcentage'] . '%' : '98%'; ?></div>
+                <div class="hero-stat-label"><?php echo t('satisfaction'); ?></div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">3</div>
+                <div class="hero-stat-label"><?php echo t('hero_stat_levels'); ?></div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Infinite Marquee Section -->
+<!-- ============================================
+     INFINITE MARQUEE - Tech Stack Logos
+     ============================================ -->
 <div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5 fade-in-up delay-600"
     style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
     <div class="marquee-content">
-        <!-- Sequence of logos (Set 1) -->
-        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
-                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img
-                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
-                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
-                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
-                alt="Gemini" style="height:28px;"> Gemini</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg"
-                alt="Copilot" style="height:28px;"> Copilot</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
-        </div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
-                style="height:28px;"> Visual Studio Code</div>
+        <?php
+        // Logo data for DRY marquee generation
+        $marquee_logos = [
+            ['src' => 'https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png', 'alt' => 'n8n', 'label' => 'n8n', 'style' => 'height:22px; filter: brightness(0) invert(1); opacity:0.8;'],
+            ['src' => 'https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png', 'alt' => 'make', 'label' => 'Make', 'style' => 'height:22px; filter: brightness(0) invert(1); opacity:0.8;'],
+            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png', 'alt' => 'Notion', 'label' => 'Notion', 'style' => 'height:28px; border-radius: 4px;'],
+            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952', 'alt' => 'Gemini', 'label' => 'Gemini', 'style' => 'height:28px;'],
+            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg', 'alt' => 'ChatGPT', 'label' => 'ChatGPT', 'style' => 'height:28px; filter: brightness(0) invert(1); opacity:0.8;'],
+            ['src' => 'https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg', 'alt' => 'Copilot', 'label' => 'Copilot', 'style' => 'height:28px;'],
+            ['icon' => 'fas fa-code', 'label' => 'API & Webhooks'],
+            ['src' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg', 'alt' => 'VS Code', 'label' => 'Visual Studio Code', 'style' => 'height:28px;'],
+        ];
 
-        <!-- Sequence of logos (Set 2) -->
-        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
-                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img
-                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
-                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
-                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
-                alt="Gemini" style="height:28px;"> Gemini</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg"
-                alt="Copilot" style="height:28px;"> Copilot</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
-        </div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
-                style="height:28px;"> Visual Studio Code</div>
-
-        <!-- Sequence of logos (Set 3) -->
-        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
-                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img
-                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
-                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
-                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
-                alt="Gemini" style="height:28px;"> Gemini</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg"
-                alt="Copilot" style="height:28px;"> Copilot</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
-        </div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
-                style="height:28px;"> Visual Studio Code</div>
-
-        <!-- Sequence of logos (Set 4 - ensuring it never runs out of content mid-animation on wide screens) -->
-        <div class="marquee-item"><img src="https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png" alt="n8n"
-                style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> n8n</div>
-        <div class="marquee-item"><img
-                src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png"
-                alt="make" style="height:22px; filter: brightness(0) invert(1); opacity:0.8;"> Make</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
-                alt="Notion" style="height:28px; border-radius: 4px;"> Notion</div>
-        <div class="marquee-item"><img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952"
-                alt="Gemini" style="height:28px;"> Gemini</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg"
-                alt="ChatGPT" style="height:28px; filter: brightness(0) invert(1); opacity:0.8;"> ChatGPT</div>
-        <div class="marquee-item"><img src="https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg"
-                alt="Copilot" style="height:28px;"> Copilot</div>
-        <div class="marquee-item"><i class="fas fa-code text-secondary" style="font-size: 1.2rem;"></i> API & Webhooks
-        </div>
-        <div class="marquee-item"><img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code"
-                style="height:28px;"> Visual Studio Code</div>
+        // Repeat 4 sets for seamless loop
+        for ($set = 0; $set < 4; $set++):
+            foreach ($marquee_logos as $logo):
+                echo '<div class="marquee-item">';
+                if (isset($logo['src'])) {
+                    echo '<img src="' . $logo['src'] . '" alt="' . $logo['alt'] . '" style="' . $logo['style'] . '"> ';
+                } elseif (isset($logo['icon'])) {
+                    echo '<i class="' . $logo['icon'] . ' text-secondary" style="font-size: 1.2rem;"></i> ';
+                }
+                echo $logo['label'];
+                echo '</div>';
+            endforeach;
+        endfor;
+        ?>
     </div>
 </div>
 </div>
 
-<!-- Main Bento Grid Interface -->
+<!-- ============================================
+     MAIN BENTO GRID - Enhanced
+     ============================================ -->
 <section class="pb-5">
     <div class="container fade-in-up delay-600">
         <div class="bento-grid">
 
             <!-- Main Feature Card - Formation IA (Large) -->
-            <div class="bento-card span-8 d-flex flex-column justify-content-between scroll-scale"
-                style="min-height: 400px; background: linear-gradient(to bottom right, rgba(20,20,20,0.8), rgba(0,0,0,0.9));">
-                <div>
+            <div class="bento-card bento-card-glow card-feature-main span-8 d-flex flex-column justify-content-between scroll-scale">
+                <!-- Internal glow orbs -->
+                <div class="card-glow-orb orb-blue"></div>
+                <div class="card-glow-orb orb-purple"></div>
+
+                <div style="position: relative; z-index: 2;">
                     <div class="icon-box text-white border-0" style="background: var(--accent-blue);">
                         <i class="fas fa-brain"></i>
                     </div>
                     <h3 class="text-white mb-2"><?php echo t('ai_training'); ?></h3>
                     <p class="text-secondary" style="max-width: 400px;"><?php echo t('learn_ai_tools'); ?></p>
                 </div>
-                <!-- Abstract visual element mimicking an interface -->
-                <div class="mt-4 rounded-3 border border-secondary border-opacity-10 p-3"
-                    style="background: rgba(0,0,0,0.5);">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="rounded-circle bg-success" style="width: 8px; height: 8px;"></div>
-                        <span class="text-secondary small"><?php echo t('3_levels_available'); ?></span>
+
+                <!-- Mini Terminal Mockup -->
+                <div class="mini-terminal" style="position: relative; z-index: 2;">
+                    <div class="mini-terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                        <span class="text-secondary small ms-2" style="font-size: 0.7rem;">slapia-training.sh</span>
                     </div>
-                    <div class="d-flex gap-2">
-                        <div class="h-1 rounded bg-secondary opacity-25 flex-grow-1"></div>
-                        <div class="h-1 rounded bg-secondary opacity-25 w-25"></div>
+                    <div class="mini-terminal-body">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">$</span>
+                            <span class="terminal-command"><?php echo t('terminal_line_1'); ?></span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-success">✓</span>
+                            <span class="terminal-command"><?php echo t('terminal_line_2'); ?></span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-success">✓</span>
+                            <span class="terminal-command"><?php echo t('terminal_line_3'); ?></span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-info">→</span>
+                            <span class="terminal-success"><?php echo t('terminal_line_4'); ?></span>
+                        </div>
                     </div>
-                    <div class="h-1 rounded bg-secondary opacity-25 w-50 mt-2"></div>
                 </div>
             </div>
 
@@ -193,29 +202,40 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
             render_reviews_section($reviews);
             ?>
 
-            <!-- Bottom Row Cards - 2 Parcours -->
-            <?php
-            render_feature_card(
-                'span-6 scroll-scale',
-                'fas fa-building',
-                'text-primary',
-                'background: rgba(41, 151, 255, 0.1);',
-                'training_for_companies',
-                'train_teams',
-                ['url' => 'entreprises', 'text_key' => 'learn_more']
-            );
-            ?>
-
-            <div class="bento-card span-6 d-flex flex-column justify-content-between scroll-scale delay-100"
-                style="background: linear-gradient(135deg, var(--accent-purple), #7000ff);">
+            <!-- Enterprise Card -->
+            <div class="bento-card bento-card-glow card-enterprise span-6 d-flex flex-column justify-content-between scroll-scale">
                 <div>
+                    <div class="icon-box text-primary border-0 mb-3" style="background: rgba(41, 151, 255, 0.1);">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h4 class="text-white"><?php echo t('training_for_companies'); ?></h4>
+                    <p class="text-secondary small"><?php echo t('train_teams'); ?></p>
+
+                    <!-- Mini pills showing capabilities -->
+                    <div class="enterprise-logos">
+                        <div class="enterprise-logo-pill"><i class="fas fa-users"></i> <?php echo t('hero_stat_teams'); ?></div>
+                        <div class="enterprise-logo-pill"><i class="fas fa-chart-line"></i> ROI</div>
+                        <div class="enterprise-logo-pill"><i class="fas fa-certificate"></i> <?php echo t('hero_stat_certification'); ?></div>
+                    </div>
+                </div>
+                <a href="entreprises" class="text-primary small text-decoration-none mt-3">
+                    <?php echo t('learn_more'); ?> <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <!-- Coaching Card - Premium Purple -->
+            <div class="bento-card bento-card-glow card-coaching span-6 d-flex flex-column justify-content-between scroll-scale delay-100">
+                <div style="position: relative; z-index: 2;">
+                    <div class="card-coaching-badge">
+                        <i class="fas fa-crown"></i> VIP
+                    </div>
                     <div class="icon-box text-white border-0 mb-3" style="background: rgba(255,255,255,0.2);">
                         <i class="fas fa-user-tie"></i>
                     </div>
                     <h5 class="text-white mb-1"><?php echo t('personal_coaching'); ?></h5>
                     <p class="text-white opacity-75 small mb-3"><?php echo t('vip_mentoring'); ?></p>
                 </div>
-                <a href="formation#formation" class="text-white text-decoration-none small fw-bold">
+                <a href="formation#formation" class="text-white text-decoration-none small fw-bold" style="position: relative; z-index: 2;">
                     <?php echo t('book_slot'); ?> <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -224,7 +244,84 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
     </div>
 </section>
 
-<!-- "OS" Style Section - Outils et Ecosystème -->
+
+<!-- ============================================
+     WHY SLAPIA SECTION
+     ============================================ -->
+<section class="section-why">
+    <div class="container">
+        <div class="text-center">
+            <div class="section-badge scroll-reveal">
+                <i class="fas fa-bolt"></i> <?php echo t('why_badge'); ?>
+            </div>
+            <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('why_title'); ?></h2>
+            <p class="text-secondary mx-auto scroll-reveal delay-200" style="max-width: 600px; font-size: 1.1rem;">
+                <?php echo t('why_subtitle'); ?>
+            </p>
+        </div>
+
+        <div class="why-grid">
+            <!-- Card 1 - Progressive -->
+            <div class="why-card scroll-reveal">
+                <div class="why-icon icon-purple">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h4 class="why-card-title"><?php echo t('progressive_training'); ?></h4>
+                <p class="why-card-desc"><?php echo t('progressive_training_desc'); ?></p>
+            </div>
+
+            <!-- Card 2 - Pratique -->
+            <div class="why-card scroll-reveal delay-100">
+                <div class="why-icon icon-blue">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h4 class="why-card-title"><?php echo t('immediate_practice'); ?></h4>
+                <p class="why-card-desc"><?php echo t('immediate_practice_desc'); ?></p>
+            </div>
+
+            <!-- Card 3 - Support -->
+            <div class="why-card scroll-reveal delay-200">
+                <div class="why-icon icon-green">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h4 class="why-card-title"><?php echo t('continuous_support'); ?></h4>
+                <p class="why-card-desc"><?php echo t('continuous_support_desc'); ?></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================
+     NUMBERS / IMPACT SECTION
+     ============================================ -->
+<section class="numbers-section">
+    <div class="container">
+        <div class="numbers-grid">
+            <div class="number-item scroll-reveal">
+                <div class="number-value" data-count="<?php echo ($stats['nombre'] > 0) ? (int)$stats['nombre'] : 50; ?>">0</div>
+                <div class="number-label"><?php echo t('number_trained'); ?></div>
+            </div>
+            <div class="number-item scroll-reveal delay-100">
+                <div class="number-value" data-count="<?php echo ($stats['pourcentage'] !== 'N.A') ? (int)$stats['pourcentage'] : 98; ?>" data-suffix="%">0</div>
+                <div class="number-label"><?php echo t('satisfaction'); ?></div>
+            </div>
+            <div class="number-item scroll-reveal delay-200">
+                <div class="number-value" data-count="3">0</div>
+                <div class="number-label"><?php echo t('number_levels'); ?></div>
+            </div>
+            <div class="number-item scroll-reveal delay-300">
+                <div class="number-value" data-count="24" data-suffix="h">0</div>
+                <div class="number-label"><?php echo t('number_support'); ?></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================
+     ECOSYSTEM SECTION - Tools & Approach
+     ============================================ -->
 <section class="py-5">
     <div class="container">
         <div class="row align-items-center">
@@ -294,5 +391,75 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
         </div>
     </div>
 </section>
+
+
+<!-- ============================================
+     FINAL CTA SECTION
+     ============================================ -->
+<section class="final-cta">
+    <div class="final-cta-bg"></div>
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="section-badge mx-auto scroll-reveal">
+            <i class="fas fa-rocket"></i> <?php echo t('cta_badge'); ?>
+        </div>
+        <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('cta_title'); ?></h2>
+        <p class="final-cta-desc scroll-reveal delay-200"><?php echo t('cta_description'); ?></p>
+        <div class="hero-cta-group scroll-reveal delay-300">
+            <a href="formation" class="btn-primary-glow">
+                <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="contact" class="btn-outline-glass">
+                <i class="fas fa-envelope"></i> <?php echo t('contact'); ?>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- Counter Animation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.number-value[data-count]');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseInt(el.getAttribute('data-count'));
+                const suffix = el.getAttribute('data-suffix') || '';
+                const prefix = target > 10 ? '+' : '';
+                const duration = 2000;
+                const start = performance.now();
+
+                function animate(currentTime) {
+                    const elapsed = currentTime - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Ease out cubic
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.round(eased * target);
+                    el.textContent = prefix + current + suffix;
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                }
+                requestAnimationFrame(animate);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+
+    // Spotlight effect for why-cards
+    const whyCards = document.querySelectorAll('.why-card');
+    whyCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+    });
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>
