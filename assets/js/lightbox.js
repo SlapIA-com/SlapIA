@@ -7,28 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
     initLightbox();
 });
 
-// If using Swup
-if (window.swup) {
-    window.swup.hooks.on('page:view', () => {
-        initLightbox();
-    });
-} else {
-    // Fallback if Swup is not exposed globally but used via custom event
-    document.addEventListener('swup:pageView', () => {
-        initLightbox();
-    });
-}
+// Ensure initLightbox is globally accessible for Swup transitions
+window.initLightbox = initLightbox;
 
 
 function initLightbox() {
     // Attach styles and behaviors only to images in specific areas
     // Exclude images with .no-lightbox class, logos, etc.
     const images = document.querySelectorAll('main#swup img:not(.no-lightbox):not(.logo)');
-    
+
     images.forEach(img => {
         if (!img.classList.contains('lightbox-trigger')) {
             img.classList.add('lightbox-trigger');
-            img.addEventListener('click', function() {
+            img.addEventListener('click', function () {
                 openLightbox(this.src, this.alt);
             });
         }
@@ -62,7 +53,7 @@ function openLightbox(src, alt) {
     // Append to overlay
     overlay.appendChild(closeBtn);
     overlay.appendChild(img);
-    
+
     // Append to body
     document.body.appendChild(overlay);
 
@@ -73,7 +64,7 @@ function openLightbox(src, alt) {
 
     // Close on button click
     closeBtn.addEventListener('click', closeLightbox);
-    
+
     // Close on background click
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
