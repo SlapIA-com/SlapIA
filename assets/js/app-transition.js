@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initLightbox) window.initLightbox();
         } catch (e) { console.error("Lightbox init failed", e); }
 
+        // Re-init Cloudflare Turnstile (contact page)
+        try {
+            if (window.initContactTurnstile) window.initContactTurnstile();
+        } catch (e) { console.error("Turnstile init failed", e); }
+
         // 6. Update Active Links
         const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";
         const links = document.querySelectorAll('.dock-link');

@@ -254,26 +254,36 @@ include '../includes/header.php'; ?>
     // Initialize Turnstile for this form
     function initContactTurnstile() {
         const container = document.getElementById('cf-turnstile-container');
-        if (container && typeof turnstile !== 'undefined') {
-            const sitekey = container.getAttribute('data-sitekey');
-            try {
-                turnstile.render(container, {
-                    sitekey: sitekey,
-                    theme: 'dark'
-                });
-            } catch (e) { console.error('Turnstile render error', e); }
-        }
+        if (!container) return;
+        if (typeof turnstile === 'undefined') return;
+
+        const sitekey = container.getAttribute('data-sitekey');
+        if (!sitekey) return;
+
+        try {
+            // Remove any existing widget first (important for Swup re-navigation)
+            turnstile.remove(container);
+        } catch (e) { /* no widget to remove, that's fine */ }
+
+        try {
+            turnstile.render(container, {
+                sitekey: sitekey,
+                theme: 'dark'
+            });
+        } catch (e) { console.error('Turnstile render error', e); }
     }
 
-    // The global callback used by Turnstile script in header
+    // Expose globally so Swup can re-init on navigation
+    window.initContactTurnstile = initContactTurnstile;
+
+    // The global callback used by Turnstile script in header (first page load)
     window.onloadTurnstileCallback = function () {
         initContactTurnstile();
     };
 
-    // Initialize if already loaded (e.g. Swup navigation)
+    // Initialize if Turnstile API is already loaded (Swup navigation)
     if (typeof turnstile !== 'undefined') {
-        // Slight delay to ensure DOM is ready if script runs immediately
-        setTimeout(initContactTurnstile, 100);
+        setTimeout(initContactTurnstile, 150);
     }
 
     function showToast(message, isError = false) {

@@ -63,7 +63,7 @@ if (strpos($meta_image, 'http') === false) {
     </script>
 
     <!-- Cloudflare Turnstile -->
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" async defer></script>
 
     <title><?php echo $meta_title; ?></title>
     
