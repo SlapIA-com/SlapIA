@@ -1,0 +1,284 @@
+/*
+   SlapIA - Formation Page Styles
+   Mobile-first responsive optimizations & premium enhancements
+*/
+
+/* =========================================
+   1. CURRICULUM TABLES → Stacked cards on mobile
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    /* Hide table headers on mobile */
+    .formation-level-card thead {
+        display: none;
+    }
+
+    .formation-level-card table,
+    .formation-level-card tbody,
+    .formation-level-card tr,
+    .formation-level-card td {
+        display: block;
+        width: 100%;
+    }
+
+    .formation-level-card tr {
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .formation-level-card tr:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0;
+    }
+
+    /* Module number - small tag */
+    .formation-level-card td:first-child {
+        padding: 0 0 6px 0 !important;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.5;
+    }
+
+    /* Theme - main title, 2nd td */
+    .formation-level-card td:nth-child(2) {
+        padding: 0 0 6px 0 !important;
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Description - 3rd td */
+    .formation-level-card td:nth-child(3) {
+        padding: 0 0 10px 0 !important;
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+
+    /* Tools badges - 4th td */
+    .formation-level-card td:nth-child(4) {
+        padding: 0 !important;
+        text-align: left !important;
+    }
+
+    /* Remove the table-responsive scroll */
+    .formation-level-card .table-responsive {
+        overflow-x: visible;
+    }
+}
+
+
+/* =========================================
+   2. LEVEL HEADERS - Stack on small mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .level-header {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 16px !important;
+    }
+
+    .level-header .level-number {
+        margin: 0 auto;
+    }
+
+    .level-header .level-info {
+        text-align: center;
+    }
+
+    .level-header .level-info h2 {
+        font-size: 1.3rem !important;
+    }
+
+    .level-header .level-info p {
+        font-size: 0.85rem;
+    }
+}
+
+
+/* =========================================
+   3. HERO NAV PILLS - 2x2 Grid on mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .formation-nav-pills {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px !important;
+        margin-top: 28px !important;
+        width: 100%;
+    }
+
+    .formation-nav-pills .btn-outline-glass,
+    .formation-nav-pills .btn-primary-glow {
+        padding: 10px 14px !important;
+        font-size: 0.82rem !important;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .formation-nav-pills {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    .formation-nav-pills .btn-outline-glass,
+    .formation-nav-pills .btn-primary-glow {
+        padding: 10px 20px !important;
+        font-size: 0.88rem !important;
+    }
+}
+
+
+/* =========================================
+   4. VIP PRICING CARD - Scale down
+   ========================================= */
+
+@media (max-width: 768px) {
+    .vip-pricing-card .display-4 {
+        font-size: 2.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .vip-pricing-card .display-4 {
+        font-size: 2rem !important;
+    }
+}
+
+
+/* =========================================
+   5. BENTO CARD PADDING - Tighter on mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .formation-level-card {
+        padding: 20px !important;
+        border-radius: 24px !important;
+    }
+}
+
+
+/* =========================================
+   6. PATH CARDS - Polish on mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .formation-path-cards .why-card {
+        padding: 24px 20px;
+    }
+
+    .formation-path-cards .why-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+        border-radius: 16px;
+    }
+
+    .formation-path-cards .why-card-title {
+        font-size: 1.05rem;
+    }
+
+    .formation-path-cards .why-card-desc {
+        font-size: 0.82rem;
+    }
+}
+
+
+/* =========================================
+   7. SECTION TITLES - Mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .formation-section-title {
+        font-size: 1.75rem !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .formation-section-title {
+        font-size: 2.2rem !important;
+    }
+}
+
+
+/* =========================================
+   8. LANGUAGE DISCLAIMER - Full width mobile
+   ========================================= */
+
+@media (max-width: 576px) {
+    .lang-disclaimer {
+        max-width: 100% !important;
+    }
+}
+
+
+/* =========================================
+   9. SCROLL PADDING for anchor links
+   ========================================= */
+
+#niveau1,
+#niveau2,
+#niveau3,
+#formation {
+    scroll-margin-top: 120px;
+}
+
+
+/* =========================================
+   10. STAGGER ROW ANIMATIONS
+   ========================================= */
+
+.formation-level-card .stagger-row {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: staggerFadeIn 0.4s ease forwards;
+}
+
+.formation-level-card .stagger-row:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.formation-level-card .stagger-row:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.formation-level-card .stagger-row:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.formation-level-card .stagger-row:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+@keyframes staggerFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================
+   11. VIP SECTION - Mobile polish
+   ========================================= */
+
+@media (max-width: 768px) {
+    .vip-section .display-6 {
+        font-size: 1.6rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .vip-section .section-badge {
+        margin-bottom: 16px;
+    }
+
+    .vip-section .display-6 {
+        font-size: 1.4rem !important;
+    }
+}

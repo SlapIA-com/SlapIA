@@ -8,6 +8,9 @@ $page_description = t('formation_meta_desc');
 $page_image = '/assets/img/logo.png';
 include '../includes/header.php';
 include '../includes/components.php';
+?>
+<link href="/assets/css/formation.css?v=1.0" rel="stylesheet">
+<?php
 
 // Notion Data
 $stats = getSatisfactionStats(true);
@@ -81,7 +84,7 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
         </p>
 
         <!-- Quick Navigation Pills -->
-        <div class="hero-cta-group fade-in-up delay-600">
+        <div class="hero-cta-group formation-nav-pills fade-in-up delay-600">
             <a href="#niveau1" class="btn-outline-glass" style="padding: 12px 28px; font-size: 0.95rem;">
                 <span class="badge bg-primary rounded-circle me-1" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;">1</span>
                 <?php echo t('level_1'); ?>
@@ -122,9 +125,9 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      LANGUAGE DISCLAIMER
      ============================================ -->
 <section class="pb-4">
-    <div class="container fade-in-up delay-600">
-        <div class="bento-card p-3 d-inline-flex gap-3 align-items-start mx-auto d-block" 
-            style="background: rgba(41,151,255,0.05); border-color: rgba(41,151,255,0.15); max-width: 650px;">
+    <div class="container fade-in-up delay-600 text-center">
+        <div class="bento-card p-3 d-inline-flex gap-3 align-items-start text-start" 
+            style="background: rgba(41,151,255,0.05); border-color: rgba(41,151,255,0.15); max-width: 650px;" class="lang-disclaimer">
             <i class="fas fa-globe text-info mt-1" style="font-size: 1.1rem;"></i>
             <div>
                 <h6 class="text-white mb-1 small text-uppercase fw-bold"><?php echo t('lang_disclaimer_title'); ?></h6>
@@ -144,14 +147,14 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
             <div class="section-badge scroll-reveal">
                 <i class="fas fa-route"></i> <?php echo t('formation_path_badge'); ?>
             </div>
-            <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('formation_path_title'); ?></h2>
+            <h2 class="section-title-lg formation-section-title scroll-reveal delay-100"><?php echo t('formation_path_title'); ?></h2>
             <p class="text-secondary mx-auto scroll-reveal delay-200" style="max-width: 600px; font-size: 1.1rem;">
                 <?php echo t('formation_path_subtitle'); ?>
             </p>
         </div>
 
         <!-- 3-Column Path Cards -->
-        <div class="why-grid">
+        <div class="why-grid formation-path-cards">
             <!-- Level 1 Card -->
             <a href="#niveau1" class="why-card scroll-reveal text-decoration-none" style="cursor:pointer;">
                 <div class="why-icon icon-blue">
@@ -210,12 +213,12 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau1" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale" style="border-color: rgba(41,151,255,0.2);">
+        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(41,151,255,0.2);">
             <!-- Header -->
-            <div class="d-flex align-items-center gap-4 mb-4">
-                <div class="d-flex justify-content-center align-items-center bg-primary text-white rounded-3 fw-bold flex-shrink-0"
+            <div class="d-flex align-items-center gap-4 mb-4 level-header">
+                <div class="d-flex justify-content-center align-items-center bg-primary text-white rounded-3 fw-bold flex-shrink-0 level-number"
                     style="width: 60px; height: 60px; font-size: 2rem; box-shadow: 0 0 30px rgba(41,151,255,0.3);">1</div>
-                <div>
+                <div class="level-info">
                     <h2 class="text-white mb-1"><?php echo t('acculturation_foundations'); ?></h2>
                     <p class="text-secondary mb-0"><?php echo t('understand_why'); ?></p>
                 </div>
@@ -236,8 +239,8 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
                     <tbody>
                         <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
                             <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white"><?php echo t('m1_level1_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m1_level1_desc'); ?></td>
+                            <td class="py-4 text-white td-theme"><?php echo t('m1_level1_theme'); ?></td>
+                            <td class="py-4 td-desc"><?php echo t('m1_level1_desc'); ?></td>
                             <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
                         </tr>
                         <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
@@ -271,12 +274,12 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau2" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale" style="border-color: rgba(191,90,242,0.2);">
+        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(191,90,242,0.2);">
             <!-- Header -->
-            <div class="d-flex align-items-center gap-4 mb-4">
-                <div class="d-flex justify-content-center align-items-center bg-info text-white rounded-3 fw-bold flex-shrink-0"
+            <div class="d-flex align-items-center gap-4 mb-4 level-header">
+                <div class="d-flex justify-content-center align-items-center bg-info text-white rounded-3 fw-bold flex-shrink-0 level-number"
                     style="width: 60px; height: 60px; font-size: 2rem; box-shadow: 0 0 30px rgba(191,90,242,0.3);">2</div>
-                <div>
+                <div class="level-info">
                     <h2 class="text-white mb-1"><?php echo t('level_2_title'); ?></h2>
                     <p class="text-secondary mb-0"><?php echo t('level_2_subtitle'); ?></p>
                 </div>
@@ -334,13 +337,13 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau3" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale" style="border-color: rgba(245,158,11,0.2);">
+        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(245,158,11,0.2);">
             <!-- Header with gradient -->
-            <div class="d-flex align-items-center gap-4 mb-4">
-                <div class="d-flex justify-content-center align-items-center text-white rounded-3 fw-bold flex-shrink-0"
+            <div class="d-flex align-items-center gap-4 mb-4 level-header">
+                <div class="d-flex justify-content-center align-items-center text-white rounded-3 fw-bold flex-shrink-0 level-number"
                     style="width: 60px; height: 60px; font-size: 2rem; background: linear-gradient(135deg, #f59e0b, #ef4444); box-shadow: 0 0 30px rgba(245,158,11,0.3);">
                     <?php echo t('level_3_number'); ?></div>
-                <div>
+                <div class="level-info">
                     <h2 class="text-white mb-1"><?php echo t('level_3_title'); ?></h2>
                     <p class="text-secondary mb-0"><?php echo t('level_3_subtitle'); ?></p>
                 </div>
@@ -402,7 +405,7 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
 <!-- ============================================
      VIP COACHING SECTION - Split Layout Premium
      ============================================ -->
-<section id="formation" class="py-5">
+<section id="formation" class="py-5 vip-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-5 mb-4 mb-lg-0 scroll-reveal">
@@ -446,7 +449,7 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
                 </div>
             </div>
             <div class="col-lg-6 offset-lg-1 scroll-reveal delay-200">
-                <div class="bento-card bento-card-glow p-4 text-center position-relative overflow-hidden"
+                <div class="bento-card bento-card-glow p-4 text-center position-relative overflow-hidden vip-pricing-card"
                     style="background: linear-gradient(135deg, rgba(191,90,242,0.08), rgba(112,0,255,0.05)); border-color: rgba(191,90,242,0.2);">
                     <!-- Glow orb -->
                     <div class="position-absolute" style="top:-80px;right:-80px;width:200px;height:200px;background:var(--accent-purple);filter:blur(100px);opacity:0.15;pointer-events:none;"></div>
