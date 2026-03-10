@@ -29,6 +29,11 @@ include '../includes/header.php'; ?>
       "@type": "HowToStep",
       "name": "Agent IA Autonome n8n",
       "text": "Un agent IA (Gemini Pro) orchestre les automatisations via n8n : qualification des prospects, réponses automatiques et synchronisation CRM."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Gestion des Emails Automatiques",
+      "text": "Chaque interaction client déclenche un flux d'emails intelligents automatisés via n8n : notification, bienvenue, demande d'avis et remerciement."
     }
   ]
 }
@@ -106,7 +111,32 @@ include '../includes/header.php'; ?>
                 </div>
             </div>
 
-            <!-- Card 4: Reviews System -->
+            <!-- Card 4: Gestion Emails Automatiques -->
+            <div class="bento-card span-12 p-4 p-md-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="icon-box text-white mb-4" style="background: #10B981;">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="text-white mb-3"><?php echo t('auto_email_title'); ?></h3>
+                        <p class="text-secondary mb-4"><?php echo t('auto_email_desc'); ?></p>
+                        <ul class="list-unstyled text-secondary mb-0">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> <?php echo t('auto_email_step1'); ?></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> <?php echo t('auto_email_step2'); ?></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> <?php echo t('auto_email_step3'); ?></li>
+                            <li class="mb-0"><i class="fas fa-check text-success me-2"></i> <?php echo t('auto_email_step4'); ?></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6">
+                        <!-- n8n Email Workflow Image -->
+                        <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10" style="min-height: 250px; background: #222;">
+                            <img src="/assets/img/n8n-agent2.png" alt="n8n Email Automation Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Reviews System -->
              <div class="bento-card span-12 p-4 p-md-5">
                 <div class="row align-items-center">
                     <div class="col-lg-7">
