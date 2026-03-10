@@ -50,10 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initLightbox) window.initLightbox();
         } catch (e) { console.error("Lightbox init failed", e); }
 
-        // Re-init Cloudflare Turnstile (contact page)
+        // Re-init Cloudflare Turnstile (contact page) — needs delay for inline scripts to execute
         try {
-            if (window.initContactTurnstile) window.initContactTurnstile();
+            const tryTurnstile = () => {
+                if (window.initContactTurnstile) {
+                    window.initContactTurnstile();
+                }
+            };
+            // Try immediately, then retry after scripts have loaded
+            tryTurnstile();
+            setTimeout(tryTurnstile, 300);
+            setTimeout(tryTurnstile, 800);
         } catch (e) { console.error("Turnstile init failed", e); }
+
+        // Re-init Counter Animations (index page)
+        try {
+            if (window.initCounters) window.initCounters();
+        } catch (e) { console.error("Counters init failed", e); }
+
+        // Re-init Why cards spotlight
+        try {
+            if (window.initWhyCards) window.initWhyCards();
+        } catch (e) { console.error("WhyCards init failed", e); }
 
         // 6. Update Active Links
         const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";

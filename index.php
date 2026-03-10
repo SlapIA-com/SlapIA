@@ -422,8 +422,10 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
 
 <!-- Counter Animation Script -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+// Global function so Swup can re-init after page transitions
+window.initCounters = function() {
     const counters = document.querySelectorAll('.number-value[data-count]');
+    if (!counters.length) return;
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -438,7 +440,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 function animate(currentTime) {
                     const elapsed = currentTime - start;
                     const progress = Math.min(elapsed / duration, 1);
-                    // Ease out cubic
                     const eased = 1 - Math.pow(1 - progress, 3);
                     const current = Math.round(eased * target);
                     el.textContent = prefix + current + suffix;
@@ -453,8 +454,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.5 });
 
     counters.forEach(counter => observer.observe(counter));
+};
 
-    // Spotlight effect for why-cards
+// Global function for why-card spotlight
+window.initWhyCards = function() {
     const whyCards = document.querySelectorAll('.why-card');
     whyCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
@@ -463,6 +466,12 @@ document.addEventListener('DOMContentLoaded', function() {
             card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         });
     });
+};
+
+// First page load
+document.addEventListener('DOMContentLoaded', function() {
+    window.initCounters();
+    window.initWhyCards();
 });
 </script>
 
