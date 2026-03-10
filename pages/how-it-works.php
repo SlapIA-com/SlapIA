@@ -47,9 +47,9 @@ include '../includes/header.php'; ?>
     <div class="container">
         
         <!-- Header -->
-        <div class="row mb-5 text-center">
+        <div class="row mb-5 text-center scroll-reveal">
             <div class="col-lg-8 mx-auto">
-                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-25 mb-4" 
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-25 mb-4 shimmer-badge" 
                      style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
                     <span class="badge bg-info rounded-pill" style="font-size: 0.7rem;"><?php echo t('tech_badge'); ?></span>
                     <span class="text-secondary small fw-medium"><?php echo t('built_with_passion'); ?></span>
@@ -59,38 +59,70 @@ include '../includes/header.php'; ?>
             </div>
         </div>
 
+        <!-- ========== STEP 1 & 2: Side by side ========== -->
         <div class="bento-grid">
             
             <!-- Card 1: VS Code / Architecture -->
-            <div class="bento-card span-6 p-4 p-md-5">
+            <div class="bento-card span-6 p-4 p-md-5 scroll-scale" style="position: relative;">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold" 
+                         style="width: 36px; height: 36px; background: linear-gradient(135deg, #007ACC, #005A9E); color: white; font-size: 0.85rem; flex-shrink: 0;">
+                        1
+                    </div>
+                    <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 0.1em;"><?php echo t('hiw_step'); ?> 1</span>
+                </div>
                 <div class="icon-box text-white mb-4" style="background: #007ACC;">
                     <i class="fas fa-code"></i>
                 </div>
                 <h3 class="text-white mb-3"><?php echo t('tech_stack_title'); ?></h3>
                 <p class="text-secondary mb-4"><?php echo t('vscode_desc'); ?></p>
-                <!-- VS Code Image -->
                 <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10 mt-3" style="min-height: 200px; background: #1e1e1e;">
                     <img src="/assets/img/vscode-stack.png" alt="VS Code Architecture" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                 </div>
             </div>
 
             <!-- Card 2: Notion CMS -->
-            <div class="bento-card span-6 p-4 p-md-5">
+            <div class="bento-card span-6 p-4 p-md-5 scroll-scale delay-200" style="position: relative;">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold" 
+                         style="width: 36px; height: 36px; background: linear-gradient(135deg, #ffffff, #d4d4d4); color: black; font-size: 0.85rem; flex-shrink: 0;">
+                        2
+                    </div>
+                    <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 0.1em;"><?php echo t('hiw_step'); ?> 2</span>
+                </div>
                 <div class="icon-box text-black mb-4" style="background: #ffffff;">
                     <i class="fas fa-database"></i>
                 </div>
                 <h3 class="text-white mb-3"><?php echo t('notion_cms_title'); ?></h3>
                 <p class="text-secondary mb-4"><?php echo t('notion_cms_desc'); ?></p>
-                <!-- Notion Image -->
                 <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10 mt-3" style="min-height: 200px; background: #191919;">
                      <img src="/assets/img/notion-cms.png" alt="Notion Database" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                 </div>
             </div>
+        </div>
 
-            <!-- Card 3: AI Agent n8n -->
-            <div class="bento-card span-12 p-4 p-md-5">
+        <!-- Transition 1 -->
+        <div class="text-center py-5 scroll-reveal">
+            <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+                <div style="height: 1px; width: 60px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2));"></div>
+                <i class="fas fa-chevron-down text-secondary" style="opacity: 0.4; animation: floatDown 2s ease-in-out infinite;"></i>
+                <div style="height: 1px; width: 60px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.2));"></div>
+            </div>
+            <p class="text-secondary fst-italic mb-0" style="font-size: 1.1rem;"><?php echo t('hiw_transition_2'); ?></p>
+        </div>
+
+        <!-- ========== STEP 3: AI Agent (full width, text left / image right) ========== -->
+        <div class="bento-grid">
+            <div class="bento-card span-12 p-4 p-md-5 scroll-scale" style="position: relative;">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold" 
+                                 style="width: 36px; height: 36px; background: linear-gradient(135deg, #EA4B71, #c4224e); color: white; font-size: 0.85rem; flex-shrink: 0;">
+                                3
+                            </div>
+                            <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 0.1em;"><?php echo t('hiw_step'); ?> 3</span>
+                        </div>
                         <div class="icon-box text-white mb-4" style="background: #EA4B71;">
                             <i class="fas fa-robot"></i>
                         </div>
@@ -103,18 +135,36 @@ include '../includes/header.php'; ?>
                         </ul>
                     </div>
                     <div class="col-lg-6">
-                        <!-- n8n Image -->
                         <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10" style="min-height: 250px; background: #222;">
                             <img src="/assets/img/n8n-agent.png" alt="n8n Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Card 4: Gestion Emails Automatiques -->
-            <div class="bento-card span-12 p-4 p-md-5">
-                <div class="row align-items-center">
+        <!-- Transition 2 -->
+        <div class="text-center py-5 scroll-reveal">
+            <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+                <div style="height: 1px; width: 60px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2));"></div>
+                <i class="fas fa-chevron-down text-secondary" style="opacity: 0.4; animation: floatDown 2s ease-in-out infinite;"></i>
+                <div style="height: 1px; width: 60px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.2));"></div>
+            </div>
+            <p class="text-secondary fst-italic mb-0" style="font-size: 1.1rem;"><?php echo t('hiw_transition_3'); ?></p>
+        </div>
+
+        <!-- ========== STEP 4: Email Automation (full width, image left / text right) ========== -->
+        <div class="bento-grid">
+            <div class="bento-card span-12 p-4 p-md-5 scroll-scale" style="position: relative;">
+                <div class="row align-items-center flex-lg-row-reverse">
                     <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold" 
+                                 style="width: 36px; height: 36px; background: linear-gradient(135deg, #10B981, #059669); color: white; font-size: 0.85rem; flex-shrink: 0;">
+                                4
+                            </div>
+                            <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 0.1em;"><?php echo t('hiw_step'); ?> 4</span>
+                        </div>
                         <div class="icon-box text-white mb-4" style="background: #10B981;">
                             <i class="fas fa-envelope-open-text"></i>
                         </div>
@@ -128,18 +178,36 @@ include '../includes/header.php'; ?>
                         </ul>
                     </div>
                     <div class="col-lg-6">
-                        <!-- n8n Email Workflow Image -->
                         <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10" style="min-height: 250px; background: #222;">
                             <img src="/assets/img/n8n-agent2.png" alt="n8n Email Automation Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Card 5: Reviews System -->
-             <div class="bento-card span-12 p-4 p-md-5">
+        <!-- Transition 3 -->
+        <div class="text-center py-5 scroll-reveal">
+            <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+                <div style="height: 1px; width: 60px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2));"></div>
+                <i class="fas fa-chevron-down text-secondary" style="opacity: 0.4; animation: floatDown 2s ease-in-out infinite;"></i>
+                <div style="height: 1px; width: 60px; background: linear-gradient(to left, transparent, rgba(255,255,255,0.2));"></div>
+            </div>
+            <p class="text-secondary fst-italic mb-0" style="font-size: 1.1rem;"><?php echo t('hiw_transition_4'); ?></p>
+        </div>
+
+        <!-- ========== STEP 5: Reviews System ========== -->
+        <div class="bento-grid">
+            <div class="bento-card span-12 p-4 p-md-5 scroll-scale" style="position: relative;">
                 <div class="row align-items-center">
                     <div class="col-lg-7">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold" 
+                                 style="width: 36px; height: 36px; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; font-size: 0.85rem; flex-shrink: 0;">
+                                5
+                            </div>
+                            <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 0.1em;"><?php echo t('hiw_step'); ?> 5</span>
+                        </div>
                          <div class="icon-box text-white mb-4" style="background: #F59E0B;">
                             <i class="fas fa-star"></i>
                         </div>
@@ -161,19 +229,39 @@ include '../includes/header.php'; ?>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Matrix Secret Hint -->
-            <div class="bento-card span-12 p-4 text-center mt-4" style="background: rgba(0, 255, 0, 0.05); border-color: rgba(0, 255, 0, 0.2);">
+        <!-- ========== CTA Section ========== -->
+        <div class="text-center py-5 mt-4 scroll-reveal">
+            <div class="p-5 rounded-4 border border-secondary border-opacity-10" 
+                 style="background: linear-gradient(135deg, rgba(41,151,255,0.08), rgba(191,90,242,0.08)); backdrop-filter: blur(20px);">
+                <i class="fas fa-rocket fs-1 mb-3" style="background: linear-gradient(135deg, #2997ff, #bf5af2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                <h3 class="text-white mb-3"><?php echo t('hiw_cta_text'); ?></h3>
+                <a href="/contact" class="btn-apple mt-2">
+                    <?php echo t('get_in_touch_btn'); ?> <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Matrix Secret Hint -->
+        <div class="bento-grid mt-3">
+            <div class="bento-card span-12 p-4 text-center scroll-scale" style="background: rgba(0, 255, 0, 0.05); border-color: rgba(0, 255, 0, 0.2);">
                 <i class="fas fa-user-secret fs-1 text-success mb-3"></i>
                 <h4 class="text-success mb-2"><?php echo t('matrix_secret_title'); ?></h4>
                 <p class="text-secondary mx-auto mb-0" style="max-width: 600px;">
                     <?php echo t('matrix_hint'); ?>
                 </p>
             </div>
-
         </div>
 
     </div>
 </section>
+
+<style>
+@keyframes floatDown {
+    0%, 100% { transform: translateY(-3px); opacity: 0.3; }
+    50% { transform: translateY(3px); opacity: 0.7; }
+}
+</style>
 
 <?php include '../includes/footer.php'; ?>
