@@ -179,8 +179,8 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
                             <span class="terminal-command"><?php echo t('terminal_line_3'); ?></span>
                         </div>
                         <div class="terminal-line">
-                            <span class="terminal-info">→</span>
-                            <span class="terminal-success"><?php echo t('terminal_line_4'); ?></span>
+                            <span class="terminal-success">✓</span>
+                            <span class="terminal-command"><?php echo t('terminal_line_4'); ?></span>
                         </div>
                         <div class="terminal-line">
                             <span class="terminal-info">→</span>
