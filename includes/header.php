@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
       "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/logo.svg",
       "contactPoint": {
         "@type": "ContactPoint",
-        "email": "contact@javabien.ovh",
+        "email": "contact@slapia.com",
         "contactType": "customer service"
       }
     }
