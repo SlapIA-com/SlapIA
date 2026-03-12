@@ -202,16 +202,6 @@ include '../includes/header.php'; ?>
                                 <a href="mailto:contact@slapia.com" class="text-secondary text-decoration-none transition-all hover-white">contact@slapia.com</a>
                             </div>
                         </div>
-                        
-                        <div class="d-flex align-items-center gap-4 bento-card p-3 rounded-4" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
-                            <div class="d-flex justify-content-center align-items-center rounded-circle bg-info bg-opacity-10 text-info flex-shrink-0" style="width: 56px; height: 56px; font-size: 1.25rem;">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Localisation</h6>
-                                <span class="text-secondary">Paris, France (Intervention globale)</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
