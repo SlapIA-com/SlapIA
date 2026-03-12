@@ -20,10 +20,10 @@ ob_start();
 
 try {
     header('Content-Type: application/json');
-    // Restrict CORS to production domain only
-    $allowedOrigin = 'https://slapia.com';
+    // Restrict CORS to production domains only
+    $allowedOrigins = ['https://slapia.com', 'https://www.slapia.com'];
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    if ($origin === $allowedOrigin || strpos($origin, 'localhost') !== false) {
+    if (in_array($origin, $allowedOrigins, true) || strpos($origin, 'localhost') !== false) {
         header('Access-Control-Allow-Origin: ' . $origin);
     }
     header('Access-Control-Allow-Methods: POST');
@@ -79,7 +79,7 @@ try {
     // Increment and save (only if not honeycomb)
     if (empty($honeypot)) {
         $rateData['count']++;
-        file_put_contents($rateLimitFile, json_encode($rateData));
+        file_put_contents($rateLimitFile, json_encode($rateData), LOCK_EX);
     }
     // ----------------------------------------------
 
@@ -165,6 +165,11 @@ try {
         echo json_encode(['success' => false, 'error' => 'Email invalide']);
         exit;
     }
+
+    // Sanitize inputs before sending to Notion
+    $prenom = htmlspecialchars($prenom, ENT_QUOTES, 'UTF-8');
+    $nom = htmlspecialchars($nom, ENT_QUOTES, 'UTF-8');
+    $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
 
     // Créer l'entrée dans Notion
     $notionData = [

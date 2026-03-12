@@ -36,22 +36,29 @@ $meta_image = isset($page_image) ? $page_image : "https://" . $_SERVER['HTTP_HOS
 if (strpos($meta_image, 'http') === false) {
     $meta_image = "https://" . $_SERVER['HTTP_HOST'] . $meta_image;
 }
+
+// Build canonical URL (strip query params except lang)
+$canonical_path = strtok($_SERVER['REQUEST_URI'], '?');
+$canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 ?>
     <!-- Standard Meta Description (SEO) -->
     <meta name="description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
+
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:title" content="<?php echo $meta_title; ?>">
-    <meta property="og:description" content="<?php echo $meta_description; ?>">
-    <meta property="og:image" content="<?php echo $meta_image; ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:title" content="<?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($meta_image, ENT_QUOTES, 'UTF-8'); ?>">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo $_SERVER['REQUEST_URI']; ?>">
-    <meta property="twitter:title" content="<?php echo $meta_title; ?>">
-    <meta property="twitter:description" content="<?php echo $meta_description; ?>">
-    <meta property="twitter:image" content="<?php echo $meta_image; ?>">
+    <meta property="twitter:url" content="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="twitter:title" content="<?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="twitter:description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="twitter:image" content="<?php echo htmlspecialchars($meta_image, ENT_QUOTES, 'UTF-8'); ?>">
 
     <!-- n8n Chat Widget -->
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
@@ -62,8 +69,10 @@ if (strpos($meta_image, 'http') === false) {
         });
     </script>
 
-    <!-- Cloudflare Turnstile -->
+    <!-- Cloudflare Turnstile (contact page only) -->
+    <?php if (isset($page_needs_turnstile) && $page_needs_turnstile): ?>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" async defer></script>
+    <?php endif; ?>
 
     <title><?php echo $meta_title; ?></title>
     
@@ -73,15 +82,50 @@ if (strpos($meta_image, 'http') === false) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom Design System -->
-    <link href="/assets/css/header.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/footer.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/animations.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/reviews.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/theme-matrix.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/style.css?v=2.1" rel="stylesheet">
-    <link href="/assets/css/lightbox.css?v=1.0" rel="stylesheet">
-    <link href="/assets/css/homepage.css?v=1.0" rel="stylesheet">
+    <!-- Custom Design System (auto cache-busting) -->
+    <?php
+    // Helper for auto cache-busting based on file modification time
+    function css_url($path) {
+        $file = $_SERVER['DOCUMENT_ROOT'] . $path;
+        $v = file_exists($file) ? filemtime($file) : time();
+        return $path . '?v=' . $v;
+    }
+    ?>
+    <link href="<?php echo css_url('/assets/css/header.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/footer.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/animations.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/reviews.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/theme-matrix.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/style.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/lightbox.css'); ?>" rel="stylesheet">
+    <?php
+    // Page-specific CSS: only load on pages that need them
+    $current_page = basename($_SERVER['PHP_SELF'], '.php');
+    if ($current_page === 'index' || !isset($page_title)) {
+        echo '<link href="' . css_url('/assets/css/homepage.css') . '" rel="stylesheet">';
+    }
+    if (isset($page_css) && is_array($page_css)) {
+        foreach ($page_css as $css) {
+            echo '<link href="' . css_url($css) . '" rel="stylesheet">';
+        }
+    }
+    ?>
+
+    <!-- Schema.org Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SlapIA",
+      "url": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>",
+      "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/logo.svg",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@slapia.com",
+        "contactType": "customer service"
+      }
+    }
+    </script>
 </head>
 <body>
 
@@ -249,19 +293,4 @@ document.addEventListener('DOMContentLoaded', function() {
 <main id="swup" class="swup-transition-main">
 
 
-    <!-- Schema.org Organization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "SlapIA",
-      "url": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>",
-      "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/logo.svg",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "contact@slapia.com",
-        "contactType": "customer service"
-      }
-    }
-    </script>
 

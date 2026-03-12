@@ -104,7 +104,7 @@
 
         <!-- Social Icons Row -->
         <div class="p-4 overflow-auto">
-            <div class="d-flex gap-4 justify-content-start" style="/* min-width: max-content; */">
+            <div class="d-flex gap-4 justify-content-start">
                 
                 <!-- Embed Button -->
                 <div class="text-center share-item" onclick="toggleEmbedMode(true)" style="cursor: pointer;">
@@ -113,6 +113,38 @@
                     </div>
                     <small class="text-secondary" style="font-size:0.75rem;"><?php echo t('share_embed'); ?></small>
                 </div>
+
+                <!-- WhatsApp -->
+                <a id="share-whatsapp" href="#" target="_blank" rel="noopener" class="text-center share-item text-decoration-none">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #25D366;">
+                        <i class="fab fa-whatsapp text-white fs-5"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">WhatsApp</small>
+                </a>
+
+                <!-- Twitter / X -->
+                <a id="share-twitter" href="#" target="_blank" rel="noopener" class="text-center share-item text-decoration-none">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #1DA1F2;">
+                        <i class="fab fa-twitter text-white fs-5"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">Twitter</small>
+                </a>
+
+                <!-- LinkedIn -->
+                <a id="share-linkedin" href="#" target="_blank" rel="noopener" class="text-center share-item text-decoration-none">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 50px; height: 50px; background: #0A66C2;">
+                        <i class="fab fa-linkedin-in text-white fs-5"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">LinkedIn</small>
+                </a>
+
+                <!-- Email -->
+                <a id="share-email" href="#" class="text-center share-item text-decoration-none">
+                    <div class="share-icon-btn mb-2 d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 border border-secondary border-opacity-25 rounded-circle mx-auto" style="width: 50px; height: 50px;">
+                        <i class="fas fa-envelope text-white fs-5"></i>
+                    </div>
+                    <small class="text-secondary" style="font-size:0.75rem;">Email</small>
+                </a>
             </div>
         </div>
 
@@ -237,7 +269,7 @@ function copyShareInput() {
     navigator.clipboard.writeText(input.value).then(() => {
         const btn = input.nextElementSibling;
         const originalText = btn.innerHTML;
-        btn.innerHTML = 'Copié !';
+        btn.innerHTML = '<?php echo t('copied'); ?>';
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-success');
         setTimeout(() => { 

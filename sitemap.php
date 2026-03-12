@@ -22,7 +22,8 @@ if (is_dir($pagesDir)) {
         if ($file === '.' || $file === '..' || pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
             continue;
         }
-        if ($file === '404.php')
+        // Skip error page and noindex pages
+        if ($file === '404.php' || $file === 'Calcule-ROI-IA.php')
             continue;
 
         $slug = pathinfo($file, PATHINFO_FILENAME);

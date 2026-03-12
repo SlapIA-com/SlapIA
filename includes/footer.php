@@ -138,23 +138,33 @@
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/carousel.js?v=2.1"></script>
-<script src="/assets/js/typewriter.js?v=2.1"></script>
-<script src="/assets/js/live-counter.js?v=2.1"></script>
-<script src="/assets/js/matrix.js?v=2.1"></script>
-<script src="/assets/js/cookie-banner.js?v=2.1"></script>
+<?php
+// Helper for JS auto cache-busting based on file modification time
+if (!function_exists('asset_url')) {
+    function asset_url($path) {
+        $file = $_SERVER['DOCUMENT_ROOT'] . $path;
+        $v = file_exists($file) ? filemtime($file) : time();
+        return $path . '?v=' . $v;
+    }
+}
+?>
+<script src="<?php echo asset_url('/assets/js/carousel.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/typewriter.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/live-counter.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/matrix.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/cookie-banner.js'); ?>"></script>
 <!-- Removed tilt.js as requested -->
-<script src="/assets/js/console-egg.js?v=2.1"></script>
-<script src="/assets/js/scroll-indicator.js?v=2.1"></script>
-<script src="/assets/js/emoji-rain.js?v=2.1"></script>
-<script src="/assets/js/interactions.js?v=1.0"></script>
-<script src="/assets/js/lightbox.js?v=1.0"></script>
+<script src="<?php echo asset_url('/assets/js/console-egg.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/scroll-indicator.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/emoji-rain.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/interactions.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/lightbox.js'); ?>"></script>
 
 <!-- Swup.js for App-like Navigation (pinned versions) -->
 <script src="https://unpkg.com/swup@4.6.0/dist/Swup.umd.js"></script>
 <script src="https://unpkg.com/@swup/scroll-plugin@3.3.4/dist/SwupScrollPlugin.umd.js"></script>
-<script src="/assets/js/animations.js?v=2.1"></script>
-<script src="/assets/js/app-transition.js?v=2.1"></script>
+<script src="<?php echo asset_url('/assets/js/animations.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/app-transition.js'); ?>"></script>
 
 <script>
     // Spotlight Effect on bento cards

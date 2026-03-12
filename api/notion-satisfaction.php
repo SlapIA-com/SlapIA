@@ -259,7 +259,7 @@ function getSatisfactionStats($forceRefresh = false) {
     
     // Sauvegarder dans le cache
     if (isset($result) && (!isset($result['error']) || !$result['error'])) {
-        file_put_contents($cacheFile, json_encode($result));
+        file_put_contents($cacheFile, json_encode($result), LOCK_EX);
     }
     
     return $result;
@@ -531,7 +531,7 @@ function getNotionReviews($limit = 20, $lang = 'fr') {
  
      // Sauvegarder dans le cache si on a récupéré des résultats
      if (!empty($reviews)) {
-         file_put_contents($cacheFile, json_encode($reviews));
+         file_put_contents($cacheFile, json_encode($reviews), LOCK_EX);
      }
 
      return $reviews;

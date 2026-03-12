@@ -161,5 +161,4 @@ include '../includes/header.php'; ?>
     </div>
 </section>
 
-<script src="../assets/js/roi-calculator.js"></script>
 <?php include '../includes/footer.php'; ?>

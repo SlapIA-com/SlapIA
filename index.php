@@ -17,7 +17,6 @@ if (isset($_GET['refresh_stats'])) {
 
 // Appels Notion
 $stats = getSatisfactionStats(true);
-$reviews = getNotionReviews(20, $lang ?? 'fr');
 
 
 ?>
@@ -198,7 +197,7 @@ $reviews = getNotionReviews(20, $lang ?? 'fr');
             $reviews = [];
             if (function_exists('getNotionReviews')) {
                 try {
-                    $reviews = getNotionReviews(12, $lang);
+                    $reviews = getNotionReviews(12, $lang ?? 'fr');
                 } catch (Exception $e) {
                     $reviews = [];
                 }

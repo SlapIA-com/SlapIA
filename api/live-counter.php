@@ -4,14 +4,6 @@
  * Uses a file-based session tracker (last active timestamp)
  */
 
-header('Content-Type: application/json');
-
-// Prevent caching
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
-
-
 
 // Suppress HTML errors to ensure JSON validity
 error_reporting(0);
@@ -70,7 +62,7 @@ try {
     }
 
     // Save back to file
-    @file_put_contents($file, json_encode($data));
+    @file_put_contents($file, json_encode($data), LOCK_EX);
 
     // Clear any previous output (warnings, etc.)
     ob_clean();

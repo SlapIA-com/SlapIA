@@ -32,8 +32,10 @@
     RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
     # Custom Error Pages
-    # Custom Error Pages
     ErrorDocument 404 /404.php
+
+    # Dynamic Sitemap
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
 </IfModule>
 
 <IfModule mod_headers.c>
@@ -58,7 +60,4 @@
   ExpiresByType text/css "access plus 1 month"
   ExpiresDefault "access plus 2 days"
 </IfModule>
-
-    # Dynamic Sitemap
-    RewriteRule ^sitemap\.xml$ sitemap.php [L]
 

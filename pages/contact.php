@@ -5,6 +5,7 @@ include_once '../includes/lang.php';
 $page_title = t('contact_title') . " - SlapIA";
 $page_description = t('contact_subtitle');
 $page_image = '/assets/img/logo.png';
+$page_needs_turnstile = true;
 include '../includes/header.php'; ?>
 
 <script type="application/ld+json">

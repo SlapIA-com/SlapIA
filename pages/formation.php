@@ -6,10 +6,10 @@ include_once '../api/notion-satisfaction.php';
 $page_title = t('formations') . " - SlapIA";
 $page_description = t('formation_meta_desc');
 $page_image = '/assets/img/logo.png';
+$page_css = ['/assets/css/formation.css'];
 include '../includes/header.php';
 include '../includes/components.php';
 ?>
-<link href="/assets/css/formation.css?v=1.0" rel="stylesheet">
 <?php
 
 // Notion Data
@@ -213,58 +213,31 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau1" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(41,151,255,0.2);">
-            <!-- Header -->
-            <div class="d-flex align-items-center gap-4 mb-4 level-header">
-                <div class="d-flex justify-content-center align-items-center bg-primary text-white rounded-3 fw-bold flex-shrink-0 level-number"
-                    style="width: 60px; height: 60px; font-size: 2rem; box-shadow: 0 0 30px rgba(41,151,255,0.3);">1</div>
-                <div class="level-info">
-                    <h2 class="text-white mb-1"><?php echo t('acculturation_foundations'); ?></h2>
-                    <p class="text-secondary mb-0"><?php echo t('understand_why'); ?></p>
-                </div>
-            </div>
+        <?php
+        // Shared badge classes for DRY
+        $badge_neutral = 'bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25';
+        $badge_chatgpt = 'bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25';
+        $badge_n8n = 'bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25';
+        $badge_make = 'bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25';
+        $badge_logic = 'bg-warning bg-opacity-10 text-warning border border-warning border-opacity-10';
 
-            <!-- Curriculum Table -->
-            <div class="table-responsive">
-                <table class="table text-white mb-0"
-                    style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
-                    <thead>
-                        <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
-                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
-                            <th class="py-3"><?php echo t('thematique'); ?></th>
-                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
-                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white td-theme"><?php echo t('m1_level1_theme'); ?></td>
-                            <td class="py-4 td-desc"><?php echo t('m1_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M2</td>
-                            <td class="py-4 text-white"><?php echo t('m2_level1_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m2_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Notion</span></td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M3</td>
-                            <td class="py-4 text-white"><?php echo t('m3_level1_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m3_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">ChatGPT</span></td>
-                        </tr>
-                        <tr class="align-middle stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M4</td>
-                            <td class="py-4 text-white"><?php echo t('m4_level1_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m4_level1_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        render_curriculum_table(
+            [
+                'number' => 1,
+                'title_key' => 'acculturation_foundations',
+                'subtitle_key' => 'understand_why',
+                'number_bg' => 'var(--bs-primary)',
+                'number_shadow' => 'rgba(41,151,255,0.3)',
+                'border_color' => 'rgba(41,151,255,0.2)',
+            ],
+            [
+                ['theme_key' => 'm1_level1_theme', 'desc_key' => 'm1_level1_desc', 'td_class' => 'td-theme', 'td_desc_class' => 'td-desc', 'tools' => [['label' => 'N.A', 'class' => $badge_neutral]]],
+                ['theme_key' => 'm2_level1_theme', 'desc_key' => 'm2_level1_desc', 'tools' => [['label' => 'Notion', 'class' => $badge_neutral]]],
+                ['theme_key' => 'm3_level1_theme', 'desc_key' => 'm3_level1_desc', 'tools' => [['label' => 'ChatGPT', 'class' => $badge_chatgpt]]],
+                ['theme_key' => 'm4_level1_theme', 'desc_key' => 'm4_level1_desc', 'tools' => [['label' => 'N.A', 'class' => $badge_neutral]]],
+            ]
+        );
+        ?>
     </div>
 </section>
 
@@ -274,60 +247,24 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau2" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(191,90,242,0.2);">
-            <!-- Header -->
-            <div class="d-flex align-items-center gap-4 mb-4 level-header">
-                <div class="d-flex justify-content-center align-items-center bg-info text-white rounded-3 fw-bold flex-shrink-0 level-number"
-                    style="width: 60px; height: 60px; font-size: 2rem; box-shadow: 0 0 30px rgba(191,90,242,0.3);">2</div>
-                <div class="level-info">
-                    <h2 class="text-white mb-1"><?php echo t('level_2_title'); ?></h2>
-                    <p class="text-secondary mb-0"><?php echo t('level_2_subtitle'); ?></p>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table text-white mb-0"
-                    style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
-                    <thead>
-                        <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
-                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
-                            <th class="py-3"><?php echo t('thematique'); ?></th>
-                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
-                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white"><?php echo t('m1_level2_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m1_level2_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M2</td>
-                            <td class="py-4 text-white"><?php echo t('m2_level2_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m2_level2_desc'); ?></td>
-                            <td class="py-4 text-end pe-0">
-                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Notion</span>
-                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">ChatGPT</span>
-                            </td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M3</td>
-                            <td class="py-4 text-white"><?php echo t('m3_level2_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m3_level2_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">N.A</span></td>
-                        </tr>
-                        <tr class="align-middle stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M4</td>
-                            <td class="py-4 text-white"><?php echo t('m4_level2_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m4_level2_desc'); ?></td>
-                            <td class="py-4 text-end pe-0"><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-10">Logic</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <?php
+        render_curriculum_table(
+            [
+                'number' => 2,
+                'title_key' => 'level_2_title',
+                'subtitle_key' => 'level_2_subtitle',
+                'number_bg' => 'var(--bs-info)',
+                'number_shadow' => 'rgba(191,90,242,0.3)',
+                'border_color' => 'rgba(191,90,242,0.2)',
+            ],
+            [
+                ['theme_key' => 'm1_level2_theme', 'desc_key' => 'm1_level2_desc', 'tools' => [['label' => 'N.A', 'class' => $badge_neutral]]],
+                ['theme_key' => 'm2_level2_theme', 'desc_key' => 'm2_level2_desc', 'tools' => [['label' => 'Notion', 'class' => $badge_neutral], ['label' => 'ChatGPT', 'class' => $badge_chatgpt]]],
+                ['theme_key' => 'm3_level2_theme', 'desc_key' => 'm3_level2_desc', 'tools' => [['label' => 'N.A', 'class' => $badge_neutral]]],
+                ['theme_key' => 'm4_level2_theme', 'desc_key' => 'm4_level2_desc', 'tools' => [['label' => 'Logic', 'class' => $badge_logic]]],
+            ]
+        );
+        ?>
     </div>
 </section>
 
@@ -337,67 +274,25 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
      ============================================ -->
 <section id="niveau3" class="py-5">
     <div class="container">
-        <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: rgba(245,158,11,0.2);">
-            <!-- Header with gradient -->
-            <div class="d-flex align-items-center gap-4 mb-4 level-header">
-                <div class="d-flex justify-content-center align-items-center text-white rounded-3 fw-bold flex-shrink-0 level-number"
-                    style="width: 60px; height: 60px; font-size: 2rem; background: linear-gradient(135deg, #f59e0b, #ef4444); box-shadow: 0 0 30px rgba(245,158,11,0.3);">
-                    <?php echo t('level_3_number'); ?></div>
-                <div class="level-info">
-                    <h2 class="text-white mb-1"><?php echo t('level_3_title'); ?></h2>
-                    <p class="text-secondary mb-0"><?php echo t('level_3_subtitle'); ?></p>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table text-white mb-0"
-                    style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
-                    <thead>
-                        <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
-                            <th class="py-3 ps-0"><?php echo t('module'); ?></th>
-                            <th class="py-3"><?php echo t('thematique'); ?></th>
-                            <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
-                            <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M1</td>
-                            <td class="py-4 text-white"><?php echo t('m1_level3_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m1_level3_desc'); ?></td>
-                            <td class="py-4 text-end pe-0">
-                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">n8n</span>
-                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">Make</span>
-                            </td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M2</td>
-                            <td class="py-4 text-white"><?php echo t('m2_level3_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m2_level3_desc'); ?></td>
-                            <td class="py-4 text-end pe-0">
-                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">n8n</span>
-                            </td>
-                        </tr>
-                        <tr class="align-middle border-bottom border-light border-opacity-10 stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M3</td>
-                            <td class="py-4 text-white"><?php echo t('m3_level3_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m3_level3_desc'); ?></td>
-                            <td class="py-4 text-end pe-0">
-                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">Make</span>
-                            </td>
-                        </tr>
-                        <tr class="align-middle stagger-row">
-                            <td class="py-4 ps-0 fw-bold text-white">M4</td>
-                            <td class="py-4 text-white"><?php echo t('m4_level3_theme'); ?></td>
-                            <td class="py-4"><?php echo t('m4_level3_desc'); ?></td>
-                            <td class="py-4 text-end pe-0">
-                                <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary border-opacity-25">Synthèse</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <?php
+        render_curriculum_table(
+            [
+                'number' => 3,
+                'number_text' => 'level_3_number',
+                'title_key' => 'level_3_title',
+                'subtitle_key' => 'level_3_subtitle',
+                'number_bg' => 'linear-gradient(135deg, #f59e0b, #ef4444)',
+                'number_shadow' => 'rgba(245,158,11,0.3)',
+                'border_color' => 'rgba(245,158,11,0.2)',
+            ],
+            [
+                ['theme_key' => 'm1_level3_theme', 'desc_key' => 'm1_level3_desc', 'tools' => [['label' => 'n8n', 'class' => $badge_n8n], ['label' => 'Make', 'class' => $badge_make]]],
+                ['theme_key' => 'm2_level3_theme', 'desc_key' => 'm2_level3_desc', 'tools' => [['label' => 'n8n', 'class' => $badge_n8n]]],
+                ['theme_key' => 'm3_level3_theme', 'desc_key' => 'm3_level3_desc', 'tools' => [['label' => 'Make', 'class' => $badge_make]]],
+                ['theme_key' => 'm4_level3_theme', 'desc_key' => 'm4_level3_desc', 'tools' => [['label' => 'Synthèse', 'class' => $badge_neutral]]],
+            ]
+        );
+        ?>
     </div>
 </section>
 

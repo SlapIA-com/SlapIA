@@ -237,3 +237,60 @@ function render_reviews_section($reviews)
     </div>
     <?php
 }
+
+/**
+ * Renders a formation level section (header + curriculum table)
+ * 
+ * @param array $level Configuration: id, number, title_key, subtitle_key, number_bg, number_shadow, border_color, number_text (optional)
+ * @param array $modules Array of modules: each ['theme_key', 'desc_key', 'tools' => [['label', 'class']]]
+ */
+function render_curriculum_table($level, $modules)
+{
+?>
+    <div class="bento-card bento-card-glow p-4 p-md-5 scroll-scale formation-level-card" style="border-color: <?php echo $level['border_color']; ?>;">
+        <!-- Header -->
+        <div class="d-flex align-items-center gap-4 mb-4 level-header">
+            <div class="d-flex justify-content-center align-items-center text-white rounded-3 fw-bold flex-shrink-0 level-number"
+                style="width: 60px; height: 60px; font-size: 2rem; background: <?php echo $level['number_bg']; ?>; box-shadow: 0 0 30px <?php echo $level['number_shadow']; ?>;">
+                <?php echo isset($level['number_text']) ? t($level['number_text']) : $level['number']; ?>
+            </div>
+            <div class="level-info">
+                <h2 class="text-white mb-1"><?php echo t($level['title_key']); ?></h2>
+                <p class="text-secondary mb-0"><?php echo t($level['subtitle_key']); ?></p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table text-white mb-0"
+                style="--bs-table-bg: transparent; --bs-table-color: var(--text-secondary); border-color: var(--glass-border);">
+                <thead>
+                    <tr class="text-uppercase small text-secondary border-bottom border-light border-opacity-10">
+                        <th class="py-3 ps-0"><?php echo t('module'); ?></th>
+                        <th class="py-3"><?php echo t('thematique'); ?></th>
+                        <th class="py-3"><?php echo t('what_you_will_do'); ?></th>
+                        <th class="py-3 text-end pe-0"><?php echo t('tools'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($modules as $i => $mod):
+                        $isLast = ($i === count($modules) - 1);
+                        $borderClass = $isLast ? '' : 'border-bottom border-light border-opacity-10';
+                    ?>
+                    <tr class="align-middle <?php echo $borderClass; ?> stagger-row">
+                        <td class="py-4 ps-0 fw-bold text-white">M<?php echo $i + 1; ?></td>
+                        <td class="py-4 text-white<?php echo isset($mod['td_class']) ? ' ' . $mod['td_class'] : ''; ?>"><?php echo t($mod['theme_key']); ?></td>
+                        <td class="py-4<?php echo isset($mod['td_desc_class']) ? ' ' . $mod['td_desc_class'] : ''; ?>"><?php echo t($mod['desc_key']); ?></td>
+                        <td class="py-4 text-end pe-0">
+                            <?php foreach ($mod['tools'] as $tool): ?>
+                                <span class="badge <?php echo $tool['class']; ?>"><?php echo $tool['label']; ?></span>
+                            <?php endforeach; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php
+}
+
