@@ -191,18 +191,6 @@ include '../includes/header.php'; ?>
                     <p class="text-secondary lead mb-5" style="font-size: 1.15rem; line-height: 1.7;">
                         <?php echo t('contact_subtitle'); ?>
                     </p>
-                    
-                    <div class="d-flex flex-column gap-4">
-                        <div class="d-flex align-items-center gap-4 bento-card p-3 rounded-4" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
-                            <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary bg-opacity-10 text-primary flex-shrink-0" style="width: 56px; height: 56px; font-size: 1.25rem;">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Email</h6>
-                                <a href="mailto:contact@slapia.com" class="text-secondary text-decoration-none transition-all hover-white">contact@slapia.com</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
