@@ -174,21 +174,57 @@ include '../includes/header.php'; ?>
 
 <section class="py-5 mt-5">
     <div class="container">
-        <div class="row justify-content-center text-center mb-5">
-            <div class="col-lg-8">
-                <h1 class="display-title mb-3" style="font-size: 3rem;"><?php echo t('contact_title'); ?></h1>
-                <p class="text-secondary lead"><?php echo t('contact_subtitle'); ?></p>
+        <div class="row g-5 align-items-center">
+            
+            <!-- Left Column: Info & Text -->
+            <div class="col-lg-5 mb-5 mb-lg-0">
+                <div class="pe-lg-4">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-white bg-opacity-10 border border-white border-opacity-10 mb-4">
+                        <span class="text-primary"><i class="fas fa-paper-plane"></i></span>
+                        <span class="text-white small fw-bold text-uppercase tracking-wider">Contactez-nous</span>
+                    </div>
+                    
+                    <h1 class="display-4 fw-bold mb-4 text-white" style="letter-spacing: -1px;">
+                        <?php echo t('contact_title'); ?>
+                    </h1>
+                    
+                    <p class="text-secondary lead mb-5" style="font-size: 1.15rem; line-height: 1.7;">
+                        <?php echo t('contact_subtitle'); ?>
+                    </p>
+                    
+                    <div class="d-flex flex-column gap-4">
+                        <div class="d-flex align-items-center gap-4 bento-card p-3 rounded-4" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
+                            <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary bg-opacity-10 text-primary flex-shrink-0" style="width: 56px; height: 56px; font-size: 1.25rem;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-1 fw-bold">Email</h6>
+                                <a href="mailto:contact@slapia.com" class="text-secondary text-decoration-none transition-all hover-white">contact@slapia.com</a>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-4 bento-card p-3 rounded-4" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
+                            <div class="d-flex justify-content-center align-items-center rounded-circle bg-info bg-opacity-10 text-info flex-shrink-0" style="width: 56px; height: 56px; font-size: 1.25rem;">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-1 fw-bold">Localisation</h6>
+                                <span class="text-secondary">Paris, France (Intervention globale)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="row justify-content-center">
+            <!-- Right Column: Form -->
             <div class="col-lg-7">
-                <form id="contactForm" class="bento-card-glow h-100 d-flex flex-column contact-main-card"
+                <form id="contactForm" class="bento-card bento-card-glow p-4 p-md-5 h-100 d-flex flex-column contact-main-card rounded-5"
                           data-msg-profanity="<?php echo htmlspecialchars(t('toast_profanity'), ENT_QUOTES, 'UTF-8'); ?>"
                           data-msg-short="<?php echo htmlspecialchars(t('toast_too_short'), ENT_QUOTES, 'UTF-8'); ?>"
                           data-msg-success="<?php echo htmlspecialchars(t('toast_success_long'), ENT_QUOTES, 'UTF-8'); ?>"
                           data-msg-generic="<?php echo htmlspecialchars(t('toast_error_generic'), ENT_QUOTES, 'UTF-8'); ?>"
                           data-msg-conn="<?php echo htmlspecialchars(t('toast_error_connection'), ENT_QUOTES, 'UTF-8'); ?>">
+                        
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label for="prenom"
@@ -236,8 +272,8 @@ include '../includes/header.php'; ?>
                                         autocomplete="off">
                                 </div>
 
-                                <button type="submit" id="submitBtn" class="btn-apple w-100 justify-content-center">
-                                    <span id="btnText"><?php echo t('form_send_btn'); ?></span>
+                                <button type="submit" id="submitBtn" class="btn-apple w-100 justify-content-center py-3">
+                                    <span id="btnText" class="fw-bold"><?php echo t('form_send_btn'); ?></span>
                                     <span id="btnLoader" class="d-none">
                                         <span class="spinner-border spinner-border-sm me-2" role="status"
                                             aria-hidden="true"></span>
@@ -246,8 +282,7 @@ include '../includes/header.php'; ?>
                                 </button>
                             </div>
                         </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
     </div>

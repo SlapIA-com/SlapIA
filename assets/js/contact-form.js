@@ -56,6 +56,12 @@ function showToast(message, isError = false) {
     // Force reflow to reset animation
     void progressBar.offsetWidth;
 
+    // Scroll to top so the user can see the toast
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
     // Show toast
     requestAnimationFrame(() => {
         toast.classList.add('show');
