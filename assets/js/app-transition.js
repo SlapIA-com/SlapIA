@@ -15,6 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: swupPlugins
     });
 
+    // Auto-close mobile menu on Swup navigation start
+    swup.hooks.on('visit:start', function () {
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        if (menuBtn && menuBtn.classList.contains('active')) {
+            if (typeof toggleMobileMenu === 'function') {
+                toggleMobileMenu();
+            }
+        }
+    });
+
     // Re-initialize scripts after content replacement
     swup.hooks.on('content:replace', function () {
         // 1. Re-init Mobile Menu
