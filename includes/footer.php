@@ -158,6 +158,7 @@ if (!function_exists('asset_url')) {
 <script src="<?php echo asset_url('/assets/js/scroll-indicator.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/emoji-rain.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/interactions.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/contact-form.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/lightbox.js'); ?>"></script>
 
 <!-- Swup.js for App-like Navigation (pinned versions) -->

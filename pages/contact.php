@@ -182,9 +182,13 @@ include '../includes/header.php'; ?>
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="bento-card p-5">
-                    <form id="contactForm">
+            <div class="col-lg-7">
+                <form id="contactForm" class="bento-card-glow h-100 d-flex flex-column contact-main-card"
+                          data-msg-profanity="<?php echo htmlspecialchars(t('toast_profanity'), ENT_QUOTES, 'UTF-8'); ?>"
+                          data-msg-short="<?php echo htmlspecialchars(t('toast_too_short'), ENT_QUOTES, 'UTF-8'); ?>"
+                          data-msg-success="<?php echo htmlspecialchars(t('toast_success_long'), ENT_QUOTES, 'UTF-8'); ?>"
+                          data-msg-generic="<?php echo htmlspecialchars(t('toast_error_generic'), ENT_QUOTES, 'UTF-8'); ?>"
+                          data-msg-conn="<?php echo htmlspecialchars(t('toast_error_connection'), ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label for="prenom"
@@ -249,191 +253,6 @@ include '../includes/header.php'; ?>
     </div>
 </section>
 
-<script>
-    let toastTimeout;
 
-    // Initialize Turnstile for this form
-    function initContactTurnstile() {
-        const container = document.getElementById('cf-turnstile-container');
-        if (!container) return;
-        if (typeof turnstile === 'undefined') return;
-
-        const sitekey = container.getAttribute('data-sitekey');
-        if (!sitekey) return;
-
-        try {
-            // Remove any existing widget first (important for Swup re-navigation)
-            turnstile.remove(container);
-        } catch (e) { /* no widget to remove, that's fine */ }
-
-        try {
-            turnstile.render(container, {
-                sitekey: sitekey,
-                theme: 'dark'
-            });
-        } catch (e) { console.error('Turnstile render error', e); }
-    }
-
-    // Expose globally so Swup can re-init on navigation
-    window.initContactTurnstile = initContactTurnstile;
-
-    // The global callback used by Turnstile script in header (first page load)
-    window.onloadTurnstileCallback = function () {
-        initContactTurnstile();
-    };
-
-    // Initialize if Turnstile API is already loaded (Swup navigation)
-    if (typeof turnstile !== 'undefined') {
-        setTimeout(initContactTurnstile, 150);
-    }
-
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toastNotification');
-        const toastMessage = document.getElementById('toastMessage');
-        const progressBar = document.getElementById('toastProgressBar');
-
-        // Clear any existing timeout
-        if (toastTimeout) {
-            clearTimeout(toastTimeout);
-        }
-
-        // Reset state
-        toast.classList.remove('show', 'error');
-        progressBar.classList.remove('animate');
-
-        // Set message and style
-        toastMessage.textContent = message;
-        if (isError) {
-            toast.classList.add('error');
-        }
-
-        // Force reflow to reset animation
-        void progressBar.offsetWidth;
-
-        // Show toast
-        requestAnimationFrame(() => {
-            toast.classList.add('show');
-            progressBar.classList.add('animate');
-        });
-
-        // Auto-hide after 5 seconds
-        toastTimeout = setTimeout(() => {
-            closeToast();
-        }, 5000);
-    }
-
-    function closeToast() {
-        const toast = document.getElementById('toastNotification');
-        toast.classList.remove('show');
-        if (toastTimeout) {
-            clearTimeout(toastTimeout);
-        }
-    }
-
-    const startTime = Date.now();
-
-    document.getElementById('contactForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        // Anti-Spam Checks
-        const honeycomb = document.getElementById('website_check').value;
-        if (honeycomb) {
-            console.log('Spam detected (honeycomb)');
-            return; // Silent fail for bots
-        }
-
-        const timeDiff = Date.now() - startTime;
-        // Frontend cooldown removed for better UX
-
-        // Content Security Check
-        const messageContent = document.getElementById('message').value.toLowerCase();
-        const forbiddenWords = ['caca', 'connard', 'pute', 'salope', 'batard', 'encule', 'merde', 'chiotte', 'bite', 'couille'];
-        const hasForbiddenWord = forbiddenWords.some(word => messageContent.includes(word));
-
-        if (hasForbiddenWord) {
-            showToast(<?php echo json_encode(t('toast_profanity')); ?>, true);
-            return;
-        }
-
-        if (messageContent.length < 20) {
-            showToast(<?php echo json_encode(t('toast_too_short')); ?>, true);
-            return;
-        }
-
-        const form = this;
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnLoader = document.getElementById('btnLoader');
-
-        // Activer le loader
-        submitBtn.disabled = true;
-        btnText.classList.add('d-none');
-        btnLoader.classList.remove('d-none');
-
-        const formData = new FormData(form);
-        const data = {
-            prenom: document.getElementById('prenom').value,
-            nom: document.getElementById('nom').value,
-            email: document.getElementById('email').value,
-            message: document.getElementById('message').value,
-            website_check: honeycomb,
-            'cf-turnstile-response': formData.get('cf-turnstile-response') // Important: Send the token!
-        };
-
-        try {
-            const response = await fetch('/api/notion-contact.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showToast(<?php echo json_encode(t('toast_success_long')); ?>);
-                form.reset();
-            } else {
-                showToast(result.error || <?php echo json_encode(t('toast_error_generic')); ?>, true);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-            showToast(<?php echo json_encode(t('toast_error_connection')); ?>, true);
-        } finally {
-            // Désactiver le loader
-            submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnLoader.classList.add('d-none');
-        }
-    });
-
-    // Character Counter Logic
-    const messageInput = document.getElementById('message');
-    const charCountDisplay = document.getElementById('charCount');
-    const minLength = 20;
-
-    if (messageInput && charCountDisplay) {
-        messageInput.addEventListener('input', function () {
-            const currentLength = this.value.length;
-            charCountDisplay.textContent = `${currentLength} / ${minLength} min`;
-
-            if (currentLength >= minLength) {
-                charCountDisplay.classList.remove('text-secondary');
-                charCountDisplay.classList.add('text-success');
-                charCountDisplay.style.fontWeight = 'bold';
-            } else {
-                charCountDisplay.classList.add('text-secondary');
-                charCountDisplay.classList.remove('text-success');
-                charCountDisplay.style.fontWeight = 'normal';
-            }
-        });
-    }
-</script>
 
 <?php include '../includes/footer.php'; ?>

@@ -50,8 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initLightbox) window.initLightbox();
         } catch (e) { console.error("Lightbox init failed", e); }
 
-        // Re-init Cloudflare Turnstile (contact page) — needs delay for inline scripts to execute
+        // Re-init Cloudflare Turnstile and Form logic (contact page) — needs delay for dynamic widgets
         try {
+            if (window.initContactFormHelpers) {
+                window.initContactFormHelpers();
+            }
             const tryTurnstile = () => {
                 if (window.initContactTurnstile) {
                     window.initContactTurnstile();
@@ -61,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tryTurnstile();
             setTimeout(tryTurnstile, 300);
             setTimeout(tryTurnstile, 800);
-        } catch (e) { console.error("Turnstile init failed", e); }
+        } catch (e) { console.error("Contact Form/Turnstile init failed", e); }
 
         // Re-init Counter Animations (index page)
         try {
