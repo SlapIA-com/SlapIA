@@ -69,10 +69,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         });
     </script>
 
-    <!-- Cloudflare Turnstile (contact page only) -->
-    <?php if (isset($page_needs_turnstile) && $page_needs_turnstile): ?>
+    <!-- Cloudflare Turnstile (loaded globally for Swup SPA compatibility) -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" async defer></script>
-    <?php endif; ?>
 
     <title><?php echo $meta_title; ?></title>
     
