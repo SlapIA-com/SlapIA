@@ -68,15 +68,6 @@ function getBlogArticles($limit = 50)
         return [];
     }
 
-    $cacheFile = sys_get_temp_dir() . '/notion_blog_' . md5($blogDbId . '_' . $limit) . '.json';
-    $cacheTime = 1800; // 30 minutes
-
-    // Utiliser le cache si disponible et récent
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
-        $cachedData = json_decode(file_get_contents($cacheFile), true);
-        if ($cachedData && is_array($cachedData))
-            return $cachedData;
-    }
 
     $allResults = [];
     $startCursor = null;
@@ -182,9 +173,7 @@ function getBlogArticles($limit = 50)
         ];
     }
 
-    if (!empty($articles)) {
-        file_put_contents($cacheFile, json_encode($articles), LOCK_EX);
-    }
+
 
     return $articles;
 }
