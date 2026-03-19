@@ -102,7 +102,7 @@ $articles = getBlogArticles(100);
                     <!-- Modal For Full Article Reading -->
                     <div class="modal fade" id="articleModal_<?php echo $article['id']; ?>" tabindex="-1" aria-labelledby="modalLabel_<?php echo $article['id']; ?>" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content bento-card border-0 overflow-hidden" style="background: var(--bg-deep); border: 1px solid rgba(255,255,255,0.1) !important;">
+                            <div class="modal-content border-0" style="background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 24px; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);">
                                 <!-- Close button placed at top right inside absolute -->
                                 <button type="button" class="btn-close btn-close-white z-3" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></button>
                                 
@@ -180,23 +180,28 @@ $articles = getBlogArticles(100);
 .article-content p {
     margin-bottom: 1.5rem;
 }
-.modal-content.bento-card {
-    backdrop-filter: blur(20px);
-    background: rgba(18, 18, 18, 0.95) !important;
+.modal-content {
+    overflow: visible;
+}
+.modal .modal-body {
+    overflow-y: auto;
+    max-height: 80vh;
 }
 </style>
 
 <script>
 // Re-initialize Bootstrap modals (needed after Swup navigation)
-(function initBlogModals() {
+// Wrapped in setTimeout to ensure Bootstrap JS is loaded (footer loads after this)
+setTimeout(function() {
+    if (typeof bootstrap === 'undefined') return;
+    
     document.querySelectorAll('.modal').forEach(function(modalEl) {
-        // Ensure Bootstrap Modal instance exists
         if (!bootstrap.Modal.getInstance(modalEl)) {
             new bootstrap.Modal(modalEl);
         }
     });
 
-    // Also ensure close buttons work via manual click handler as fallback
+    // Fallback: manual close handler
     document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var modal = this.closest('.modal');
@@ -206,7 +211,7 @@ $articles = getBlogArticles(100);
             }
         });
     });
-})();
+}, 500);
 </script>
 
 <?php include '../includes/footer.php'; ?>
