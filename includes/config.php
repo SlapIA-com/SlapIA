@@ -11,10 +11,22 @@ function loadEnv($path)
     }
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) {
+            continue;
+        }
+        // Skip lines without '='
+        if (strpos($line, '=') === false) {
             continue;
         }
         [$name, $value] = explode('=', $line, 2);
+        $name = trim($name);
+        $value = trim($value);
+        // Strip surrounding quotes (single or double)
+        if (preg_match('/^(["\'])(.*)\1$/', $value, $m)) {
+            $value = $m[2];
+        }
+        if ($name === '') continue;
         if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
             putenv("$name=$value");
             $_ENV[$name] = $value;
