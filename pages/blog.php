@@ -186,4 +186,27 @@ $articles = getBlogArticles(100);
 }
 </style>
 
+<script>
+// Re-initialize Bootstrap modals (needed after Swup navigation)
+(function initBlogModals() {
+    document.querySelectorAll('.modal').forEach(function(modalEl) {
+        // Ensure Bootstrap Modal instance exists
+        if (!bootstrap.Modal.getInstance(modalEl)) {
+            new bootstrap.Modal(modalEl);
+        }
+    });
+
+    // Also ensure close buttons work via manual click handler as fallback
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var modal = this.closest('.modal');
+            if (modal) {
+                var bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            }
+        });
+    });
+})();
+</script>
+
 <?php include '../includes/footer.php'; ?>
