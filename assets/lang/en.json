@@ -325,5 +325,13 @@
     "number_support": "Support Available",
     "cta_badge": "Get Started Now",
     "cta_title": "Ready to level up?",
-    "cta_description": "Join our training and transform your approach to AI. From beginner to expert, we've got you covered."
+    "cta_description": "Join our training and transform your approach to AI. From beginner to expert, we've got you covered.",
+    "blog_title": "Latest Articles",
+    "blog_desc": "Discover our news, guides, and insights on AI and automation.",
+    "news_and_insights": "News & Insights",
+    "rss_subscribe": "Subscribe to RSS Feed",
+    "no_articles_yet": "No articles yet",
+    "coming_soon_articles": "Our first articles are coming very soon.",
+    "read_article": "Read article",
+    "link_copied_to_clipboard": "Article link copied!"
 }

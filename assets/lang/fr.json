@@ -325,5 +325,13 @@
     "number_support": "Support Disponible",
     "cta_badge": "Commencez Maintenant",
     "cta_title": "Prêt à passer au niveau supérieur ?",
-    "cta_description": "Rejoignez nos formations et transformez votre approche de l'IA. Du débutant à l'expert, on vous accompagne."
+    "cta_description": "Rejoignez nos formations et transformez votre approche de l'IA. Du débutant à l'expert, on vous accompagne.",
+    "blog_title": "Derniers articles",
+    "blog_desc": "Découvrez nos actualités, guides, et retours d'XP sur l'IA et l'automatisation.",
+    "news_and_insights": "Actualités & Insights",
+    "rss_subscribe": "S'abonner au flux RSS",
+    "no_articles_yet": "Aucun article pour le moment",
+    "coming_soon_articles": "Nos premiers articles arrivent très bientôt.",
+    "read_article": "Lire l'article",
+    "link_copied_to_clipboard": "Lien de l'article copié !"
 }

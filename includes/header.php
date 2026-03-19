@@ -151,6 +151,9 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <a href="/expertise" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>">
         <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
     </a>
+    <a href="/blog" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'blog.php' ? 'active' : ''; ?>">
+        <i class="fas fa-newspaper"></i> Blog
+    </a>
     <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="mobile-menu-link">
         <i class="fas fa-flag"></i> <?php echo $lang === 'en' ? 'FR' : 'EN'; ?>
     </a>
@@ -175,6 +178,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
             <a href="/formation" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'formation.php' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
             <a href="/entreprises" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'entreprises.php' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
             <a href="/expertise" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
+            <a href="/blog" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'blog.php' ? 'active' : ''; ?>">Blog</a>
         </div>
         <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>">
             <i class="fas fa-flag" style="margin-right: 6px;"></i> <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>

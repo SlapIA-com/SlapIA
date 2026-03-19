@@ -36,6 +36,9 @@
 
     # Dynamic Sitemap
     RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+    # RSS Feed
+    RewriteRule ^rss\.xml$ rss.php [L]
 </IfModule>
 
 <IfModule mod_headers.c>
