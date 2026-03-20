@@ -65,7 +65,14 @@ $articles = getBlogArticles(100);
                 <?php foreach ($articles as $index => $article): ?>
                     <!-- Article Card -->
                     <div class="col-lg-4 col-md-6" id="<?php echo $article['slug']; ?>">
-                        <div class="bento-card bento-card-glow h-100 d-flex flex-column p-0 overflow-hidden scroll-reveal <?php echo ($index % 3 == 0) ? '' : ($index % 3 == 1 ? 'delay-100' : 'delay-200'); ?>">
+                        <div class="bento-card bento-card-glow h-100 d-flex flex-column p-0 overflow-hidden scroll-reveal blog-read-btn <?php echo ($index % 3 == 0) ? '' : ($index % 3 == 1 ? 'delay-100' : 'delay-200'); ?>"
+                            style="cursor: pointer;"
+                            data-article-title="<?php echo htmlspecialchars($article['titre'], ENT_QUOTES, 'UTF-8'); ?>"
+                            data-article-image="<?php echo htmlspecialchars($article['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                            data-article-date="<?php echo date('d M Y', strtotime($article['date'])); ?>"
+                            data-article-readtime="<?php echo max(1, round(str_word_count(strip_tags($article['contenu'])) / 200)); ?>"
+                            data-article-content="<?php echo htmlspecialchars($article['contenu'], ENT_QUOTES, 'UTF-8'); ?>"
+                            data-article-slug="<?php echo htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8'); ?>">
                             
                             <!-- Internal glow orbs -->
                             <div class="card-glow-orb orb-purple" style="opacity: 0.2"></div>
@@ -92,15 +99,9 @@ $articles = getBlogArticles(100);
                                     ?>
                                 </p>
                                 
-                                <button type="button" class="btn btn-sm btn-outline-glass align-self-start blog-read-btn"
-                                    data-article-title="<?php echo htmlspecialchars($article['titre'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-article-image="<?php echo htmlspecialchars($article['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-article-date="<?php echo date('d M Y', strtotime($article['date'])); ?>"
-                                    data-article-readtime="<?php echo max(1, round(str_word_count(strip_tags($article['contenu'])) / 200)); ?>"
-                                    data-article-content="<?php echo htmlspecialchars($article['contenu'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-article-slug="<?php echo htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <span class="btn btn-sm btn-outline-glass align-self-start">
                                     <?php echo t('read_article'); ?> <i class="fas fa-arrow-right ms-2 fs-6"></i>
-                                </button>
+                                </span>
                             </div>
                         </div>
                     </div>
