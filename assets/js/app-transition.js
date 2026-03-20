@@ -15,13 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: swupPlugins
     });
 
-    // Auto-close mobile menu on Swup navigation start
+    // Auto-close mobile menu and blog overlay on Swup navigation start
     swup.hooks.on('visit:start', function () {
         const menuBtn = document.querySelector('.mobile-menu-btn');
         if (menuBtn && menuBtn.classList.contains('active')) {
             if (typeof toggleMobileMenu === 'function') {
                 toggleMobileMenu();
             }
+        }
+        // Clean up blog article overlay if open
+        if (typeof window.cleanupBlogOverlay === 'function') {
+            window.cleanupBlogOverlay();
         }
     });
 
@@ -86,13 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initWhyCards) window.initWhyCards();
         } catch (e) { console.error("WhyCards init failed", e); }
 
-        // Re-init Blog Modals (Bootstrap modals after Swup content swap)
+        // Re-init Blog Overlay (custom overlay after Swup content swap)
         try {
-            if (window.initBlogModals) {
-                setTimeout(window.initBlogModals, 100);
+            if (window.initBlogOverlay) {
+                setTimeout(window.initBlogOverlay, 100);
             }
-        } catch (e) { console.error("Blog modals init failed", e); }
-
+        } catch (e) { console.error("Blog overlay init failed", e); }
 
         // 6. Update Active Links
         const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";
