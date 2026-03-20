@@ -86,6 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initWhyCards) window.initWhyCards();
         } catch (e) { console.error("WhyCards init failed", e); }
 
+        // Re-init Blog Modals (Bootstrap modals after Swup content swap)
+        try {
+            if (window.initBlogModals) {
+                setTimeout(window.initBlogModals, 100);
+            }
+        } catch (e) { console.error("Blog modals init failed", e); }
+
+
         // 6. Update Active Links
         const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";
         const links = document.querySelectorAll('.dock-link');

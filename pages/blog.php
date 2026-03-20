@@ -100,26 +100,28 @@ $articles = getBlogArticles(100);
                     </div>
 
                     <!-- Modal For Full Article Reading -->
-                    <div class="modal fade" id="articleModal_<?php echo $article['id']; ?>" tabindex="-1" aria-labelledby="modalLabel_<?php echo $article['id']; ?>" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content border-0" style="background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 24px; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);">
-                                <!-- Close button placed at top right inside absolute -->
-                                <button type="button" class="btn-close btn-close-white z-3" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></button>
+                    <div class="modal fade blog-article-modal" id="articleModal_<?php echo $article['id']; ?>" tabindex="-1" aria-labelledby="modalLabel_<?php echo $article['id']; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 blog-modal-content">
+                                <!-- Close button — high z-index to stay above hero image -->
+                                <button type="button" class="blog-modal-close" data-bs-dismiss="modal" aria-label="Close">
+                                    <i class="fas fa-times"></i>
+                                </button>
                                 
-                                <div class="modal-body p-0">
+                                <div class="modal-body p-0 blog-modal-body">
                                     <?php if (!empty($article['image'])): ?>
-                                        <div class="position-relative" style="height: 350px; width: 100%;">
-                                            <div class="position-absolute w-100 h-100 top-0 start-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(20,20,20,1) 100%); z-index: 1;"></div>
+                                        <div class="blog-modal-hero">
+                                            <div class="blog-modal-hero-gradient"></div>
                                             <img src="<?php echo htmlspecialchars($article['image']); ?>" alt="" class="w-100 h-100" style="object-fit: cover;">
                                             
                                             <!-- Title embedded inside the image gradient -->
-                                            <div class="position-absolute bottom-0 start-0 w-100 p-4 p-md-5 z-2">
+                                            <div class="position-absolute bottom-0 start-0 w-100 p-4 p-md-5" style="z-index: 2;">
                                                 <h2 class="text-white fw-bold mb-2" id="modalLabel_<?php echo $article['id']; ?>"><?php echo htmlspecialchars($article['titre']); ?></h2>
                                             </div>
                                         </div>
                                     <?php else: ?>
                                         <!-- Header for article without image -->
-                                        <div class="p-4 p-md-5 border-bottom border-light border-opacity-10 bg-gradient-to-br from-primary to-purple bg-opacity-10" style="padding-top: 80px !important;">
+                                        <div class="p-4 p-md-5 border-bottom border-light border-opacity-10" style="padding-top: 80px !important; background: rgba(255,255,255,0.02);">
                                             <h2 class="text-white fw-bold mb-2" id="modalLabel_<?php echo $article['id']; ?>"><?php echo htmlspecialchars($article['titre']); ?></h2>
                                         </div>
                                     <?php endif; ?>
@@ -163,11 +165,82 @@ $articles = getBlogArticles(100);
 </section>
 
 <style>
-/* Interactions visuelles pour les cartes du blog */
+/* ===== Blog Card Hover ===== */
 .blog-card-img-wrapper:hover img {
     transform: scale(1.08) !important;
 }
-/* Style basique pour le contenu interne dans la modale (au cas où on y met des liens ou tags dans le futur) */
+
+/* ===== Blog Article Modal ===== */
+.blog-modal-content {
+    background: rgba(18, 18, 18, 0.97) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    overflow: hidden !important;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Close button */
+.blog-modal-close {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.blog-modal-close:hover {
+    background: rgba(255,60,60,0.7);
+    border-color: rgba(255,60,60,0.5);
+    transform: scale(1.1);
+}
+
+/* Scrollable body */
+.blog-modal-body {
+    overflow-y: auto !important;
+    flex: 1 1 auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hero image */
+.blog-modal-hero {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    flex-shrink: 0;
+}
+.blog-modal-hero-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(18,18,18,1) 100%);
+    z-index: 1;
+}
+
+/* Fix the modal-footer to stay at bottom */
+.blog-article-modal .modal-footer {
+    flex-shrink: 0;
+    border-radius: 0 0 24px 24px;
+}
+
+/* Article content styles */
 .article-content a {
     color: var(--accent-blue);
     text-decoration: underline;
@@ -180,38 +253,123 @@ $articles = getBlogArticles(100);
 .article-content p {
     margin-bottom: 1.5rem;
 }
-.modal-content {
-    overflow: visible;
+
+/* Scrollbar styling for modal */
+.blog-modal-body::-webkit-scrollbar {
+    width: 6px;
 }
-.modal .modal-body {
-    overflow-y: auto;
-    max-height: 80vh;
+.blog-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.blog-modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+}
+.blog-modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .blog-modal-content {
+        max-height: 95vh;
+        border-radius: 16px !important;
+    }
+    .blog-modal-hero {
+        height: 200px;
+    }
+    .blog-modal-close {
+        right: 12px;
+        top: 12px;
+        width: 36px;
+        height: 36px;
+    }
 }
 </style>
 
 <script>
-// Re-initialize Bootstrap modals (needed after Swup navigation)
-// Wrapped in setTimeout to ensure Bootstrap JS is loaded (footer loads after this)
-setTimeout(function() {
+// Blog modals initialization — exposed globally for Swup re-init
+window.initBlogModals = function() {
     if (typeof bootstrap === 'undefined') return;
-    
-    document.querySelectorAll('.modal').forEach(function(modalEl) {
-        if (!bootstrap.Modal.getInstance(modalEl)) {
-            new bootstrap.Modal(modalEl);
+
+    // Initialize all blog modals
+    document.querySelectorAll('.blog-article-modal').forEach(function(modalEl) {
+        // Destroy any stale instance first
+        var existing = bootstrap.Modal.getInstance(modalEl);
+        if (existing) {
+            try { existing.dispose(); } catch(e) {}
         }
+        // Create fresh instance
+        new bootstrap.Modal(modalEl);
     });
 
-    // Fallback: manual close handler
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+    // Close button click handler (robust fallback)
+    document.querySelectorAll('.blog-modal-close').forEach(function(btn) {
+        // Remove old listeners by cloning  
+        var newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             var modal = this.closest('.modal');
             if (modal) {
                 var bsModal = bootstrap.Modal.getInstance(modal);
-                if (bsModal) bsModal.hide();
+                if (bsModal) {
+                    bsModal.hide();
+                } else {
+                    // Emergency fallback: remove modal manually
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    modal.setAttribute('aria-hidden', 'true');
+                    document.body.classList.remove('modal-open');
+                    var backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
             }
         });
     });
-}, 500);
+
+    // Open button handler — use event delegation for robustness
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(trigger) {
+        var newTrigger = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(newTrigger, trigger);
+
+        newTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            var targetId = this.getAttribute('data-bs-target');
+            var modalEl = document.querySelector(targetId);
+            if (modalEl) {
+                var bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                bsModal.show();
+            }
+        });
+    });
+
+    // Cleanup body scroll lock when modal is hidden
+    document.querySelectorAll('.blog-article-modal').forEach(function(modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            var backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+        });
+    });
+};
+
+// Initialize on first load (wait for Bootstrap to be available from footer)
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    // If page is already loaded (Swup navigation), init immediately
+    setTimeout(window.initBlogModals, 100);
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait a tick for Bootstrap script from footer to load
+        setTimeout(window.initBlogModals, 200);
+    });
+}
 </script>
 
 <?php include '../includes/footer.php'; ?>
