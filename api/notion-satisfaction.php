@@ -175,7 +175,7 @@ function getSatisfactionStats($forceRefresh = false) {
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
-        curl_close($ch);
+        unset($ch);
 
         if ($curlError) {
             return [
@@ -303,7 +303,7 @@ function translateText($text, $targetLang = 'fr') {
         ]);
         
         $response = curl_exec($ch);
-        curl_close($ch);
+        unset($ch);
         
         if ($response) {
             $data = json_decode($response, true);
@@ -374,7 +374,7 @@ function getNotionReviews($limit = 20, $lang = 'fr') {
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
-        curl_close($ch);
+        unset($ch);
 
         if ($curlError) break;
 
