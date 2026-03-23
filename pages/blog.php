@@ -131,6 +131,10 @@ $articles = getBlogArticles(100);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
 }
 .article-overlay.active {
     opacity: 1;
@@ -152,11 +156,8 @@ $articles = getBlogArticles(100);
 
 /* Panel (the card itself) */
 .article-overlay-panel {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.95);
-    width: 90%;
+    position: relative;
+    width: 100%;
     max-width: 800px;
     max-height: 90vh;
     background: rgba(18, 18, 18, 0.97);
@@ -167,10 +168,12 @@ $articles = getBlogArticles(100);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
 }
 .article-overlay.active .article-overlay-panel {
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
 }
 
 /* Close button */
@@ -204,6 +207,7 @@ $articles = getBlogArticles(100);
 .article-overlay-body {
     overflow-y: auto;
     flex: 1 1 auto;
+    min-height: 0;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -247,10 +251,15 @@ $articles = getBlogArticles(100);
 }
 
 /* Article content styles */
+.article-overlay-content-wrap {
+    padding: 1.5rem 2rem;
+}
 .article-overlay .article-content {
     line-height: 1.8;
     font-size: 1.08rem;
     color: rgba(255,255,255,0.85);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 .article-overlay .article-content a {
     color: var(--accent-blue, #2997ff);
@@ -278,10 +287,19 @@ $articles = getBlogArticles(100);
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
+    .article-overlay {
+        padding: 0;
+    }
     .article-overlay-panel {
-        width: 95%;
-        max-height: 95vh;
-        border-radius: 16px;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+        transform: scale(0.98);
+    }
+    .article-overlay.active .article-overlay-panel {
+        transform: scale(1);
     }
     .article-overlay-hero {
         height: 200px;
@@ -291,13 +309,18 @@ $articles = getBlogArticles(100);
         top: 12px;
         width: 36px;
         height: 36px;
+        background: rgba(0,0,0,0.8);
     }
     .article-overlay-hero-title {
         padding: 1rem 1.25rem;
     }
+    .article-overlay-content-wrap {
+        padding: 1.25rem;
+    }
     .article-overlay-footer {
-        padding: 10px 1.25rem;
-        border-radius: 0 0 16px 16px;
+        padding: 12px 1.25rem;
+        border-radius: 0;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     }
 }
 </style>
@@ -369,8 +392,8 @@ $articles = getBlogArticles(100);
                 '<button type="button" class="article-overlay-close" aria-label="Close"><i class="fas fa-times"></i></button>' +
                 '<div class="article-overlay-body">' +
                     heroHtml +
-                    '<div style="padding: 1.5rem 2rem;">' +
-                        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);">' +
+                    '<div class="article-overlay-content-wrap">' +
+                        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;">' +
                             '<div style="display:flex;align-items:center;">' +
                                 '<img src="/assets/img/team/Thomas-Lapierre.jpg" alt="Author" style="width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:10px;">' +
                                 '<div>' +
@@ -429,11 +452,11 @@ $articles = getBlogArticles(100);
         if (shareEl) shareText = shareEl.textContent.trim();
 
         document.querySelectorAll('.blog-read-btn').forEach(function(btn) {
-            // Clone to remove old listeners
-            var newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
+            // Prevent multiple listener bindings without cloning the node
+            if (btn.dataset.overlayInitialized) return;
+            btn.dataset.overlayInitialized = 'true';
 
-            newBtn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 openArticle(this);
             });
