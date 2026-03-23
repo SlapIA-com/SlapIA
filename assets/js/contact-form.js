@@ -4,31 +4,52 @@
 let toastTimeout;
 let contactFormStartTime;
 
-// Initialize Turnstile for this form
+// Initialize Turnstile for the Contact Form
 window.initContactTurnstile = function () {
     const container = document.getElementById('cf-turnstile-container');
-    if (!container) return;
-    if (typeof turnstile === 'undefined') return;
+    if (!container || typeof turnstile === 'undefined') return;
+
+    if (container.querySelector('iframe')) return; // Already rendered
 
     const sitekey = container.getAttribute('data-sitekey');
     if (!sitekey) return;
-
-    try {
-        // Remove any existing widget first (important for Swup re-navigation)
-        turnstile.remove(container);
-    } catch (e) { /* no widget to remove */ }
 
     try {
         turnstile.render(container, {
             sitekey: sitekey,
             theme: 'dark'
         });
-    } catch (e) { console.error('Turnstile render error', e); }
+    } catch (e) {
+        console.warn('Turnstile render retry pending...');
+    }
 };
 
-// The global callback used by Turnstile script in header (first page load)
+// Initialize Turnstile for the RSS Modal
+window.initRssTurnstile = function (force = false) {
+    const container = document.getElementById('cf-turnstile-rss');
+    if (!container || typeof turnstile === 'undefined') return;
+    
+    if (!force && container.querySelector('iframe')) return; // Already rendered
+
+    const sitekey = container.getAttribute('data-sitekey');
+    if (!sitekey) return;
+
+    try {
+        if (force) {
+            try { turnstile.remove(container); } catch(e) {}
+        }
+        
+        turnstile.render(container, {
+            sitekey: sitekey,
+            theme: 'dark'
+        });
+    } catch (e) { }
+};
+
+// The global callback used by Turnstile script in header
 window.onloadTurnstileCallback = function () {
     window.initContactTurnstile();
+    window.initRssTurnstile();
 };
 
 function showToast(message, isError = false) {
@@ -38,37 +59,30 @@ function showToast(message, isError = false) {
 
     if (!toast || !toastMessage || !progressBar) return;
 
-    // Clear any existing timeout
     if (toastTimeout) {
         clearTimeout(toastTimeout);
     }
 
-    // Reset state
     toast.classList.remove('show', 'error');
     progressBar.classList.remove('animate');
 
-    // Set message and style
     toastMessage.textContent = message;
     if (isError) {
         toast.classList.add('error');
     }
 
-    // Force reflow to reset animation
     void progressBar.offsetWidth;
 
-    // Scroll to top so the user can see the toast
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
     });
 
-    // Show toast
     requestAnimationFrame(() => {
         toast.classList.add('show');
         progressBar.classList.add('animate');
     });
 
-    // Auto-hide after 5 seconds
     toastTimeout = setTimeout(() => {
         closeToast();
     }, 5000);
@@ -87,32 +101,21 @@ async function handleContactFormSubmit(e) {
     e.preventDefault();
 
     const form = e.target;
-    const msgProfanity = form.getAttribute('data-msg-profanity') || 'Un texte inapproprié a été détecté.';
-    const msgShort = form.getAttribute('data-msg-short') || 'Le message est trop court (min 20 caractères).';
-    const msgSuccess = form.getAttribute('data-msg-success') || 'Message envoyé avec succès !';
-    const msgGeneric = form.getAttribute('data-msg-generic') || 'Une erreur est survenue.';
-    const msgConn = form.getAttribute('data-msg-conn') || 'Erreur de connexion. Veuillez réessayer.';
-
-    // Anti-Spam Checks
+    // Anti-Spam Check
     const honeycomb = document.getElementById('website_check').value;
-    if (honeycomb) {
-        console.log('Spam detected (honeycomb)');
-        return; // Silent fail for bots
-    }
+    if (honeycomb) return;
 
     // Content Security Check
     const messageInput = document.getElementById('message');
     const messageContent = messageInput ? messageInput.value.toLowerCase() : '';
     const forbiddenWords = ['caca', 'connard', 'pute', 'salope', 'batard', 'encule', 'merde', 'chiotte', 'bite', 'couille'];
-    const hasForbiddenWord = forbiddenWords.some(word => messageContent.includes(word));
-
-    if (hasForbiddenWord) {
-        showToast(msgProfanity, true);
+    if (forbiddenWords.some(word => messageContent.includes(word))) {
+        showToast("Un texte inapproprié a été détecté.", true);
         return;
     }
 
     if (messageContent.length < 20) {
-        showToast(msgShort, true);
+        showToast("Le message est trop court (min 20 caractères).", true);
         return;
     }
 
@@ -125,7 +128,6 @@ async function handleContactFormSubmit(e) {
     const btnText = document.getElementById('btnText');
     const btnLoader = document.getElementById('btnLoader');
 
-    // Activer le loader
     submitBtn.disabled = true;
     btnText.classList.add('d-none');
     btnLoader.classList.remove('d-none');
@@ -137,24 +139,21 @@ async function handleContactFormSubmit(e) {
         email: document.getElementById('email').value,
         message: document.getElementById('message').value,
         website_check: honeycomb,
-        'cf-turnstile-response': formData.get('cf-turnstile-response') // Important: Send the token!
+        'cf-turnstile-response': formData.get('cf-turnstile-response')
     };
 
     try {
         const response = await fetch('/api/notion-contact.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         const result = await response.json();
 
         if (result.success) {
-            showToast(msgSuccess);
+            showToast("Message envoyé avec succès !");
             form.reset();
-            // Reset character count
             const charCountDisplay = document.getElementById('charCount');
             if (charCountDisplay) {
                 charCountDisplay.textContent = '0 / 20 min';
@@ -163,13 +162,11 @@ async function handleContactFormSubmit(e) {
                 charCountDisplay.style.fontWeight = 'normal';
             }
         } else {
-            showToast(result.error || msgGeneric, true);
+            showToast(result.error || "Une erreur est survenue.", true);
         }
     } catch (error) {
-        console.error('Erreur:', error);
-        showToast(msgConn, true);
+        showToast("Erreur de connexion au serveur.", true);
     } finally {
-        // Désactiver le loader
         submitBtn.disabled = false;
         btnText.classList.remove('d-none');
         btnLoader.classList.add('d-none');
@@ -196,10 +193,90 @@ function handleCharacterCount(e) {
     }
 }
 
+// RSS Modal Global Handlers
+window.initRssModalHelpers = function() {
+    const rssModalEl = document.getElementById('rssSubscribeModal');
+    if (!rssModalEl || rssModalEl.dataset.helpersInitialized) return;
+    rssModalEl.dataset.helpersInitialized = 'true';
+
+    rssModalEl.addEventListener('show.bs.modal', function () {
+        const msg = document.getElementById('rss-subscribe-msg');
+        if (msg) { msg.style.display = 'none'; msg.innerHTML = ''; }
+        
+        if (typeof turnstile !== 'undefined') {
+            window.initRssTurnstile(true); // Force re-render
+        } else {
+            let checkInt = setInterval(() => {
+                if (typeof turnstile !== 'undefined') {
+                    window.initRssTurnstile(true);
+                    clearInterval(checkInt);
+                }
+            }, 500);
+            setTimeout(() => clearInterval(checkInt), 5000);
+        }
+    });
+
+    const rssForm = document.getElementById('rss-subscribe-form');
+    if (rssForm) {
+        rssForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('rss-email-input').value;
+            const btn = document.getElementById('rss-submit-btn');
+            const msg = document.getElementById('rss-subscribe-msg');
+            const formData = new FormData(rssForm);
+            const cfResponse = formData.get('cf-turnstile-response');
+
+            if (!cfResponse) {
+                msg.style.display = 'block';
+                msg.innerHTML = '<span class="text-danger">Veuillez valider le Captcha Cloudflare.</span>';
+                return;
+            }
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+            btn.disabled = true;
+            msg.style.display = 'none';
+
+            fetch('/api/subscribe-rss.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, 'cf-turnstile-response': cfResponse })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = 'M\'inscrire';
+                msg.style.display = 'block';
+                if(data.success) {
+                    msg.innerHTML = '<span class="text-success">Inscription réussie ! Merci.</span>';
+                    rssForm.reset();
+                    try { turnstile.reset('#cf-turnstile-rss'); } catch(e) {}
+                    setTimeout(() => {
+                        if (window.bootstrap && bootstrap.Modal) {
+                            var modal = bootstrap.Modal.getInstance(rssModalEl);
+                            if (modal) modal.hide();
+                        }
+                    }, 2000);
+                } else {
+                    msg.innerHTML = `<span class="text-danger">${data.error || 'Erreur inconnue'}</span>`;
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = 'M\'inscrire';
+                msg.style.display = 'block';
+                msg.innerHTML = '<span class="text-danger">Erreur de connexion au serveur.</span>';
+            });
+        });
+    }
+};
+
 // Global Re-Init function called by Swup and on DOMContentLoaded
 window.initContactFormHelpers = function () {
     const form = document.getElementById('contactForm');
     const messageInput = document.getElementById('message');
+
+    // Re-init RSS helpers too
+    window.initRssModalHelpers();
 
     // Remove old listeners to prevent duplicates during Swup navigation
     if (form) {

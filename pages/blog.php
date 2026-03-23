@@ -476,84 +476,9 @@ $articles = getBlogArticles(100);
         if (shareEl) shareText = shareEl.textContent.trim();
         window._blogShareText = shareText;
 
-        // Turnstile robust initialization
-        window.initRssTurnstile = function() {
-            var container = document.getElementById('cf-turnstile-rss');
-            if (!container || typeof turnstile === 'undefined') return;
-            var sitekey = container.getAttribute('data-sitekey');
-            if (container.querySelector('iframe')) return; // Already rendered
-            try { turnstile.remove(container); } catch(e) {}
-            try { turnstile.render(container, { sitekey: sitekey, theme: 'dark' }); } catch (e) {}
-        };
+        // Turnstile robust initialization (No longer needed here, moved to contact-form.js)
 
-        // RSS Form handling
-        var form = document.getElementById('rss-subscribe-form');
-        if (form && !form.dataset.initialized) {
-            form.dataset.initialized = 'true';
-
-            // Initialiser Turnstile quand la modal s'ouvre, pour garantir que le DOM est prêt
-            var modalEl = document.getElementById('rssSubscribeModal');
-            if (modalEl) {
-                modalEl.addEventListener('show.bs.modal', function () {
-                    window.initRssTurnstile();
-                    setTimeout(window.initRssTurnstile, 500);
-                });
-            }
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                var email = document.getElementById('rss-email-input').value;
-                var btn = document.getElementById('rss-submit-btn');
-                var msg = document.getElementById('rss-subscribe-msg');
-                
-                var formData = new FormData(form);
-                var cfResponse = formData.get('cf-turnstile-response');
-
-                if (!cfResponse) {
-                    msg.style.display = 'block';
-                    msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Veuillez valider le Captcha Cloudflare.</span>';
-                    return;
-                }
-                
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
-                btn.disabled = true;
-                msg.style.display = 'none';
-
-                fetch('/api/subscribe-rss.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        email: email,
-                        'cf-turnstile-response': cfResponse
-                    })
-                })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    btn.disabled = false;
-                    btn.innerHTML = 'M\'inscrire';
-                    msg.style.display = 'block';
-                    if(data.success) {
-                        msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i> Inscription réussie ! Merci.</span>';
-                        form.reset();
-                        setTimeout(function() {
-                            var modalEl = document.getElementById('rssSubscribeModal');
-                            if (window.bootstrap && bootstrap.Modal) {
-                                var modal = bootstrap.Modal.getInstance(modalEl);
-                                if (modal) modal.hide();
-                            }
-                        }, 2000);
-                    } else {
-                        msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + (data.error || 'Erreur inconnue') + '</span>';
-                    }
-                })
-                .catch(function(err) {
-                    btn.disabled = false;
-                    btn.innerHTML = 'M\'inscrire';
-                    msg.style.display = 'block';
-                    msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Erreur de connexion au serveur.</span>';
-                });
-            });
-        }
+        // RSS Form handling (No longer needed here, moved to contact-form.js)
 
         // Auto-open article if a valid hash is present in the URL
         if (window.location.hash) {
