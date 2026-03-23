@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
             persistAssets: true
         }));
     }
+    if (typeof SwupScriptsPlugin !== 'undefined') {
+        swupPlugins.push(new SwupScriptsPlugin());
+    }
 
     const swup = new Swup({
         containers: ['#swup'],

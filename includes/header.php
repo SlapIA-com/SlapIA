@@ -97,17 +97,11 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <link href="<?php echo css_url('/assets/css/style.css'); ?>" rel="stylesheet">
     <link href="<?php echo css_url('/assets/css/lightbox.css'); ?>" rel="stylesheet">
     <?php
-    // Page-specific CSS: only load on pages that need them
-    $current_page = basename($_SERVER['PHP_SELF'], '.php');
-    if ($current_page === 'index' || !isset($page_title)) {
-        echo '<link href="' . css_url('/assets/css/homepage.css') . '" rel="stylesheet" data-swup-replace>';
-    }
-    if (isset($page_css) && is_array($page_css)) {
-        foreach ($page_css as $css) {
-            echo '<link href="' . css_url($css) . '" rel="stylesheet" data-swup-replace>';
-        }
-    }
+    // Load ALL page-specific CSS globally so SPA (Swup) navigation always has styles ready.
+    // No conflicts because selectors target page-specific class names.
     ?>
+    <link href="<?php echo css_url('/assets/css/homepage.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/formation.css'); ?>" rel="stylesheet">
 
     <!-- Schema.org Organization -->
     <script type="application/ld+json">
