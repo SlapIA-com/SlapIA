@@ -477,14 +477,17 @@ $articles = getBlogArticles(100);
         if (window.location.hash) {
             var inputSlug = window.location.hash.substring(1);
             if (/^[a-zA-Z0-9_-]+$/.test(inputSlug)) {
-                var articleCard = document.getElementById(inputSlug);
-                if (articleCard && articleCard.classList.contains('blog-read-btn')) {
-                    // Slight delay to ensure DOM and styles are fully ready
-                    setTimeout(function() {
-                        if (window._blogOpenArticle) {
-                            window._blogOpenArticle(articleCard);
-                        }
-                    }, 50);
+                var articleWrapper = document.getElementById(inputSlug);
+                if (articleWrapper) {
+                    var articleBtn = articleWrapper.classList.contains('blog-read-btn') ? articleWrapper : articleWrapper.querySelector('.blog-read-btn');
+                    if (articleBtn) {
+                        // Slight delay to ensure DOM and styles are fully ready
+                        setTimeout(function() {
+                            if (window._blogOpenArticle) {
+                                window._blogOpenArticle(articleBtn);
+                            }
+                        }, 200);
+                    }
                 }
             }
         }
