@@ -424,7 +424,7 @@ $articles = getBlogArticles(100);
             shareBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 navigator.clipboard.writeText(window.location.origin + '/blog#' + slug);
-                alert(shareText || 'Lien copié !');
+                alert(window._blogShareText || shareText || 'Lien copié !');
             });
         }
 
@@ -445,23 +445,30 @@ $articles = getBlogArticles(100);
         return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // Initialize — attach click handlers to all read buttons
+    // Initialize - just get share text
     window.initBlogOverlay = function() {
-        // Get share text
         var shareEl = document.getElementById('blog-share-text');
         if (shareEl) shareText = shareEl.textContent.trim();
-
-        document.querySelectorAll('.blog-read-btn').forEach(function(btn) {
-            // Prevent multiple listener bindings without cloning the node
-            if (btn.dataset.overlayInitialized) return;
-            btn.dataset.overlayInitialized = 'true';
-
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                openArticle(this);
-            });
-        });
+        window._blogShareText = shareText;
     };
+
+    // Expose openArticle to the global delegated listener
+    window._blogOpenArticle = openArticle;
+
+    // Attach exactly one delegated listener to the document body
+    // This survives Swup transitions seamlessly!
+    if (!window._blogDelegatedListenerAdded) {
+        document.body.addEventListener('click', function(e) {
+            var btn = e.target.closest('.blog-read-btn');
+            if (btn) {
+                e.preventDefault();
+                if (window._blogOpenArticle) {
+                    window._blogOpenArticle(btn);
+                }
+            }
+        });
+        window._blogDelegatedListenerAdded = true;
+    }
 
     // Escape key to close
     document.addEventListener('keydown', function(e) {
