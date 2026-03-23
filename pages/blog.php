@@ -350,6 +350,12 @@ $articles = getBlogArticles(100);
         if (!overlayEl) return;
         overlayEl.classList.remove('active');
         document.body.style.overflow = '';
+        
+        // Remove hash from URL without reloading
+        if (window.location.hash) {
+            history.replaceState('', document.title, window.location.pathname + window.location.search);
+        }
+
         // After transition, clear content
         setTimeout(function() {
             if (overlayEl) overlayEl.innerHTML = '';
@@ -363,6 +369,11 @@ $articles = getBlogArticles(100);
         var readtime = btn.getAttribute('data-article-readtime') || '1';
         var content = btn.getAttribute('data-article-content') || '';
         var slug = btn.getAttribute('data-article-slug') || '';
+
+        // Update URL hash dynamically when opening the article
+        if (slug && ('#' + slug) !== window.location.hash) {
+            history.replaceState(null, null, '#' + slug);
+        }
 
         // Convert newlines to <br> for display
         var contentHtml = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
@@ -456,11 +467,27 @@ $articles = getBlogArticles(100);
         return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // Initialize - just get share text
+    // Initialize - just get share text and handle deep linking
     window.initBlogOverlay = function() {
         var shareEl = document.getElementById('blog-share-text');
         if (shareEl) shareText = shareEl.textContent.trim();
         window._blogShareText = shareText;
+
+        // Auto-open article if a valid hash is present in the URL
+        if (window.location.hash) {
+            var inputSlug = window.location.hash.substring(1);
+            if (/^[a-zA-Z0-9_-]+$/.test(inputSlug)) {
+                var articleCard = document.getElementById(inputSlug);
+                if (articleCard && articleCard.classList.contains('blog-read-btn')) {
+                    // Slight delay to ensure DOM and styles are fully ready
+                    setTimeout(function() {
+                        if (window._blogOpenArticle) {
+                            window._blogOpenArticle(articleCard);
+                        }
+                    }, 50);
+                }
+            }
+        }
     };
 
     // Expose openArticle to the global delegated listener
