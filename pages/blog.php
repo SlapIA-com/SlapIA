@@ -114,44 +114,6 @@ $articles = getBlogArticles(100);
     </div>
 </section>
 
-<!-- RSS Subscribe Modal -->
-<div class="modal fade" id="rssSubscribeModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px;">
-      <div class="modal-header border-bottom border-light border-opacity-10 position-relative p-4">
-        <h5 class="modal-title text-warning fw-bold"><i class="fas fa-rss me-2"></i> <?php echo t('rss_subscribe'); ?></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px;"></button>
-      </div>
-      <div class="modal-body p-4 text-center">
-        <p class="text-white-50 mb-4">Laissez votre e-mail pour être prévenu de nos prochains articles et actualités exclusives.</p>
-        <form id="rss-subscribe-form">
-          <input type="email" id="rss-email-input" class="form-control mb-3 text-white fw-medium" placeholder="votre.email@exemple.com" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff !important;">
-          <style>
-              #rss-email-input::placeholder { color: rgba(255,255,255,0.4); }
-              #rss-email-input:-webkit-autofill,
-              #rss-email-input:-webkit-autofill:hover, 
-              #rss-email-input:-webkit-autofill:focus {
-                  -webkit-text-fill-color: white;
-                  -webkit-box-shadow: 0 0 0px 1000px rgba(18,18,18,0.95) inset;
-                  transition: background-color 5000s ease-in-out 0s;
-              }
-          </style>
-          
-          <!-- Cloudflare Turnstile -->
-          <div class="d-flex justify-content-center mb-3">
-              <div id="cf-turnstile-rss" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
-          </div>
-
-          <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold" id="rss-submit-btn">
-            M'inscrire
-          </button>
-        </form>
-        <div id="rss-subscribe-msg" class="mt-3 small" style="display:none;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Hidden data for share text -->
 <span id="blog-share-text" style="display:none;"><?php echo htmlspecialchars(t('link_copied_to_clipboard'), ENT_QUOTES, 'UTF-8'); ?></span>
 
@@ -524,12 +486,6 @@ $articles = getBlogArticles(100);
             try { turnstile.render(container, { sitekey: sitekey, theme: 'dark' }); } catch (e) {}
         };
 
-        // Safely move the RSS modal to document.body to avoid z-index/transform trapping issues
-        var rssModal = document.getElementById('rssSubscribeModal');
-        if (rssModal && rssModal.parentNode !== document.body) {
-            document.body.appendChild(rssModal);
-        }
-
         // RSS Form handling
         var form = document.getElementById('rss-subscribe-form');
         if (form && !form.dataset.initialized) {
@@ -659,17 +615,6 @@ $articles = getBlogArticles(100);
             overlayEl = null;
         }
 
-        // Force cleanup the RSS modal and its backdrop if moved to body
-        var rssModal = document.getElementById('rssSubscribeModal');
-        if (rssModal) {
-            var backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(function(b) { b.remove(); });
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            
-            if (rssModal.parentNode) rssModal.parentNode.removeChild(rssModal);
-        }
     };
 })();
 </script>

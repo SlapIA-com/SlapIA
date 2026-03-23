@@ -112,6 +112,44 @@
     </div>
 </div>
 
+<!-- RSS Subscribe Modal -->
+<div class="modal fade" id="rssSubscribeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px;">
+      <div class="modal-header border-bottom border-light border-opacity-10 position-relative p-4">
+        <h5 class="modal-title text-warning fw-bold"><i class="fas fa-rss me-2"></i> <?php echo function_exists('t') ? t('rss_subscribe') : "S'abonner aux alertes"; ?></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px;"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <p class="text-white-50 mb-4">Laissez votre e-mail pour être prévenu de nos prochains articles et actualités exclusives.</p>
+        <form id="rss-subscribe-form">
+          <input type="email" id="rss-email-input" class="form-control mb-3 text-white fw-medium" placeholder="votre.email@exemple.com" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff !important;">
+          <style>
+              #rss-email-input::placeholder { color: rgba(255,255,255,0.4); }
+              #rss-email-input:-webkit-autofill,
+              #rss-email-input:-webkit-autofill:hover, 
+              #rss-email-input:-webkit-autofill:focus {
+                  -webkit-text-fill-color: white;
+                  -webkit-box-shadow: 0 0 0px 1000px rgba(18,18,18,0.95) inset;
+                  transition: background-color 5000s ease-in-out 0s;
+              }
+          </style>
+          
+          <!-- Cloudflare Turnstile -->
+          <div class="d-flex justify-content-center mb-3">
+              <div id="cf-turnstile-rss" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold" id="rss-submit-btn">
+             M'inscrire
+          </button>
+        </form>
+        <div id="rss-subscribe-msg" class="mt-3 small" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Live Visitor Counter Badge (Floating) -->
 <div class="floating-visitor-counter position-fixed bottom-0 start-0 m-3 p-2 rounded-pill bg-dark border border-secondary border-opacity-25 shadow-lg d-flex align-items-center gap-2 fade-in"
     style="z-index: 9999; backdrop-filter: blur(10px);">
