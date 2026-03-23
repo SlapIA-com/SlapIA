@@ -123,9 +123,19 @@ $articles = getBlogArticles(100);
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px;"></button>
       </div>
       <div class="modal-body p-4 text-center">
-        <p class="text-secondary mb-4">Laissez votre e-mail pour être prévenu de nos prochains articles et actualités exclusives.</p>
+        <p class="text-white-50 mb-4">Laissez votre e-mail pour être prévenu de nos prochains articles et actualités exclusives.</p>
         <form id="rss-subscribe-form">
-          <input type="email" id="rss-email-input" class="form-control mb-3" placeholder="votre.email@exemple.com" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+          <input type="email" id="rss-email-input" class="form-control mb-3 text-white fw-medium" placeholder="votre.email@exemple.com" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff !important;">
+          <style>
+              #rss-email-input::placeholder { color: rgba(255,255,255,0.4); }
+              #rss-email-input:-webkit-autofill,
+              #rss-email-input:-webkit-autofill:hover, 
+              #rss-email-input:-webkit-autofill:focus {
+                  -webkit-text-fill-color: white;
+                  -webkit-box-shadow: 0 0 0px 1000px rgba(18,18,18,0.95) inset;
+                  transition: background-color 5000s ease-in-out 0s;
+              }
+          </style>
           
           <!-- Cloudflare Turnstile -->
           <div class="d-flex justify-content-center mb-3">
@@ -504,19 +514,34 @@ $articles = getBlogArticles(100);
         if (shareEl) shareText = shareEl.textContent.trim();
         window._blogShareText = shareText;
 
+        // Turnstile robust initialization
+        window.initRssTurnstile = function() {
+            var container = document.getElementById('cf-turnstile-rss');
+            if (!container || typeof turnstile === 'undefined') return;
+            var sitekey = container.getAttribute('data-sitekey');
+            if (container.querySelector('iframe')) return; // Already rendered
+            try { turnstile.remove(container); } catch(e) {}
+            try { turnstile.render(container, { sitekey: sitekey, theme: 'dark' }); } catch (e) {}
+        };
+
+        // Safely move the RSS modal to document.body to avoid z-index/transform trapping issues
+        var rssModal = document.getElementById('rssSubscribeModal');
+        if (rssModal && rssModal.parentNode !== document.body) {
+            document.body.appendChild(rssModal);
+        }
+
         // RSS Form handling
         var form = document.getElementById('rss-subscribe-form');
         if (form && !form.dataset.initialized) {
             form.dataset.initialized = 'true';
 
-            // Initialiser Turnstile quand le script tourne (ou via callback)
-            if (typeof turnstile !== 'undefined') {
-                try {
-                    turnstile.render('#cf-turnstile-rss', {
-                        sitekey: document.getElementById('cf-turnstile-rss').getAttribute('data-sitekey'),
-                        theme: 'dark'
-                    });
-                } catch(e) {}
+            // Initialiser Turnstile quand la modal s'ouvre, pour garantir que le DOM est prêt
+            var modalEl = document.getElementById('rssSubscribeModal');
+            if (modalEl) {
+                modalEl.addEventListener('show.bs.modal', function () {
+                    window.initRssTurnstile();
+                    setTimeout(window.initRssTurnstile, 500);
+                });
             }
 
             form.addEventListener('submit', function(e) {
@@ -632,6 +657,18 @@ $articles = getBlogArticles(100);
         if (overlayEl && document.body.contains(overlayEl)) {
             document.body.removeChild(overlayEl);
             overlayEl = null;
+        }
+
+        // Force cleanup the RSS modal and its backdrop if moved to body
+        var rssModal = document.getElementById('rssSubscribeModal');
+        if (rssModal) {
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function(b) { b.remove(); });
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            if (rssModal.parentNode) rssModal.parentNode.removeChild(rssModal);
         }
     };
 })();
