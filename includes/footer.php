@@ -164,6 +164,7 @@ if (!function_exists('asset_url')) {
 <!-- Swup.js for App-like Navigation (pinned versions) -->
 <script src="https://unpkg.com/swup@4.6.0/dist/Swup.umd.js"></script>
 <script src="https://unpkg.com/@swup/scroll-plugin@3.3.4/dist/SwupScrollPlugin.umd.js"></script>
+<script src="https://unpkg.com/@swup/head-plugin@2.2.0/dist/SwupHeadPlugin.umd.js"></script>
 <script src="<?php echo asset_url('/assets/js/animations.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/app-transition.js'); ?>"></script>
 

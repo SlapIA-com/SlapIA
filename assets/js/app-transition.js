@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollAcceleration: 0.04,
         }));
     }
+    if (typeof SwupHeadPlugin !== 'undefined') {
+        swupPlugins.push(new SwupHeadPlugin({
+            persistAssets: true
+        }));
+    }
 
     const swup = new Swup({
         containers: ['#swup'],

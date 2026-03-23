@@ -100,11 +100,11 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     // Page-specific CSS: only load on pages that need them
     $current_page = basename($_SERVER['PHP_SELF'], '.php');
     if ($current_page === 'index' || !isset($page_title)) {
-        echo '<link href="' . css_url('/assets/css/homepage.css') . '" rel="stylesheet">';
+        echo '<link href="' . css_url('/assets/css/homepage.css') . '" rel="stylesheet" data-swup-replace>';
     }
     if (isset($page_css) && is_array($page_css)) {
         foreach ($page_css as $css) {
-            echo '<link href="' . css_url($css) . '" rel="stylesheet">';
+            echo '<link href="' . css_url($css) . '" rel="stylesheet" data-swup-replace>';
         }
     }
     ?>
