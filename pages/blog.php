@@ -423,8 +423,19 @@ $articles = getBlogArticles(100);
         if (shareBtn) {
             shareBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                navigator.clipboard.writeText(window.location.origin + '/blog#' + slug);
-                alert(window._blogShareText || shareText || 'Lien copié !');
+                var shareUrl = window.location.origin + '/blog#' + slug;
+                if (navigator.share) {
+                    navigator.share({
+                        title: title,
+                        text: 'Retrouvez cet article de SlapIA : ' + title,
+                        url: shareUrl
+                    }).catch(function(err) {
+                        console.error('Erreur de partage :', err);
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareUrl);
+                    alert(window._blogShareText || shareText || 'Lien copié !');
+                }
             });
         }
 
