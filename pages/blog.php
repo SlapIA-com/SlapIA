@@ -30,8 +30,11 @@ $articles = getBlogArticles(100);
                     <?php echo t('blog_desc'); ?>
                 </p>
                 <div class="fade-in-up delay-300">
-                    <a href="/rss.xml" class="btn btn-outline-warning rounded-pill px-4" target="_blank">
+                    <button type="button" class="btn btn-outline-warning rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#rssSubscribeModal">
                         <i class="fas fa-rss me-2"></i> <?php echo t('rss_subscribe'); ?>
+                    </button>
+                    <a href="/rss.xml" class="d-inline-flex align-items-center ms-3 text-secondary text-decoration-none hover-white small fade-in" target="_blank" title="Lien direct vers le flux">
+                        <i class="fas fa-link me-1"></i> Flux direct
                     </a>
                 </div>
             </div>
@@ -110,6 +113,34 @@ $articles = getBlogArticles(100);
         </div>
     </div>
 </section>
+
+<!-- RSS Subscribe Modal -->
+<div class="modal fade" id="rssSubscribeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px;">
+      <div class="modal-header border-bottom border-light border-opacity-10 position-relative p-4">
+        <h5 class="modal-title text-warning fw-bold"><i class="fas fa-rss me-2"></i> <?php echo t('rss_subscribe'); ?></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px;"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <p class="text-secondary mb-4">Laissez votre e-mail pour être prévenu de nos prochains articles et actualités exclusives.</p>
+        <form id="rss-subscribe-form">
+          <input type="email" id="rss-email-input" class="form-control mb-3" placeholder="votre.email@exemple.com" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+          
+          <!-- Cloudflare Turnstile -->
+          <div class="d-flex justify-content-center mb-3">
+              <div id="cf-turnstile-rss" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold" id="rss-submit-btn">
+            M'inscrire
+          </button>
+        </form>
+        <div id="rss-subscribe-msg" class="mt-3 small" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Hidden data for share text -->
 <span id="blog-share-text" style="display:none;"><?php echo htmlspecialchars(t('link_copied_to_clipboard'), ENT_QUOTES, 'UTF-8'); ?></span>
@@ -472,6 +503,76 @@ $articles = getBlogArticles(100);
         var shareEl = document.getElementById('blog-share-text');
         if (shareEl) shareText = shareEl.textContent.trim();
         window._blogShareText = shareText;
+
+        // RSS Form handling
+        var form = document.getElementById('rss-subscribe-form');
+        if (form && !form.dataset.initialized) {
+            form.dataset.initialized = 'true';
+
+            // Initialiser Turnstile quand le script tourne (ou via callback)
+            if (typeof turnstile !== 'undefined') {
+                try {
+                    turnstile.render('#cf-turnstile-rss', {
+                        sitekey: document.getElementById('cf-turnstile-rss').getAttribute('data-sitekey'),
+                        theme: 'dark'
+                    });
+                } catch(e) {}
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var email = document.getElementById('rss-email-input').value;
+                var btn = document.getElementById('rss-submit-btn');
+                var msg = document.getElementById('rss-subscribe-msg');
+                
+                var formData = new FormData(form);
+                var cfResponse = formData.get('cf-turnstile-response');
+
+                if (!cfResponse) {
+                    msg.style.display = 'block';
+                    msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Veuillez valider le Captcha Cloudflare.</span>';
+                    return;
+                }
+                
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+                btn.disabled = true;
+                msg.style.display = 'none';
+
+                fetch('/api/subscribe-rss.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        email: email,
+                        'cf-turnstile-response': cfResponse
+                    })
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'M\'inscrire';
+                    msg.style.display = 'block';
+                    if(data.success) {
+                        msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i> Inscription réussie ! Merci.</span>';
+                        form.reset();
+                        setTimeout(function() {
+                            var modalEl = document.getElementById('rssSubscribeModal');
+                            if (window.bootstrap && bootstrap.Modal) {
+                                var modal = bootstrap.Modal.getInstance(modalEl);
+                                if (modal) modal.hide();
+                            }
+                        }, 2000);
+                    } else {
+                        msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + (data.error || 'Erreur inconnue') + '</span>';
+                    }
+                })
+                .catch(function(err) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'M\'inscrire';
+                    msg.style.display = 'block';
+                    msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Erreur de connexion au serveur.</span>';
+                });
+            });
+        }
 
         // Auto-open article if a valid hash is present in the URL
         if (window.location.hash) {
