@@ -4,7 +4,7 @@ include_once '../includes/lang.php';
 
 $page_title = t('companies') . " - SlapIA";
 $page_description = t('training_for_companies') . " - " . t('level_2_title');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include '../includes/header.php';
 
 include '../includes/components.php';
@@ -86,13 +86,21 @@ include '../includes/components.php';
                         <div class="col-6 col-md-4 col-lg-3 text-center">
                             <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.05);">
                                 <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
-                                    <img src="/assets/img/hoshin.png" alt="Hoshin Partners" class="img-fluid rounded-circle" style="max-height: 80px; width: auto;">
+                                    <img src="/assets/img/partners/hoshin.png" alt="Hoshin Partners" class="img-fluid rounded-circle" style="max-height: 80px; width: auto;">
                                 </div>
                                 <a href="https://www.linkedin.com/company/hoshin-partners/" target="_blank" class="text-white text-decoration-none fw-bold d-block mb-2 hover-text-primary">Hoshin Partners</a>
                                 <p class="text-secondary small mb-0"><?php echo t('hoshin_desc'); ?></p>
                             </div>
                         </div>
-                        <!-- Placeholders removed -->
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.05);">
+                                <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
+                                    <img src="/assets/img/partners/gnlsolution.jpg" alt="GNL Solution Cloud" class="img-fluid rounded-3" style="max-height: 80px; width: auto;">
+                                </div>
+                                <a href="https://www.linkedin.com/company/gnl-solution-cloud/" target="_blank" class="text-white text-decoration-none fw-bold d-block mb-2 hover-text-primary">GNL Solution Cloud</a>
+                                <p class="text-secondary small mb-0">Hébergeur Cloud & Services Managés</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

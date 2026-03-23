@@ -4,7 +4,7 @@ include_once '../includes/lang.php';
 
 $page_title = t('how_it_works') . " - SlapIA";
 $page_description = t('tech_stack_desc');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include '../includes/header.php'; ?>
 
 <script type="application/ld+json">
@@ -77,7 +77,7 @@ include '../includes/header.php'; ?>
                 <h3 class="text-white mb-3"><?php echo t('tech_stack_title'); ?></h3>
                 <p class="text-secondary mb-4"><?php echo t('vscode_desc'); ?></p>
                 <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10 mt-3" style="min-height: 200px; background: #1e1e1e;">
-                    <img src="/assets/img/vscode-stack.png" alt="VS Code Architecture" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
+                    <img src="/assets/img/showcase/vscode-stack.png" alt="VS Code Architecture" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                 </div>
             </div>
 
@@ -96,7 +96,7 @@ include '../includes/header.php'; ?>
                 <h3 class="text-white mb-3"><?php echo t('notion_cms_title'); ?></h3>
                 <p class="text-secondary mb-4"><?php echo t('notion_cms_desc'); ?></p>
                 <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10 mt-3" style="min-height: 200px; background: #191919;">
-                     <img src="/assets/img/notion-cms.png" alt="Notion Database" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
+                     <img src="/assets/img/showcase/notion-cms.png" alt="Notion Database" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@ include '../includes/header.php'; ?>
                     </div>
                     <div class="col-lg-6">
                         <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10" style="min-height: 250px; background: #222;">
-                            <img src="/assets/img/n8n-agent.png" alt="n8n Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
+                            <img src="/assets/img/showcase/n8n-agent.png" alt="n8n Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -179,7 +179,7 @@ include '../includes/header.php'; ?>
                     </div>
                     <div class="col-lg-6">
                         <div class="rounded-3 overflow-hidden border border-secondary border-opacity-10" style="min-height: 250px; background: #222;">
-                            <img src="/assets/img/n8n-agent2.png" alt="n8n Email Automation Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
+                            <img src="/assets/img/showcase/n8n-agent2.png" alt="n8n Email Automation Workflow" class="img-fluid w-100 h-100 object-fit-cover" loading="lazy">
                         </div>
                     </div>
                 </div>

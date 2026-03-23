@@ -4,7 +4,7 @@ include_once '../includes/lang.php';
 
 $page_title = t('legal_meta_title') . " - SlapIA";
 $page_description = t('legal_notice_title');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include '../includes/header.php'; ?>
 
 <section class="py-5" style="padding-top: 120px !important;">

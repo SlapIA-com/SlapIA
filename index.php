@@ -3,7 +3,7 @@ include_once 'includes/config.php';
 include_once 'includes/lang.php';
 $page_title = t('meta_title');
 $page_description = t('meta_description');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include 'includes/header.php';
 include 'includes/components.php';
 include_once 'api/notion-satisfaction.php';

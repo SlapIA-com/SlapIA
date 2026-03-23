@@ -4,7 +4,7 @@ include_once '../includes/lang.php';
 
 $page_title = t('expertise') . " - SlapIA";
 $page_description = t('comprehensive_expertise') . " - " . t('technical_expertise_desc');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include '../includes/header.php'; ?>
 
 <script type="application/ld+json">
@@ -47,7 +47,7 @@ include '../includes/header.php'; ?>
                 <div class="position-relative d-inline-block">
                     <!-- Placeholder for profile picture -->
                     <div class="rounded-circle p-1 bg-gradient-to-br from-primary to-purple d-inline-block mb-4">
-                        <img src="../assets/img/Thomas-Lapierre.jpg" alt="Thomas Lapierre"
+                        <img src="../assets/img/team/Thomas-Lapierre.jpg" alt="Thomas Lapierre"
                             class="rounded-circle shadow-lg"
                             style="width: 160px; height: 160px; border: 4px solid var(--bg-deep);">
                     </div>
@@ -107,7 +107,7 @@ include '../includes/header.php'; ?>
                         <i class="fas fa-user-astronaut fs-2"></i>
                     </div>
                     <div class="cert-image mb-3">
-                        <img src="../assets/img/Formation_iA_Niveau_1_Entreprise.jpg" alt="Certification Niveau 1"
+                        <img src="../assets/img/certifications/Formation_iA_Niveau_1_Entreprise.jpg" alt="Certification Niveau 1"
                             style="max-width:100%; height:auto; border-radius:8px;">
                     </div>
                     <h3 class="text-white mb-2"><?php echo t('cert_level_1_title'); ?></h3>
@@ -131,7 +131,7 @@ include '../includes/header.php'; ?>
                         <i class="fas fa-rocket fs-2"></i>
                     </div>
                     <div class="cert-image mb-3">
-                        <img src="../assets/img/Formation_iA_Niveau_2_Entreprise.jpg" alt="Certification Niveau 2"
+                        <img src="../assets/img/certifications/Formation_iA_Niveau_2_Entreprise.jpg" alt="Certification Niveau 2"
                             style="max-width:100%; height:auto; border-radius:8px;">
                     </div>
                     <h3 class="text-white mb-2"><?php echo t('cert_level_2_title'); ?></h3>

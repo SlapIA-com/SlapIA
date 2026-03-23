@@ -13,22 +13,22 @@ include_once '../includes/lang.php';
     <meta name="robots" content="noindex"> <!-- Prevent indexing of this standalone component -->
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
-    <link rel="apple-touch-icon" href="/assets/img/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/brand/logo.svg">
+    <link rel="apple-touch-icon" href="/assets/img/brand/logo.svg">
     
     <!-- Open Graph / Discord Embeds -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://slapia.com/Calcule-ROI-IA">
     <meta property="og:title" content="<?php echo t('roi_title'); ?> - SlapIA">
     <meta property="og:description" content="<?php echo t('roi_subtitle'); ?> | <?php echo t('roi_disclaimer'); ?>">
-    <meta property="og:image" content="https://slapia.com/assets/img/logo.png">
+    <meta property="og:image" content="https://slapia.com/assets/img/brand/logo.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://slapia.com/Calcule-ROI-IA">
     <meta property="twitter:title" content="<?php echo t('roi_title'); ?> - SlapIA">
     <meta property="twitter:description" content="<?php echo t('roi_subtitle'); ?> | <?php echo t('roi_disclaimer'); ?>">
-    <meta property="twitter:image" content="https://slapia.com/assets/img/logo.png">
+    <meta property="twitter:image" content="https://slapia.com/assets/img/brand/logo.png">
 
     <title><?php echo t('roi_title'); ?> - SlapIA</title>
     

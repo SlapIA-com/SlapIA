@@ -18,8 +18,8 @@ include_once 'lang.php';
     <link rel="dns-prefetch" href="https://api.notion.com">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
-    <link rel="apple-touch-icon" href="/assets/img/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/brand/logo.svg">
+    <link rel="apple-touch-icon" href="/assets/img/brand/logo.svg">
 
     <!-- Alternate Languages (SE0) -->
     <link rel="alternate" hreflang="fr" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>?lang=fr" />
@@ -30,7 +30,7 @@ include_once 'lang.php';
     <?php
 $meta_title = isset($page_title) ? $page_title : t('meta_title');
 $meta_description = isset($page_description) ? $page_description : t('meta_description');
-$meta_image = isset($page_image) ? $page_image : "https://" . $_SERVER['HTTP_HOST'] . "/assets/img/logo.png";
+$meta_image = isset($page_image) ? $page_image : "https://" . $_SERVER['HTTP_HOST'] . "/assets/img/brand/logo.png";
 
 // Ensure image URL is absolute
 if (strpos($meta_image, 'http') === false) {
@@ -110,7 +110,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
       "@type": "Organization",
       "name": "SlapIA",
       "url": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>",
-      "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/logo.svg",
+      "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/brand/logo.svg",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "contact@slapia.com",
@@ -161,7 +161,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 <!-- Floating Dock Navbar -->
 <nav class="dock-nav">
     <a href="/" class="dock-brand">
-        <img src="/assets/img/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy"> SlapIA
+        <img src="/assets/img/brand/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy"> SlapIA
     </a>
     
     <!-- Right: Navigation & Action -->

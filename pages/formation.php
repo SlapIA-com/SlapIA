@@ -5,7 +5,7 @@ include_once '../api/notion-satisfaction.php';
 
 $page_title = t('formations') . " - SlapIA";
 $page_description = t('formation_meta_desc');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 $page_css = ['/assets/css/formation.css'];
 include '../includes/header.php';
 include '../includes/components.php';
@@ -27,7 +27,7 @@ $reviews = getNotionReviews(12, $lang ?? 'fr');
     "@type": "EducationalOrganization",
     "name": "SlapIA",
     "url": "https://www.slapia.com",
-    "logo": "https://www.slapia.com/assets/img/logo.svg"
+    "logo": "https://www.slapia.com/assets/img/brand/logo.svg"
   },
   "url": "https://www.slapia.com/formation",
   "educationalLevel": ["Beginner", "Intermediate", "Advanced"],

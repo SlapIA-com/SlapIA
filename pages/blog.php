@@ -5,7 +5,7 @@ include_once '../api/notion-blog.php';
 
 $page_title = t('blog_title') . " - SlapIA";
 $page_description = t('blog_desc');
-$page_image = '/assets/img/logo.png';
+$page_image = '/assets/img/brand/logo.png';
 include '../includes/header.php';
 
 // Fetch articles max. 100 for display
@@ -372,7 +372,7 @@ $articles = getBlogArticles(100);
                     '<div style="padding: 1.5rem 2rem;">' +
                         '<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);">' +
                             '<div style="display:flex;align-items:center;">' +
-                                '<img src="/assets/img/Thomas-Lapierre.jpg" alt="Author" style="width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:10px;">' +
+                                '<img src="/assets/img/team/Thomas-Lapierre.jpg" alt="Author" style="width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:10px;">' +
                                 '<div>' +
                                     '<div style="color:#fff;font-size:0.85rem;font-weight:700;">SlapIA Team</div>' +
                                     '<div style="color:rgba(255,255,255,0.5);font-size:0.75rem;"><i class="far fa-calendar-alt" style="margin-right:4px;"></i>' + escapeHtml(date) + '</div>' +
