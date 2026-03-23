@@ -1,106 +1,125 @@
 <?php
+// Suppress warnings/errors from breaking JSON
+error_reporting(0);
+ini_set('display_errors', 0);
+ob_start();
+
 header('Content-Type: application/json; charset=utf-8');
 
 include_once __DIR__ . '/../includes/config.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method Not Allowed']);
-    exit;
-}
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Method Not Allowed', 405);
+    }
 
-$input = json_decode(file_get_contents('php://input'), true);
-$email = trim($input['email'] ?? '');
-$turnstileResponse = $input['cf-turnstile-response'] ?? '';
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true);
+    if (!is_array($input)) {
+        $input = [];
+    }
 
-if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Adresse email invalide']);
-    exit;
-}
+    $email = trim($input['email'] ?? '');
+    $turnstileResponse = $input['cf-turnstile-response'] ?? '';
 
-if (empty($turnstileResponse)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Veuillez valider le Captcha Cloudflare.']);
-    exit;
-}
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Adresse email invalide', 400);
+    }
 
-$secretKey = config('TURNSTILE_SECRET_KEY');
-$ip = $_SERVER['REMOTE_ADDR'];
+    if (empty($turnstileResponse)) {
+        throw new Exception('Veuillez valider le Captcha Cloudflare.', 400);
+    }
 
-$verifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-$data = [
-    'secret' => $secretKey,
-    'response' => $turnstileResponse,
-    'remoteip' => $ip
-];
+    $secretKey = config('TURNSTILE_SECRET_KEY');
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
-$chCF = curl_init();
-curl_setopt($chCF, CURLOPT_URL, $verifyUrl);
-curl_setopt($chCF, CURLOPT_POST, true);
-curl_setopt($chCF, CURLOPT_POSTFIELDS, http_build_query($data));
-curl_setopt($chCF, CURLOPT_RETURNTRANSFER, true);
-$responseCF = curl_exec($chCF);
-$httpCodeCF = curl_getinfo($chCF, CURLINFO_HTTP_CODE);
-curl_close($chCF);
+    $verifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    $data = [
+        'secret' => $secretKey,
+        'response' => $turnstileResponse,
+        'remoteip' => $ip
+    ];
 
-$responseKeys = json_decode($responseCF, true);
-if ($httpCodeCF !== 200 || empty($responseKeys['success'])) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Validation Captcha échouée.']);
-    exit;
-}
+    $chCF = curl_init();
+    curl_setopt($chCF, CURLOPT_URL, $verifyUrl);
+    curl_setopt($chCF, CURLOPT_POST, true);
+    curl_setopt($chCF, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($chCF, CURLOPT_RETURNTRANSFER, true);
+    $responseCF = curl_exec($chCF);
+    $httpCodeCF = curl_getinfo($chCF, CURLINFO_HTTP_CODE);
+    curl_close($chCF);
 
-$notionApiKey = config('NOTION_API_KEY');
-$newsletterDbId = config('NOTION_Newsletter_DATABASE_ID');
+    $responseKeys = json_decode($responseCF, true);
+    if ($httpCodeCF !== 200 || empty($responseKeys['success'])) {
+        throw new Exception('Validation Captcha échouée.', 400);
+    }
 
-if (empty($newsletterDbId) || empty($notionApiKey)) {
-    http_response_code(500);
-    error_log('[RSS Subscribe] Missing NOTION_API_KEY or NOTION_Newsletter_DATABASE_ID');
-    echo json_encode(['error' => 'Erreur de configuration serveur']);
-    exit;
-}
+    $notionApiKey = config('NOTION_API_KEY');
+    $newsletterDbId = config('NOTION_Newsletter_DATABASE_ID');
 
-$payload = [
-    'parent' => [
-        'database_id' => $newsletterDbId
-    ],
-    'properties' => [
-        'Email' => [
-            'title' => [
-                [
-                    'text' => [
-                        'content' => $email
+    if (empty($newsletterDbId) || empty($notionApiKey)) {
+        error_log('[RSS Subscribe] Missing NOTION_API_KEY or NOTION_Newsletter_DATABASE_ID');
+        throw new Exception('Erreur de configuration serveur', 500);
+    }
+
+    $payload = [
+        'parent' => [
+            'database_id' => $newsletterDbId
+        ],
+        'properties' => [
+            'Email' => [
+                'title' => [
+                    [
+                        'text' => [
+                            'content' => $email
+                        ]
                     ]
                 ]
             ]
         ]
-    ]
-];
+    ];
 
-$ch = curl_init('https://api.notion.com/v1/pages');
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $notionApiKey,
-        'Content-Type: application/json',
-        'Notion-Version: 2022-06-28'
-    ],
-    CURLOPT_TIMEOUT => 15
-]);
+    $ch = curl_init('https://api.notion.com/v1/pages');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Content-Type: application/json',
+            'Notion-Version: 2022-06-28'
+        ],
+        CURLOPT_TIMEOUT => 15
+    ]);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
 
-if ($curlError || $httpCode !== 200) {
-    error_log("[RSS Subscribe] Notion API Error: $httpCode - Response: $response");
+    if ($curlError || $httpCode !== 200) {
+        error_log("[RSS Subscribe] Notion API Error: $httpCode - Response: $response");
+        // Notion return error mesage
+        $notionErr = json_decode($response, true);
+        $errMsg = 'Impossible de sauvegarder votre inscription';
+        if ($notionErr && isset($notionErr['message'])) {
+            $errMsg = "Notion a refusé: " . $notionErr['message'];
+        }
+        throw new Exception($errMsg, 500);
+    }
+
+    ob_clean();
+    echo json_encode(['success' => true]);
+
+} catch (Exception $e) {
+    ob_clean();
+    $code = $e->getCode() ?: 500;
+    http_response_code($code);
+    echo json_encode(['error' => $e->getMessage()]);
+} catch (Throwable $e) {
+    ob_clean();
+    error_log("[RSS Subscribe] Fatal Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Impossible de sauvegarder votre inscription']);
-    exit;
+    echo json_encode(['error' => 'Erreur critique du serveur.']);
 }
 
-echo json_encode(['success' => true]);
