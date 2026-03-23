@@ -1,3 +1,5 @@
+<?php
+include_once 'config.php';
 include_once 'lang.php';
 
 // Calculate the current page "slug" (filename without extension)
@@ -101,6 +103,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     ?>
     <link href="<?php echo css_url('/assets/css/homepage.css'); ?>" rel="stylesheet">
     <link href="<?php echo css_url('/assets/css/formation.css'); ?>" rel="stylesheet">
+    <link href="<?php echo css_url('/assets/css/blog.css'); ?>" rel="stylesheet">
 
     <!-- Schema.org Organization -->
     <script type="application/ld+json">

@@ -205,6 +205,7 @@ if (!function_exists('asset_url')) {
 <script src="https://unpkg.com/@swup/head-plugin@2.2.0/dist/SwupHeadPlugin.umd.js"></script>
 <script src="https://unpkg.com/@swup/scripts-plugin@2.1.1/dist/SwupScriptsPlugin.umd.js"></script>
 <script src="<?php echo asset_url('/assets/js/animations.js'); ?>"></script>
+<script src="<?php echo asset_url('/assets/js/blog-overlay.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/app-transition.js'); ?>"></script>
 
 <script>
