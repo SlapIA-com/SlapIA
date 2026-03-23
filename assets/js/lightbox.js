@@ -12,6 +12,11 @@ window.initLightbox = initLightbox;
 
 
 function initLightbox() {
+    // Disable on blog page as requested
+    if (window.location.pathname.includes('/blog')) {
+        return;
+    }
+
     // Attach styles and behaviors only to images in specific areas
     // Exclude images with .no-lightbox class, logos, etc.
     const images = document.querySelectorAll('main#swup img:not(.no-lightbox):not(.logo)');

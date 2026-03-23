@@ -72,10 +72,10 @@ $stats = getSatisfactionStats(true);
 
         <!-- Dual CTA -->
         <div class="hero-cta-group fade-in-up delay-600">
-            <a href="formation" class="btn-primary-glow">
+            <a href="/formation" class="btn-primary-glow">
                 <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
             </a>
-            <a href="entreprises" class="btn-outline-glass">
+            <a href="/entreprises" class="btn-outline-glass">
                 <i class="fas fa-building"></i> <?php echo t('companies'); ?>
             </a>
         </div>
@@ -221,7 +221,7 @@ $stats = getSatisfactionStats(true);
                         <div class="enterprise-logo-pill"><i class="fas fa-certificate"></i> <?php echo t('hero_stat_certification'); ?></div>
                     </div>
                 </div>
-                <a href="entreprises" class="text-primary small text-decoration-none mt-3">
+                <a href="/entreprises" class="text-primary small text-decoration-none mt-3">
                     <?php echo t('learn_more'); ?> <i class="fas fa-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -238,7 +238,7 @@ $stats = getSatisfactionStats(true);
                     <h5 class="text-white mb-1"><?php echo t('personal_coaching'); ?></h5>
                     <p class="text-white opacity-75 small mb-3"><?php echo t('vip_mentoring'); ?></p>
                 </div>
-                <a href="formation#formation" class="text-white text-decoration-none small fw-bold" style="position: relative; z-index: 2;">
+                <a href="/formation#formation" class="text-white text-decoration-none small fw-bold" style="position: relative; z-index: 2;">
                     <?php echo t('book_slot'); ?> <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -408,10 +408,10 @@ $stats = getSatisfactionStats(true);
         <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('cta_title'); ?></h2>
         <p class="final-cta-desc scroll-reveal delay-200"><?php echo t('cta_description'); ?></p>
         <div class="hero-cta-group scroll-reveal delay-300">
-            <a href="formation" class="btn-primary-glow">
+            <a href="/formation" class="btn-primary-glow">
                 <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
             </a>
-            <a href="contact" class="btn-outline-glass">
+            <a href="/contact" class="btn-outline-glass">
                 <i class="fas fa-envelope"></i> <?php echo t('contact'); ?>
             </a>
         </div>
@@ -419,59 +419,6 @@ $stats = getSatisfactionStats(true);
 </section>
 
 
-<!-- Counter Animation Script -->
-<script>
-// Global function so Swup can re-init after page transitions
-window.initCounters = function() {
-    const counters = document.querySelectorAll('.number-value[data-count]');
-    if (!counters.length) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const target = parseInt(el.getAttribute('data-count'));
-                const suffix = el.getAttribute('data-suffix') || '';
-                const prefix = target > 10 ? '+' : '';
-                const duration = 2000;
-                const start = performance.now();
-
-                function animate(currentTime) {
-                    const elapsed = currentTime - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    const current = Math.round(eased * target);
-                    el.textContent = prefix + current + suffix;
-                    if (progress < 1) {
-                        requestAnimationFrame(animate);
-                    }
-                }
-                requestAnimationFrame(animate);
-                observer.unobserve(el);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    counters.forEach(counter => observer.observe(counter));
-};
-
-// Global function for why-card spotlight
-window.initWhyCards = function() {
-    const whyCards = document.querySelectorAll('.why-card');
-    whyCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        });
-    });
-};
-
-// First page load
-document.addEventListener('DOMContentLoaded', function() {
-    window.initCounters();
-    window.initWhyCards();
-});
-</script>
 
 <?php include 'includes/footer.php'; ?>

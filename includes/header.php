@@ -1,8 +1,7 @@
-<?php
-
-include_once 'config.php';
 include_once 'lang.php';
 
+// Calculate the current page "slug" (filename without extension)
+$slug = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang ?? 'fr'; ?>">
@@ -133,19 +132,19 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 
 <!-- Mobile Menu -->
 <nav class="mobile-menu">
-    <a href="/" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
+    <a href="/" class="mobile-menu-link <?php echo $slug == 'index' ? 'active' : ''; ?>">
         <i class="fas fa-home"></i> <?php echo t('home'); ?>
     </a>
-    <a href="/formation" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'formation.php' ? 'active' : ''; ?>">
+    <a href="/formation" class="mobile-menu-link <?php echo $slug == 'formation' ? 'active' : ''; ?>">
         <i class="fas fa-graduation-cap"></i> <?php echo t('formations'); ?>
     </a>
-    <a href="/entreprises" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'entreprises.php' ? 'active' : ''; ?>">
+    <a href="/entreprises" class="mobile-menu-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>">
         <i class="fas fa-building"></i> <?php echo t('companies'); ?>
     </a>
-    <a href="/expertise" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>">
+    <a href="/expertise" class="mobile-menu-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>">
         <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
     </a>
-    <a href="/blog" class="mobile-menu-link <?php echo basename($_SERVER['PHP_SELF']) == 'blog.php' ? 'active' : ''; ?>">
+    <a href="/blog" class="mobile-menu-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">
         <i class="fas fa-newspaper"></i> Blog
     </a>
     <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="mobile-menu-link">
@@ -168,11 +167,11 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <div class="d-flex align-items-center gap-4">
         <div class="dock-links-container d-none d-md-flex">
             <div class="nav-liquid-pill"></div>
-            <a href="/" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>"><?php echo t('home'); ?></a>
-            <a href="/formation" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'formation.php' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
-            <a href="/entreprises" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'entreprises.php' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
-            <a href="/expertise" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'expertise.php' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
-            <a href="/blog" class="dock-link <?php echo basename($_SERVER['PHP_SELF']) == 'blog.php' ? 'active' : ''; ?>">Blog</a>
+            <a href="/" class="dock-link <?php echo $slug == 'index' ? 'active' : ''; ?>"><?php echo t('home'); ?></a>
+            <a href="/formation" class="dock-link <?php echo $slug == 'formation' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
+            <a href="/entreprises" class="dock-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
+            <a href="/expertise" class="dock-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
+            <a href="/blog" class="dock-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">Blog</a>
         </div>
         <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>">
             <i class="fas fa-flag" style="margin-right: 6px;"></i> <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>

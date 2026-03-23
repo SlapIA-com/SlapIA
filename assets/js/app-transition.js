@@ -106,14 +106,21 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Blog overlay init failed", e); }
 
         // 6. Update Active Links
-        const currentPath = window.location.pathname.replace(/\/$/, "").replace("/index.php", "") || "/";
+        // Normalize current path for comparison
+        let currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
+        currentPath = currentPath.replace("/index.php", "");
+        if (currentPath === "") currentPath = "/";
+
         const links = document.querySelectorAll('.dock-link');
         let activeLink = null;
 
         links.forEach(link => {
             link.classList.remove('active');
-            // Normalize link href too
-            const linkHref = link.getAttribute('href').replace(/\/$/, "").replace("/index.php", "") || "/";
+            
+            // Normalize link href
+            let linkHref = link.getAttribute('href').replace(/\/+$/, "") || "/";
+            linkHref = linkHref.replace("/index.php", "");
+            if (linkHref === "") linkHref = "/";
 
             if (linkHref === currentPath) {
                 link.classList.add('active');
