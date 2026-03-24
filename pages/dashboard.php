@@ -198,10 +198,49 @@ if ($isAdmin) {
     ]);
     $resFullUsers = curl_exec($chFullUsers);
     $adminData['list_users'] = json_decode($resFullUsers, true)['results'] ?? [];
+
+    // 3.3 Fetch Pending Billing Users
+    $queryPending = [
+        'filter' => [
+            'property' => 'Facturation',
+            'select' => [
+                'equals' => 'En attente'
+            ]
+        ]
+    ];
+    $chPending = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_SATISFACTION_DATABASE_ID') . '/query');
+    curl_setopt_array($chPending, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($queryPending),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json'
+        ]
+    ]);
+    $resPending = curl_exec($chPending);
+    $adminData['list_pending_billing'] = json_decode($resPending, true)['results'] ?? [];
 }
 ?>
 
 <style>
+    .admin-table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #fff !important;
+    }
+    .admin-table td, .admin-table th {
+        background: transparent !important;
+        color: inherit !important;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+    .admin-table thead th {
+        color: #71717a !important;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+    }
+
 /* Dashboard Mobile Enhancements */
 @media (max-width: 767px) {
     .dashboard-section {
@@ -432,6 +471,64 @@ if ($isAdmin) {
 
                 <!-- BILLING TAB -->
                 <div id="content-billing" class="tab-content d-none fade-in">
+                    <?php if ($isAdmin && !empty($adminData['list_pending_billing'])): ?>
+                        <div class="bento-card p-4 p-md-5 mb-4" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: 24px;">
+                            <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle me-3 text-danger"></i> File d'attente Facturation (Admin)
+                            </h3>
+                            <div class="row g-3">
+                                <?php foreach($adminData['list_pending_billing'] as $pb): 
+                                    $pbProps = $pb['properties'] ?? [];
+                                    $pbName = $getNotionProp($pbProps['Prenom NOM']) ?: 'N.A';
+                                    $pbEmail = $getNotionProp($pbProps['Email']);
+                                    $pbPhoto = '';
+                                    $pbPhotoProp = $pbProps['Photo']['files'] ?? [];
+                                    if (count($pbPhotoProp) > 0) {
+                                        $pbPhoto = $pbPhotoProp[0]['file']['url'] ?? $pbPhotoProp[0]['external']['url'] ?? '';
+                                    }
+                                    if (empty($pbPhoto) && isset($pb['icon'])) {
+                                        $pIcon = $pb['icon'];
+                                        if ($pIcon['type'] !== 'emoji') {
+                                            $pbPhoto = $pIcon[$pIcon['type']]['url'] ?? '';
+                                        }
+                                    }
+                                ?>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="d-flex align-items-center p-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                            <div class="rounded-circle me-3 overflow-hidden" style="width: 48px; height: 48px; min-width: 48px; background: #333;">
+                                                <?php if($pbPhoto): ?>
+                                                    <img src="<?php echo $pbPhoto; ?>" alt="" class="w-100 h-100 object-fit-cover">
+                                                <?php else: ?>
+                                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="overflow-hidden">
+                                                <h6 class="text-white mb-0 text-truncate"><?php echo htmlspecialchars($pbName); ?></h6>
+                                                <p class="text-secondary small mb-0 text-truncate opacity-75"><?php echo htmlspecialchars($pbEmail); ?></p>
+                                                <?php 
+                                                $pbInvoices = $pbProps['Factures']['files'] ?? [];
+                                                if (!empty($pbInvoices)): ?>
+                                                    <div class="mt-2 d-flex flex-wrap gap-2">
+                                                        <?php foreach($pbInvoices as $f): 
+                                                            $fUrl = $f['file']['url'] ?? $f['external']['url'] ?? '#';
+                                                            $fName = $f['name'] ?? 'Doc';
+                                                        ?>
+                                                            <a href="<?php echo $fUrl; ?>" target="_blank" class="btn btn-sm btn-outline-glass px-2 py-1 rounded-pill" style="font-size: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                                                                <i class="fas fa-file-download me-1"></i> <?php echo htmlspecialchars($fName); ?>
+                                                            </a>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <div>
@@ -444,7 +541,7 @@ if ($isAdmin) {
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table text-white border-white border-opacity-10" style="--bs-table-bg: transparent; --bs-table-color: white;">
+                            <table class="table admin-table m-0">
                                 <thead>
                                     <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
                                         <th class="py-3" style="color: #71717a; border: 0;"><?php echo t('dash_table_doc'); ?></th>
@@ -627,7 +724,7 @@ if ($isAdmin) {
                             <i class="fas fa-mail-bulk me-3 text-success"></i> <?php echo t('admin_total_subscribers'); ?>
                         </h3>
                         <div class="table-responsive">
-                            <table class="table text-white border-white border-opacity-10">
+                            <table class="table admin-table border-0 m-0">
                                 <thead>
                                     <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
                                         <th class="py-3 border-0">Email</th>
@@ -654,7 +751,7 @@ if ($isAdmin) {
                             <i class="fas fa-users-cog me-3 text-warning"></i> <?php echo t('admin_total_users'); ?>
                         </h3>
                         <div class="table-responsive">
-                            <table class="table text-white border-white border-opacity-10">
+                            <table class="table admin-table border-0 m-0">
                                 <thead>
                                     <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
                                         <th class="py-3 border-0">Nom</th>
