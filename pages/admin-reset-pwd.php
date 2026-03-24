@@ -22,9 +22,9 @@ curl_setopt_array($ch, [
 $response = curl_exec($ch);
 $userPage = json_decode($response, true);
 $props = $userPage['properties'] ?? [];
-$company = $props['Nom d\'entreprise']['rich_text'][0]['text']['content'] ?? '';
+$status = $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? '';
 
-if ($company !== 'SlapIA') {
+if ($status !== 'Admin') {
     header('Location: /dashboard');
     exit;
 }

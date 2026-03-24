@@ -87,7 +87,7 @@ $getNotionProp = function($p) {
 $invoices = $props['Factures']['files'] ?? [];
 
 // --- ADMIN LOGIC ---
-$isAdmin = ($getUserCompany() === 'SlapIA');
+$isAdmin = ($getUserStatus() === 'Admin');
 $adminData = ['users' => 0, 'leads' => 0, 'newsletter' => 0, 'recent' => []];
 
 if ($isAdmin) {
