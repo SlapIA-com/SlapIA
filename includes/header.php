@@ -294,7 +294,6 @@ async function fetchNotifications() {
     try {
         const res = await fetch('/api/check-notifications.php');
         const data = await res.json();
-        console.log('Notif check:', data); // Diagnostic Trace
         
         if (data.success && data.notifications.length > 0) {
             let html = '';

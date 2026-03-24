@@ -35,7 +35,23 @@ $res = curl_exec($ch);
 $userData = json_decode($res, true);
 $props = $userData['properties'] ?? [];
 
-// Detect Invoices (Last 3)
+// 1. Detect User-Specific Pending Billing (Persistent for the user)
+$billingStatus = $props['Facturation']['select']['name'] ?? '';
+if ($billingStatus === 'En attente') {
+    $notifications[] = [
+        'id' => 'user_pending_payment',
+        'title' => 'Paiement en attente',
+        'desc' => 'Votre accès est suspendu jusqu\'au règlement de votre facture.',
+        'ts' => time() + 5000, 
+        'icon' => 'fas fa-exclamation-circle',
+        'icon_bg' => 'bg-danger',
+        'icon_color' => 'text-danger',
+        'link' => '/dashboard?tab=billing',
+        'pinned' => true
+    ];
+}
+
+// 2. Detect Invoices (Last 3)
 $invoices = array_reverse($props['Factures']['files'] ?? []);
 $invCount = 0;
 foreach ($invoices as $inv) {
@@ -57,10 +73,11 @@ foreach ($invoices as $inv) {
 // Support for Admin Status change notification
 $status = $props['Status']['select']['name'] ?? '';
 if ($status === 'Admin') {
+    // 1. Admin Status Notif
     $notifications[] = [
         'id' => 'system_admin',
         'title' => 'Privilèges Admin',
-        'desc' => 'Vous avez maintenant accès au centre de contrôle SlapIA.',
+        'desc' => 'Vous avez accès au centre de contrôle SlapIA.',
         'ts' => strtotime($userData['last_edited_time']),
         'icon' => 'fas fa-shield-alt',
         'icon_bg' => 'bg-warning',
@@ -70,17 +87,6 @@ if ($status === 'Admin') {
 }
 
 // 2. Global Static Platform Notifications (Example)
-$notifications[] = [
-    'id' => 'system_ready',
-    'title' => 'Système Connecté',
-    'desc' => 'Le pont avec Notion CRM est actif.',
-    'ts' => time(), // Always "new" for debug
-    'icon' => 'fas fa-plug',
-    'icon_bg' => 'bg-info',
-    'icon_color' => 'text-info',
-    'link' => '#'
-];
-
 $notifications[] = [
     'id' => 'pwa_launch',
     'title' => 'SlapIA est mobile',
