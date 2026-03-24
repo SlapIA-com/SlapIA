@@ -153,9 +153,18 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="mobile-menu-link">
         <i class="fas fa-flag"></i> <?php echo $lang === 'en' ? 'FR' : 'EN'; ?>
     </a>
-    <div class="mobile-contact-btn">
+    <div class="mobile-contact-btn pt-3">
+        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+            <a href="/dashboard" class="btn-primary-glow w-100 justify-content-center mb-2" style="border-radius: 999px; display:flex; align-items:center; text-decoration:none;">
+                <i class="fas fa-user-circle me-2"></i> Mon Espace
+            </a>
+        <?php else: ?>
+            <a href="/login" class="btn-outline-glass w-100 justify-content-center mb-2" style="display:flex; align-items:center; text-decoration:none;">
+                <i class="fas fa-sign-in-alt me-2"></i> Connexion
+            </a>
+        <?php endif; ?>
         <a href="/contact" class="btn-apple w-100 justify-content-center">
-            <i class="fas fa-envelope"></i> <?php echo t('contact'); ?>
+            <i class="fas fa-envelope me-2"></i> <?php echo t('contact'); ?>
         </a>
     </div>
 </nav>
@@ -182,6 +191,16 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;">
             <?php echo t('contact'); ?>
         </a>
+        
+        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+            <a href="/dashboard" class="btn btn-sm btn-primary-glow px-3 py-2 fw-bold" style="font-size: 0.8rem; border-radius: 999px;">
+                <i class="fas fa-user-circle me-1"></i> Mon Espace
+            </a>
+        <?php else: ?>
+            <a href="/login" class="btn btn-sm btn-outline-glass px-3 py-2 fw-bold" style="font-size: 0.8rem;">
+                <i class="fas fa-sign-in-alt me-1"></i> Connexion
+            </a>
+        <?php endif; ?>
         
         <!-- Mobile Menu Button -->
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">

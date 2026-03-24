@@ -3,6 +3,20 @@
  * Charge un éventuel fichier .env en local et expose un helper config()
  */
 
+// Start session securely if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 86400, // 1 day
+        'path' => '/',
+        'domain' => '',
+        'secure' => isset($_SERVER['HTTPS']), // true on HTTPS
+        'httponly' => true, // prevent XSS
+        'samesite' => 'Lax' // prevent CSRF
+    ]);
+    session_start();
+}
+
+
 // Ne charge le fichier .env que s'il existe encore (utile en développement local)
 function loadEnv($path)
 {
