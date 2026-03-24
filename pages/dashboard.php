@@ -2,16 +2,16 @@
 include_once '../includes/config.php';
 include_once '../includes/lang.php';
 
-$page_title = t('dash_title') . ' - SlapIA';
-$page_description = t('login_meta_desc');
-include '../includes/header.php';
-include '../includes/components.php';
-
-// Auth Protection
+// Auth Protection (MUST be before any output)
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header('Location: /login');
     exit;
 }
+
+$page_title = t('dash_title') . ' - SlapIA';
+$page_description = t('login_meta_desc');
+include '../includes/header.php';
+include '../includes/components.php';
 
 // Fetch Latest User Data from Notion Server-side
 $notionApiKey = config('NOTION_API_KEY');
