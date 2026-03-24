@@ -19,8 +19,7 @@ $slug = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="dns-prefetch" href="https://api.notion.com">
-    <!-- Google Fonts (non-blocking) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/img/brand/logo.svg">

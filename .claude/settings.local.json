@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(wc -l \"c:/Users/thoma/SynologyDrive/Documents/Projets/SlapIA/Site Web/assets/js/\"*.js)",
-      "Bash(du -sh \"c:/Users/thoma/SynologyDrive/Documents/Projets/SlapIA/Site Web/assets/img/\"*)"
+      "Bash(du -sh \"c:/Users/thoma/SynologyDrive/Documents/Projets/SlapIA/Site Web/assets/img/\"*)",
+      "Bash(grep -n \"^i,\\\\|^i {\" \"c:\\\\Users\\\\thoma\\\\SynologyDrive\\\\Documents\\\\Projets\\\\SlapIA\\\\Site Web\\\\assets\\\\css\\\\style.css\")"
     ]
   }
 }

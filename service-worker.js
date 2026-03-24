@@ -1,5 +1,8 @@
-const CACHE_NAME = 'slapia-v2';
+const CACHE_NAME = 'slapia-v4';
 
+// Only pre-cache local assets — CDN resources (FA, Bootstrap, etc.) are
+// handled by the browser's HTTP cache via their own Cache-Control headers.
+// Pre-caching CDN CSS can break webfont relative URL resolution.
 const STATIC_ASSETS = [
   '/',
   '/assets/img/brand/logo.svg',
@@ -13,8 +16,6 @@ const STATIC_ASSETS = [
   '/assets/css/reviews.css',
   '/assets/css/lightbox.css',
   '/assets/css/theme-matrix.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
 // Install: cache all static assets
