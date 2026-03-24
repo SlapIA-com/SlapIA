@@ -384,5 +384,7 @@
     "err_all_fields": "Veuillez remplir tous les champs.",
     "err_invalid_credentials": "Email ou mot de passe incorrect.",
     "err_not_activated": "Votre compte n'est pas encore activé. Veuillez suivre les instructions reçues par email ou nous contacter.",
-    "err_server": "Une erreur serveur est survenue."
+    "err_server": "Une erreur serveur est survenue.",
+    "rss_success": "Inscription réussie ! Merci.",
+    "rss_error_already_subscribed": "Vous êtes déjà inscrit à notre newsletter !"
 }

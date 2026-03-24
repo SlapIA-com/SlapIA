@@ -274,7 +274,7 @@ window.initRssModalHelpers = function() {
                 btn.innerHTML = 'M\'inscrire';
                 msg.style.display = 'block';
                 if(data.success) {
-                    msg.innerHTML = '<span class="text-success">Inscription réussie ! Merci.</span>';
+                    msg.innerHTML = `<span class="text-success">${data.message || 'Inscription réussie !'}</span>`;
                     rssForm.reset();
                     try { turnstile.reset('#cf-turnstile-rss'); } catch(e) {}
                     setTimeout(() => {

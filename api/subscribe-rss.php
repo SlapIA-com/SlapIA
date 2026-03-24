@@ -57,10 +57,45 @@ try {
     $notionApiKey = config('NOTION_API_KEY');
     $newsletterDbId = config('NOTION_Newsletter_DATABASE_ID');
 
+    include_once __DIR__ . '/../includes/lang.php';
+
     if (empty($newsletterDbId) || empty($notionApiKey)) {
         error_log('[RSS Subscribe] Missing NOTION_API_KEY or NOTION_Newsletter_DATABASE_ID');
-        throw new Exception('Erreur de configuration serveur', 500);
+        throw new Exception(t('err_server'), 500);
     }
+
+    // --- NEW: DUPLICATE CHECK ---
+    $queryPayload = [
+        'filter' => [
+            'property' => 'Email',
+            'title' => [
+                'equals' => $email
+            ]
+        ]
+    ];
+
+    $chQuery = curl_init('https://api.notion.com/v1/databases/' . $newsletterDbId . '/query');
+    curl_setopt_array($chQuery, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($queryPayload),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Content-Type: application/json',
+            'Notion-Version: 2022-06-28'
+        ]
+    ]);
+    $queryResponse = curl_exec($chQuery);
+    $queryHttpCode = curl_getinfo($chQuery, CURLINFO_HTTP_CODE);
+    curl_close($chQuery);
+
+    if ($queryHttpCode === 200) {
+        $resultData = json_decode($queryResponse, true);
+        if (!empty($resultData['results'])) {
+            throw new Exception(t('rss_error_already_subscribed'), 409);
+        }
+    }
+    // --- END DUPLICATE CHECK ---
 
     $payload = [
         'parent' => [
@@ -109,7 +144,7 @@ try {
     }
 
     ob_clean();
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'message' => t('rss_success')]);
 
 } catch (Exception $e) {
     ob_clean();
