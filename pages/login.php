@@ -48,7 +48,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         </div>
                     </div>
 
-                    <form id="loginForm">
+                    <form id="loginForm" method="POST">
                         <div id="loginAlert" class="alert-premium-error d-none mb-4 fade-in" role="alert">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             <span class="alert-text"></span>
@@ -341,63 +341,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     }
 }
 </style>
-
-<script>
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnLogin');
-    const alert = document.getElementById('loginAlert');
-    const originalText = btn.innerHTML;
-    
-    // UI Loading state
-    btn.innerHTML = '<span><?php echo t('login_connecting'); ?></span>';
-    btn.disabled = true;
-    alert.classList.add('d-none');
-    
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData.entries());
-    
-    try {
-        const response = await fetch('/api/auth-login.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            window.location.href = result.redirect || '/dashboard';
-        } else {
-            const alertText = alert.querySelector('.alert-text');
-            alertText.textContent = result.error || '<?php echo t('login_error_fail'); ?>';
-            alert.classList.remove('d-none');
-            // Shake effect
-            const card = document.querySelector('.login-glass');
-            card.style.animation = 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both';
-            setTimeout(() => card.style.animation = '', 500);
-            
-            // Reset turnstile if exists
-            if (typeof turnstile !== 'undefined') {
-                try { turnstile.reset('#cf-turnstile-login'); } catch(e) {}
-            }
-        }
-    } catch (err) {
-        const alertText = alert.querySelector('.alert-text');
-        if (alertText) {
-            alertText.textContent = '<?php echo t('login_error_server'); ?>';
-        } else {
-            alert.textContent = '<?php echo t('login_error_server'); ?>';
-        }
-        alert.classList.remove('d-none');
-    } finally {
-        if (!window.location.href.includes('/dashboard')) {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-});
-</script>
 
 <style>
 @keyframes shake {
