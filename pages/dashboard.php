@@ -69,9 +69,96 @@ $getUserLinkedin = fn() => $props['Linkedin']['url'] ?? '';
 $getFacturationStatus = fn() => $props['Facturation']['select']['name'] ?? 'Non disponible';
 $getSatisfaction = fn() => $props['Satisfaction']['select']['name'] ?? '';
 $getAvis = fn() => $props['Avis clients']['rich_text'][0]['text']['content'] ?? '';
+$getUserStatus = fn() => $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? 'Client';
 
 // Fetch Invoices (Files)
 $invoices = $props['Factures']['files'] ?? [];
+
+// --- ADMIN LOGIC ---
+$isAdmin = ($getUserCompany() === 'SlapIA');
+$adminData = ['users' => 0, 'leads' => 0, 'newsletter' => 0, 'recent' => []];
+
+if ($isAdmin) {
+    // 1. Fetch KPI Counts (Simplification: just get the count of items in databases)
+    $dbIds = [
+        'users' => config('NOTION_SATISFACTION_DATABASE_ID'),
+        'leads' => config('NOTION_CONTACT_DATABASE_ID'),
+        'newsletter' => config('NOTION_Newsletter_DATABASE_ID')
+    ];
+
+    foreach ($dbIds as $key => $dbId) {
+        if (!$dbId) continue;
+        $ch = curl_init('https://api.notion.com/v1/databases/' . $dbId . '/query');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode(['page_size' => 1]), // We only need the total (if API provided it) but Notion doesn't return total count easily. We'll fetch more or handle as needed.
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $notionApiKey,
+                'Notion-Version: 2022-06-28'
+            ]
+        ]);
+        $res = curl_exec($ch);
+        $data = json_decode($res, true);
+        // Notion doesn't give a 'total' count in query results. For a real dashboard, we'd use a search or a specifically maintained counter.
+        // For now, we'll fetch a small batch to show "Live" state.
+        $adminData[$key] = count($data['results'] ?? []); 
+        curl_close($ch);
+    }
+
+    // 2. Fetch Recent Activity (Latest Leads & Subscribers)
+    $chRecent = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_CONTACT_DATABASE_ID') . '/query');
+    curl_setopt_array($chRecent, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'page_size' => 5,
+            'sorts' => [['timestamp' => 'created_time', 'direction' => 'descending']]
+        ]),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json'
+        ]
+    ]);
+    $resRecent = curl_exec($chRecent);
+    $recentLeads = json_decode($resRecent, true)['results'] ?? [];
+    foreach($recentLeads as $l) {
+        $name = $l['properties']['Prenom NOM']['title'][0]['text']['content'] ?? 'Anonyme';
+        $email = $l['properties']['Email']['email'] ?? ($l['properties']['Email']['email'] ?? '');
+        $date = date('d/m H:i', strtotime($l['created_time']));
+        $adminData['recent'][] = ['type' => 'lead', 'name' => $name, 'email' => $email, 'date' => $date, 'ts' => strtotime($l['created_time'])];
+    }
+    curl_close($chRecent);
+
+    // 2.2 Recent Newsletter
+    $chNews = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_Newsletter_DATABASE_ID') . '/query');
+    curl_setopt_array($chNews, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'page_size' => 5,
+            'sorts' => [['timestamp' => 'created_time', 'direction' => 'descending']]
+        ]),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json'
+        ]
+    ]);
+    $resNews = curl_exec($chNews);
+    $recentNews = json_decode($resNews, true)['results'] ?? [];
+    foreach($recentNews as $n) {
+        $email = $n['properties']['Email']['title'][0]['text']['content'] ?? 'Newsletter';
+        $date = date('d/m H:i', strtotime($n['created_time']));
+        $adminData['recent'][] = ['type' => 'newsletter', 'name' => 'Subscriber', 'email' => $email, 'date' => $date, 'ts' => strtotime($n['created_time'])];
+    }
+    curl_close($chNews);
+
+    // Sort combined recent activity
+    usort($adminData['recent'], fn($a, $b) => $b['ts'] <=> $a['ts']);
+    $adminData['recent'] = array_slice($adminData['recent'], 0, 10);
+}
 ?>
 
 <style>
@@ -172,7 +259,38 @@ $invoices = $props['Factures']['files'] ?? [];
                 <?php endif; ?>
             </div>
             <div class="col-md">
-                <h1 class="display-5 fw-bold text-white mb-2"><?php echo t('dash_title'); ?></h1>
+                <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
+                    <h1 class="display-5 fw-bold text-white mb-0"><?php echo t('dash_title'); ?></h1>
+                    
+                    <?php 
+                    $status = $getUserStatus();
+                    $statusIcon = 'fa-user';
+                    $statusLabel = 'Espace Client';
+                    $statusColor = 'rgba(255, 255, 255, 0.1)';
+                    $statusText = '#fff';
+
+                    if ($isAdmin) {
+                        $statusIcon = 'fa-user-shield';
+                        $statusLabel = 'Espace Admin';
+                        $statusColor = 'rgba(239, 68, 68, 0.15)';
+                        $statusText = '#ef4444';
+                    } elseif (stripos($status, 'Entreprise') !== false) {
+                        $statusIcon = 'fa-building';
+                        $statusLabel = 'Espace Entreprise';
+                        $statusColor = 'rgba(59, 130, 246, 0.15)';
+                        $statusText = '#3b82f6';
+                    } elseif (stripos($status, 'Particulier') !== false) {
+                        $statusIcon = 'fa-user-tie';
+                        $statusLabel = 'Espace Particulier';
+                        $statusColor = 'rgba(168, 85, 247, 0.15)';
+                        $statusText = '#a855f7';
+                    }
+                    ?>
+                    <div class="badge rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2" 
+                         style="background: <?php echo $statusColor; ?>; border: 1px solid rgba(255,255,255,0.1); color: <?php echo $statusText; ?>; font-size: 0.75rem; font-weight: 600; text-uppercase: uppercase; letter-spacing: 0.5px;">
+                        <i class="fas <?php echo $statusIcon; ?>"></i> <?php echo $statusLabel; ?>
+                    </div>
+                </div>
                 <p class="text-secondary lead mb-0" style="opacity: 0.8;"><?php echo t('dash_welcome'); ?>, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</p>
             </div>
             <div class="col-md-auto mt-4 mt-md-0">
@@ -195,9 +313,15 @@ $invoices = $props['Factures']['files'] ?? [];
                         <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 mb-2 d-flex align-items-center" id="tab-billing" onclick="switchTab('billing')">
                             <i class="fas fa-file-invoice-dollar me-3 text-primary"></i> <span class="fw-medium"><?php echo t('dash_tab_billing'); ?></span>
                         </button>
-                        <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-reviews" onclick="switchTab('reviews')">
-                            <i class="fas fa-star me-3 text-primary"></i> <span class="fw-medium"><?php echo t('dash_tab_reviews'); ?></span>
-                        </button>
+                        <?php if($isAdmin): ?>
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-admin" onclick="switchTab('admin')">
+                                <i class="fas fa-shield-alt me-3 text-danger"></i> <span class="fw-medium"><?php echo t('dash_tab_admin'); ?></span>
+                            </button>
+                        <?php else: ?>
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-reviews" onclick="switchTab('reviews')">
+                                <i class="fas fa-star me-3 text-primary"></i> <span class="fw-medium"><?php echo t('dash_tab_reviews'); ?></span>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -314,7 +438,8 @@ $invoices = $props['Factures']['files'] ?? [];
                     </div>
                 </div>
 
-                <!-- REVIEWS TAB -->
+                <!-- REVIEWS TAB (Only for customers) -->
+                <?php if(!$isAdmin): ?>
                 <div id="content-reviews" class="tab-content d-none fade-in">
                     <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
                         <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
@@ -359,6 +484,96 @@ $invoices = $props['Factures']['files'] ?? [];
                         </form>
                     </div>
                 </div>
+                <?php endif; ?>
+
+                <!-- ADMIN CONTROL TAB -->
+                <?php if($isAdmin): ?>
+                <div id="content-admin" class="tab-content d-none fade-in">
+                    <div class="row g-4 mb-4">
+                        <!-- KPI Card: Users -->
+                        <div class="col-md-4">
+                            <div class="bento-card p-4 h-100" style="background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(15, 15, 15, 0.4)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-3 p-2 me-3" style="background: rgba(88, 86, 214, 0.2);"><i class="fas fa-users text-primary"></i></div>
+                                    <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_users'); ?></span>
+                                </div>
+                                <h2 class="text-white mb-0"><?php echo $adminData['users']; ?>+</h2>
+                            </div>
+                        </div>
+                        <!-- KPI Card: Leads -->
+                        <div class="col-md-4">
+                            <div class="bento-card p-4 h-100" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(15, 15, 15, 0.4)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-3 p-2 me-3" style="background: rgba(255, 149, 0, 0.2);"><i class="fas fa-bolt text-warning"></i></div>
+                                    <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_leads'); ?></span>
+                                </div>
+                                <h2 class="text-white mb-0"><?php echo $adminData['leads']; ?>+</h2>
+                            </div>
+                        </div>
+                        <!-- KPI Card: Newsletter -->
+                        <div class="col-md-4">
+                            <div class="bento-card p-4 h-100" style="background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(15, 15, 15, 0.4)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-3 p-2 me-3" style="background: rgba(52, 199, 89, 0.2);"><i class="fas fa-paper-plane text-success"></i></div>
+                                    <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_subscribers'); ?></span>
+                                </div>
+                                <h2 class="text-white mb-0"><?php echo $adminData['newsletter']; ?>+</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h3 class="h4 text-white fw-bold mb-0">
+                                <i class="fas fa-history me-3 text-primary"></i> <?php echo t('admin_recent_activity'); ?>
+                            </h3>
+                            <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass rounded-pill px-4">
+                                <i class="fas fa-external-link-alt me-2"></i> <?php echo t('admin_view_crm'); ?>
+                            </a>
+                        </div>
+
+                        <div class="activity-feed">
+                            <?php if(empty($adminData['recent'])): ?>
+                                <p class="text-secondary py-4 text-center">Aucune activité récente détectée.</p>
+                            <?php else: ?>
+                                <?php foreach($adminData['recent'] as $act): ?>
+                                    <div class="d-flex align-items-start mb-4 pb-4 border-bottom border-white border-opacity-5">
+                                        <div class="rounded-circle p-2 me-4 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                            <?php if($act['type'] === 'lead'): ?>
+                                                <i class="fas fa-envelope text-warning"></i>
+                                            <?php else: ?>
+                                                <i class="fas fa-rss text-success"></i>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <h6 class="text-white mb-0 fw-bold"><?php echo htmlspecialchars($act['name']); ?></h6>
+                                                <span class="text-secondary x-small"><?php echo $act['date']; ?></span>
+                                            </div>
+                                            <p class="text-secondary small mb-0 opacity-75"><?php echo htmlspecialchars($act['email']); ?></p>
+                                            <span class="badge bg-opacity-10 text-uppercase x-small mt-2 <?php echo $act['type'] === 'lead' ? 'bg-warning text-warning' : 'bg-success text-success'; ?>" style="font-size: 10px;">
+                                                <?php echo $act['type']; ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mt-5 pt-4 border-top border-white border-opacity-10">
+                            <h5 class="text-white small fw-bold text-uppercase mb-4"><i class="fas fa-tools me-2 opacity-50"></i> Configuration & Maintenance</h5>
+                            <div class="d-flex flex-wrap gap-3">
+                                <button class="btn btn-sm px-4 py-2 rounded-pill" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                                    Rénitialiser le Cache
+                                </button>
+                                <button class="btn btn-sm px-4 py-2 rounded-pill" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
+                                    Réinitialiser un mot de passe
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
 
             </div>
         </div>

@@ -386,5 +386,14 @@
     "err_not_activated": "Your account is not activated yet. Please follow the instructions received by email or contact us.",
     "err_server": "A server error occurred.",
     "rss_success": "Subscription successful! Thank you.",
-    "rss_error_already_subscribed": "You are already subscribed to our newsletter!"
+    "rss_error_already_subscribed": "You are already subscribed to our newsletter!",
+    "dash_tab_admin": "Admin Control",
+    "admin_total_users": "Total Users",
+    "admin_total_leads": "Prospects (Leads)",
+    "admin_total_subscribers": "Newsletter Subscriptions",
+    "admin_recent_activity": "Recent Activity",
+    "admin_recent_contacts": "Latest Contacts",
+    "admin_recent_newsletter": "Latest Newsletter Signups",
+    "admin_system_logs": "System Status",
+    "admin_view_crm": "Open Notion CRM"
 }
