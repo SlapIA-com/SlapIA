@@ -1,6 +1,8 @@
 <?php
 include_once '../includes/config.php';
 session_start();
+ini_set('display_errors', 0);
+ob_start();
 
 /**
  * API Endpoint: Check Notifications
@@ -10,6 +12,7 @@ session_start();
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Non connecté']);
     exit;
 }
@@ -92,6 +95,7 @@ $notifications[] = [
 // Sort by timestamp descending
 usort($notifications, fn($a, $b) => $b['ts'] <=> $a['ts']);
 
+ob_clean();
 echo json_encode([
     'success' => true,
     'notifications' => array_slice($notifications, 0, 8)
