@@ -102,9 +102,11 @@ try {
 
     if (!$validUserPage || empty($storedHash)) {
         // No password set yet for this user
+        $debugProps = array_keys($results[0]['properties'] ?? []);
+        $debugPwd = $results[0]['properties']['Mot de passe'] ?? 'NON_TROUVE';
         ob_clean();
         http_response_code(401);
-        echo json_encode(['success' => false, 'error' => "Votre compte n'est pas encore activé. Veuillez suivre les instructions reçues par email ou nous contacter."]);
+        echo json_encode(['success' => false, 'error' => "DEBUG: " . json_encode(['props' => $debugProps, 'pwd' => $debugPwd])]);
         exit;
     }
 
