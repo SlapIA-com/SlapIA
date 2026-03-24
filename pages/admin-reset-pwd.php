@@ -70,6 +70,7 @@ include '../includes/header.php';
                     <?php endif; ?>
 
                     <form action="/api/admin-reset-pwd-exec.php" method="POST" id="reset-form">
+                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                         <div class="mb-4">
                             <label class="form-label text-white small fw-bold text-uppercase opacity-50 mb-2">Email de l'utilisateur</label>
                             <input type="email" name="email" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white rounded-3 py-3 px-4" 

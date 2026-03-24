@@ -241,6 +241,20 @@ if ($isAdmin) {
         letter-spacing: 0.05em;
     }
 
+    .pulse-green {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
 /* Dashboard Mobile Enhancements */
 @media (max-width: 767px) {
     .dashboard-section {
@@ -339,7 +353,7 @@ if ($isAdmin) {
             </div>
             <div class="col-md">
                 <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
-                    <h1 class="display-5 fw-bold text-white mb-0"><?php echo t('dash_title'); ?></h1>
+                    <h1 id="dash-title" class="display-5 fw-bold text-white mb-0"><?php echo t('dash_title'); ?></h1>
                     
                     <?php 
                     $status = $getUserStatus();
@@ -632,6 +646,40 @@ if ($isAdmin) {
                 <!-- ADMIN CONTROL TAB -->
                 <?php if($isAdmin): ?>
                 <div id="content-admin" class="tab-content d-none fade-in">
+                    <!-- Admin Hub: Status & Quick Actions -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="bento-card p-4" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                    <div class="d-flex align-items-center gap-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pulse-green"></div>
+                                            <span class="text-white small fw-bold text-uppercase opacity-75">Notion API:</span>
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-3 py-1 rounded-pill">Connecté</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-database text-primary small"></i>
+                                            <span class="text-white small fw-bold text-uppercase opacity-75">DB:</span>
+                                            <span class="text-white small fw-medium">CRM-SlapIA</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2 border-start border-white border-opacity-10 ps-4">
+                                            <i class="fas fa-clock text-secondary small"></i>
+                                            <span class="text-secondary small">Dernière synchro : <?php echo date('H:i:s'); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="/admin-reset-pwd" class="btn btn-sm btn-outline-danger px-4 py-2 rounded-pill">
+                                            <i class="fas fa-key me-2"></i> Reset Tool
+                                        </a>
+                                        <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass px-4 py-2 rounded-pill">
+                                            <i class="fas fa-external-link-alt me-2"></i> Notion CRM
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row g-4 mb-4">
                         <!-- KPI Card: Users -->
                         <div class="col-md-4">
@@ -767,6 +815,9 @@ if ($isAdmin) {
                                             <td class="py-3 text-secondary"><?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?></td>
                                             <td class="py-3 small text-secondary opacity-75"><?php echo htmlspecialchars($getNotionProp($u['properties']['Nom d\'entreprise'])); ?></td>
                                             <td class="py-3 text-end">
+                                                <a href="mailto:<?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?>" class="btn btn-sm btn-outline-glass px-3 py-1 rounded-pill me-2" style="font-size: 11px; border: 1px solid rgba(255,255,255,0.1);">
+                                                    <i class="fas fa-envelope me-1"></i> Email
+                                                </a>
                                                 <a href="/admin-reset-pwd?email=<?php echo urlencode($getNotionProp($u['properties']['Email'])); ?>" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill" style="font-size: 11px;">
                                                     <i class="fas fa-key me-1"></i> Reset
                                                 </a>
@@ -793,6 +844,17 @@ function switchTab(tabId) {
     
     document.getElementById('content-' + tabId).classList.remove('d-none');
     document.getElementById('tab-' + tabId).classList.add('active');
+
+    // Dynamic Title
+    const titleMap = {
+        'profile': '<?php echo t('dash_tab_profile'); ?>',
+        'billing': '<?php echo t('dash_tab_billing'); ?>',
+        'reviews': '<?php echo t('dash_tab_reviews'); ?>',
+        'admin': 'Administration SlapIA',
+        'admin-newsletter': 'Liste Newsletter',
+        'admin-emails': 'Gestion Utilisateurs'
+    };
+    if(titleMap[tabId]) document.getElementById('dash-title').textContent = titleMap[tabId];
 }
 
 function setStars(count) {

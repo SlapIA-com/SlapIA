@@ -8,6 +8,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit;
 }
 
+// CSRF Verification
+$postedToken = $_POST['csrf_token'] ?? '';
+if (empty($postedToken) || $postedToken !== ($_SESSION['csrf_token'] ?? '')) {
+    header('Location: /admin-reset-pwd?error=' . urlencode('Erreur de sécurité (CSRF). Veuillez réessayer.'));
+    exit;
+}
+
 $notionApiKey = config('NOTION_API_KEY');
 $adminUserId = $_SESSION['user_id'];
 
