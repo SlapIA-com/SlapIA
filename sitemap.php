@@ -22,9 +22,9 @@ if (is_dir($pagesDir)) {
         if ($file === '.' || $file === '..' || pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
             continue;
         }
-        // Skip error page and noindex pages
-        if ($file === '404.php' || $file === 'Calcule-ROI-IA.php')
-            continue;
+        // Skip error page, private/auth pages, and noindex pages
+        $skipPages = ['404.php', 'Calcule-ROI-IA.php', 'dashboard.php', 'login.php', 'register.php', 'admin-reset-pwd.php', 'how-it-works.php'];
+        if (in_array($file, $skipPages)) continue;
 
         $slug = pathinfo($file, PATHINFO_FILENAME);
         $url = $baseUrl . '/' . $slug;

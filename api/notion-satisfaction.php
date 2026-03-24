@@ -5,8 +5,8 @@
 
 // Configuration Notion
 include_once __DIR__ . '/../includes/config.php';
-define('NOTION_API_KEY', config('NOTION_API_KEY'));
-define('NOTION_DATABASE_ID', config('NOTION_SATISFACTION_DATABASE_ID'));
+if (!defined('NOTION_API_KEY')) define('NOTION_API_KEY', config('NOTION_API_KEY'));
+if (!defined('NOTION_DATABASE_ID')) define('NOTION_DATABASE_ID', config('NOTION_SATISFACTION_DATABASE_ID'));
 
 /**
  * Parse une valeur de select pour en extraire un pourcentage

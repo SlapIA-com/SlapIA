@@ -1,6 +1,5 @@
 <?php
 include_once '../includes/config.php';
-session_start();
 
 // 1. Auth Protection (ADMIN ONLY)
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -22,6 +21,7 @@ $adminUserId = $_SESSION['user_id'];
 $ch = curl_init('https://api.notion.com/v1/pages/' . $adminUserId);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 10,
     CURLOPT_HTTPHEADER => [
         'Authorization: Bearer ' . $notionApiKey,
         'Notion-Version: 2022-06-28'
@@ -60,6 +60,7 @@ $queryPayload = [
 $chQuery = curl_init('https://api.notion.com/v1/databases/' . $satisfactionDbId . '/query');
 curl_setopt_array($chQuery, [
     CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 10,
     CURLOPT_POST => true,
     CURLOPT_POSTFIELDS => json_encode($queryPayload),
     CURLOPT_HTTPHEADER => [
@@ -99,6 +100,7 @@ $chUpdate = curl_init('https://api.notion.com/v1/pages/' . $targetPageId);
 curl_setopt_array($chUpdate, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_CUSTOMREQUEST => 'PATCH',
+    CURLOPT_TIMEOUT => 10,
     CURLOPT_POSTFIELDS => json_encode($updatePayload),
     CURLOPT_HTTPHEADER => [
         'Authorization: Bearer ' . $notionApiKey,

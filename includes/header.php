@@ -12,20 +12,29 @@ $slug = basename($_SERVER['PHP_SELF'], '.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- DNS Prefetch & Preconnect for external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="dns-prefetch" href="https://api.notion.com">
+    <!-- Google Fonts (non-blocking) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/img/brand/logo.svg">
     <link rel="apple-touch-icon" href="/assets/img/brand/logo.svg">
 
-    <!-- Alternate Languages (SE0) -->
-    <link rel="alternate" hreflang="fr" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>?lang=fr" />
-    <link rel="alternate" hreflang="en" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>?lang=en" />
-    <link rel="alternate" hreflang="x-default" href="https://<?php echo $_SERVER['HTTP_HOST']; ?><?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>" />
+    <!-- Alternate Languages (SEO) -->
+    <?php
+    $canonical_path = strtok($_SERVER['REQUEST_URI'], '?');
+    $safe_host = htmlspecialchars($_SERVER['HTTP_HOST'], ENT_QUOTES, 'UTF-8');
+    $safe_path = htmlspecialchars($canonical_path, ENT_QUOTES, 'UTF-8');
+    ?>
+    <link rel="alternate" hreflang="fr" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>?lang=fr" />
+    <link rel="alternate" hreflang="en" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>" />
 
     <!-- Open Graph / Facebook -->
     <?php
@@ -38,8 +47,7 @@ if (strpos($meta_image, 'http') === false) {
     $meta_image = "https://" . $_SERVER['HTTP_HOST'] . $meta_image;
 }
 
-// Build canonical URL (strip query params except lang)
-$canonical_path = strtok($_SERVER['REQUEST_URI'], '?');
+// Build canonical URL (strip query params) — $canonical_path and $safe_host already set above
 $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 ?>
     <!-- Standard Meta Description (SEO) -->
@@ -111,8 +119,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "SlapIA",
-      "url": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>",
-      "logo": "https://<?php echo $_SERVER["HTTP_HOST"]; ?>/assets/img/brand/logo.svg",
+      "url": "https://<?php echo $safe_host; ?>",
+      "logo": "https://<?php echo $safe_host; ?>/assets/img/brand/logo.svg",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "contact@slapia.com",
