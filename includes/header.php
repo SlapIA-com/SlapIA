@@ -226,8 +226,28 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 </nav>
 
 <!-- Right Side Floating Account (Outside Dock) -->
-<div class="header-right-actions d-none d-md-flex">
+<div class="header-right-actions d-none d-md-flex align-items-center">
     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+        <!-- Global Notification Bell -->
+        <div class="dropdown me-3">
+            <button class="btn btn-link p-0 position-relative border-0 shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="globalNotifBtn" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                <i class="fas fa-bell text-white opacity-75 fs-5"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" id="globalNotifBadge" style="font-size: 0.55rem; padding: 0.35em 0.5em; display: none; box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);">
+                    0
+                </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bento-card border-white border-opacity-10 p-2 shadow-lg mt-3" 
+                id="globalNotifList"
+                style="min-width: 300px; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(30px); border-radius: 20px;">
+                <li class="dropdown-header text-uppercase text-secondary small fw-bold mb-2 p-2">Notifications</li>
+                <div id="globalNotifContainer" style="max-height: 400px; overflow-y: auto;">
+                    <li class="p-4 text-center text-secondary small opacity-50">Aucune notification</li>
+                </div>
+                <li><hr class="dropdown-divider opacity-10"></li>
+                <li><button onclick="markAllRead()" class="dropdown-item text-center small text-primary fw-medium py-2 rounded-3">Marquer tout comme lu</button></li>
+            </ul>
+        </div>
+
         <a href="/dashboard" class="account-pill hover-glow shadow-sm" title="<?php echo t('dash_title'); ?>">
             <?php if (!empty($_SESSION['user_photo'])): ?>
                 <img src="<?php echo $_SESSION['user_photo']; ?>" alt="Profile" class="account-img shadow-lg">
@@ -262,6 +282,67 @@ function toggleMobileMenu() {
     // Prevent body scroll when menu is open
     document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
 }
+
+// Notification Management
+let lastReadNotif = localStorage.getItem('slapia_notif_read') || 0;
+
+async function fetchNotifications() {
+    const list = document.getElementById('globalNotifContainer');
+    const badge = document.getElementById('globalNotifBadge');
+    if (!list) return;
+
+    try {
+        const res = await fetch('/api/check-notifications.php');
+        const data = await res.json();
+        
+        if (data.success && data.notifications.length > 0) {
+            let html = '';
+            let unreadCount = 0;
+            
+            data.notifications.forEach(n => {
+                const isNew = n.ts > lastReadNotif;
+                if (isNew) unreadCount++;
+                
+                html += `
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4 ${isNew ? 'bg-white bg-opacity-5' : ''}" href="${n.link || '#'}">
+                            <div class="rounded-circle p-2 ${n.icon_bg || 'bg-primary'} bg-opacity-10">
+                                <i class="${n.icon || 'fas fa-info-circle'} ${n.icon_color || 'text-primary'}"></i>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <div class="text-white small fw-bold text-truncate">${n.title}</div>
+                                <div class="text-secondary smaller text-truncate opacity-75">${n.desc}</div>
+                            </div>
+                            ${isNew ? '<div class="rounded-circle bg-danger" style="width: 6px; height: 6px;"></div>' : ''}
+                        </a>
+                    </li>`;
+            });
+            
+            list.innerHTML = html;
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    } catch (e) {
+        console.error('Notif error:', e);
+    }
+}
+
+function markAllRead() {
+    lastReadNotif = Date.now() / 1000;
+    localStorage.setItem('slapia_notif_read', lastReadNotif);
+    fetchNotifications();
+}
+
+// Initial fetch
+<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+document.addEventListener('DOMContentLoaded', fetchNotifications);
+// Refresh occasionally
+setInterval(fetchNotifications, 60000); 
+<?php endif; ?>
 
 // Close menu on escape key
 document.addEventListener('keydown', (e) => {

@@ -88,8 +88,15 @@ try {
         ];
     }
 
-    // Password Update
+    // Password Update with Minimum Difficulty
     if (!empty($password)) {
+        // Enforce 8 characters + 1 number or special char
+        if (strlen($password) < 8 || !preg_match('/[0-9\W]/', $password)) {
+            ob_clean();
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Le mot de passe doit faire au moins 8 caractères et contenir au moins un chiffre ou un caractère spécial.']);
+            exit;
+        }
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $updateData['properties']['Mot de passe'] = [
             'rich_text' => [['text' => ['content' => $hashedPassword]]]

@@ -377,39 +377,6 @@ if ($isAdmin) {
                 <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
                     <h1 id="dash-title" class="display-5 fw-bold text-white mb-0"><?php echo t('dash_title'); ?></h1>
                     
-                    <!-- Notification Bell -->
-                    <div class="dropdown ms-auto">
-                        <button class="btn btn-outline-glass rounded-circle p-2 position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 42px; height: 42px; border-color: rgba(255,255,255,0.1);">
-                            <i class="fas fa-bell text-white"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.35em 0.5em;">
-                                2
-                            </span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bento-card border-white border-opacity-10 p-2 shadow-lg" style="min-width: 300px; background: rgba(15,15,15,0.95); backdrop-filter: blur(20px); border-radius: 20px;">
-                            <li><h6 class="dropdown-header text-uppercase text-secondary small fw-bold mb-2">Notifications</h6></li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4" href="#">
-                                    <div class="rounded-circle p-2 bg-primary bg-opacity-10"><i class="fas fa-info-circle text-primary"></i></div>
-                                    <div>
-                                        <div class="text-white small fw-bold">Nouveau : Centre d'Analytics</div>
-                                        <div class="text-secondary smaller">Découvrez vos nouvelles courbes de croissance.</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4" href="#">
-                                    <div class="rounded-circle p-2 bg-success bg-opacity-10"><i class="fas fa-shield-alt text-success"></i></div>
-                                    <div>
-                                        <div class="text-white small fw-bold">Sécurité à jour</div>
-                                        <div class="text-secondary smaller">La plateforme SlapIA est maintenant en mode PWA.</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider opacity-10"></li>
-                            <li><a class="dropdown-item text-center small text-primary fw-medium py-2" href="#">Tout voir</a></li>
-                        </ul>
-                    </div>
-                    
                     <?php 
                     $status = $getUserStatus();
                     $statusIcon = 'fa-user';
@@ -507,7 +474,8 @@ if ($isAdmin) {
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_new_password'); ?></label>
-                                    <input type="password" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="password" placeholder="<?php echo t('dash_password_hint'); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
+                                    <input type="password" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="password" placeholder="<?php echo t('dash_password_hint'); ?>" minlength="8" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
+                                    <div class="smaller text-secondary mt-1 opacity-50"><i class="fas fa-info-circle me-1"></i> Min. 8 caractères, un chiffre ou symbole.</div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_phone'); ?></label>
