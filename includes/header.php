@@ -120,6 +120,19 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
       }
     }
     </script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PWA Manifest & Service Worker Registration -->
+    <link rel="manifest" href="/manifest.json">
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('[PWA] SW Registered'))
+          .catch(err => console.log('[PWA] SW Failed', err));
+      });
+    }
+    </script>
 </head>
 <body>
 

@@ -221,6 +221,28 @@ if ($isAdmin) {
     ]);
     $resPending = curl_exec($chPending);
     $adminData['list_pending_billing'] = json_decode($resPending, true)['results'] ?? [];
+
+    // 4. Aggregate Growth Data for Charts
+    $chartData = ['labels' => [], 'users' => [], 'news' => []];
+    $months = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $m = date('M Y', strtotime("-$i months"));
+        $months[$m] = ['u' => 0, 'n' => 0];
+    }
+    foreach(($adminData['list_users'] ?? []) as $u) {
+        $m = date('M Y', strtotime($u['created_time']));
+        if(isset($months[$m])) $months[$m]['u']++;
+    }
+    foreach(($adminData['list_newsletter'] ?? []) as $n) {
+        $m = date('M Y', strtotime($n['created_time']));
+        if(isset($months[$m])) $months[$m]['n']++;
+    }
+    foreach($months as $label => $counts) {
+        $chartData['labels'][] = $label;
+        $chartData['users'][] = $counts['u'];
+        $chartData['news'][] = $counts['n'];
+    }
+    $adminData['chart'] = $chartData;
 }
 ?>
 
@@ -355,6 +377,39 @@ if ($isAdmin) {
                 <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
                     <h1 id="dash-title" class="display-5 fw-bold text-white mb-0"><?php echo t('dash_title'); ?></h1>
                     
+                    <!-- Notification Bell -->
+                    <div class="dropdown ms-auto">
+                        <button class="btn btn-outline-glass rounded-circle p-2 position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 42px; height: 42px; border-color: rgba(255,255,255,0.1);">
+                            <i class="fas fa-bell text-white"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.35em 0.5em;">
+                                2
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bento-card border-white border-opacity-10 p-2 shadow-lg" style="min-width: 300px; background: rgba(15,15,15,0.95); backdrop-filter: blur(20px); border-radius: 20px;">
+                            <li><h6 class="dropdown-header text-uppercase text-secondary small fw-bold mb-2">Notifications</h6></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4" href="#">
+                                    <div class="rounded-circle p-2 bg-primary bg-opacity-10"><i class="fas fa-info-circle text-primary"></i></div>
+                                    <div>
+                                        <div class="text-white small fw-bold">Nouveau : Centre d'Analytics</div>
+                                        <div class="text-secondary smaller">Découvrez vos nouvelles courbes de croissance.</div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4" href="#">
+                                    <div class="rounded-circle p-2 bg-success bg-opacity-10"><i class="fas fa-shield-alt text-success"></i></div>
+                                    <div>
+                                        <div class="text-white small fw-bold">Sécurité à jour</div>
+                                        <div class="text-secondary smaller">La plateforme SlapIA est maintenant en mode PWA.</div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider opacity-10"></li>
+                            <li><a class="dropdown-item text-center small text-primary fw-medium py-2" href="#">Tout voir</a></li>
+                        </ul>
+                    </div>
+                    
                     <?php 
                     $status = $getUserStatus();
                     $statusIcon = 'fa-user';
@@ -413,8 +468,11 @@ if ($isAdmin) {
                             <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 mb-2 d-flex align-items-center" id="tab-admin-newsletter" onclick="switchTab('admin-newsletter')">
                                 <i class="fas fa-mail-bulk me-3 text-success"></i> <span class="fw-medium"><?php echo 'List ' . t('admin_total_subscribers'); ?></span>
                             </button>
-                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-admin-emails" onclick="switchTab('admin-emails')">
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 mb-2 d-flex align-items-center" id="tab-admin-emails" onclick="switchTab('admin-emails')">
                                 <i class="fas fa-users-cog me-3 text-warning"></i> <span class="fw-medium"><?php echo 'List ' . t('admin_total_users'); ?></span>
+                            </button>
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-admin-audit" onclick="switchTab('admin-audit')">
+                                <i class="fas fa-history me-3 text-info"></i> <span class="fw-medium">Journal d'Audit</span>
                             </button>
                         <?php else: ?>
                             <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-reviews" onclick="switchTab('reviews')">
@@ -471,6 +529,23 @@ if ($isAdmin) {
                                     <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_job_title'); ?></label>
                                     <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="job" value="<?php echo htmlspecialchars($getUserJob()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
+                            </div>
+
+                            <div class="col-12 mt-4 pt-4 border-top border-white border-opacity-10">
+                                <h5 class="text-white small fw-bold text-uppercase mb-4"><i class="fas fa-shield-alt me-2 opacity-50"></i> Sécurité & Confidentialité</h5>
+                                <div class="bento-card p-3 d-flex align-items-center justify-content-between" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle p-2 bg-warning bg-opacity-10 text-warning"><i class="fas fa-lock"></i></div>
+                                        <div>
+                                            <div class="text-white small fw-bold">Authentification à deux facteurs (2FA)</div>
+                                            <div class="text-secondary smaller">Renforcez la sécurité de votre compte SlapIA.</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" disabled>
+                                    </div>
+                                </div>
+                                <p class="text-secondary smaller mt-2 ms-2 opacity-50"><i class="fas fa-info-circle me-1"></i> Bientôt disponible : gérez vos sessions actives et le 2FA.</p>
                             </div>
 
                             <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
@@ -712,6 +787,20 @@ if ($isAdmin) {
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Growth Trends Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="bento-card p-4" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                                <h4 class="text-white fw-bold mb-4 d-flex align-items-center">
+                                    <i class="fas fa-chart-line me-3 text-primary"></i> Courbes de Croissance
+                                </h4>
+                                <div style="height: 350px; position: relative;">
+                                    <canvas id="growthChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
                         <div class="d-flex justify-content-between align-items-center mb-5">
@@ -768,11 +857,23 @@ if ($isAdmin) {
                 <!-- ADMIN NEWSLETTER LIST TAB -->
                 <div id="content-admin-newsletter" class="tab-content d-none fade-in">
                     <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
-                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
-                            <i class="fas fa-mail-bulk me-3 text-success"></i> <?php echo t('admin_total_subscribers'); ?>
-                        </h3>
+                        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+                            <h3 class="h4 text-white fw-bold mb-0">
+                                <i class="fas fa-mail-bulk me-3 text-success"></i> <?php echo t('admin_total_subscribers'); ?>
+                            </h3>
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="position-relative" style="width: 240px;">
+                                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size: 0.8rem; opacity: 0.5;"></i>
+                                    <input type="text" onkeyup="filterTable('newsletterTable', this.value)" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white rounded-pill py-2 ps-5 pe-4" 
+                                           placeholder="Filtrer..." style="font-size: 0.8rem;">
+                                </div>
+                                <button onclick="exportTableToCSV('newsletterTable', 'newsletter_slapia')" class="btn btn-sm btn-outline-glass px-3 py-2 rounded-pill text-white" style="font-size: 0.8rem; border-color: rgba(255,255,255,0.1);">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table admin-table border-0 m-0">
+                            <table class="table admin-table border-0 m-0" id="newsletterTable">
                                 <thead>
                                     <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
                                         <th class="py-3 border-0">Email</th>
@@ -795,25 +896,44 @@ if ($isAdmin) {
                 <!-- ADMIN EMAILS LIST TAB -->
                 <div id="content-admin-emails" class="tab-content d-none fade-in">
                     <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
-                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
-                            <i class="fas fa-users-cog me-3 text-warning"></i> <?php echo t('admin_total_users'); ?>
-                        </h3>
+                        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+                            <h3 class="h4 text-white fw-bold mb-0">
+                                <i class="fas fa-users-cog me-3 text-warning"></i> <?php echo t('admin_total_users'); ?>
+                            </h3>
+                            <div class="position-relative" style="width: 300px;">
+                                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size: 0.9rem; opacity: 0.5;"></i>
+                                <input type="text" onkeyup="filterTable('usersTable', this.value)" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white rounded-pill py-2 ps-5 pe-4" 
+                                       placeholder="Rechercher..." style="font-size: 0.85rem;">
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table admin-table border-0 m-0">
+                            <table class="table admin-table border-0 m-0" id="usersTable">
                                 <thead>
                                     <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
                                         <th class="py-3 border-0">Nom</th>
                                         <th class="py-3 border-0">Email</th>
                                         <th class="py-3 border-0">Entreprise</th>
+                                        <th class="py-3 border-0">Statut</th>
                                         <th class="py-3 border-0 text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($adminData['list_users'] as $u): ?>
+                                    <?php foreach($adminData['list_users'] as $u): 
+                                        $uStatus = $getNotionProp($u['properties']['Status']) ?: 'Client';
+                                    ?>
                                         <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
                                             <td class="py-3 text-white fw-medium"><?php echo htmlspecialchars($getNotionProp($u['properties']['Prenom NOM']) ?: 'N.A'); ?></td>
-                                            <td class="py-3 text-secondary"><?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?></td>
+                                            <td class="py-3 text-secondary small"><?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?></td>
                                             <td class="py-3 small text-secondary opacity-75"><?php echo htmlspecialchars($getNotionProp($u['properties']['Nom d\'entreprise'])); ?></td>
+                                            <td class="py-3">
+                                                <select class="form-select form-select-sm bg-transparent border-0 text-white small p-0 fw-bold" 
+                                                        style="cursor: pointer; width: auto;"
+                                                        onchange="updateUserRole('<?php echo $u['id']; ?>', this.value)">
+                                                    <option value="Client" class="bg-dark" <?php echo $uStatus === 'Client' ? 'selected' : ''; ?>>Client</option>
+                                                    <option value="Entreprise" class="bg-dark" <?php echo $uStatus === 'Entreprise' ? 'selected' : ''; ?>>Entreprise</option>
+                                                    <option value="Admin" class="bg-dark text-danger" <?php echo $uStatus === 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                                                </select>
+                                            </td>
                                             <td class="py-3 text-end">
                                                 <a href="mailto:<?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?>" class="btn btn-sm btn-outline-glass px-3 py-1 rounded-pill me-2" style="font-size: 11px; border: 1px solid rgba(255,255,255,0.1);">
                                                     <i class="fas fa-envelope me-1"></i> Email
@@ -822,6 +942,44 @@ if ($isAdmin) {
                                                     <i class="fas fa-key me-1"></i> Reset
                                                 </a>
                                             </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN AUDIT LOG TAB -->
+                <div id="content-admin-audit" class="tab-content d-none fade-in">
+                    <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                            <i class="fas fa-history me-3 text-info"></i> Journal d'Audit détaillé
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table admin-table border-0 m-0">
+                                <thead>
+                                    <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
+                                        <th class="py-3 border-0">Événement</th>
+                                        <th class="py-3 border-0">Acteur / Cible</th>
+                                        <th class="py-3 border-0">Date</th>
+                                        <th class="py-3 border-0 text-end">Auto-Sync</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($adminData['recent'] as $act): ?>
+                                        <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
+                                            <td class="py-3">
+                                                <span class="badge bg-opacity-10 <?php echo $act['type'] === 'lead' ? 'bg-primary text-primary border-primary' : 'bg-success text-success border-success'; ?> border px-2 py-1 rounded-pill" style="font-size: 10px;">
+                                                    <?php echo strtoupper($act['type']); ?>
+                                                </span>
+                                            </td>
+                                            <td class="py-3">
+                                                <div class="text-white small fw-medium"><?php echo htmlspecialchars($act['name']); ?></div>
+                                                <div class="text-secondary smaller opacity-50"><?php echo htmlspecialchars($act['email']); ?></div>
+                                            </td>
+                                            <td class="py-3 text-secondary small"><?php echo $act['date']; ?></td>
+                                            <td class="py-3 text-end"><i class="fas fa-check-circle text-success opacity-50"></i></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -852,10 +1010,139 @@ function switchTab(tabId) {
         'reviews': '<?php echo t('dash_tab_reviews'); ?>',
         'admin': 'Administration SlapIA',
         'admin-newsletter': 'Liste Newsletter',
-        'admin-emails': 'Gestion Utilisateurs'
+        'admin-emails': 'Gestion Utilisateurs',
+        'admin-audit': 'Journal d\'Audit'
     };
     if(titleMap[tabId]) document.getElementById('dash-title').textContent = titleMap[tabId];
 }
+
+// Admin Table Search/Filter
+function filterTable(tableId, query) {
+    const table = document.getElementById(tableId);
+    const rows = table.getElementsByTagName('tr');
+    query = query.toLowerCase();
+    
+    for (let i = 1; i < rows.length; i++) {
+        const text = rows[i].textContent.toLowerCase();
+        rows[i].style.display = text.includes(query) ? '' : 'none';
+    }
+}
+
+// Admin CSV Export
+function exportTableToCSV(tableId, filename) {
+    const table = document.getElementById(tableId);
+    let csv = [];
+    const rows = table.querySelectorAll('tr');
+    
+    for (const row of rows) {
+        const cols = row.querySelectorAll('th, td');
+        const rowData = Array.from(cols).map(c => `"${c.innerText.replace(/"/g, '""')}"`).join(',');
+        csv.push(rowData);
+    }
+    
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+}
+
+// Update User Role (Notion Status)
+async function updateUserRole(pageId, newStatus) {
+    if (!confirm(`Voulez-vous vraiment changer le statut en "${newStatus}" ?`)) return;
+    
+    try {
+        const res = await fetch('/api/admin-update-role-exec.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page_id: pageId, status: newStatus, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('Statut mis à jour avec succès !');
+            // Optional: refresh or update UI badge if we had one in the row
+        } else {
+            alert('Erreur: ' + (data.error || 'Inconnue'));
+        }
+    } catch (err) {
+        alert('Erreur réseau lors de la mise à jour.');
+    }
+}
+
+// Growth Chart Initialization
+<?php if ($isAdmin && isset($adminData['chart'])): ?>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: <?php echo json_encode($adminData['chart']['labels']); ?>,
+            datasets: [
+                {
+                    label: 'Utilisateurs',
+                    data: <?php echo json_encode($adminData['chart']['users']); ?>,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
+                },
+                {
+                    label: 'Newsletter',
+                    data: <?php echo json_encode($adminData['chart']['news']); ?>,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#10b981'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: { color: 'rgba(255,255,255,0.7)', font: { size: 11, weight: '600' }, boxWidth: 10, usePointStyle: true }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 15, 15, 0.95)',
+                    titleColor: '#fff',
+                    bodyColor: 'rgba(255,255,255,0.8)',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    cornerRadius: 12
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                    ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 }, stepSize: 1 }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } }
+                }
+            }
+        }
+    });
+});
+<?php endif; ?>
 
 function setStars(count) {
     const input = document.getElementById('satisfactionInput');
