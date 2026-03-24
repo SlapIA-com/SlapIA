@@ -395,5 +395,18 @@
     "admin_recent_contacts": "Derniers Contacts",
     "admin_recent_newsletter": "Dernières Inscriptions Newsletter",
     "admin_system_logs": "Statut Système",
-    "admin_view_crm": "Ouvrir CRM Notion"
+    "admin_view_crm": "Ouvrir CRM Notion",
+    "login_forgot_password": "Mot de passe oublié ?",
+    "login_remember_me": "Se souvenir de moi",
+    "reset_password_title": "Réinitialiser le mot de passe - SlapIA",
+    "reset_password_meta_desc": "Réinitialisez votre mot de passe SlapIA.",
+    "reset_request_title": "Mot de passe oublié ?",
+    "reset_request_subtitle": "Entrez votre email, nous vous enverrons un lien de réinitialisation.",
+    "reset_new_password_title": "Nouveau mot de passe",
+    "reset_new_password_subtitle": "Choisissez un mot de passe sécurisé pour votre compte.",
+    "reset_send_link_btn": "Envoyer le lien",
+    "reset_confirm_btn": "Mettre à jour",
+    "reset_new_password_label": "Nouveau mot de passe",
+    "reset_confirm_password_label": "Confirmer le mot de passe",
+    "reset_back_to_login": "← Retour à la connexion"
 }

@@ -6,30 +6,82 @@
 include_once __DIR__ . '/../includes/config.php';
 include_once __DIR__ . '/../includes/lang.php';
 $notionApiKey = config('NOTION_API_KEY');
-$notionDbId = config('NOTION_SATISFACTION_DATABASE_ID'); // ID de la base de données ERP complète
+$notionDbId   = config('NOTION_SATISFACTION_DATABASE_ID');
 
 error_reporting(0);
 ini_set('display_errors', 0);
 ob_start();
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * File-based rate limiter — returns true if the action is allowed, false if blocked.
+ * Max $maxAttempts within a $windowSeconds window, keyed by $key.
+ */
+function rateLimitCheck(string $key, int $maxAttempts = 5, int $windowSeconds = 900): bool
+{
+    $file = sys_get_temp_dir() . '/rl_' . md5($key) . '.json';
+    $now  = time();
+    $data = [];
+
+    if (file_exists($file)) {
+        $data = json_decode(file_get_contents($file), true) ?? [];
+    }
+
+    // Remove expired entries
+    $data = array_filter($data, fn($ts) => ($now - $ts) < $windowSeconds);
+
+    if (count($data) >= $maxAttempts) {
+        return false; // Blocked
+    }
+
+    $data[] = $now;
+    file_put_contents($file, json_encode(array_values($data)), LOCK_EX);
+    return true;
+}
+
+/**
+ * Reset the rate limit counter for a key (called on successful login).
+ */
+function rateLimitReset(string $key): void
+{
+    $file = sys_get_temp_dir() . '/rl_' . md5($key) . '.json';
+    if (file_exists($file)) @unlink($file);
+}
+
+/**
+ * Append a line to the failed-login log file.
+ */
+function logFailedLogin(string $email, string $reason, string $ip): void
+{
+    $logFile = sys_get_temp_dir() . '/slapia_failed_logins.log';
+    $line    = date('Y-m-d H:i:s') . "\t" . $ip . "\t" . $email . "\t" . $reason . PHP_EOL;
+    @file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
+    error_log('[SlapIA Auth] Failed login — ' . $reason . ' — ' . $email . ' — IP: ' . $ip);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Main
+// ─────────────────────────────────────────────────────────────────────────────
+
 try {
     header('Content-Type: application/json');
-    
-    // Auth Check
+
     if (!$notionDbId) {
         throw new Exception("L'ID de la base de données des comptes n'est pas configuré.");
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
-    
-    // Fallback for form-data
     if (!$input) {
         $input = $_POST;
     }
 
-    $email = trim($input['email'] ?? '');
-    $password = $input['password'] ?? '';
+    $email             = trim($input['email'] ?? '');
+    $password          = $input['password'] ?? '';
     $turnstileResponse = $input['cf-turnstile-response'] ?? '';
+    $rememberMe        = !empty($input['remember_me']);
 
     if (empty($email) || empty($password)) {
         ob_clean();
@@ -38,7 +90,19 @@ try {
         exit;
     }
 
-    // Cloudflare Turnstile Validation
+    // ── Rate limiting (per IP + per email) ───────────────────────────────────
+    $ip         = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $rlKeyIp    = 'login_ip_' . $ip;
+    $rlKeyEmail = 'login_email_' . strtolower($email);
+
+    if (!rateLimitCheck($rlKeyIp, 10, 900) || !rateLimitCheck($rlKeyEmail, 5, 900)) {
+        ob_clean();
+        http_response_code(429);
+        echo json_encode(['success' => false, 'error' => 'Trop de tentatives. Réessayez dans 15 minutes.']);
+        exit;
+    }
+
+    // ── Cloudflare Turnstile ─────────────────────────────────────────────────
     if (empty($turnstileResponse)) {
         ob_clean();
         http_response_code(400);
@@ -46,62 +110,60 @@ try {
         exit;
     }
 
-    $secretKey = config('TURNSTILE_SECRET_KEY');
-    $verifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    $secretKey  = config('TURNSTILE_SECRET_KEY');
     $verifyData = [
-        'secret' => $secretKey,
+        'secret'   => $secretKey,
         'response' => $turnstileResponse,
-        'remoteip' => $_SERVER['REMOTE_ADDR']
+        'remoteip' => $ip,
     ];
 
-    $chVerify = curl_init();
-    curl_setopt($chVerify, CURLOPT_URL, $verifyUrl);
-    curl_setopt($chVerify, CURLOPT_POST, true);
-    curl_setopt($chVerify, CURLOPT_POSTFIELDS, http_build_query($verifyData));
-    curl_setopt($chVerify, CURLOPT_RETURNTRANSFER, true);
+    $chVerify = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($chVerify, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($verifyData),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+    ]);
     $responseVerify = curl_exec($chVerify);
     $httpCodeVerify = curl_getinfo($chVerify, CURLINFO_HTTP_CODE);
-    unset($chVerify);
+    curl_close($chVerify);
 
     $responseKeys = json_decode($responseVerify, true);
-    if ($httpCodeVerify !== 200 || !isset($responseKeys['success']) || !$responseKeys['success']) {
+    if ($httpCodeVerify !== 200 || empty($responseKeys['success'])) {
         ob_clean();
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Validation de sécurité échouée.']);
         exit;
     }
 
-    // Query Notion for this email
-    // NOTE: Since standard API rate limits apply, no rapid brute-force possible, but let's query carefully
+    // ── Query Notion ─────────────────────────────────────────────────────────
     $queryData = [
         'filter' => [
             'property' => 'Email',
-            'email' => [
-                'equals' => $email
-            ]
-        ]
+            'email'    => ['equals' => $email],
+        ],
     ];
 
     $ch = curl_init('https://api.notion.com/v1/databases/' . $notionDbId . '/query');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($queryData),
-        CURLOPT_HTTPHEADER => [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($queryData),
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_HTTPHEADER     => [
             'Authorization: Bearer ' . $notionApiKey,
             'Content-Type: application/json',
-            'Notion-Version: 2022-06-28'
-        ]
+            'Notion-Version: 2022-06-28',
+        ],
     ]);
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    unset($ch);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
 
-    if ($error || $httpCode >= 400) {
-        $responseData = json_decode($response, true);
-        $notionMsg = $responseData['message'] ?? $response ?? 'Erreur inconnue';
+    if ($curlErr || $httpCode >= 400) {
+        $notionMsg = json_decode($response, true)['message'] ?? 'Erreur inconnue';
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Notion HTTP ' . $httpCode . ' : ' . $notionMsg]);
@@ -112,122 +174,133 @@ try {
     if (!isset($responseData['results'])) {
         ob_clean();
         http_response_code(500);
-        $notionError = $responseData['message'] ?? 'Erreur inconnue de l\'API Notion';
-        echo json_encode(['success' => false, 'error' => 'Erreur API Notion : ' . $notionError]);
+        echo json_encode(['success' => false, 'error' => 'Erreur API Notion : ' . ($responseData['message'] ?? 'Erreur inconnue')]);
         exit;
     }
 
     $results = $responseData['results'] ?? [];
 
     if (count($results) === 0) {
+        logFailedLogin($email, 'email_not_found', $ip);
         ob_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
         exit;
     }
 
-    // The CRM might contain multiple entries for the same email (e.g. multiple contact form submissions)
-    // We must find the one that actually has a password defined!
+    // Find the entry that has a password set (CRM may have duplicates)
     $validUserPage = null;
-    $storedHash = '';
+    $storedHash    = '';
 
     foreach ($results as $page) {
-        $passwordProperty = $page['properties']['Mot de passe']['rich_text'] ?? [];
-        $hash = '';
-        if (count($passwordProperty) > 0) {
-            $hash = $passwordProperty[0]['text']['content'] ?? '';
-        }
-        
+        $pwProp = $page['properties']['Mot de passe']['rich_text'] ?? [];
+        $hash   = $pwProp[0]['text']['content'] ?? '';
         if (!empty($hash)) {
             $validUserPage = $page;
-            $storedHash = $hash;
-            break; // Found the active account!
+            $storedHash    = $hash;
+            break;
         }
     }
 
     if (!$validUserPage || empty($storedHash)) {
-        // No password set yet for this user
+        logFailedLogin($email, 'account_not_activated', $ip);
         ob_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => t('err_not_activated')]);
         exit;
     }
 
-    // Assign the valid page
     $userPage = $validUserPage;
 
-    // Verify password gracefully
+    // ── Verify password ───────────────────────────────────────────────────────
     $needsHashUpgrade = false;
-    
-    // Check if the stored password is a bcrypt hash (starts with $2y$)
+
     if (strpos($storedHash, '$2y$') === 0) {
         if (!password_verify($password, $storedHash)) {
+            logFailedLogin($email, 'wrong_password', $ip);
             ob_clean();
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
             exit;
         }
     } else {
-        // Plain text password assigned manually by Admin in Notion
+        // Plain text — auto-upgrade to bcrypt on next login
         if ($storedHash !== $password) {
+            logFailedLogin($email, 'wrong_password', $ip);
             ob_clean();
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
             exit;
         }
-        $needsHashUpgrade = true; // Flag to upgrade to secure hash
+        $needsHashUpgrade = true;
     }
 
-    // Auto-upgrade security: Hash the plain text password and update Notion
+    // ── Auto-upgrade plain text → bcrypt ─────────────────────────────────────
     if ($needsHashUpgrade) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-        $updateData = [
+        $updateData     = [
             'properties' => [
                 'Mot de passe' => [
-                    'rich_text' => [['text' => ['content' => $hashedPassword]]]
-                ]
-            ]
+                    'rich_text' => [['text' => ['content' => $hashedPassword]]],
+                ],
+            ],
         ];
         $chUpd = curl_init('https://api.notion.com/v1/pages/' . $userPage['id']);
         curl_setopt_array($chUpd, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => 'PATCH',
-            CURLOPT_POSTFIELDS => json_encode($updateData),
-            CURLOPT_HTTPHEADER => [
+            CURLOPT_RETURNTRANSFER   => true,
+            CURLOPT_CUSTOMREQUEST    => 'PATCH',
+            CURLOPT_POSTFIELDS       => json_encode($updateData),
+            CURLOPT_TIMEOUT          => 10,
+            CURLOPT_HTTPHEADER       => [
                 'Authorization: Bearer ' . $notionApiKey,
                 'Content-Type: application/json',
-                'Notion-Version: 2022-06-28'
-            ]
+                'Notion-Version: 2022-06-28',
+            ],
         ]);
         curl_exec($chUpd);
-        unset($chUpd);
+        curl_close($chUpd);
     }
 
-    // Success! Setup Session
-    // Extract First Name / Last Name (Title property 'Prenom NOM')
+    // ── Success — reset rate limits, build session ────────────────────────────
+    rateLimitReset($rlKeyIp);
+    rateLimitReset($rlKeyEmail);
+
     $nameProperty = $userPage['properties']['Prenom NOM']['title'] ?? [];
-    $fullName = '';
-    if (count($nameProperty) > 0) {
-        $fullName = $nameProperty[0]['text']['content'] ?? '';
-    }
+    $fullName     = $nameProperty[0]['text']['content'] ?? '';
 
-    $_SESSION['user_id'] = $userPage['id'];
+    $_SESSION['user_id']    = $userPage['id'];
     $_SESSION['user_email'] = $email;
-    $_SESSION['user_name'] = $fullName;
-    
-    // Avatar is served dynamically via /api/notion-avatar.php?id={user_id}
-    // No need to store an expiring Notion S3 URL in the session.
-    
-    // Security: Regenerate session ID to prevent fixation
+    $_SESSION['user_name']  = $fullName;
+
+    // Avatar served dynamically via /api/notion-avatar.php?id={user_id}
+
+    // Security: regenerate session ID to prevent fixation
     session_regenerate_id(true);
 
     $_SESSION['logged_in'] = true;
 
+    // ── Remember Me — extend session lifetime via a long-lived cookie ─────────
+    if ($rememberMe) {
+        $cookieLifetime = 30 * 24 * 3600; // 30 days
+        $token          = bin2hex(random_bytes(32));
+        $_SESSION['remember_token']   = $token;
+        $_SESSION['remember_expires'] = time() + $cookieLifetime;
+
+        setcookie(
+            'remember_token',
+            $token,
+            [
+                'expires'  => time() + $cookieLifetime,
+                'path'     => '/',
+                'secure'   => isset($_SERVER['HTTPS']),
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]
+        );
+    }
+
     ob_clean();
-    echo json_encode([
-        'success' => true,
-        'redirect' => '/dashboard'
-    ]);
+    echo json_encode(['success' => true, 'redirect' => '/dashboard']);
 
 } catch (Throwable $e) {
     ob_clean();

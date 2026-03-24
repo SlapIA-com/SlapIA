@@ -395,5 +395,18 @@
     "admin_recent_contacts": "Latest Contacts",
     "admin_recent_newsletter": "Latest Newsletter Signups",
     "admin_system_logs": "System Status",
-    "admin_view_crm": "Open Notion CRM"
+    "admin_view_crm": "Open Notion CRM",
+    "login_forgot_password": "Forgot password?",
+    "login_remember_me": "Remember me",
+    "reset_password_title": "Reset password - SlapIA",
+    "reset_password_meta_desc": "Reset your SlapIA password.",
+    "reset_request_title": "Forgot your password?",
+    "reset_request_subtitle": "Enter your email and we'll send you a reset link.",
+    "reset_new_password_title": "New password",
+    "reset_new_password_subtitle": "Choose a secure password for your account.",
+    "reset_send_link_btn": "Send reset link",
+    "reset_confirm_btn": "Update password",
+    "reset_new_password_label": "New password",
+    "reset_confirm_password_label": "Confirm password",
+    "reset_back_to_login": "← Back to login"
 }

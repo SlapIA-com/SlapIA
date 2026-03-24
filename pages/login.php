@@ -2,17 +2,17 @@
 include_once '../includes/config.php';
 include_once '../includes/lang.php';
 
-$page_title = t('login_title');
-$page_description = t('login_meta_desc');
-$page_needs_turnstile = true;
-include '../includes/header.php';
-include '../includes/components.php';
-
 // Redirect to dashboard if already logged in
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     header('Location: /dashboard');
     exit;
 }
+
+$page_title = t('login_title');
+$page_description = t('login_meta_desc');
+$page_needs_turnstile = true;
+include '../includes/header.php';
+include '../includes/components.php';
 ?>
 
 <div class="login-page-wrapper">
@@ -63,13 +63,20 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         </div>
 
                         <div class="input-group-premium mb-4">
-                            <div class="d-flex justify-content-between">
-                                <label class="premium-label"><?php echo t('login_password_label'); ?></label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="premium-label mb-0"><?php echo t('login_password_label'); ?></label>
+                                <a href="/reset-password" class="forgot-link"><?php echo t('login_forgot_password'); ?></a>
                             </div>
-                            <div class="input-wrapper">
+                            <div class="input-wrapper mt-3">
                                 <i class="fas fa-lock input-icon"></i>
                                 <input type="password" class="premium-input" id="password" name="password" required placeholder="••••••••">
                             </div>
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <input type="checkbox" class="remember-checkbox" id="rememberMe" name="remember_me">
+                            <label for="rememberMe" class="remember-label"><?php echo t('login_remember_me'); ?></label>
                         </div>
 
                         <!-- Cloudflare Turnstile -->
@@ -276,6 +283,27 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 .btn-premium-action:active {
     transform: translateY(0);
+}
+
+/* FORGOT / REMEMBER */
+.forgot-link {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.forgot-link:hover { color: white; }
+
+.remember-checkbox {
+    width: 16px; height: 16px;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+}
+.remember-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.82rem;
+    cursor: pointer;
+    user-select: none;
 }
 
 /* NOTICE */

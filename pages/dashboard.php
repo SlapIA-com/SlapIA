@@ -69,126 +69,13 @@ $completedCount = count(array_filter($profileFields));
 $totalFields    = count($profileFields);
 $completionPct  = (int) round(($completedCount / $totalFields) * 100);
 
-// Admin helper
-$getNotionProp = function($p) {
-    if (!$p) return '';
-    $type = $p['type'] ?? '';
-    if (($type === 'title' || $type === 'rich_text') && !empty($p[$type])) {
-        return $p[$type][0]['plain_text'] ?? '';
-    }
-    if ($type === 'email')  return $p['email']          ?? '';
-    if ($type === 'select') return $p['select']['name'] ?? '';
-    return '';
-};
-
 // Invoices
 $invoices = $props['Factures']['files'] ?? [];
 
 // Status
 $isAdmin  = ($getUserStatus() === 'Admin');
 
-// ─── Admin data ───────────────────────────────────────────────────────────────
-$adminData = [
-    'list_users'           => [],
-    'list_newsletter'      => [],
-    'list_pending_billing' => [],
-    'recent'               => [],
-    'chart'                => [],
-];
-
-if ($isAdmin) {
-    $headers = [
-        'Authorization: Bearer ' . $notionApiKey,
-        'Notion-Version: 2022-06-28',
-        'Content-Type: application/json'
-    ];
-
-    // Helper for admin cURL calls
-    $notionQuery = function(string $dbId, array $payload = []) use ($headers): array {
-        $ch = curl_init('https://api.notion.com/v1/databases/' . $dbId . '/query');
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 15,
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($payload),
-            CURLOPT_HTTPHEADER     => $headers,
-        ]);
-        $res  = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        unset($ch);
-        return ($code === 200) ? (json_decode($res, true) ?? []) : [];
-    };
-
-    // Users list (up to 100)
-    $usersDb  = config('NOTION_SATISFACTION_DATABASE_ID');
-    $leadsDb  = config('NOTION_CONTACT_DATABASE_ID');
-    $newsDb   = config('NOTION_Newsletter_DATABASE_ID');
-
-    $adminData['list_users']      = $notionQuery($usersDb, ['page_size' => 100])['results'] ?? [];
-    $adminData['list_newsletter'] = $notionQuery($newsDb,  ['page_size' => 100])['results'] ?? [];
-
-    // Pending billing
-    $adminData['list_pending_billing'] = $notionQuery($usersDb, [
-        'filter' => ['property' => 'Facturation', 'select' => ['equals' => 'En attente']]
-    ])['results'] ?? [];
-
-    // Recent leads
-    $recentLeads = $notionQuery($leadsDb, [
-        'page_size' => 5,
-        'sorts' => [['timestamp' => 'created_time', 'direction' => 'descending']]
-    ])['results'] ?? [];
-
-    foreach ($recentLeads as $l) {
-        $name  = $l['properties']['Prenom NOM']['title'][0]['text']['content'] ?? 'Anonyme';
-        $email = $l['properties']['Email']['email'] ?? '';
-        $adminData['recent'][] = [
-            'type'  => 'lead',
-            'name'  => $name,
-            'email' => $email,
-            'date'  => date('d/m H:i', strtotime($l['created_time'])),
-            'ts'    => strtotime($l['created_time']),
-        ];
-    }
-
-    // Recent newsletter
-    $recentNews = $notionQuery($newsDb, [
-        'page_size' => 5,
-        'sorts' => [['timestamp' => 'created_time', 'direction' => 'descending']]
-    ])['results'] ?? [];
-
-    foreach ($recentNews as $n) {
-        $email = $n['properties']['Email']['title'][0]['text']['content'] ?? 'Newsletter';
-        $adminData['recent'][] = [
-            'type'  => 'newsletter',
-            'name'  => 'Subscriber',
-            'email' => $email,
-            'date'  => date('d/m H:i', strtotime($n['created_time'])),
-            'ts'    => strtotime($n['created_time']),
-        ];
-    }
-
-    usort($adminData['recent'], fn($a, $b) => $b['ts'] <=> $a['ts']);
-    $adminData['recent'] = array_slice($adminData['recent'], 0, 10);
-
-    // Chart data (6 months)
-    $months = [];
-    for ($i = 5; $i >= 0; $i--) {
-        $months[date('M Y', strtotime("-$i months"))] = ['u' => 0, 'n' => 0];
-    }
-    foreach ($adminData['list_users'] as $u) {
-        $m = date('M Y', strtotime($u['created_time']));
-        if (isset($months[$m])) $months[$m]['u']++;
-    }
-    foreach ($adminData['list_newsletter'] as $n) {
-        $m = date('M Y', strtotime($n['created_time']));
-        if (isset($months[$m])) $months[$m]['n']++;
-    }
-    $adminData['chart'] = [
-        'labels' => array_keys($months),
-        'users'  => array_column(array_values($months), 'u'),
-        'news'   => array_column(array_values($months), 'n'),
-    ];
-}
+// Admin data is loaded lazily via /api/admin-data.php when admin tabs are first opened.
 
 // ─── Status display config ────────────────────────────────────────────────────
 $status      = $getUserStatus();
@@ -466,6 +353,25 @@ $csrfToken = generateCSRFToken();
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Skeleton loader ─────────────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+@keyframes shimmer {
+    0%   { background-position:  200% 0; }
+    100% { background-position: -200% 0; }
+}
+.skeleton-line { height: 14px; margin-bottom: 10px; }
+.skeleton-line.short { width: 45%; }
+.skeleton-line.medium { width: 70%; }
+.skeleton-line.full   { width: 100%; }
+.skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+.skeleton-block  { height: 80px; border-radius: 16px; }
+.skeleton-kpi    { height: 110px; border-radius: 20px; }
+
 /* ── Mobile ──────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
     .dashboard-section { padding-top: 1.5rem !important; }
@@ -625,13 +531,13 @@ $csrfToken = generateCSRFToken();
                 <button class="dash-sidebar-btn" id="tab-admin-emails" onclick="switchTab('admin-emails')">
                     <div class="dash-icon" style="background:rgba(251,191,36,.12);color:#fbbf24;"><i class="fas fa-users-cog"></i></div>
                     <span>Utilisateurs</span>
-                    <span class="ms-auto text-secondary small"><?php echo count($adminData['list_users']); ?></span>
+                    <span class="ms-auto text-secondary small" id="sidebarCountUsers">…</span>
                 </button>
 
                 <button class="dash-sidebar-btn" id="tab-admin-newsletter" onclick="switchTab('admin-newsletter')">
                     <div class="dash-icon" style="background:rgba(16,185,129,.12);color:#10b981;"><i class="fas fa-mail-bulk"></i></div>
                     <span>Newsletter</span>
-                    <span class="ms-auto text-secondary small"><?php echo count($adminData['list_newsletter']); ?></span>
+                    <span class="ms-auto text-secondary small" id="sidebarCountNews">…</span>
                 </button>
 
                 <button class="dash-sidebar-btn" id="tab-admin-audit" onclick="switchTab('admin-audit')">
@@ -764,50 +670,9 @@ $csrfToken = generateCSRFToken();
         <!-- ═══ BILLING TAB ════════════════════════════════════════════════ -->
         <div id="content-billing" class="tab-pane-dash d-none">
 
-            <?php if ($isAdmin && !empty($adminData['list_pending_billing'])): ?>
-            <div class="bento-card p-4 mb-4" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:24px;">
-                <h3 class="h5 text-white fw-bold mb-4 d-flex align-items-center gap-2">
-                    <i class="fas fa-exclamation-circle text-danger"></i>
-                    File d'attente — Facturation en attente (<?php echo count($adminData['list_pending_billing']); ?>)
-                </h3>
-                <div class="row g-3">
-                    <?php foreach ($adminData['list_pending_billing'] as $pb):
-                        $pbProps = $pb['properties'] ?? [];
-                        $pbName  = $getNotionProp($pbProps['Prenom NOM']) ?: 'N.A';
-                        $pbEmail = $getNotionProp($pbProps['Email']);
-                        $pbPageId = $pb['id'] ?? '';
-                    ?>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
-                            <div class="rounded-circle overflow-hidden flex-shrink-0" style="width:44px;height:44px;background:#1a1a2e;">
-                                <?php if ($pbPageId): ?>
-                                    <img src="/api/notion-avatar.php?id=<?php echo urlencode($pbPageId); ?>"
-                                         alt="" class="w-100 h-100" style="object-fit:cover;" loading="lazy">
-                                <?php else: ?>
-                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"><i class="fas fa-user"></i></div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="overflow-hidden flex-grow-1">
-                                <div class="text-white small fw-bold text-truncate"><?php echo htmlspecialchars($pbName); ?></div>
-                                <div class="text-secondary smaller text-truncate"><?php echo htmlspecialchars($pbEmail); ?></div>
-                                <?php $pbInvoices = $pbProps['Factures']['files'] ?? [];
-                                if (!empty($pbInvoices)): ?>
-                                <div class="mt-1">
-                                    <?php foreach (array_slice($pbInvoices, 0, 2) as $f):
-                                        $fUrl = $f['file']['url'] ?? $f['external']['url'] ?? '#'; ?>
-                                    <a href="<?php echo htmlspecialchars($fUrl); ?>" target="_blank"
-                                       class="badge bg-white bg-opacity-10 text-white text-decoration-none px-2 py-1 me-1 rounded-pill smaller">
-                                        <i class="fas fa-file-download me-1"></i><?php echo htmlspecialchars($f['name'] ?? 'Doc'); ?>
-                                    </a>
-                                    <?php endforeach; ?>
-                                </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
+            <?php if ($isAdmin): ?>
+            <!-- Pending billing (admin) — rendered by JS -->
+            <div id="adminPendingBilling"></div>
             <?php endif; ?>
 
             <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
@@ -816,10 +681,18 @@ $csrfToken = generateCSRFToken();
                         <h3 class="h4 text-white fw-bold mb-1"><?php echo t('dash_billing_history'); ?></h3>
                         <p class="text-secondary small mb-0"><?php echo t('dash_billing_subtitle'); ?></p>
                     </div>
-                    <div class="d-flex align-items-center gap-2 px-4 py-2 rounded-pill"
-                         style="background:<?php echo $billBgHex; ?>;border:1px solid rgba(255,255,255,.08);">
-                        <i class="fas fa-circle" style="font-size:.45rem;color:<?php echo $billHex; ?>;"></i>
-                        <span class="small fw-bold" style="color:<?php echo $billHex; ?>;"><?php echo htmlspecialchars($factStatus); ?></span>
+                    <div class="d-flex align-items-center gap-3">
+                        <?php if (!empty($invoices)): ?>
+                        <button onclick="printInvoices()" class="btn btn-sm px-3 py-2 rounded-pill"
+                                style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:.78rem;">
+                            <i class="fas fa-print me-1"></i> Imprimer
+                        </button>
+                        <?php endif; ?>
+                        <div class="d-flex align-items-center gap-2 px-4 py-2 rounded-pill"
+                             style="background:<?php echo $billBgHex; ?>;border:1px solid rgba(255,255,255,.08);">
+                            <i class="fas fa-circle" style="font-size:.45rem;color:<?php echo $billHex; ?>;"></i>
+                            <span class="small fw-bold" style="color:<?php echo $billHex; ?>;"><?php echo htmlspecialchars($factStatus); ?></span>
+                        </div>
                     </div>
                 </div>
 
@@ -881,10 +754,17 @@ $csrfToken = generateCSRFToken();
 
                 <!-- Notification list -->
                 <div id="dashNotifList">
-                    <div class="text-center py-5 text-secondary">
-                        <i class="fas fa-spinner fa-spin fa-2x mb-3 d-block opacity-30"></i>
-                        Chargement…
+                    <!-- Skeleton -->
+                    <?php for ($s = 0; $s < 4; $s++): ?>
+                    <div class="d-flex align-items-start gap-3 p-3 mb-2">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="flex-grow-1">
+                            <div class="skeleton skeleton-line medium"></div>
+                            <div class="skeleton skeleton-line full"></div>
+                            <div class="skeleton skeleton-line short"></div>
+                        </div>
                     </div>
+                    <?php endfor; ?>
                 </div>
             </div>
         </div>
@@ -946,290 +826,38 @@ $csrfToken = generateCSRFToken();
         <!-- ═══ ADMIN TABS ═════════════════════════════════════════════════ -->
         <?php if ($isAdmin): ?>
 
-        <!-- Admin overview -->
+        <!-- Admin overview — JS rendered -->
         <div id="content-admin" class="tab-pane-dash d-none">
-
-            <!-- Status bar -->
-            <div class="bento-card p-4 mb-4" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:20px;">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div class="d-flex align-items-center gap-4 flex-wrap">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="pulse-green"></div>
-                            <span class="text-white small fw-bold opacity-75">API Notion</span>
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-2 py-1 rounded-pill small">Connecté</span>
-                        </div>
-                        <div class="quick-stat border-start border-white border-opacity-10 ps-4">
-                            <i class="fas fa-clock"></i>
-                            Synchro <strong><?php echo date('H:i:s'); ?></strong>
-                        </div>
-                        <?php if (!empty($adminData['list_pending_billing'])): ?>
-                        <div class="quick-stat">
-                            <i class="fas fa-exclamation-circle text-danger"></i>
-                            <strong style="color:#ef4444;"><?php echo count($adminData['list_pending_billing']); ?> en attente</strong>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="/admin-reset-pwd" class="btn btn-sm btn-outline-danger px-4 py-2 rounded-pill">
-                            <i class="fas fa-key me-2"></i> Reset MDP
-                        </a>
-                        <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass px-4 py-2 rounded-pill">
-                            <i class="fas fa-external-link-alt me-2"></i> Notion CRM
-                        </a>
-                    </div>
+            <div id="adminOverviewInner">
+                <!-- Skeleton -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4"><div class="skeleton skeleton-kpi"></div></div>
+                    <div class="col-md-4"><div class="skeleton skeleton-kpi"></div></div>
+                    <div class="col-md-4"><div class="skeleton skeleton-kpi"></div></div>
                 </div>
-            </div>
-
-            <!-- KPIs -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="kpi-card" style="background:linear-gradient(135deg,rgba(88,86,214,.12),rgba(15,15,15,.5));">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-3 p-2" style="background:rgba(88,86,214,.2);"><i class="fas fa-users text-primary small"></i></div>
-                            <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_users'); ?></span>
-                        </div>
-                        <div class="kpi-number text-white"><?php echo count($adminData['list_users']); ?></div>
-                        <div class="text-secondary smaller opacity-60">utilisateurs enregistrés</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="kpi-card" style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(15,15,15,.5));">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-3 p-2" style="background:rgba(16,185,129,.2);"><i class="fas fa-paper-plane text-success small"></i></div>
-                            <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_subscribers'); ?></span>
-                        </div>
-                        <div class="kpi-number text-white"><?php echo count($adminData['list_newsletter']); ?></div>
-                        <div class="text-secondary smaller opacity-60">abonnés newsletter</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="kpi-card" style="background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(15,15,15,.5));">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-3 p-2" style="background:rgba(239,68,68,.15);"><i class="fas fa-hourglass-half text-danger small"></i></div>
-                            <span class="text-secondary small fw-bold text-uppercase">Factures en attente</span>
-                        </div>
-                        <div class="kpi-number" style="color:<?php echo empty($adminData['list_pending_billing']) ? '#fff' : '#ef4444'; ?>;">
-                            <?php echo count($adminData['list_pending_billing']); ?>
-                        </div>
-                        <div class="text-secondary smaller opacity-60">paiements à valider</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Growth Chart -->
-            <div class="bento-card p-4 mb-4" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
-                <h4 class="text-white fw-bold mb-4 d-flex align-items-center gap-3">
-                    <i class="fas fa-chart-line text-primary"></i> Courbes de Croissance — 6 derniers mois
-                </h4>
-                <div style="height:300px;position:relative;">
-                    <canvas id="growthChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Recent activity -->
-            <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3">
-                        <i class="fas fa-history text-primary"></i> <?php echo t('admin_recent_activity'); ?>
-                    </h3>
-                    <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass rounded-pill px-4">
-                        <i class="fas fa-external-link-alt me-2"></i> CRM
-                    </a>
-                </div>
-
-                <?php if (empty($adminData['recent'])): ?>
-                <p class="text-secondary text-center py-4">Aucune activité récente.</p>
-                <?php else: ?>
-                <?php foreach ($adminData['recent'] as $act): ?>
-                <div class="d-flex align-items-start gap-4 mb-4 pb-4 border-bottom border-white border-opacity-5">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                         style="width:42px;height:42px;background:<?php echo $act['type']==='lead' ? 'rgba(251,191,36,.1)' : 'rgba(16,185,129,.1)'; ?>;">
-                        <i class="fas <?php echo $act['type']==='lead' ? 'fa-envelope text-warning' : 'fa-rss text-success'; ?>"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h6 class="text-white mb-0 fw-bold"><?php echo htmlspecialchars($act['name'] ?: 'Inscrit'); ?></h6>
-                            <span class="text-secondary smaller"><?php echo $act['date']; ?></span>
-                        </div>
-                        <p class="text-secondary small mb-1 opacity-75"><?php echo htmlspecialchars($act['email']); ?></p>
-                        <span class="badge rounded-pill px-2 py-1 smaller text-uppercase"
-                              style="background:<?php echo $act['type']==='lead' ? 'rgba(251,191,36,.1)' : 'rgba(16,185,129,.1)'; ?>;color:<?php echo $act['type']==='lead' ? '#fbbf24' : '#10b981'; ?>;">
-                            <?php echo $act['type']; ?>
-                        </span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                <?php endif; ?>
+                <div class="skeleton skeleton-block mb-4" style="height:320px;"></div>
+                <div class="skeleton skeleton-block" style="height:200px;"></div>
             </div>
         </div>
 
-        <!-- Admin Newsletter List -->
+        <!-- Admin Newsletter List — JS rendered -->
         <div id="content-admin-newsletter" class="tab-pane-dash d-none">
-            <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                    <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3">
-                        <i class="fas fa-mail-bulk text-success"></i>
-                        <?php echo t('admin_total_subscribers'); ?>
-                        <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-3 py-1">
-                            <?php echo count($adminData['list_newsletter']); ?>
-                        </span>
-                    </h3>
-                    <div class="d-flex gap-2 align-items-center">
-                        <div class="position-relative">
-                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size:.75rem;opacity:.5;"></i>
-                            <input type="text" onkeyup="filterTable('newsletterTable', this.value)"
-                                   class="form-control dash-input rounded-pill py-2 ps-5 pe-4"
-                                   placeholder="Filtrer…" style="width:220px;font-size:.8rem;">
-                        </div>
-                        <button onclick="exportTableToCSV('newsletterTable','newsletter_slapia')"
-                                class="btn btn-sm btn-outline-glass px-3 py-2 rounded-pill text-white" style="font-size:.8rem;border-color:rgba(255,255,255,.1);">
-                            <i class="fas fa-download me-1"></i> CSV
-                        </button>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table admin-table border-0 m-0" id="newsletterTable">
-                        <thead>
-                            <tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
-                                <th class="py-3 border-0">Email</th>
-                                <th class="py-3 border-0">Date d'inscription</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($adminData['list_newsletter'] as $n): ?>
-                            <tr class="align-middle">
-                                <td class="py-3 text-white"><?php echo htmlspecialchars($getNotionProp($n['properties']['Email'])); ?></td>
-                                <td class="py-3 text-secondary small"><?php echo date('d/m/Y H:i', strtotime($n['created_time'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+            <div id="adminNewsletterInner">
+                <div class="skeleton skeleton-block" style="height:300px;"></div>
             </div>
         </div>
 
-        <!-- Admin Users List -->
+        <!-- Admin Users List — JS rendered -->
         <div id="content-admin-emails" class="tab-pane-dash d-none">
-            <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                    <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3">
-                        <i class="fas fa-users-cog text-warning"></i>
-                        <?php echo t('admin_total_users'); ?>
-                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-20 px-3 py-1">
-                            <?php echo count($adminData['list_users']); ?>
-                        </span>
-                    </h3>
-                    <div class="d-flex gap-2 align-items-center">
-                        <div class="position-relative">
-                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size:.75rem;opacity:.5;"></i>
-                            <input type="text" onkeyup="filterTable('usersTable', this.value)"
-                                   class="form-control dash-input rounded-pill py-2 ps-5 pe-4"
-                                   placeholder="Rechercher…" style="width:240px;font-size:.85rem;">
-                        </div>
-                        <button onclick="exportTableToCSV('usersTable','users_slapia')"
-                                class="btn btn-sm btn-outline-glass px-3 py-2 rounded-pill text-white" style="font-size:.8rem;border-color:rgba(255,255,255,.1);">
-                            <i class="fas fa-download me-1"></i> CSV
-                        </button>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table admin-table border-0 m-0" id="usersTable">
-                        <thead>
-                            <tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
-                                <th class="py-3 border-0">Nom</th>
-                                <th class="py-3 border-0">Email</th>
-                                <th class="py-3 border-0">Entreprise</th>
-                                <th class="py-3 border-0">Statut</th>
-                                <th class="py-3 border-0 text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($adminData['list_users'] as $u):
-                                $uStatus  = $getNotionProp($u['properties']['Status']) ?: 'Client';
-                                $uName    = $getNotionProp($u['properties']['Prenom NOM']) ?: 'N.A';
-                                $uEmail   = $getNotionProp($u['properties']['Email']);
-                                $uCo      = $getNotionProp($u['properties']['Nom d\'entreprise']);
-                                $uPageId  = $u['id'] ?? '';
-                            ?>
-                            <tr class="align-middle">
-                                <td class="py-3">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <?php if ($uPageId): ?>
-                                        <img src="/api/notion-avatar.php?id=<?php echo urlencode($uPageId); ?>"
-                                             alt="" loading="lazy"
-                                             style="width:34px;height:34px;border-radius:50%;object-fit:cover;background:#1a1a2e;border:1px solid rgba(255,255,255,.08);flex-shrink:0;">
-                                        <?php endif; ?>
-                                        <span class="text-white fw-medium"><?php echo htmlspecialchars($uName); ?></span>
-                                    </div>
-                                </td>
-                                <td class="py-3 text-secondary small"><?php echo htmlspecialchars($uEmail); ?></td>
-                                <td class="py-3 text-secondary small opacity-75"><?php echo htmlspecialchars($uCo); ?></td>
-                                <td class="py-3">
-                                    <select class="form-select form-select-sm bg-transparent border-0 text-white small p-0 fw-bold"
-                                            style="cursor:pointer;width:auto;"
-                                            onchange="updateUserRole('<?php echo htmlspecialchars($u['id']); ?>', this.value)">
-                                        <option value="Client"    class="bg-dark" <?php echo $uStatus==='Client'    ? 'selected' : ''; ?>>Client</option>
-                                        <option value="Entreprise" class="bg-dark" <?php echo $uStatus==='Entreprise' ? 'selected' : ''; ?>>Entreprise</option>
-                                        <option value="Particulier" class="bg-dark" <?php echo $uStatus==='Particulier' ? 'selected' : ''; ?>>Particulier</option>
-                                        <option value="Admin"     class="bg-dark text-danger" <?php echo $uStatus==='Admin' ? 'selected' : ''; ?>>Admin</option>
-                                    </select>
-                                </td>
-                                <td class="py-3 text-end">
-                                    <a href="mailto:<?php echo htmlspecialchars($uEmail); ?>"
-                                       class="btn btn-sm px-3 py-1 rounded-pill me-1 text-white"
-                                       style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:.75rem;">
-                                        <i class="fas fa-envelope me-1"></i> Email
-                                    </a>
-                                    <a href="/admin-reset-pwd?email=<?php echo urlencode($uEmail); ?>"
-                                       class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill"
-                                       style="font-size:.75rem;">
-                                        <i class="fas fa-key me-1"></i> Reset
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+            <div id="adminUsersInner">
+                <div class="skeleton skeleton-block" style="height:400px;"></div>
             </div>
         </div>
 
-        <!-- Admin Audit Log -->
+        <!-- Admin Audit Log — JS rendered -->
         <div id="content-admin-audit" class="tab-pane-dash d-none">
-            <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
-                <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center gap-3">
-                    <i class="fas fa-history text-indigo"></i> Journal d'Audit
-                </h3>
-                <div class="table-responsive">
-                    <table class="table admin-table border-0 m-0">
-                        <thead>
-                            <tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
-                                <th class="py-3 border-0">Type</th>
-                                <th class="py-3 border-0">Acteur / Cible</th>
-                                <th class="py-3 border-0">Date</th>
-                                <th class="py-3 border-0 text-end">Sync</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($adminData['recent'] as $act): ?>
-                            <tr class="align-middle">
-                                <td class="py-3">
-                                    <span class="badge rounded-pill px-3 py-1 smaller text-uppercase"
-                                          style="background:<?php echo $act['type']==='lead' ? 'rgba(59,130,246,.1)' : 'rgba(16,185,129,.1)'; ?>;color:<?php echo $act['type']==='lead' ? '#60a5fa' : '#34d399'; ?>;border:1px solid <?php echo $act['type']==='lead' ? 'rgba(59,130,246,.2)' : 'rgba(16,185,129,.2)'; ?>;">
-                                        <?php echo strtoupper($act['type']); ?>
-                                    </span>
-                                </td>
-                                <td class="py-3">
-                                    <div class="text-white small fw-medium"><?php echo htmlspecialchars($act['name']); ?></div>
-                                    <div class="text-secondary smaller opacity-50"><?php echo htmlspecialchars($act['email']); ?></div>
-                                </td>
-                                <td class="py-3 text-secondary small"><?php echo $act['date']; ?></td>
-                                <td class="py-3 text-end"><i class="fas fa-check-circle text-success opacity-40"></i></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+            <div id="adminAuditInner">
+                <div class="skeleton skeleton-block" style="height:300px;"></div>
             </div>
         </div>
 
@@ -1253,6 +881,11 @@ const tabTitles = {
     'admin-audit':        'Journal d\'Audit',
 };
 
+// ── Admin lazy-load state ────────────────────────────────────────────────────
+const ADMIN_TABS = ['admin', 'admin-emails', 'admin-newsletter', 'admin-audit'];
+let adminDataCache  = null;
+let adminDataLoading = false;
+
 function switchTab(tabId) {
     document.querySelectorAll('.tab-pane-dash').forEach(c => c.classList.add('d-none'));
     document.querySelectorAll('.dash-sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -1264,13 +897,11 @@ function switchTab(tabId) {
 
     if (tabTitles[tabId]) document.getElementById('dash-title').textContent = tabTitles[tabId];
 
-    // Load notifications when tab is opened
     if (tabId === 'notifications') renderDashNotifs();
 
-    // Init chart when admin tab opens
-    if (tabId === 'admin') initGrowthChart();
+    // Lazy-load admin data on first admin tab click
+    if (ADMIN_TABS.includes(tabId)) loadAdminData(tabId);
 
-    // Update URL hash without scroll
     history.replaceState(null, '', '#' + tabId);
 }
 
@@ -1318,27 +949,291 @@ async function updateUserRole(pageId, newStatus) {
     } catch { alert('Erreur réseau.'); }
 }
 
-// ── Growth chart ─────────────────────────────────────────────────────────────
-<?php if ($isAdmin && isset($adminData['chart'])): ?>
+// ── Admin lazy loading ────────────────────────────────────────────────────────
 let growthChartInstance = null;
-function initGrowthChart() {
+
+async function loadAdminData(targetTab) {
+    if (adminDataLoading) return;
+    if (adminDataCache) { renderAdminTab(targetTab, adminDataCache); return; }
+    adminDataLoading = true;
+    try {
+        const res  = await fetch('/api/admin-data.php');
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Erreur');
+        adminDataCache = data;
+        // Update sidebar counts
+        const cu = document.getElementById('sidebarCountUsers');
+        const cn = document.getElementById('sidebarCountNews');
+        if (cu) cu.textContent = data.counts.users;
+        if (cn) cn.textContent = data.counts.newsletter;
+        renderAdminAllTabs(data);
+        renderAdminTab(targetTab, data);
+    } catch (e) {
+        ['adminOverviewInner','adminUsersInner','adminNewsletterInner','adminAuditInner'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = `<p class="text-danger text-center py-4"><i class="fas fa-exclamation-circle me-2"></i>${e.message}</p>`;
+        });
+    } finally {
+        adminDataLoading = false;
+    }
+}
+
+function renderAdminTab(tabId, data) {
+    if (tabId === 'admin' && !growthChartInstance) {
+        setTimeout(() => initGrowthChart(data.chart), 50);
+    }
+}
+
+function renderAdminAllTabs(data) {
+    renderAdminOverview(data);
+    renderAdminUsers(data);
+    renderAdminNewsletter(data);
+    renderAdminAudit(data);
+    renderAdminPendingBilling(data);
+}
+
+function renderAdminOverview(data) {
+    const el = document.getElementById('adminOverviewInner');
+    if (!el) return;
+    const syncTime = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const pendingAlert = data.counts.pending > 0
+        ? `<div class="quick-stat"><i class="fas fa-exclamation-circle text-danger"></i><strong style="color:#ef4444;">${data.counts.pending} en attente</strong></div>`
+        : '';
+    el.innerHTML = `
+    <div class="bento-card p-4 mb-4" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:20px;">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="pulse-green"></div>
+                    <span class="text-white small fw-bold opacity-75">API Notion</span>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-2 py-1 rounded-pill small">Connecté</span>
+                </div>
+                <div class="quick-stat border-start border-white border-opacity-10 ps-4">
+                    <i class="fas fa-clock"></i> Synchro <strong>${syncTime}</strong>
+                </div>
+                ${pendingAlert}
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/admin-reset-pwd" class="btn btn-sm btn-outline-danger px-4 py-2 rounded-pill"><i class="fas fa-key me-2"></i> Reset MDP</a>
+                <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass px-4 py-2 rounded-pill"><i class="fas fa-external-link-alt me-2"></i> Notion CRM</a>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="kpi-card" style="background:linear-gradient(135deg,rgba(88,86,214,.12),rgba(15,15,15,.5));">
+                <div class="d-flex align-items-center gap-2"><div class="rounded-3 p-2" style="background:rgba(88,86,214,.2);"><i class="fas fa-users text-primary small"></i></div><span class="text-secondary small fw-bold text-uppercase">Utilisateurs</span></div>
+                <div class="kpi-number text-white">${data.counts.users}</div>
+                <div class="text-secondary smaller opacity-60">enregistrés</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="kpi-card" style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(15,15,15,.5));">
+                <div class="d-flex align-items-center gap-2"><div class="rounded-3 p-2" style="background:rgba(16,185,129,.2);"><i class="fas fa-paper-plane text-success small"></i></div><span class="text-secondary small fw-bold text-uppercase">Newsletter</span></div>
+                <div class="kpi-number text-white">${data.counts.newsletter}</div>
+                <div class="text-secondary smaller opacity-60">abonnés</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="kpi-card" style="background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(15,15,15,.5));">
+                <div class="d-flex align-items-center gap-2"><div class="rounded-3 p-2" style="background:rgba(239,68,68,.15);"><i class="fas fa-hourglass-half text-danger small"></i></div><span class="text-secondary small fw-bold text-uppercase">Factures en attente</span></div>
+                <div class="kpi-number" style="color:${data.counts.pending > 0 ? '#ef4444' : '#fff'}">${data.counts.pending}</div>
+                <div class="text-secondary smaller opacity-60">paiements à valider</div>
+            </div>
+        </div>
+    </div>
+    <div class="bento-card p-4 mb-4" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
+        <h4 class="text-white fw-bold mb-4 d-flex align-items-center gap-3"><i class="fas fa-chart-line text-primary"></i> Courbes de Croissance — 6 derniers mois</h4>
+        <div style="height:300px;position:relative;"><canvas id="growthChart"></canvas></div>
+    </div>
+    <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3"><i class="fas fa-history text-primary"></i> Activité Récente</h3>
+            <a href="https://www.notion.so" target="_blank" class="btn btn-sm btn-outline-glass rounded-pill px-4"><i class="fas fa-external-link-alt me-2"></i> CRM</a>
+        </div>
+        ${data.recent.length === 0 ? '<p class="text-secondary text-center py-4">Aucune activité récente.</p>' : data.recent.map(act => `
+        <div class="d-flex align-items-start gap-4 mb-4 pb-4 border-bottom border-white border-opacity-5">
+            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                 style="width:42px;height:42px;background:${act.type==='lead'?'rgba(251,191,36,.1)':'rgba(16,185,129,.1)'};">
+                <i class="fas ${act.type==='lead'?'fa-envelope text-warning':'fa-rss text-success'}"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="text-white mb-0 fw-bold">${escHtml(act.name||'Inscrit')}</h6>
+                    <span class="text-secondary smaller">${act.date}</span>
+                </div>
+                <p class="text-secondary small mb-1 opacity-75">${escHtml(act.email)}</p>
+                <span class="badge rounded-pill px-2 py-1 smaller text-uppercase"
+                      style="background:${act.type==='lead'?'rgba(251,191,36,.1)':'rgba(16,185,129,.1)'};color:${act.type==='lead'?'#fbbf24':'#10b981'};">${act.type}</span>
+            </div>
+        </div>`).join('')}
+    </div>`;
+    // Init chart after DOM is updated
+    setTimeout(() => initGrowthChart(data.chart), 50);
+}
+
+function renderAdminUsers(data) {
+    const el = document.getElementById('adminUsersInner');
+    if (!el) return;
+    const rows = data.users.map(u => `
+        <tr class="align-middle">
+            <td class="py-3">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="/api/notion-avatar.php?id=${encodeURIComponent(u.id)}" alt="" loading="lazy"
+                         style="width:34px;height:34px;border-radius:50%;object-fit:cover;background:#1a1a2e;border:1px solid rgba(255,255,255,.08);flex-shrink:0;">
+                    <span class="text-white fw-medium">${escHtml(u.name)}</span>
+                </div>
+            </td>
+            <td class="py-3 text-secondary small">${escHtml(u.email)}</td>
+            <td class="py-3 text-secondary small opacity-75">${escHtml(u.company)}</td>
+            <td class="py-3">
+                <select class="form-select form-select-sm bg-transparent border-0 text-white small p-0 fw-bold" style="cursor:pointer;width:auto;"
+                        onchange="updateUserRole('${u.id}', this.value)">
+                    ${['Client','Entreprise','Particulier','Admin'].map(s =>
+                        `<option value="${s}" class="bg-dark"${u.status===s?' selected':''}>${s}</option>`
+                    ).join('')}
+                </select>
+            </td>
+            <td class="py-3 text-end">
+                <a href="mailto:${escHtml(u.email)}" class="btn btn-sm px-3 py-1 rounded-pill me-1 text-white" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);font-size:.75rem;"><i class="fas fa-envelope me-1"></i> Email</a>
+                <a href="/admin-reset-pwd?email=${encodeURIComponent(u.email)}" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill" style="font-size:.75rem;"><i class="fas fa-key me-1"></i> Reset</a>
+            </td>
+        </tr>`).join('');
+    el.innerHTML = `
+    <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3">
+                <i class="fas fa-users-cog text-warning"></i> Utilisateurs
+                <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-20 px-3 py-1">${data.counts.users}</span>
+            </h3>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="position-relative">
+                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size:.75rem;opacity:.5;"></i>
+                    <input type="text" onkeyup="filterTable('usersTable',this.value)" class="form-control dash-input rounded-pill py-2 ps-5 pe-4" placeholder="Rechercher…" style="width:240px;font-size:.85rem;">
+                </div>
+                <button onclick="exportTableToCSV('usersTable','users_slapia')" class="btn btn-sm btn-outline-glass px-3 py-2 rounded-pill text-white" style="font-size:.8rem;border-color:rgba(255,255,255,.1);"><i class="fas fa-download me-1"></i> CSV</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table admin-table border-0 m-0" id="usersTable">
+                <thead><tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
+                    <th class="py-3 border-0">Nom</th><th class="py-3 border-0">Email</th><th class="py-3 border-0">Entreprise</th><th class="py-3 border-0">Statut</th><th class="py-3 border-0 text-end">Actions</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderAdminNewsletter(data) {
+    const el = document.getElementById('adminNewsletterInner');
+    if (!el) return;
+    const rows = data.newsletter.map(n => `
+        <tr class="align-middle">
+            <td class="py-3 text-white">${escHtml(n.email)}</td>
+            <td class="py-3 text-secondary small">${n.date}</td>
+        </tr>`).join('');
+    el.innerHTML = `
+    <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-3">
+                <i class="fas fa-mail-bulk text-success"></i> Newsletter
+                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-3 py-1">${data.counts.newsletter}</span>
+            </h3>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="position-relative">
+                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" style="font-size:.75rem;opacity:.5;"></i>
+                    <input type="text" onkeyup="filterTable('newsletterTable',this.value)" class="form-control dash-input rounded-pill py-2 ps-5 pe-4" placeholder="Filtrer…" style="width:220px;font-size:.8rem;">
+                </div>
+                <button onclick="exportTableToCSV('newsletterTable','newsletter_slapia')" class="btn btn-sm btn-outline-glass px-3 py-2 rounded-pill text-white" style="font-size:.8rem;border-color:rgba(255,255,255,.1);"><i class="fas fa-download me-1"></i> CSV</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table admin-table border-0 m-0" id="newsletterTable">
+                <thead><tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
+                    <th class="py-3 border-0">Email</th><th class="py-3 border-0">Date d'inscription</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderAdminAudit(data) {
+    const el = document.getElementById('adminAuditInner');
+    if (!el) return;
+    const rows = data.recent.map(act => `
+        <tr class="align-middle">
+            <td class="py-3">
+                <span class="badge rounded-pill px-3 py-1 smaller text-uppercase"
+                      style="background:${act.type==='lead'?'rgba(59,130,246,.1)':'rgba(16,185,129,.1)'};color:${act.type==='lead'?'#60a5fa':'#34d399'};border:1px solid ${act.type==='lead'?'rgba(59,130,246,.2)':'rgba(16,185,129,.2)'};">
+                    ${act.type.toUpperCase()}
+                </span>
+            </td>
+            <td class="py-3">
+                <div class="text-white small fw-medium">${escHtml(act.name)}</div>
+                <div class="text-secondary smaller opacity-50">${escHtml(act.email)}</div>
+            </td>
+            <td class="py-3 text-secondary small">${act.date}</td>
+            <td class="py-3 text-end"><i class="fas fa-check-circle text-success opacity-40"></i></td>
+        </tr>`).join('');
+    el.innerHTML = `
+    <div class="bento-card p-4 p-md-5" style="background:rgba(15,15,15,.4);border:1px solid rgba(255,255,255,.05);border-radius:24px;">
+        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center gap-3"><i class="fas fa-history"></i> Journal d'Audit</h3>
+        <div class="table-responsive">
+            <table class="table admin-table border-0 m-0">
+                <thead><tr style="border-bottom:2px solid rgba(255,255,255,.05)!important;">
+                    <th class="py-3 border-0">Type</th><th class="py-3 border-0">Acteur / Cible</th><th class="py-3 border-0">Date</th><th class="py-3 border-0 text-end">Sync</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function renderAdminPendingBilling(data) {
+    const el = document.getElementById('adminPendingBilling');
+    if (!el || data.pending.length === 0) return;
+    const cards = data.pending.map(pb => `
+        <div class="col-md-6 col-lg-4">
+            <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
+                <div class="rounded-circle overflow-hidden flex-shrink-0" style="width:44px;height:44px;background:#1a1a2e;">
+                    <img src="/api/notion-avatar.php?id=${encodeURIComponent(pb.id)}" alt="" class="w-100 h-100" style="object-fit:cover;" loading="lazy">
+                </div>
+                <div class="overflow-hidden flex-grow-1">
+                    <div class="text-white small fw-bold text-truncate">${escHtml(pb.name)}</div>
+                    <div class="text-secondary smaller text-truncate">${escHtml(pb.email)}</div>
+                    ${pb.docs.length ? '<div class="mt-1">' + pb.docs.map(f => `
+                        <a href="${escHtml(f.url)}" target="_blank" class="badge bg-white bg-opacity-10 text-white text-decoration-none px-2 py-1 me-1 rounded-pill smaller">
+                            <i class="fas fa-file-download me-1"></i>${escHtml(f.name)}
+                        </a>`).join('') + '</div>' : ''}
+                </div>
+            </div>
+        </div>`).join('');
+    el.innerHTML = `
+    <div class="bento-card p-4 mb-4" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:24px;">
+        <h3 class="h5 text-white fw-bold mb-4 d-flex align-items-center gap-2">
+            <i class="fas fa-exclamation-circle text-danger"></i>
+            File d'attente — Facturation en attente (${data.pending.length})
+        </h3>
+        <div class="row g-3">${cards}</div>
+    </div>`;
+}
+
+function initGrowthChart(chart) {
     const el = document.getElementById('growthChart');
-    if (!el || growthChartInstance) return;
+    if (!el || growthChartInstance || !chart) return;
     growthChartInstance = new Chart(el.getContext('2d'), {
         type: 'line',
         data: {
-            labels: <?php echo json_encode($adminData['chart']['labels']); ?>,
+            labels: chart.labels,
             datasets: [{
-                label: 'Utilisateurs',
-                data: <?php echo json_encode($adminData['chart']['users']); ?>,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59,130,246,.08)',
+                label: 'Utilisateurs', data: chart.users,
+                borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.08)',
                 fill: true, tension: .4, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#3b82f6'
             },{
-                label: 'Newsletter',
-                data: <?php echo json_encode($adminData['chart']['news']); ?>,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16,185,129,.08)',
+                label: 'Newsletter', data: chart.news,
+                borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.08)',
                 fill: true, tension: .4, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#10b981'
             }]
         },
@@ -1347,22 +1242,22 @@ function initGrowthChart() {
             interaction: { intersect: false, mode: 'index' },
             plugins: {
                 legend: { display: true, position: 'top', align: 'end',
-                    labels: { color: 'rgba(255,255,255,.6)', font: { size: 11, weight:'600' }, boxWidth: 10, usePointStyle: true }
+                    labels: { color: 'rgba(255,255,255,.6)', font: { size: 11, weight: '600' }, boxWidth: 10, usePointStyle: true }
                 },
-                tooltip: {
-                    backgroundColor: 'rgba(10,10,10,.95)', titleColor: '#fff', bodyColor: 'rgba(255,255,255,.75)',
-                    borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 12, cornerRadius: 12
-                }
+                tooltip: { backgroundColor: 'rgba(10,10,10,.95)', titleColor: '#fff', bodyColor: 'rgba(255,255,255,.75)', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 12, cornerRadius: 12 }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,.04)' },
-                     ticks: { color: 'rgba(255,255,255,.35)', font: { size: 11 }, stepSize: 1 } },
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: 'rgba(255,255,255,.35)', font: { size: 11 }, stepSize: 1 } },
                 x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,.35)', font: { size: 11 } } }
             }
         }
     });
 }
-<?php endif; ?>
+
+// ── Escape HTML helper ────────────────────────────────────────────────────────
+function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // ── Stars ────────────────────────────────────────────────────────────────────
 let currentStarValue = <?php echo $currentStars ?? 0; ?>;
@@ -1434,10 +1329,48 @@ async function handleUpdate(formId, btnId, alertId) {
     }
 }
 
-document.getElementById('profileForm')?.addEventListener('submit', e => { e.preventDefault(); handleUpdate('profileForm','btnSaveProfile','profileAlert'); });
+// ── Debounce helper ───────────────────────────────────────────────────────────
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
+}
+
+// Profile form: debounce 300ms to avoid accidental double-submit
+const profileForm = document.getElementById('profileForm');
+if (profileForm) {
+    const debouncedSave = debounce(() => handleUpdate('profileForm','btnSaveProfile','profileAlert'), 300);
+    profileForm.addEventListener('submit', e => { e.preventDefault(); debouncedSave(); });
+}
+
 <?php if (!$isAdmin): ?>
-document.getElementById('reviewForm')?.addEventListener('submit',  e => { e.preventDefault(); handleUpdate('reviewForm','btnSaveReview','reviewAlert'); });
+document.getElementById('reviewForm')?.addEventListener('submit', e => { e.preventDefault(); handleUpdate('reviewForm','btnSaveReview','reviewAlert'); });
 <?php endif; ?>
+
+// ── PDF / Print invoices ──────────────────────────────────────────────────────
+function printInvoices() {
+    const section = document.querySelector('#content-billing .bento-card:last-child');
+    if (!section) return;
+    const win = window.open('', '_blank', 'width=800,height=600');
+    win.document.write(`<!DOCTYPE html><html><head><title>Factures SlapIA</title>
+    <style>
+        body { font-family: sans-serif; background: #fff; color: #111; padding: 2rem; }
+        h3 { margin-bottom: 1.5rem; }
+        .invoice-row { display: flex; align-items: center; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid #eee; }
+        .invoice-row:last-child { border-bottom: none; }
+        a { color: #3b82f6; }
+        @media print { body { padding: 0; } }
+    </style></head><body>`);
+    win.document.write('<h3>Mes Factures — SlapIA</h3>');
+    section.querySelectorAll('.invoice-card').forEach(card => {
+        const name = card.querySelector('.text-white')?.textContent?.trim() || 'Document';
+        const link = card.querySelector('a[href]')?.href || '#';
+        win.document.write(`<div class="invoice-row"><span style="flex:1;">${name}</span><a href="${link}" target="_blank">Télécharger</a></div>`);
+    });
+    win.document.write('</body></html>');
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 300);
+}
 
 // ── Notification center ──────────────────────────────────────────────────────
 let dashNotifData   = [];
@@ -1572,18 +1505,17 @@ function updateSidebarBadge(count) {
     }
 }
 
-// ── On load: fetch notifs for sidebar badge ──────────────────────────────────
+// ── On load ───────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+    // Fetch notification count for sidebar badge
     fetch('/api/check-notifications.php')
         .then(r => r.json())
-        .then(data => {
-            if (data.success) updateSidebarBadge(data.unread_count || 0);
-        });
+        .then(data => { if (data.success) updateSidebarBadge(data.unread_count || 0); });
 
     <?php if ($isAdmin): ?>
-    // Auto-init chart if admin tab is visible on load
-    const adminContent = document.getElementById('content-admin');
-    if (adminContent && !adminContent.classList.contains('d-none')) initGrowthChart();
+    // If an admin tab is active on load (via URL hash), trigger lazy load
+    const hash = location.hash.replace('#','');
+    if (ADMIN_TABS.includes(hash)) loadAdminData(hash);
     <?php endif; ?>
 });
 </script>
