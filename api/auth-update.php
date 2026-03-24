@@ -30,6 +30,11 @@ try {
     $phone = trim($input['phone'] ?? '');
     $company = trim($input['company'] ?? '');
     $job = trim($input['job'] ?? '');
+    $location = trim($input['location'] ?? '');
+    $linkedin = trim($input['linkedin'] ?? '');
+    $password = $input['password'] ?? '';
+    $satisfaction = trim($input['satisfaction'] ?? '');
+    $avis = trim($input['avis'] ?? '');
 
     if (empty($fullName)) {
         ob_clean();
@@ -51,7 +56,7 @@ try {
         ]
     ];
 
-    // If company exists, assuming 'Nom d\'entreprise' is a rich_text (or select if strictly typed but text is safer)
+    // If company exists
     if (isset($input['company'])) {
         $updateData['properties']['Nom d\'entreprise'] = [
             'rich_text' => [['text' => ['content' => $company]]]
@@ -62,6 +67,42 @@ try {
     if (isset($input['job'])) {
         $updateData['properties']['Job'] = [
             'rich_text' => [['text' => ['content' => $job]]]
+        ];
+    }
+
+    // Location
+    if (isset($input['location'])) {
+        $updateData['properties']['Location'] = [
+            'rich_text' => [['text' => ['content' => $location]]]
+        ];
+    }
+
+    // Linkedin
+    if (isset($input['linkedin'])) {
+        $updateData['properties']['Linkedin'] = [
+            'url' => empty($linkedin) ? null : $linkedin
+        ];
+    }
+
+    // Password Update
+    if (!empty($password)) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        $updateData['properties']['Mot de passe'] = [
+            'rich_text' => [['text' => ['content' => $hashedPassword]]]
+        ];
+    }
+
+    // Satisfaction (Select with Stars)
+    if (!empty($satisfaction)) {
+        $updateData['properties']['Satisfaction'] = [
+            'select' => ['name' => $satisfaction]
+        ];
+    }
+
+    // Avis clients
+    if (isset($input['avis'])) {
+        $updateData['properties']['Avis clients'] = [
+            'rich_text' => [['text' => ['content' => $avis]]]
         ];
     }
 
