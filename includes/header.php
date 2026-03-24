@@ -177,8 +177,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <div class="mobile-contact-btn pt-3">
         <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
             <a href="/dashboard" class="btn-primary-glow w-100 justify-content-center mb-2 p-2" style="border-radius: 999px; display:flex; align-items:center; text-decoration:none; gap: 10px;">
-                <?php if (!empty($_SESSION['user_photo'])): ?>
-                    <img src="<?php echo $_SESSION['user_photo']; ?>" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);">
+                <?php if (!empty($_SESSION['user_id'])): ?>
+                    <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);" loading="lazy">
                 <?php else: ?>
                     <i class="fas fa-user-circle"></i>
                 <?php endif; ?>
@@ -257,8 +257,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         </div>
 
         <a href="/dashboard" class="account-pill hover-glow shadow-sm" title="<?php echo t('dash_title'); ?>">
-            <?php if (!empty($_SESSION['user_photo'])): ?>
-                <img src="<?php echo $_SESSION['user_photo']; ?>" alt="Profile" class="account-img shadow-lg">
+            <?php if (!empty($_SESSION['user_id'])): ?>
+                <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" class="account-img shadow-lg" loading="lazy">
             <?php else: ?>
                 <i class="fas fa-user-circle text-white opacity-75 fs-5"></i>
             <?php endif; ?>

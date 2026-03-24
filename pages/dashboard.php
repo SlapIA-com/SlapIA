@@ -39,26 +39,8 @@ $memberSince = isset($userPage['created_time'])
     ? date('M Y', strtotime($userPage['created_time']))
     : '';
 
-// Photo / icon
-$getUserIcon = function() use ($icon) {
-    if (!$icon) return null;
-    if ($icon['type'] === 'emoji')    return $icon['emoji'];
-    if ($icon['type'] === 'external') return $icon['external']['url'];
-    if ($icon['type'] === 'file')     return $icon['file']['url'];
-    return null;
-};
-
-// Sync session
+// Sync session name (avatar is served by /api/notion-avatar.php — no expiring URL stored)
 $_SESSION['user_name'] = $props['Prenom NOM']['title'][0]['text']['content'] ?? $_SESSION['user_name'];
-$photoProperty = $props['Photo']['files'] ?? [];
-$photoUrl = '';
-if (!empty($photoProperty)) {
-    $photoUrl = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
-}
-if (empty($photoUrl) && $icon && in_array($icon['type'], ['external','file'])) {
-    $photoUrl = $icon[$icon['type']]['url'] ?? '';
-}
-$_SESSION['user_photo'] = $photoUrl;
 
 // ─── Property helpers ─────────────────────────────────────────────────────────
 $getUserName         = fn() => $props['Prenom NOM']['title'][0]['text']['content']                  ?? '';
@@ -515,18 +497,16 @@ $csrfToken = generateCSRFToken();
 <!-- ══ HEADER ═══════════════════════════════════════════════════════════════ -->
 <div class="row mb-4 align-items-center fade-in-up">
     <div class="col-md-auto mb-4 mb-md-0">
-        <?php $userIcon = $getUserIcon(); ?>
         <div class="dash-header-avatar position-relative rounded-4 overflow-hidden border border-white border-opacity-10 shadow-lg"
              style="width:120px;height:120px;background:rgba(255,255,255,.03);">
-            <?php if ($userIcon && strpos($userIcon,'http') === 0): ?>
-                <img src="<?php echo htmlspecialchars($userIcon); ?>" alt="Photo de profil" class="w-100 h-100" style="object-fit:cover;">
-            <?php elseif ($userIcon): ?>
-                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="font-size:3.5rem;"><?php echo $userIcon; ?></div>
-            <?php else: ?>
-                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white" style="background:rgba(191,90,242,.15);font-size:2.5rem;">
-                    <i class="fas fa-user"></i>
-                </div>
-            <?php endif; ?>
+            <img src="/api/notion-avatar.php?id=<?php echo urlencode($userId); ?>"
+                 alt="Photo de profil"
+                 class="w-100 h-100"
+                 style="object-fit:cover;"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <div class="w-100 h-100 align-items-center justify-content-center text-white" style="background:rgba(191,90,242,.15);font-size:2.5rem;display:none;">
+                <i class="fas fa-user"></i>
+            </div>
             <?php if ($completionPct === 100): ?>
             <div class="position-absolute bottom-0 end-0 m-1">
                 <div style="width:22px;height:22px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:.6rem;border:2px solid #000;">
@@ -795,21 +775,14 @@ $csrfToken = generateCSRFToken();
                         $pbProps = $pb['properties'] ?? [];
                         $pbName  = $getNotionProp($pbProps['Prenom NOM']) ?: 'N.A';
                         $pbEmail = $getNotionProp($pbProps['Email']);
-                        $pbPhoto = '';
-                        $pbPhotoFiles = $pbProps['Photo']['files'] ?? [];
-                        if (!empty($pbPhotoFiles)) {
-                            $pbPhoto = $pbPhotoFiles[0]['file']['url'] ?? $pbPhotoFiles[0]['external']['url'] ?? '';
-                        }
-                        if (empty($pbPhoto) && isset($pb['icon']) && $pb['icon']['type'] !== 'emoji') {
-                            $t = $pb['icon']['type'];
-                            $pbPhoto = $pb['icon'][$t]['url'] ?? '';
-                        }
+                        $pbPageId = $pb['id'] ?? '';
                     ?>
                     <div class="col-md-6 col-lg-4">
                         <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
-                            <div class="rounded-circle overflow-hidden flex-shrink-0" style="width:44px;height:44px;background:#333;">
-                                <?php if ($pbPhoto): ?>
-                                    <img src="<?php echo htmlspecialchars($pbPhoto); ?>" alt="" class="w-100 h-100" style="object-fit:cover;">
+                            <div class="rounded-circle overflow-hidden flex-shrink-0" style="width:44px;height:44px;background:#1a1a2e;">
+                                <?php if ($pbPageId): ?>
+                                    <img src="/api/notion-avatar.php?id=<?php echo urlencode($pbPageId); ?>"
+                                         alt="" class="w-100 h-100" style="object-fit:cover;" loading="lazy">
                                 <?php else: ?>
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"><i class="fas fa-user"></i></div>
                                 <?php endif; ?>
@@ -1172,14 +1145,22 @@ $csrfToken = generateCSRFToken();
                         </thead>
                         <tbody>
                             <?php foreach ($adminData['list_users'] as $u):
-                                $uStatus = $getNotionProp($u['properties']['Status']) ?: 'Client';
-                                $uName   = $getNotionProp($u['properties']['Prenom NOM']) ?: 'N.A';
-                                $uEmail  = $getNotionProp($u['properties']['Email']);
-                                $uCo     = $getNotionProp($u['properties']['Nom d\'entreprise']);
+                                $uStatus  = $getNotionProp($u['properties']['Status']) ?: 'Client';
+                                $uName    = $getNotionProp($u['properties']['Prenom NOM']) ?: 'N.A';
+                                $uEmail   = $getNotionProp($u['properties']['Email']);
+                                $uCo      = $getNotionProp($u['properties']['Nom d\'entreprise']);
+                                $uPageId  = $u['id'] ?? '';
                             ?>
                             <tr class="align-middle">
                                 <td class="py-3">
-                                    <span class="text-white fw-medium"><?php echo htmlspecialchars($uName); ?></span>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <?php if ($uPageId): ?>
+                                        <img src="/api/notion-avatar.php?id=<?php echo urlencode($uPageId); ?>"
+                                             alt="" loading="lazy"
+                                             style="width:34px;height:34px;border-radius:50%;object-fit:cover;background:#1a1a2e;border:1px solid rgba(255,255,255,.08);flex-shrink:0;">
+                                        <?php endif; ?>
+                                        <span class="text-white fw-medium"><?php echo htmlspecialchars($uName); ?></span>
+                                    </div>
                                 </td>
                                 <td class="py-3 text-secondary small"><?php echo htmlspecialchars($uEmail); ?></td>
                                 <td class="py-3 text-secondary small opacity-75"><?php echo htmlspecialchars($uCo); ?></td>
