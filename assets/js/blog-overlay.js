@@ -215,4 +215,12 @@
         window._blogDelegatedListenerAdded = true;
     }
 
+    // Auto-init on first load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.initBlogOverlay);
+    } else {
+        // Use a slight timeout to ensure DOM (even if parsed) is fully ready
+        setTimeout(window.initBlogOverlay, 100);
+    }
+
 })();
