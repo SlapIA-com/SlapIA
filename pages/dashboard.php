@@ -176,7 +176,7 @@ $invoices = $props['Factures']['files'] ?? [];
                 <p class="text-secondary lead mb-0" style="opacity: 0.8;"><?php echo t('dash_welcome'); ?>, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</p>
             </div>
             <div class="col-md-auto mt-4 mt-md-0">
-                <a href="/api/auth-logout.php" class="btn btn-sm px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2" 
+                <a href="/api/auth-logout.php" data-no-swup class="btn btn-sm px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2" 
                    style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; text-decoration: none; transition: all 0.3s ease;">
                     <i class="fas fa-sign-out-alt"></i> <?php echo t('dash_logout'); ?>
                 </a>
