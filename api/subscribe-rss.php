@@ -95,7 +95,7 @@ try {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
-    curl_close($ch);
+    unset($ch);
 
     if ($curlError || $httpCode !== 200) {
         error_log("[RSS Subscribe] Notion API Error: $httpCode - Response: $response");
