@@ -182,23 +182,27 @@ function render_reviews_section($reviews)
         $prof = htmlspecialchars($r['profession'] ?? '');
         $avis = htmlspecialchars($r['avis'] ?? '');
         $note = isset($r['note']) ? floatval($r['note']) : 0;
-        $photo = $r['photo'] ?? null;
         $linkedin = $r['linkedin'] ?? '';
         $name = trim($prenom . ' ' . $nom);
         $initials = strtoupper(($prenom ? $prenom[0] : '') . ($nom ? $nom[0] : ''));
+        // Use the avatar proxy if we have a page_id (never expires), fallback to direct URL
+        $pageId = $r['page_id'] ?? null;
+        $avatarSrc = $pageId
+            ? '/api/notion-avatar.php?id=' . urlencode($pageId)
+            : ($r['photo'] ?? null);
         if (empty($avis))
             continue;
 ?>
                     <div class="review-item">
                         <div class="review-header">
                             <div class="review-avatar">
-                                <?php if ($photo): ?>
-                                    <img src="<?php echo htmlspecialchars($photo); ?>" alt="<?php echo $name; ?>" loading="lazy"/>
-                                <?php
-        else: ?>
+                                <?php if ($avatarSrc): ?>
+                                    <img src="<?php echo htmlspecialchars($avatarSrc); ?>" alt="<?php echo $name; ?>" loading="lazy"
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                    <span style="display:none"><?php echo $initials; ?></span>
+                                <?php else: ?>
                                     <?php echo $initials; ?>
-                                <?php
-        endif; ?>
+                                <?php endif; ?>
                             </div>
                             <div class="review-info">
                                 <?php if (!empty($linkedin)): ?>

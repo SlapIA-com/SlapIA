@@ -503,27 +503,20 @@ function getNotionReviews($limit = 20, $lang = 'fr') {
             }
         }
 
-        // Si pas de photo via propriété, essayer l'icône de la page
-        if (empty($photo) && isset($page['icon'])) {
-            $icon = $page['icon'];
-            if ($icon['type'] === 'emoji') {
-               // On ne gère pas les emojis comme images pour l'instant
-            } elseif ($icon['type'] === 'file' || $icon['type'] === 'external') {
-                $url = $icon[$icon['type']]['url'] ?? null;
-                if ($url) $photo = $url;
-            }
-        }
+        // Page ID — used by the avatar proxy (/api/notion-avatar.php?id=...)
+        $pageId = $page['id'] ?? null;
 
         $reviews[] = [
-            'prenom' => $prenom,
-            'nom' => $nom,
-            'profession' => $profession,
-            'avis' => $avis,
-            'note' => $note,
-            'photo' => $photo,
-            'status' => $status,
-            'entreprise' => $entreprise,
-            'linkedin' => $linkedin
+            'prenom'    => $prenom,
+            'nom'       => $nom,
+            'profession'=> $profession,
+            'avis'      => $avis,
+            'note'      => $note,
+            'photo'     => $photo,   // kept for backward compat but proxy is preferred
+            'page_id'   => $pageId,  // Notion page ID for the avatar proxy
+            'status'    => $status,
+            'entreprise'=> $entreprise,
+            'linkedin'  => $linkedin
         ];
 
         if (count($reviews) >= $limit) break;
