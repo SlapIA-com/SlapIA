@@ -214,6 +214,15 @@ try {
     $_SESSION['user_id'] = $userPage['id'];
     $_SESSION['user_email'] = $email;
     $_SESSION['user_name'] = $fullName;
+    
+    // Extract Photo URL
+    $photoProperty = $userPage['properties']['Photo']['files'] ?? [];
+    $photoUrl = '';
+    if (count($photoProperty) > 0) {
+        $photoUrl = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
+    }
+    $_SESSION['user_photo'] = $photoUrl;
+    
     $_SESSION['logged_in'] = true;
 
     ob_clean();

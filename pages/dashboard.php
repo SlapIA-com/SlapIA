@@ -42,6 +42,13 @@ $getUserIcon = function() use ($icon) {
     return null;
 };
 
+// Sync session with Notion photo/name
+$_SESSION['user_name'] = $props['Prenom NOM']['title'][0]['text']['content'] ?? $_SESSION['user_name'];
+$photoProperty = $props['Photo']['files'] ?? [];
+if (count($photoProperty) > 0) {
+    $_SESSION['user_photo'] = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
+}
+
 // Helper functions to safely extract data
 $getUserName = fn() => $props['Prenom NOM']['title'][0]['text']['content'] ?? '';
 $getUserEmail = fn() => $props['Email']['email'] ?? '';
@@ -57,6 +64,84 @@ $getAvis = fn() => $props['Avis clients']['rich_text'][0]['text']['content'] ?? 
 // Fetch Invoices (Files)
 $invoices = $props['Factures']['files'] ?? [];
 ?>
+
+<style>
+/* Dashboard Mobile Enhancements */
+@media (max-width: 767px) {
+    .dashboard-section {
+        padding-top: 2rem !important;
+    }
+    .dashboard-section .row.align-items-center {
+        text-align: center;
+        flex-direction: column;
+    }
+    .dashboard-section .col-md-auto {
+        margin-bottom: 20px;
+    }
+    .dashboard-section .col-md-auto div[style*="width: 140px"] {
+        width: 100px !important;
+        height: 100px !important;
+        margin: 0 auto;
+    }
+    .dashboard-section .col-md-auto div[style*="font-size: 4.5rem"] {
+        font-size: 3rem !important;
+    }
+    .dashboard-section .display-5 {
+        font-size: 2rem;
+    }
+    
+    /* Sidebar Tabs for Mobile */
+    .dashboard-section .col-lg-3 .bento-card {
+        margin-bottom: 20px;
+    }
+    .dashboard-section .list-group {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        scrollbar-width: none;
+    }
+    .dashboard-section .list-group::-webkit-scrollbar {
+        display: none;
+    }
+    .dashboard-section .list-group-item {
+        margin-bottom: 0 !important;
+        margin-right: 8px;
+        white-space: nowrap;
+        padding: 10px 20px !important;
+        background: rgba(255,255,255,0.03) !important;
+    }
+    .dashboard-section .list-group-item.active {
+        background: var(--accent-purple) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* Form Adjustments */
+    .bento-card.p-md-5 {
+        padding: 25px !important;
+    }
+    .bento-card .h4 {
+        font-size: 1.25rem;
+        justify-content: center;
+    }
+    
+    /* Billing Table */
+    .table thead th {
+        font-size: 0.7rem;
+    }
+    .table td {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tab Content Transitions */
+.tab-content.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 
 <div class="grid-bg"></div>
 <!-- Dashboard Layout -->
@@ -123,36 +208,36 @@ $invoices = $props['Factures']['files'] ?? [];
 
                             <div class="row g-4">
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_full_name'); ?></label>
-                                    <input type="text" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="name" value="<?php echo htmlspecialchars($getUserName()); ?>" required>
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_full_name'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="name" value="<?php echo htmlspecialchars($getUserName()); ?>" required style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_email_readonly'); ?></label>
-                                    <input type="email" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" value="<?php echo htmlspecialchars($props['Email']['email'] ?? ''); ?>" disabled>
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_email_readonly'); ?></label>
+                                    <input type="email" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" value="<?php echo htmlspecialchars($getUserEmail()); ?>" disabled style="background: rgba(255,255,255,0.03) !important; color: rgba(255,255,255,0.6) !important; cursor: not-allowed; border-color: rgba(255,255,255,0.05) !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_new_password'); ?></label>
-                                    <input type="password" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="password" placeholder="<?php echo t('dash_password_hint'); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_new_password'); ?></label>
+                                    <input type="password" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="password" placeholder="<?php echo t('dash_password_hint'); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_phone'); ?></label>
-                                    <input type="text" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="phone" value="<?php echo htmlspecialchars($getUserPhone()); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_phone'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="phone" value="<?php echo htmlspecialchars($getUserPhone()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_linkedin_link'); ?></label>
-                                    <input type="url" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="linkedin" value="<?php echo htmlspecialchars($getUserLinkedin()); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_linkedin_link'); ?></label>
+                                    <input type="url" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="linkedin" value="<?php echo htmlspecialchars($getUserLinkedin()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_location_city'); ?></label>
-                                    <input type="text" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="location" value="<?php echo htmlspecialchars($getUserLocation()); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_location_city'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="location" value="<?php echo htmlspecialchars($getUserLocation()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_company'); ?></label>
-                                    <input type="text" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="company" value="<?php echo htmlspecialchars($getUserCompany()); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_company'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="company" value="<?php echo htmlspecialchars($getUserCompany()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-bold text-uppercase mb-2"><?php echo t('dash_job_title'); ?></label>
-                                    <input type="text" class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-3" name="job" value="<?php echo htmlspecialchars($getUserJob()); ?>">
+                                    <label class="form-label text-white opacity-50 small fw-bold text-uppercase mb-2"><?php echo t('dash_job_title'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-white border-opacity-10 text-white p-3 rounded-3" name="job" value="<?php echo htmlspecialchars($getUserJob()); ?>" style="background: rgba(255,255,255,0.05) !important; color: white !important;">
                                 </div>
                             </div>
 
@@ -173,40 +258,40 @@ $invoices = $props['Factures']['files'] ?? [];
                                 <h3 class="h4 text-white fw-bold mb-1"><?php echo t('dash_billing_history'); ?></h3>
                                 <p class="text-secondary small mb-0"><?php echo t('dash_billing_subtitle'); ?></p>
                             </div>
-                            <div class="badge rounded-pill px-3 py-2 bg-white bg-opacity-5 border border-white border-opacity-10 text-secondary">
-                                <?php echo t('dash_table_status'); ?>: <span class="text-white"><?php echo htmlspecialchars($getFacturationStatus()); ?></span>
+                            <div class="badge rounded-pill px-3 py-2 border border-white border-opacity-10" style="background: rgba(255,255,255,0.03); color: #a1a1aa;">
+                                <span class="opacity-75"><?php echo t('dash_table_status'); ?>:</span> <span class="text-white fw-bold ms-1"><?php echo htmlspecialchars($getFacturationStatus()); ?></span>
                             </div>
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table text-white border-white border-opacity-10" style="--bs-table-bg: transparent;">
+                            <table class="table text-white border-white border-opacity-10" style="--bs-table-bg: transparent; --bs-table-color: white;">
                                 <thead>
-                                    <tr class="text-secondary small text-uppercase">
-                                        <th class="border-opacity-10 py-3"><?php echo t('dash_table_doc'); ?></th>
-                                        <th class="border-opacity-10 py-3"><?php echo t('dash_table_date'); ?></th>
-                                        <th class="border-opacity-10 py-3 text-end"><?php echo t('dash_table_actions'); ?></th>
+                                    <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
+                                        <th class="py-3" style="color: #71717a; border: 0;"><?php echo t('dash_table_doc'); ?></th>
+                                        <th class="py-3" style="color: #71717a; border: 0;"><?php echo t('dash_table_date'); ?></th>
+                                        <th class="py-3 text-end" style="color: #71717a; border: 0;"><?php echo t('dash_table_actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (empty($invoices)): ?>
                                         <tr>
-                                            <td colspan="3" class="text-center text-secondary py-5">
+                                            <td colspan="3" class="text-center text-secondary py-5 border-0">
                                                 <i class="fas fa-folder-open mb-3 d-block" style="font-size: 2.5rem; opacity: 0.3;"></i>
                                                 <?php echo t('dash_no_documents'); ?>
                                             </td>
                                         </tr>
                                     <?php else: ?>
                                         <?php foreach ($invoices as $inv): ?>
-                                            <tr class="align-middle">
+                                            <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
                                                 <td class="py-3">
                                                     <div class="d-flex align-items-center">
                                                         <i class="far fa-file-pdf text-danger fs-4 me-3"></i>
-                                                        <span><?php echo htmlspecialchars($inv['name']); ?></span>
+                                                        <span class="text-white fw-medium"><?php echo htmlspecialchars($inv['name']); ?></span>
                                                     </div>
                                                 </td>
-                                                <td class="py-3 text-secondary"><?php echo date('d/m/Y'); ?></td>
+                                                <td class="py-3 text-secondary opacity-75"><?php echo date('d/m/Y'); ?></td>
                                                 <td class="py-3 text-end">
-                                                    <a href="<?php echo $inv['file']['url'] ?? $inv['external']['url'] ?? '#'; ?>" target="_blank" class="btn btn-outline-glass btn-sm px-3 rounded-pill text-white border-white border-opacity-25">
+                                                    <a href="<?php echo $inv['file']['url'] ?? $inv['external']['url'] ?? '#'; ?>" target="_blank" class="btn btn-outline-glass btn-sm px-3 rounded-pill text-white" style="border-color: rgba(255,255,255,0.15);">
                                                         <i class="fas fa-download me-1"></i> <?php echo t('dash_download'); ?>
                                                     </a>
                                                 </td>
@@ -234,12 +319,13 @@ $invoices = $props['Factures']['files'] ?? [];
                                 <div class="d-flex justify-content-center gap-3 mb-2">
                                     <?php 
                                     $currentStars = 0;
-                                    $sat = mb_strtolower($getSatisfaction());
-                                    if(strpos($sat, '5') !== false) $currentStars = 5;
-                                    elseif(strpos($sat, '4') !== false) $currentStars = 4;
-                                    elseif(strpos($sat, '3') !== false) $currentStars = 3;
-                                    elseif(strpos($sat, '2') !== false) $currentStars = 2;
-                                    elseif(strpos($sat, '1') !== false) $currentStars = 1;
+                                    $sat = (string)($props['Satisfaction']['select']['name'] ?? '');
+                                    // Robust star counting from Select (e.g. "⭐⭐⭐⭐⭐" or "5 étoiles" or "5/5")
+                                    if(preg_match('/[1-5]/', $sat, $matches)) {
+                                        $currentStars = (int)$matches[0];
+                                    } elseif(strpos($sat, '⭐') !== false) {
+                                        $currentStars = mb_substr_count($sat, '⭐');
+                                    }
                                     ?>
                                     <input type="hidden" name="satisfaction" id="satisfactionInput" value="<?php echo str_repeat('⭐', $currentStars); ?>">
                                     <?php for($i=1; $i<=5; $i++): ?>
@@ -251,7 +337,7 @@ $invoices = $props['Factures']['files'] ?? [];
 
                             <div class="mb-4">
                                 <label class="form-label text-secondary small fw-bold text-uppercase mb-3"><?php echo t('dash_review_label'); ?></label>
-                                <textarea class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-3 rounded-4" name="avis" rows="6" placeholder="<?php echo t('dash_review_placeholder'); ?>"><?php echo htmlspecialchars($getAvis()); ?></textarea>
+                                <textarea class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-4 rounded-4" name="avis" rows="12" placeholder="<?php echo t('dash_review_placeholder'); ?>" style="background: rgba(255,255,255,0.03) !important; min-height: 250px; line-height: 1.6;"><?php echo htmlspecialchars($getAvis()); ?></textarea>
                             </div>
 
                             <div class="d-flex justify-content-end">

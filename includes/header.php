@@ -155,8 +155,13 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     </a>
     <div class="mobile-contact-btn pt-3">
         <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-            <a href="/dashboard" class="btn-primary-glow w-100 justify-content-center mb-2" style="border-radius: 999px; display:flex; align-items:center; text-decoration:none;">
-                <i class="fas fa-user-circle me-2"></i> Mon Espace
+            <a href="/dashboard" class="btn-primary-glow w-100 justify-content-center mb-2 p-2" style="border-radius: 999px; display:flex; align-items:center; text-decoration:none; gap: 10px;">
+                <?php if (!empty($_SESSION['user_photo'])): ?>
+                    <img src="<?php echo $_SESSION['user_photo']; ?>" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);">
+                <?php else: ?>
+                    <i class="fas fa-user-circle"></i>
+                <?php endif; ?>
+                Mon Espace
             </a>
         <?php else: ?>
             <a href="/login" class="btn-outline-glass w-100 justify-content-center mb-2" style="display:flex; align-items:center; text-decoration:none;">
@@ -171,36 +176,30 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 
 <!-- Floating Dock Navbar -->
 <nav class="dock-nav">
+    <!-- Brand -->
     <a href="/" class="dock-brand">
-        <img src="/assets/img/brand/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy"> SlapIA
+        <img src="/assets/img/brand/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy">
+        <span class="ms-2 d-none d-lg-inline">SlapIA</span>
     </a>
     
-    <!-- Right: Navigation & Action -->
-    <div class="d-flex align-items-center gap-4">
-        <div class="dock-links-container d-none d-md-flex">
-            <div class="nav-liquid-pill"></div>
-            <a href="/" class="dock-link <?php echo $slug == 'index' ? 'active' : ''; ?>"><?php echo t('home'); ?></a>
-            <a href="/formation" class="dock-link <?php echo $slug == 'formation' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
-            <a href="/entreprises" class="dock-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
-            <a href="/expertise" class="dock-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
-            <a href="/blog" class="dock-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">Blog</a>
-        </div>
-        <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;" title="<?php echo $lang === 'en' ? t('lang_fr') : t('lang_en'); ?>">
-            <i class="fas fa-flag" style="margin-right: 6px;"></i> <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>
+    <!-- Navigation Links -->
+    <div class="dock-links-container d-none d-md-flex">
+        <div class="nav-liquid-pill"></div>
+        <a href="/" class="dock-link <?php echo $slug == 'index' ? 'active' : ''; ?>"><?php echo t('home'); ?></a>
+        <a href="/formation" class="dock-link <?php echo $slug == 'formation' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
+        <a href="/entreprises" class="dock-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
+        <a href="/expertise" class="dock-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
+        <a href="/blog" class="dock-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">Blog</a>
+    </div>
+    
+    <!-- Dock Actions (Wait, only Lang and Contact here) -->
+    <div class="d-flex align-items-center gap-2">
+        <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="btn btn-sm btn-apple px-3 py-2 fw-bold d-none d-sm-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
+            <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>
         </a>
-        <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold" style="font-size: 0.8rem;">
+        <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold d-none d-md-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
             <?php echo t('contact'); ?>
         </a>
-        
-        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-            <a href="/dashboard" class="btn btn-sm btn-primary-glow px-3 py-2 fw-bold" style="font-size: 0.8rem; border-radius: 999px;">
-                <i class="fas fa-user-circle me-1"></i> Mon Espace
-            </a>
-        <?php else: ?>
-            <a href="/login" class="btn btn-sm btn-outline-glass px-3 py-2 fw-bold" style="font-size: 0.8rem;">
-                <i class="fas fa-sign-in-alt me-1"></i> Connexion
-            </a>
-        <?php endif; ?>
         
         <!-- Mobile Menu Button -->
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
@@ -212,6 +211,23 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         </button>
     </div>
 </nav>
+
+<!-- Right Side Floating Account (Outside Dock) -->
+<div class="header-right-actions">
+    <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+        <a href="/dashboard" class="account-pill hover-glow shadow-sm" title="<?php echo t('dash_title'); ?>">
+            <?php if (!empty($_SESSION['user_photo'])): ?>
+                <img src="<?php echo $_SESSION['user_photo']; ?>" alt="Profile" class="account-img shadow-lg">
+            <?php else: ?>
+                <i class="fas fa-user-circle text-white opacity-75 fs-5"></i>
+            <?php endif; ?>
+        </a>
+    <?php else: ?>
+        <a href="/login" class="btn btn-sm btn-primary-glow px-4 py-2 fw-bold d-none d-md-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
+            <i class="fas fa-sign-in-alt me-1"></i> <?php echo t('login_title'); ?>
+        </a>
+    <?php endif; ?>
+</div>
 
 <script>
 function switchLanguage(lang) {
