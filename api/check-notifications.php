@@ -54,8 +54,8 @@ if (isset($props['Facturation']['select']['name'])) {
 if ($billingStatus === 'En attente') {
     $notifications[] = [
         'id' => 'user_pending_payment',
-        'title' => 'Paiement en attente',
-        'desc' => 'Votre accès est suspendu jusqu\'au règlement de votre facture.',
+        'title' => 'Vous devez vite régler votre facture !',
+        'desc' => 'Action requise pour conserver votre accès.',
         'ts' => time() + 5000, 
         'icon' => 'fas fa-exclamation-circle',
         'icon_bg' => 'bg-danger',
@@ -109,16 +109,7 @@ if ($status === 'Admin') {
 }
 
 // 2. Global Static Platform Notifications (Example)
-$notifications[] = [
-    'id' => 'pwa_launch',
-    'title' => 'SlapIA est mobile',
-    'desc' => 'Installez l\'application sur votre écran d\'accueil.',
-    'ts' => 1711294800, 
-    'icon' => 'fas fa-mobile-alt',
-    'icon_bg' => 'bg-primary',
-    'icon_color' => 'text-primary',
-    'link' => '#'
-];
+// (Removed Slapia est mobile as per user request)
 
 // Sort by timestamp descending
 usort($notifications, fn($a, $b) => $b['ts'] <=> $a['ts']);
