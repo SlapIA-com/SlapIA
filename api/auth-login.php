@@ -81,23 +81,35 @@ try {
         exit;
     }
 
-    // We assume the first matching result is the user
-    $userPage = $results[0];
-    
-    // Extract Hash Password from 'Mot de passe' property (Rich text)
-    $passwordProperty = $userPage['properties']['Mot de passe']['rich_text'] ?? [];
+    // The CRM might contain multiple entries for the same email (e.g. multiple contact form submissions)
+    // We must find the one that actually has a password defined!
+    $validUserPage = null;
     $storedHash = '';
-    if (count($passwordProperty) > 0) {
-        $storedHash = $passwordProperty[0]['text']['content'] ?? '';
+
+    foreach ($results as $page) {
+        $passwordProperty = $page['properties']['Mot de passe']['rich_text'] ?? [];
+        $hash = '';
+        if (count($passwordProperty) > 0) {
+            $hash = $passwordProperty[0]['text']['content'] ?? '';
+        }
+        
+        if (!empty($hash)) {
+            $validUserPage = $page;
+            $storedHash = $hash;
+            break; // Found the active account!
+        }
     }
 
-    if (empty($storedHash)) {
-        // No password set yet for this user (they might have been created manually in ERP but never registered on site)
+    if (!$validUserPage || empty($storedHash)) {
+        // No password set yet for this user
         ob_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => "Votre compte n'est pas encore activé. Veuillez suivre les instructions reçues par email ou nous contacter."]);
         exit;
     }
+
+    // Assign the valid page
+    $userPage = $validUserPage;
 
     // Verify password gracefully
     $needsHashUpgrade = false;
