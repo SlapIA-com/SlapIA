@@ -5,7 +5,7 @@
 
 include_once __DIR__ . '/../includes/config.php';
 $notionApiKey = config('NOTION_API_KEY');
-$notionDbId = config('NOTION_ERP_DATABASE_ID'); // ID de la base de données ERP complète
+$notionDbId = config('NOTION_SATISFACTION_DATABASE_ID'); // ID de la base de données ERP complète
 
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -65,13 +65,23 @@ try {
     unset($ch);
 
     if ($error || $httpCode >= 400) {
+        $responseData = json_decode($response, true);
+        $notionMsg = $responseData['message'] ?? $response ?? 'Erreur inconnue';
         ob_clean();
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Erreur de connexion à la base de données.']);
+        echo json_encode(['success' => false, 'error' => 'Notion HTTP ' . $httpCode . ' : ' . $notionMsg]);
         exit;
     }
 
     $responseData = json_decode($response, true);
+    if (!isset($responseData['results'])) {
+        ob_clean();
+        http_response_code(500);
+        $notionError = $responseData['message'] ?? 'Erreur inconnue de l\'API Notion';
+        echo json_encode(['success' => false, 'error' => 'Erreur API Notion : ' . $notionError]);
+        exit;
+    }
+
     $results = $responseData['results'] ?? [];
 
     if (count($results) === 0) {
@@ -181,5 +191,5 @@ try {
     ob_clean();
     error_log('[SlapIA Auth Login] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Erreur serveur interne.']);
+    echo json_encode(['success' => false, 'error' => 'Exception PHP : ' . $e->getMessage() . ' à la ligne ' . $e->getLine()]);
 }
