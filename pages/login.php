@@ -1,8 +1,11 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
+
 $page_title = 'Connexion - SlapIA';
 $page_description = 'Connectez-vous à votre espace personnel SlapIA';
-include 'includes/header.php';
-include 'includes/components.php';
+include '../includes/header.php';
+include '../includes/components.php';
 
 // Redirect to dashboard if already logged in
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
@@ -102,4 +105,4 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 });
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

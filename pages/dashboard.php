@@ -1,8 +1,11 @@
 <?php
+include_once '../includes/config.php';
+include_once '../includes/lang.php';
+
 $page_title = 'Mon Espace - SlapIA';
 $page_description = 'Gérez votre profil, vos formations et vos factures.';
-include 'includes/header.php';
-include 'includes/components.php';
+include '../includes/header.php';
+include '../includes/components.php';
 
 // Auth Protection
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -235,4 +238,4 @@ document.getElementById('profileForm').addEventListener('submit', async function
 });
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
