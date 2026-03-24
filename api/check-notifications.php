@@ -32,23 +32,23 @@ $res = curl_exec($ch);
 $userData = json_decode($res, true);
 $props = $userData['properties'] ?? [];
 
-// Detect New Invoices
-$invoices = $props['Factures']['files'] ?? [];
-if (!empty($invoices)) {
-    // We take the last one added (Notion usually appends to the end)
-    $latest = end($invoices);
-    $notifId = md5($latest['name']); // Stable ID for this file
-    
+// Detect Invoices (Last 3)
+$invoices = array_reverse($props['Factures']['files'] ?? []);
+$invCount = 0;
+foreach ($invoices as $inv) {
+    if ($invCount >= 3) break;
+    $notifId = md5($inv['name']);
     $notifications[] = [
         'id' => 'inv_' . $notifId,
-        'title' => 'Nouvelle facture',
-        'desc' => htmlspecialchars($latest['name']),
-        'ts' => strtotime($userData['last_edited_time']), // Approximation of when it was added
+        'title' => 'Facture disponible',
+        'desc' => htmlspecialchars($inv['name']),
+        'ts' => strtotime($userData['last_edited_time']), 
         'icon' => 'fas fa-file-invoice-dollar',
         'icon_bg' => 'bg-success',
         'icon_color' => 'text-success',
         'link' => '/dashboard?tab=billing'
     ];
+    $invCount++;
 }
 
 // Support for Admin Status change notification
@@ -68,10 +68,21 @@ if ($status === 'Admin') {
 
 // 2. Global Static Platform Notifications (Example)
 $notifications[] = [
+    'id' => 'system_ready',
+    'title' => 'Système Connecté',
+    'desc' => 'Le pont avec Notion CRM est actif.',
+    'ts' => time(), // Always "new" for debug
+    'icon' => 'fas fa-plug',
+    'icon_bg' => 'bg-info',
+    'icon_color' => 'text-info',
+    'link' => '#'
+];
+
+$notifications[] = [
     'id' => 'pwa_launch',
     'title' => 'SlapIA est mobile',
     'desc' => 'Installez l\'application sur votre écran d\'accueil.',
-    'ts' => 1711294800, // Fixed TS for this announcement
+    'ts' => 1711294800, 
     'icon' => 'fas fa-mobile-alt',
     'icon_bg' => 'bg-primary',
     'icon_color' => 'text-primary',
