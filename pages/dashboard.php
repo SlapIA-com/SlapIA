@@ -71,6 +71,18 @@ $getSatisfaction = fn() => $props['Satisfaction']['select']['name'] ?? '';
 $getAvis = fn() => $props['Avis clients']['rich_text'][0]['text']['content'] ?? '';
 $getUserStatus = fn() => $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? 'Client';
 
+// Admin Property Helper
+$getNotionProp = function($p) {
+    if (!$p) return '';
+    $type = $p['type'] ?? '';
+    if (($type === 'title' || $type === 'rich_text') && !empty($p[$type])) {
+        return $p[$type][0]['plain_text'] ?? '';
+    }
+    if ($type === 'email') return $p['email'] ?? '';
+    if ($type === 'select') return $p['select']['name'] ?? '';
+    return '';
+};
+
 // Fetch Invoices (Files)
 $invoices = $props['Factures']['files'] ?? [];
 
@@ -531,7 +543,7 @@ if ($isAdmin) {
                                     <div class="rounded-3 p-2 me-3" style="background: rgba(88, 86, 214, 0.2);"><i class="fas fa-users text-primary"></i></div>
                                     <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_users'); ?></span>
                                 </div>
-                                <h2 class="text-white mb-0"><?php echo count($adminData['list_users']); ?>+</h2>
+                                <h2 class="text-white mb-0"><?php echo count($adminData['list_users']); ?></h2>
                             </div>
                         </div>
                         <!-- KPI Card: Leads -->
@@ -541,7 +553,7 @@ if ($isAdmin) {
                                     <div class="rounded-3 p-2 me-3" style="background: rgba(255, 149, 0, 0.2);"><i class="fas fa-bolt text-warning"></i></div>
                                     <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_leads'); ?></span>
                                 </div>
-                                <h2 class="text-white mb-0"><?php echo $adminData['leads']; ?>+</h2>
+                                <h2 class="text-white mb-0"><?php echo $adminData['leads']; ?></h2>
                             </div>
                         </div>
                         <!-- KPI Card: Newsletter -->
@@ -551,7 +563,7 @@ if ($isAdmin) {
                                     <div class="rounded-3 p-2 me-3" style="background: rgba(52, 199, 89, 0.2);"><i class="fas fa-paper-plane text-success"></i></div>
                                     <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_subscribers'); ?></span>
                                 </div>
-                                <h2 class="text-white mb-0"><?php echo count($adminData['list_newsletter']); ?>+</h2>
+                                <h2 class="text-white mb-0"><?php echo count($adminData['list_newsletter']); ?></h2>
                             </div>
                         </div>
                     </div>
@@ -581,7 +593,7 @@ if ($isAdmin) {
                                         </div>
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between mb-1">
-                                                <h6 class="text-white mb-0 fw-bold"><?php echo htmlspecialchars($act['name']); ?></h6>
+                                                <h6 class="text-white mb-0 fw-bold"><?php echo htmlspecialchars($act['name'] ?: 'Inscrit'); ?></h6>
                                                 <span class="text-secondary x-small"><?php echo $act['date']; ?></span>
                                             </div>
                                             <p class="text-secondary small mb-0 opacity-75"><?php echo htmlspecialchars($act['email']); ?></p>
@@ -600,7 +612,7 @@ if ($isAdmin) {
                                 <button class="btn btn-sm px-4 py-2 rounded-pill" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
                                     Rénitialiser le Cache
                                 </button>
-                                <button class="btn btn-sm px-4 py-2 rounded-pill" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
+                                <button class="btn btn-sm px-4 py-2 rounded-pill" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;" onclick="switchTab('admin-emails')">
                                     Réinitialiser un mot de passe
                                 </button>
                             </div>
@@ -625,7 +637,7 @@ if ($isAdmin) {
                                 <tbody>
                                     <?php foreach($adminData['list_newsletter'] as $n): ?>
                                         <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
-                                            <td class="py-3 text-white"><?php echo htmlspecialchars($n['properties']['Email']['title'][0]['text']['content'] ?? ''); ?></td>
+                                            <td class="py-3 text-white"><?php echo htmlspecialchars($getNotionProp($n['properties']['Email'])); ?></td>
                                             <td class="py-3 text-secondary small"><?php echo date('d/m/Y H:i', strtotime($n['created_time'])); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -648,14 +660,20 @@ if ($isAdmin) {
                                         <th class="py-3 border-0">Nom</th>
                                         <th class="py-3 border-0">Email</th>
                                         <th class="py-3 border-0">Entreprise</th>
+                                        <th class="py-3 border-0 text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach($adminData['list_users'] as $u): ?>
                                         <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
-                                            <td class="py-3 text-white fw-medium"><?php echo htmlspecialchars($u['properties']['Prenom NOM']['title'][0]['text']['content'] ?? 'N.A'); ?></td>
-                                            <td class="py-3 text-secondary"><?php echo htmlspecialchars($u['properties']['Email']['email'] ?? ''); ?></td>
-                                            <td class="py-3 small text-secondary opacity-75"><?php echo htmlspecialchars($u['properties']['Nom d\'entreprise']['rich_text'][0]['text']['content'] ?? ''); ?></td>
+                                            <td class="py-3 text-white fw-medium"><?php echo htmlspecialchars($getNotionProp($u['properties']['Prenom NOM']) ?: 'N.A'); ?></td>
+                                            <td class="py-3 text-secondary"><?php echo htmlspecialchars($getNotionProp($u['properties']['Email'])); ?></td>
+                                            <td class="py-3 small text-secondary opacity-75"><?php echo htmlspecialchars($getNotionProp($u['properties']['Nom d\'entreprise'])); ?></td>
+                                            <td class="py-3 text-end">
+                                                <a href="/admin-reset-pwd?email=<?php echo urlencode($getNotionProp($u['properties']['Email'])); ?>" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill" style="font-size: 11px;">
+                                                    <i class="fas fa-key me-1"></i> Reset
+                                                </a>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
