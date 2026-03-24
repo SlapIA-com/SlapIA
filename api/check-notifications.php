@@ -1,13 +1,13 @@
 <?php
-include_once '../includes/config.php';
-session_start();
-ini_set('display_errors', 0);
-ob_start();
-
 /**
  * API Endpoint: Check Notifications
  * Aggregates platform updates and personal alerts (like new invoices) from Notion.
  */
+include_once '../includes/config.php';
+// session_start(); // Already handled in config.php
+
+ini_set('display_errors', 0);
+ob_start();
 
 header('Content-Type: application/json');
 
@@ -18,7 +18,13 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 }
 
 $notionApiKey = config('NOTION_API_KEY');
-$userId = $_SESSION['user_id'];
+$userId = $_SESSION['user_id'] ?? '';
+
+if (empty($userId)) {
+    ob_clean();
+    echo json_encode(['success' => false, 'error' => 'ID utilisateur manquant']);
+    exit;
+}
 
 $notifications = [];
 
@@ -32,11 +38,19 @@ curl_setopt_array($ch, [
     ]
 ]);
 $res = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
 $userData = json_decode($res, true);
 $props = $userData['properties'] ?? [];
+$lastEdited = $userData['last_edited_time'] ?? date('c');
 
 // 1. Detect User-Specific Pending Billing (Persistent for the user)
-$billingStatus = $props['Facturation']['select']['name'] ?? '';
+$billingStatus = '';
+if (isset($props['Facturation']['select']['name'])) {
+    $billingStatus = $props['Facturation']['select']['name'];
+}
+
 if ($billingStatus === 'En attente') {
     $notifications[] = [
         'id' => 'user_pending_payment',
@@ -52,16 +66,21 @@ if ($billingStatus === 'En attente') {
 }
 
 // 2. Detect Invoices (Last 3)
-$invoices = array_reverse($props['Factures']['files'] ?? []);
+$invoices = [];
+if (isset($props['Factures']['files'])) {
+    $invoices = array_reverse($props['Factures']['files']);
+}
+
 $invCount = 0;
 foreach ($invoices as $inv) {
     if ($invCount >= 3) break;
-    $notifId = md5($inv['name']);
+    $invName = $inv['name'] ?? 'Facture';
+    $notifId = md5($invName);
     $notifications[] = [
         'id' => 'inv_' . $notifId,
         'title' => 'Facture disponible',
-        'desc' => htmlspecialchars($inv['name']),
-        'ts' => strtotime($userData['last_edited_time']), 
+        'desc' => htmlspecialchars($invName),
+        'ts' => strtotime($lastEdited), 
         'icon' => 'fas fa-file-invoice-dollar',
         'icon_bg' => 'bg-success',
         'icon_color' => 'text-success',
@@ -71,14 +90,17 @@ foreach ($invoices as $inv) {
 }
 
 // Support for Admin Status change notification
-$status = $props['Status']['select']['name'] ?? '';
+$status = '';
+if (isset($props['Status']['select']['name'])) {
+    $status = $props['Status']['select']['name'];
+}
+
 if ($status === 'Admin') {
-    // 1. Admin Status Notif
     $notifications[] = [
         'id' => 'system_admin',
         'title' => 'Privilèges Admin',
         'desc' => 'Vous avez accès au centre de contrôle SlapIA.',
-        'ts' => strtotime($userData['last_edited_time']),
+        'ts' => strtotime($lastEdited),
         'icon' => 'fas fa-shield-alt',
         'icon_bg' => 'bg-warning',
         'icon_color' => 'text-warning',
