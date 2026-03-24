@@ -99,12 +99,51 @@ try {
         exit;
     }
 
-    // Verify password
-    if (!password_verify($password, $storedHash)) {
-        ob_clean();
-        http_response_code(401);
-        echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
-        exit;
+    // Verify password gracefully
+    $needsHashUpgrade = false;
+    
+    // Check if the stored password is a bcrypt hash (starts with $2y$)
+    if (strpos($storedHash, '$2y$') === 0) {
+        if (!password_verify($password, $storedHash)) {
+            ob_clean();
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
+            exit;
+        }
+    } else {
+        // Plain text password assigned manually by Admin in Notion
+        if ($storedHash !== $password) {
+            ob_clean();
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
+            exit;
+        }
+        $needsHashUpgrade = true; // Flag to upgrade to secure hash
+    }
+
+    // Auto-upgrade security: Hash the plain text password and update Notion
+    if ($needsHashUpgrade) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        $updateData = [
+            'properties' => [
+                'Mot de passe' => [
+                    'rich_text' => [['text' => ['content' => $hashedPassword]]]
+                ]
+            ]
+        ];
+        $chUpd = curl_init('https://api.notion.com/v1/pages/' . $userPage['id']);
+        curl_setopt_array($chUpd, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'PATCH',
+            CURLOPT_POSTFIELDS => json_encode($updateData),
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $notionApiKey,
+                'Content-Type: application/json',
+                'Notion-Version: 2022-06-28'
+            ]
+        ]);
+        curl_exec($chUpd);
+        unset($chUpd);
     }
 
     // Success! Setup Session
