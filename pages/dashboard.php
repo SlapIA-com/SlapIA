@@ -103,7 +103,6 @@ if ($isAdmin) {
         // Notion doesn't give a 'total' count in query results. For a real dashboard, we'd use a search or a specifically maintained counter.
         // For now, we'll fetch a small batch to show "Live" state.
         $adminData[$key] = count($data['results'] ?? []); 
-        curl_close($ch);
     }
 
     // 2. Fetch Recent Activity (Latest Leads & Subscribers)
@@ -129,7 +128,6 @@ if ($isAdmin) {
         $date = date('d/m H:i', strtotime($l['created_time']));
         $adminData['recent'][] = ['type' => 'lead', 'name' => $name, 'email' => $email, 'date' => $date, 'ts' => strtotime($l['created_time'])];
     }
-    curl_close($chRecent);
 
     // 2.2 Recent Newsletter
     $chNews = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_Newsletter_DATABASE_ID') . '/query');
@@ -153,11 +151,41 @@ if ($isAdmin) {
         $date = date('d/m H:i', strtotime($n['created_time']));
         $adminData['recent'][] = ['type' => 'newsletter', 'name' => 'Subscriber', 'email' => $email, 'date' => $date, 'ts' => strtotime($n['created_time'])];
     }
-    curl_close($chNews);
 
     // Sort combined recent activity
     usort($adminData['recent'], fn($a, $b) => $b['ts'] <=> $a['ts']);
     $adminData['recent'] = array_slice($adminData['recent'], 0, 10);
+
+    // 3. Fetch Full Admin Lists (Newsletter & Users)
+    // 3.1 Newsletter List
+    $chFullNews = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_Newsletter_DATABASE_ID') . '/query');
+    curl_setopt_array($chFullNews, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode(['page_size' => 100]),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json'
+        ]
+    ]);
+    $resFullNews = curl_exec($chFullNews);
+    $adminData['list_newsletter'] = json_decode($resFullNews, true)['results'] ?? [];
+
+    // 3.2 Users List
+    $chFullUsers = curl_init('https://api.notion.com/v1/databases/' . config('NOTION_SATISFACTION_DATABASE_ID') . '/query');
+    curl_setopt_array($chFullUsers, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode(['page_size' => 100]),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json'
+        ]
+    ]);
+    $resFullUsers = curl_exec($chFullUsers);
+    $adminData['list_users'] = json_decode($resFullUsers, true)['results'] ?? [];
 }
 ?>
 
@@ -314,8 +342,14 @@ if ($isAdmin) {
                             <i class="fas fa-file-invoice-dollar me-3 text-primary"></i> <span class="fw-medium"><?php echo t('dash_tab_billing'); ?></span>
                         </button>
                         <?php if($isAdmin): ?>
-                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-admin" onclick="switchTab('admin')">
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 mb-2 d-flex align-items-center" id="tab-admin" onclick="switchTab('admin')">
                                 <i class="fas fa-shield-alt me-3 text-danger"></i> <span class="fw-medium"><?php echo t('dash_tab_admin'); ?></span>
+                            </button>
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 mb-2 d-flex align-items-center" id="tab-admin-newsletter" onclick="switchTab('admin-newsletter')">
+                                <i class="fas fa-mail-bulk me-3 text-success"></i> <span class="fw-medium"><?php echo 'List ' . t('admin_total_subscribers'); ?></span>
+                            </button>
+                            <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-admin-emails" onclick="switchTab('admin-emails')">
+                                <i class="fas fa-users-cog me-3 text-warning"></i> <span class="fw-medium"><?php echo 'List ' . t('admin_total_users'); ?></span>
                             </button>
                         <?php else: ?>
                             <button class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded-4 d-flex align-items-center" id="tab-reviews" onclick="switchTab('reviews')">
@@ -497,7 +531,7 @@ if ($isAdmin) {
                                     <div class="rounded-3 p-2 me-3" style="background: rgba(88, 86, 214, 0.2);"><i class="fas fa-users text-primary"></i></div>
                                     <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_users'); ?></span>
                                 </div>
-                                <h2 class="text-white mb-0"><?php echo $adminData['users']; ?>+</h2>
+                                <h2 class="text-white mb-0"><?php echo count($adminData['list_users']); ?>+</h2>
                             </div>
                         </div>
                         <!-- KPI Card: Leads -->
@@ -517,7 +551,7 @@ if ($isAdmin) {
                                     <div class="rounded-3 p-2 me-3" style="background: rgba(52, 199, 89, 0.2);"><i class="fas fa-paper-plane text-success"></i></div>
                                     <span class="text-secondary small fw-bold text-uppercase"><?php echo t('admin_total_subscribers'); ?></span>
                                 </div>
-                                <h2 class="text-white mb-0"><?php echo $adminData['newsletter']; ?>+</h2>
+                                <h2 class="text-white mb-0"><?php echo count($adminData['list_newsletter']); ?>+</h2>
                             </div>
                         </div>
                     </div>
@@ -570,6 +604,62 @@ if ($isAdmin) {
                                     Réinitialiser un mot de passe
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN NEWSLETTER LIST TAB -->
+                <div id="content-admin-newsletter" class="tab-content d-none fade-in">
+                    <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                            <i class="fas fa-mail-bulk me-3 text-success"></i> <?php echo t('admin_total_subscribers'); ?>
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table text-white border-white border-opacity-10">
+                                <thead>
+                                    <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
+                                        <th class="py-3 border-0">Email</th>
+                                        <th class="py-3 border-0">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($adminData['list_newsletter'] as $n): ?>
+                                        <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
+                                            <td class="py-3 text-white"><?php echo htmlspecialchars($n['properties']['Email']['title'][0]['text']['content'] ?? ''); ?></td>
+                                            <td class="py-3 text-secondary small"><?php echo date('d/m/Y H:i', strtotime($n['created_time'])); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN EMAILS LIST TAB -->
+                <div id="content-admin-emails" class="tab-content d-none fade-in">
+                    <div class="bento-card p-4 p-md-5" style="background: rgba(15, 15, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;">
+                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                            <i class="fas fa-users-cog me-3 text-warning"></i> <?php echo t('admin_total_users'); ?>
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table text-white border-white border-opacity-10">
+                                <thead>
+                                    <tr class="text-secondary small text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05) !important;">
+                                        <th class="py-3 border-0">Nom</th>
+                                        <th class="py-3 border-0">Email</th>
+                                        <th class="py-3 border-0">Entreprise</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($adminData['list_users'] as $u): ?>
+                                        <tr class="align-middle" style="border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
+                                            <td class="py-3 text-white fw-medium"><?php echo htmlspecialchars($u['properties']['Prenom NOM']['title'][0]['text']['content'] ?? 'N.A'); ?></td>
+                                            <td class="py-3 text-secondary"><?php echo htmlspecialchars($u['properties']['Email']['email'] ?? ''); ?></td>
+                                            <td class="py-3 small text-secondary opacity-75"><?php echo htmlspecialchars($u['properties']['Nom d\'entreprise']['rich_text'][0]['text']['content'] ?? ''); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

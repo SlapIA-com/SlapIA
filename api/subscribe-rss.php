@@ -47,7 +47,8 @@ try {
     curl_setopt($chCF, CURLOPT_RETURNTRANSFER, true);
     $responseCF = curl_exec($chCF);
     $httpCodeCF = curl_getinfo($chCF, CURLINFO_HTTP_CODE);
-    curl_close($chCF);
+    
+    // Cloudflare Turnstile Verification
 
     $responseKeys = json_decode($responseCF, true);
     if ($httpCodeCF !== 200 || empty($responseKeys['success'])) {
@@ -87,7 +88,6 @@ try {
     ]);
     $queryResponse = curl_exec($chQuery);
     $queryHttpCode = curl_getinfo($chQuery, CURLINFO_HTTP_CODE);
-    curl_close($chQuery);
 
     if ($queryHttpCode === 200) {
         $resultData = json_decode($queryResponse, true);
