@@ -1,8 +1,9 @@
-const CACHE_NAME = 'slapia-v4';
+const CACHE_NAME = 'slapia-v5';
 
-// Only pre-cache local assets — CDN resources (FA, Bootstrap, etc.) are
-// handled by the browser's HTTP cache via their own Cache-Control headers.
-// Pre-caching CDN CSS can break webfont relative URL resolution.
+// Only pre-cache local assets — CDN resources (FA, Bootstrap, Google Fonts, etc.)
+// must NOT be intercepted by the SW because:
+// 1. Opaque cross-origin responses lose their URL, breaking @font-face relative paths
+// 2. The browser's HTTP cache already handles CDN resources via Cache-Control headers
 const STATIC_ASSETS = [
   '/',
   '/assets/img/brand/logo.svg',
@@ -43,18 +44,19 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: cache-first for static assets, network-first for API/PHP pages
+// Fetch: only intercept same-origin requests — never touch cross-origin CDN/font requests
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Never intercept API calls, PHP endpoints, or non-GET requests
+  // Never intercept non-GET, API calls, PHP endpoints, or cross-origin requests
   if (event.request.method !== 'GET') return;
+  if (url.hostname !== location.hostname) return;   // let browser handle CDN/fonts natively
   if (url.pathname.startsWith('/api/')) return;
   if (url.pathname.endsWith('.php')) return;
 
-  // Cache-first for static assets (CSS, JS, images, fonts)
+  // Cache-first for local static assets (CSS, JS, images, fonts)
   const isStatic = url.pathname.match(/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico)$/);
-  if (isStatic || url.hostname !== location.hostname) {
+  if (isStatic) {
     event.respondWith(
       caches.match(event.request).then(cached => cached || fetch(event.request))
     );

@@ -77,7 +77,14 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         });
     </script>
 
-    <!-- Cloudflare Turnstile (loaded globally for Swup SPA compatibility) -->
+    <!-- Cloudflare Turnstile — pre-define callback before async script loads to avoid race condition -->
+    <script>
+    // Queue fired before contact-form.js defines the real init functions
+    window.onloadTurnstileCallback = function () {
+        window._turnstileReady = true;
+        if (typeof window._initAllTurnstiles === 'function') window._initAllTurnstiles();
+    };
+    </script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" async defer></script>
 
     <title><?php echo $meta_title; ?></title>
@@ -171,23 +178,25 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         <i class="fas fa-newspaper"></i> Blog
     </a>
     <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="mobile-menu-link">
-        <i class="fas fa-flag"></i> <?php echo $lang === 'en' ? 'FR' : 'EN'; ?>
+        <i class="fas fa-globe"></i> <?php echo $lang === 'en' ? 'Français' : 'English'; ?>
     </a>
-    <div class="mobile-contact-btn pt-3">
-        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-            <a href="/dashboard" class="btn-primary-glow w-100 justify-content-center mb-2 p-2" style="border-radius: 999px; display:flex; align-items:center; text-decoration:none; gap: 10px;">
-                <?php if (!empty($_SESSION['user_id'])): ?>
-                    <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);" loading="lazy">
-                <?php else: ?>
-                    <i class="fas fa-user-circle"></i>
-                <?php endif; ?>
-                Mon Espace
-            </a>
-        <?php else: ?>
-            <a href="/login" class="btn-outline-glass w-100 justify-content-center mb-2" style="display:flex; align-items:center; text-decoration:none;">
-                <i class="fas fa-sign-in-alt me-2"></i> Connexion
-            </a>
-        <?php endif; ?>
+
+    <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+        <a href="/dashboard" class="mobile-menu-link mobile-menu-link--account">
+            <?php if (!empty($_SESSION['user_id'])): ?>
+                <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.3);" loading="lazy">
+            <?php else: ?>
+                <i class="fas fa-user-circle"></i>
+            <?php endif; ?>
+            Mon Espace
+        </a>
+    <?php else: ?>
+        <a href="/login" class="mobile-menu-link mobile-menu-link--account">
+            <i class="fas fa-sign-in-alt"></i> <?php echo t('login_title'); ?>
+        </a>
+    <?php endif; ?>
+
+    <div class="mobile-contact-btn">
         <a href="/contact" class="btn-apple w-100 justify-content-center">
             <i class="fas fa-envelope me-2"></i> <?php echo t('contact'); ?>
         </a>

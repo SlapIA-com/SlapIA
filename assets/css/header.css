@@ -305,6 +305,19 @@
     font-size: 1rem;
 }
 
+.mobile-menu-link--account {
+    color: white;
+    background: linear-gradient(135deg, rgba(108, 0, 255, 0.25), rgba(0, 200, 255, 0.15));
+    border: 1px solid rgba(108, 0, 255, 0.35);
+    font-weight: 600;
+}
+
+.mobile-menu-link--account:hover {
+    background: linear-gradient(135deg, rgba(108, 0, 255, 0.4), rgba(0, 200, 255, 0.25));
+    border-color: rgba(108, 0, 255, 0.6);
+    color: white;
+}
+
 .mobile-contact-btn {
     margin-top: auto;
     text-align: center;

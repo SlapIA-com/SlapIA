@@ -72,12 +72,18 @@ window.initRssTurnstile = function (force = false) {
     }
 };
 
-// The global callback used by Turnstile script in header
-window.onloadTurnstileCallback = function () {
+// Central init — called either by onloadTurnstileCallback or on Swup page transitions
+window._initAllTurnstiles = function () {
     window.initContactTurnstile();
     window.initLoginTurnstile();
     window.initRssTurnstile();
 };
+
+// Real callback redefinition (header.php may have pre-fired with the stub)
+window.onloadTurnstileCallback = window._initAllTurnstiles;
+
+// If Turnstile already fired before this script loaded, run now
+if (window._turnstileReady) window._initAllTurnstiles();
 
 function showToast(message, isError = false) {
     const toast = document.getElementById('toastNotification');
