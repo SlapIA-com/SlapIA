@@ -25,6 +25,15 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     if (!$input) $input = $_POST;
 
+    // Security: Verify CSRF Token
+    $csrfToken = $input['csrf_token'] ?? '';
+    if (!verifyCSRFToken($csrfToken)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Erreur de sécurité (CSRF). Veuillez rafraîchir la page.']);
+        exit;
+    }
+
     $fullName = trim($input['name'] ?? '');
     $phone = trim($input['phone'] ?? '');
     $company = trim($input['company'] ?? '');

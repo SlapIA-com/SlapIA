@@ -236,6 +236,9 @@ try {
     
     $_SESSION['user_photo'] = $photoUrl;
     
+    // Security: Regenerate session ID to prevent fixation
+    session_regenerate_id(true);
+
     $_SESSION['logged_in'] = true;
 
     ob_clean();

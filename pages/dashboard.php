@@ -250,6 +250,7 @@ $invoices = $props['Factures']['files'] ?? [];
                                 </div>
                             </div>
 
+                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                             <div class="d-flex justify-content-end mt-5">
                                 <button type="submit" class="btn-primary-glow px-4 py-3 rounded-pill fw-bold border-0" id="btnSaveProfile">
                                     <i class="fas fa-save me-2"></i> <?php echo t('dash_update_btn'); ?>
@@ -349,6 +350,7 @@ $invoices = $props['Factures']['files'] ?? [];
                                 <textarea class="form-control bg-white bg-opacity-5 border-white border-opacity-10 text-white p-4 rounded-4" name="avis" rows="12" placeholder="<?php echo t('dash_review_placeholder'); ?>" style="background: rgba(255,255,255,0.03) !important; min-height: 250px; line-height: 1.6;"><?php echo htmlspecialchars($getAvis()); ?></textarea>
                             </div>
 
+                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn-primary-glow px-5 py-3 rounded-pill fw-bold border-0" id="btnSaveReview">
                                     <i class="fas fa-paper-plane me-2"></i> <?php echo t('dash_review_save'); ?>

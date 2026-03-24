@@ -39,6 +39,12 @@
 
     # RSS Feed
     RewriteRule ^rss\.xml$ rss.php [L]
+
+    # SECURITY: Prevent access to sensitive files
+    <FilesMatch "^\.env|composer\.(json|lock)|config\.php|inspect_db\.php|debug-notion\.php|\.git|README\.md">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
 </IfModule>
 
 <IfModule mod_headers.c>
