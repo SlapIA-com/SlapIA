@@ -4,8 +4,8 @@
  */
 
 include_once __DIR__ . '/../includes/config.php';
-
-error_reporting(0);
+include_once __DIR__ . '/../includes/lang.php';
+$notionApiKey = config('NOTION_API_KEY');
 ini_set('display_errors', 0);
 ob_start();
 
@@ -20,7 +20,6 @@ try {
         exit;
     }
 
-    $notionApiKey = config('NOTION_API_KEY');
     $userId = $_SESSION['user_id'];
 
     $input = json_decode(file_get_contents('php://input'), true);
@@ -36,25 +35,21 @@ try {
     $satisfaction = trim($input['satisfaction'] ?? '');
     $avis = trim($input['avis'] ?? '');
 
-    if (empty($fullName)) {
-        ob_clean();
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Le nom complet est obligatoire.']);
-        exit;
-    }
-
     // Build Payload for Notion PATCH
     // Based on user's ERP screenshot properties
-    $updateData = [
-        'properties' => [
-            'Prenom NOM' => [
-                'title' => [['text' => ['content' => $fullName]]]
-            ],
-            'Téléphone' => [
-                'phone_number' => $phone
-            ]
-        ]
-    ];
+    $updateData = ['properties' => []];
+
+    if (!empty($fullName)) {
+        $updateData['properties']['Prenom NOM'] = [
+            'title' => [['text' => ['content' => $fullName]]]
+        ];
+    }
+
+    if (!empty($phone)) {
+        $updateData['properties']['Téléphone'] = [
+            'phone_number' => $phone
+        ];
+    }
 
     // If company exists
     if (isset($input['company'])) {
@@ -106,6 +101,12 @@ try {
         ];
     }
 
+    if (empty($updateData['properties'])) {
+        ob_clean();
+        echo json_encode(['success' => true, 'message' => t('dash_update_no_change')]);
+        exit;
+    }
+
     $ch = curl_init('https://api.notion.com/v1/pages/' . $userId);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -127,20 +128,22 @@ try {
         ob_clean();
         http_response_code(500);
         error_log("Notion Profile Update Failed: " . $response);
-        echo json_encode(['success' => false, 'error' => 'Erreur lors de la mise à jour de votre profil.']);
+        echo json_encode(['success' => false, 'error' => t('err_server')]);
         exit;
     }
 
-    // Update Session name
-    $_SESSION['user_name'] = $fullName;
+    // Update Session name if provided
+    if (!empty($fullName)) {
+        $_SESSION['user_name'] = $fullName;
+    }
 
     // Optional: Only output pure JSON
     ob_clean();
-    echo json_encode(['success' => true, 'message' => 'Profil mis à jour avec succès!']);
+    echo json_encode(['success' => true, 'message' => t('dash_update_success')]);
 
 } catch (Throwable $e) {
     ob_clean();
     error_log('[SlapIA Auth Update] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Erreur serveur interne.']);
+    echo json_encode(['success' => false, 'error' => t('err_server')]);
 }

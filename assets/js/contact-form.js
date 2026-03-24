@@ -9,18 +9,41 @@ window.initContactTurnstile = function () {
     const container = document.getElementById('cf-turnstile-container');
     if (!container || typeof turnstile === 'undefined') return;
 
-    if (container.querySelector('iframe')) return; // Already rendered
+    if (container.dataset.rendered === 'true' || container.querySelector('iframe')) return;
 
     const sitekey = container.getAttribute('data-sitekey');
     if (!sitekey) return;
 
+    container.dataset.rendered = 'true';
     try {
         turnstile.render(container, {
             sitekey: sitekey,
             theme: 'dark'
         });
     } catch (e) {
+        container.dataset.rendered = 'false';
         console.warn('Turnstile render retry pending...');
+    }
+};
+
+// Initialize Turnstile for the Login Form
+window.initLoginTurnstile = function () {
+    const container = document.getElementById('cf-turnstile-login');
+    if (!container || typeof turnstile === 'undefined') return;
+
+    if (container.dataset.rendered === 'true' || container.querySelector('iframe')) return;
+
+    const sitekey = container.getAttribute('data-sitekey');
+    if (!sitekey) return;
+
+    container.dataset.rendered = 'true';
+    try {
+        turnstile.render(container, {
+            sitekey: sitekey,
+            theme: 'dark'
+        });
+    } catch (e) {
+        container.dataset.rendered = 'false';
     }
 };
 
@@ -29,7 +52,7 @@ window.initRssTurnstile = function (force = false) {
     const container = document.getElementById('cf-turnstile-rss');
     if (!container || typeof turnstile === 'undefined') return;
     
-    if (!force && container.querySelector('iframe')) return; // Already rendered
+    if (container.dataset.rendered === 'true' && !force) return;
 
     const sitekey = container.getAttribute('data-sitekey');
     if (!sitekey) return;
@@ -39,16 +62,20 @@ window.initRssTurnstile = function (force = false) {
             try { turnstile.remove(container); } catch(e) {}
         }
         
+        container.dataset.rendered = 'true';
         turnstile.render(container, {
             sitekey: sitekey,
             theme: 'dark'
         });
-    } catch (e) { }
+    } catch (e) {
+        container.dataset.rendered = 'false';
+    }
 };
 
 // The global callback used by Turnstile script in header
 window.onloadTurnstileCallback = function () {
     window.initContactTurnstile();
+    window.initLoginTurnstile();
     window.initRssTurnstile();
 };
 
@@ -275,8 +302,9 @@ window.initContactFormHelpers = function () {
     const form = document.getElementById('contactForm');
     const messageInput = document.getElementById('message');
 
-    // Re-init RSS helpers too
+    // Re-init RSS and Login helpers too
     window.initRssModalHelpers();
+    window.initLoginTurnstile();
 
     // Remove old listeners to prevent duplicates during Swup navigation
     if (form) {

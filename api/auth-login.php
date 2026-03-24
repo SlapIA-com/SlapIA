@@ -4,6 +4,7 @@
  */
 
 include_once __DIR__ . '/../includes/config.php';
+include_once __DIR__ . '/../includes/lang.php';
 $notionApiKey = config('NOTION_API_KEY');
 $notionDbId = config('NOTION_SATISFACTION_DATABASE_ID'); // ID de la base de données ERP complète
 
@@ -28,11 +29,45 @@ try {
 
     $email = trim($input['email'] ?? '');
     $password = $input['password'] ?? '';
+    $turnstileResponse = $input['cf-turnstile-response'] ?? '';
 
     if (empty($email) || empty($password)) {
         ob_clean();
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Veuillez remplir tous les champs.']);
+        echo json_encode(['success' => false, 'error' => t('err_all_fields')]);
+        exit;
+    }
+
+    // Cloudflare Turnstile Validation
+    if (empty($turnstileResponse)) {
+        ob_clean();
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Veuillez compléter la sécurité Cloudflare.']);
+        exit;
+    }
+
+    $secretKey = config('TURNSTILE_SECRET_KEY');
+    $verifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    $verifyData = [
+        'secret' => $secretKey,
+        'response' => $turnstileResponse,
+        'remoteip' => $_SERVER['REMOTE_ADDR']
+    ];
+
+    $chVerify = curl_init();
+    curl_setopt($chVerify, CURLOPT_URL, $verifyUrl);
+    curl_setopt($chVerify, CURLOPT_POST, true);
+    curl_setopt($chVerify, CURLOPT_POSTFIELDS, http_build_query($verifyData));
+    curl_setopt($chVerify, CURLOPT_RETURNTRANSFER, true);
+    $responseVerify = curl_exec($chVerify);
+    $httpCodeVerify = curl_getinfo($chVerify, CURLINFO_HTTP_CODE);
+    unset($chVerify);
+
+    $responseKeys = json_decode($responseVerify, true);
+    if ($httpCodeVerify !== 200 || !isset($responseKeys['success']) || !$responseKeys['success']) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Validation de sécurité échouée.']);
         exit;
     }
 
@@ -87,7 +122,7 @@ try {
     if (count($results) === 0) {
         ob_clean();
         http_response_code(401);
-        echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
+        echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
         exit;
     }
 
@@ -114,7 +149,7 @@ try {
         // No password set yet for this user
         ob_clean();
         http_response_code(401);
-        echo json_encode(['success' => false, 'error' => "Votre compte n'est pas encore activé. Veuillez suivre les instructions reçues par email ou nous contacter."]);
+        echo json_encode(['success' => false, 'error' => t('err_not_activated')]);
         exit;
     }
 
@@ -129,7 +164,7 @@ try {
         if (!password_verify($password, $storedHash)) {
             ob_clean();
             http_response_code(401);
-            echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
+            echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
             exit;
         }
     } else {
@@ -137,7 +172,7 @@ try {
         if ($storedHash !== $password) {
             ob_clean();
             http_response_code(401);
-            echo json_encode(['success' => false, 'error' => 'Email ou mot de passe incorrect.']);
+            echo json_encode(['success' => false, 'error' => t('err_invalid_credentials')]);
             exit;
         }
         $needsHashUpgrade = true; // Flag to upgrade to secure hash

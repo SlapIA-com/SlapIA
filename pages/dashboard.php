@@ -2,8 +2,8 @@
 include_once '../includes/config.php';
 include_once '../includes/lang.php';
 
-$page_title = 'Mon Espace - SlapIA';
-$page_description = 'Gérez votre profil, vos formations et vos factures.';
+$page_title = t('dash_title') . ' - SlapIA';
+$page_description = t('login_meta_desc');
 include '../includes/header.php';
 include '../includes/components.php';
 
@@ -76,13 +76,13 @@ $invoices = $props['Factures']['files'] ?? [];
                     </div>
                 <?php endif; ?>
                 <div>
-                    <h1 class="h2 text-white fw-bold mb-1">Espace Personnel</h1>
-                    <p class="text-secondary mb-0">Ravi de vous revoir, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</p>
+                    <h1 class="h2 text-white fw-bold mb-1"><?php echo t('dash_title'); ?></h1>
+                    <p class="text-secondary mb-0"><?php echo t('dash_welcome'); ?>, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</p>
                 </div>
             </div>
             <div>
                 <a href="/api/auth-logout.php" class="btn btn-outline-danger btn-sm px-3 rounded-pill" style="border-color: rgba(220,53,69,0.5);">
-                    <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+                    <i class="fas fa-sign-out-alt me-1"></i> <?php echo t('dash_logout'); ?>
                 </a>
             </div>
         </div>
@@ -91,16 +91,16 @@ $invoices = $props['Factures']['files'] ?? [];
             
             <!-- Sidebar Navigation -->
             <div class="col-lg-3 fade-in-up delay-100">
-                <div class="bento-card bento-card-glow p-3 w-100 h-100 position-relative">
+                <div class="bento-card bento-card-glow p-3 w-100 h-auto position-relative sticky-top" style="top: 120px;">
                     <div class="list-group list-group-flush bg-transparent">
                         <button class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary border-opacity-25 py-3 active" id="tab-profile" onclick="switchTab('profile')">
-                            <i class="fas fa-user-circle me-2 text-primary"></i> Mon Profil
+                            <i class="fas fa-user-circle me-2 text-primary"></i> <?php echo t('dash_tab_profile'); ?>
                         </button>
                         <button class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary border-opacity-25 py-3" id="tab-billing" onclick="switchTab('billing')">
-                            <i class="fas fa-file-invoice-dollar me-2" style="color: var(--accent-purple);"></i> Facturation
+                            <i class="fas fa-file-invoice-dollar me-2 text-primary"></i> <?php echo t('dash_tab_billing'); ?>
                         </button>
-                        <button class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary border-opacity-25 py-3" id="tab-reviews" onclick="switchTab('reviews')">
-                            <i class="fas fa-star me-2 text-warning"></i> Mon Avis
+                        <button class="list-group-item list-group-item-action bg-transparent text-white py-3" id="tab-reviews" onclick="switchTab('reviews')">
+                            <i class="fas fa-star me-2 text-primary"></i> <?php echo t('dash_tab_reviews'); ?>
                         </button>
                     </div>
                 </div>
@@ -110,62 +110,53 @@ $invoices = $props['Factures']['files'] ?? [];
             <div class="col-lg-9 fade-in-up delay-200">
                 
                 <!-- PROFILE TAB -->
-                <div id="content-profile" class="dashboard-tab">
-                    <div class="bento-card bento-card-glow p-4 p-lg-5 position-relative">
-                        <div class="card-glow-orb orb-blue" style="top:-30px; right:-30px; width:200px; height:200px; opacity:0.1;"></div>
-                        
-                        <h4 class="text-white mb-4"><i class="fas fa-id-card text-primary me-2"></i> Informations Personnelles</h4>
+                <div id="content-profile" class="tab-content fade-in">
+                    <div class="bento-card bento-card-glow p-4 p-md-5">
+                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                            <i class="fas fa-id-card me-3 text-primary"></i> <?php echo t('dash_profile_info'); ?>
+                        </h3>
                         
                         <form id="profileForm">
-                            <div id="profileAlert" class="alert d-none small py-2" role="alert"></div>
+                            <div id="profileAlert" class="alert alert-success d-none small py-2 fade-in" role="alert"></div>
 
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Prénom NOM (Format strict)</label>
-                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="name" value="<?php echo htmlspecialchars($getUserName()); ?>" required placeholder="Prenom NOM">
+                            <div class="row g-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_full_name'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="name" value="<?php echo htmlspecialchars($getUserName()); ?>" required placeholder="Prénom NOM">
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Email (Non modifiable)</label>
-                                    <input type="email" class="form-control bg-dark border-secondary text-secondary" value="<?php echo htmlspecialchars($_SESSION['user_email']); ?>" disabled>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_email_readonly'); ?></label>
+                                    <input type="email" class="form-control bg-dark border-secondary text-white" value="<?php echo htmlspecialchars($getUserEmail()); ?>" disabled>
                                 </div>
-                            </div>
-                            
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Nouveau mot de passe (Laissez vide pour ne pas changer)</label>
-                                    <input type="password" class="form-control bg-dark border-secondary text-white" name="password" autocomplete="new-password">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_new_password'); ?> (<?php echo t('dash_password_hint'); ?>)</label>
+                                    <input type="password" class="form-control bg-dark border-secondary text-white" name="password" placeholder="••••••••">
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Téléphone</label>
-                                    <input type="tel" class="form-control bg-dark border-secondary text-white" name="phone" value="<?php echo htmlspecialchars($getUserPhone()); ?>">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_phone'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="phone" value="<?php echo htmlspecialchars($getUserPhone()); ?>" placeholder="+33 6 00 00 00 00">
                                 </div>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Lien LinkedIn</label>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_linkedin_link'); ?></label>
                                     <input type="url" class="form-control bg-dark border-secondary text-white" name="linkedin" value="<?php echo htmlspecialchars($getUserLinkedin()); ?>" placeholder="https://linkedin.com/in/...">
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Localisation (Ville)</label>
-                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="location" value="<?php echo htmlspecialchars($getUserLocation()); ?>" placeholder="Ex: Paris, France">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_location_city'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="location" value="<?php echo htmlspecialchars($getUserLocation()); ?>" placeholder="Paris, France">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_company'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="company" value="<?php echo htmlspecialchars($getUserCompany()); ?>" placeholder="Ma Super Entreprise">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white opacity-75 small"><?php echo t('dash_job_title'); ?></label>
+                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="job" value="<?php echo htmlspecialchars($getUserJob()); ?>" placeholder="CEO / Consultant">
                                 </div>
                             </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Entreprise</label>
-                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="company" value="<?php echo htmlspecialchars($getUserCompany()); ?>">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white opacity-75 small">Fonction / Job</label>
-                                    <input type="text" class="form-control bg-dark border-secondary text-white" name="job" value="<?php echo htmlspecialchars($getUserJob()); ?>">
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary btn-primary-glow px-4" id="btnSaveProfile">
-                                    Mettre à jour le profil <i class="fas fa-save ms-2"></i>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary btn-primary-glow px-4 py-2 rounded-pill fw-bold" id="btnSaveProfile">
+                                    <?php echo t('dash_update_btn'); ?> <i class="fas fa-save ms-2"></i>
                                 </button>
                             </div>
                         </form>
@@ -173,128 +164,115 @@ $invoices = $props['Factures']['files'] ?? [];
                 </div>
 
                 <!-- BILLING TAB -->
-                <div id="content-billing" class="dashboard-tab d-none">
-                    <div class="bento-card bento-card-glow p-4 p-lg-5 position-relative">
-                        <div class="card-glow-orb orb-purple" style="bottom:-30px; left:-30px; width:200px; height:200px; opacity:0.1;"></div>
-                        
-                        <h4 class="text-white mb-4"><i class="fas fa-receipt me-2" style="color: var(--accent-purple);"></i> État de votre facturation</h4>
+                <div id="content-billing" class="tab-content d-none fade-in">
+                    <div class="bento-card bento-card-glow p-4 p-md-5">
+                        <h3 class="h4 text-white fw-bold mb-1"><?php echo t('dash_billing_history'); ?></h3>
+                        <p class="text-secondary small mb-4"><?php echo t('dash_billing_subtitle'); ?></p>
 
-                        <div class="d-flex align-items-center p-3 rounded bg-dark border border-secondary border-opacity-25 mt-3 mb-4">
-                            <div class="me-3">
-                                <?php 
-                                    $status = $getFacturationStatus(); 
-                                    $statusClass = 'text-secondary';
-                                    $statusIcon = 'fa-info-circle';
-                                    
-                                    switch(mb_strtolower($status)) {
-                                        case 'payé':
-                                            $statusClass = 'text-success';
-                                            $statusIcon = 'fa-check-circle';
-                                            $badgeColor = '#10b981';
-                                            break;
-                                        case 'facturé':
-                                            $statusClass = 'text-info';
-                                            $statusIcon = 'fa-file-invoice';
-                                            $badgeColor = '#06b6d4';
-                                            break;
-                                        case 'en cours':
-                                            $statusClass = 'text-primary';
-                                            $statusIcon = 'fa-spinner fa-spin';
-                                            $badgeColor = '#3b82f6';
-                                            break;
-                                        case 'en attente':
-                                            $statusClass = 'text-warning';
-                                            $statusIcon = 'fa-clock';
-                                            $badgeColor = '#f59e0b';
-                                            break;
-                                        case 'dispensé':
-                                            $statusClass = 'text-muted';
-                                            $statusIcon = 'fa-minus-circle';
-                                            $badgeColor = '#71717a';
-                                            break;
-                                    }
-                                    echo '<i class="fas '.$statusIcon.' '.$statusClass.' fs-3"></i>';
-                                ?>
-                            </div>
-                            <div>
-                                <h6 class="text-white m-0">Statut Financier Général</h6>
-                                <p class="m-0 small fw-bold" style="color: <?php echo $badgeColor ?? '#71717a'; ?>;">
-                                    <?php echo htmlspecialchars($status); ?>
-                                </p>
-                            </div>
-                        </div>
-
-                        <h5 class="text-white mb-3 small fw-bold text-uppercase opacity-75">Vos Factures & Documents</h5>
-                        <div class="row g-3">
-                            <?php if(empty($invoices)): ?>
-                                <div class="col-12 text-center py-4 opacity-50">
-                                    <i class="fas fa-folder-open mb-2 fs-4"></i>
-                                    <p class="small mb-0">Aucun document n'a été partagé pour le moment.</p>
-                                </div>
-                            <?php else: ?>
-                                <?php foreach($invoices as $file): ?>
-                                    <div class="col-md-6">
-                                        <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 d-flex align-items-center">
-                                            <i class="fas fa-file-pdf text-danger me-3 fs-4"></i>
-                                            <div class="flex-grow-1 overflow-hidden">
-                                                <div class="text-white text-truncate small fw-bold"><?php echo htmlspecialchars($file['name']); ?></div>
-                                                <div class="text-secondary smaller">PDF • Facture</div>
-                                            </div>
-                                            <a href="<?php echo $file['file']['url'] ?? $file['external']['url'] ?? '#'; ?>" target="_blank" class="btn btn-sm btn-outline-glass ms-2">
-                                                <i class="fas fa-download"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                        <div class="table-responsive">
+                            <table class="table text-white border-secondary border-opacity-10">
+                                <thead>
+                                    <tr class="text-secondary small">
+                                        <th class="border-0"><?php echo t('dash_table_status'); ?></th>
+                                        <th class="border-0"><?php echo t('dash_table_doc'); ?></th>
+                                        <th class="border-0"><?php echo t('dash_table_date'); ?></th>
+                                        <th class="border-0 text-end"><?php echo t('dash_table_actions'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (empty($formattedInvoices)): ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center text-secondary py-4">
+                                                <i class="fas fa-folder-open mb-2 fs-4"></i><br>
+                                                <?php echo t('dash_no_documents'); ?>
+                                            </td>
+                                        </tr>
+                                    <?php else: ?>
+                                        <?php foreach ($formattedInvoices as $f): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                        $status = $f['status'];
+                                                        $statusClass = 'text-secondary';
+                                                        $statusIcon = 'fa-info-circle';
+                                                        $badgeColor = '#71717a';
+                                                        
+                                                        switch(mb_strtolower($status)) {
+                                                            case 'payé':
+                                                                $statusClass = 'text-success';
+                                                                $statusIcon = 'fa-check-circle';
+                                                                $badgeColor = '#10b981';
+                                                                break;
+                                                            case 'facturé':
+                                                                $statusClass = 'text-info';
+                                                                $statusIcon = 'fa-file-invoice';
+                                                                $badgeColor = '#06b6d4';
+                                                                break;
+                                                            case 'en cours':
+                                                                $statusClass = 'text-primary';
+                                                                $statusIcon = 'fa-spinner fa-spin';
+                                                                $badgeColor = '#3b82f6';
+                                                                break;
+                                                            case 'en attente':
+                                                                $statusClass = 'text-warning';
+                                                                $statusIcon = 'fa-clock';
+                                                                $badgeColor = '#f59e0b';
+                                                                break;
+                                                            case 'dispensé':
+                                                                $statusClass = 'text-muted';
+                                                                $statusIcon = 'fa-minus-circle';
+                                                                $badgeColor = '#71717a';
+                                                                break;
+                                                        }
+                                                    ?>
+                                                    <span class="badge rounded-pill px-3 py-2" style="background-color: <?php echo $badgeColor; ?>; color: #fff;">
+                                                        <i class="fas <?php echo $statusIcon; ?> me-1"></i> <?php echo htmlspecialchars($status); ?>
+                                                    </span>
+                                                </td>
+                                                <td><?php echo htmlspecialchars($f['name']); ?></td>
+                                                <td><?php echo htmlspecialchars($f['date']); ?></td>
+                                                <td class="text-end">
+                                                    <a href="<?php echo htmlspecialchars($f['file_url']); ?>" class="btn btn-outline-primary btn-sm px-3 rounded-pill" target="_blank">
+                                                        <i class="fas fa-download me-1"></i> <?php echo t('dash_download'); ?>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
                 <!-- REVIEWS TAB -->
-                <div id="content-reviews" class="dashboard-tab d-none">
-                    <div class="bento-card bento-card-glow p-4 p-lg-5 position-relative">
-                        <div class="card-glow-orb orb-blue" style="top:-30px; left:-30px; width:200px; height:200px; opacity:0.1;"></div>
-                        
-                        <h4 class="text-white mb-4"><i class="fas fa-star text-warning me-2"></i> Mon Avis Client</h4>
-                        
-                        <form id="reviewForm">
-                            <div id="reviewAlert" class="alert d-none small py-2" role="alert"></div>
+                <div id="content-reviews" class="tab-content d-none fade-in">
+                    <div class="bento-card bento-card-glow p-4 p-md-5">
+                        <h3 class="h4 text-white fw-bold mb-4 d-flex align-items-center">
+                            <i class="fas fa-star me-3 text-warning"></i> <?php echo t('dash_review_title'); ?>
+                        </h3>
 
-                            <div class="mb-4 text-center p-3 rounded bg-dark border border-secondary border-opacity-25">
-                                <label class="d-block text-white opacity-75 small mb-3">Votre Note de Satisfaction</label>
-                                <div class="star-rating fs-2">
-                                    <?php 
-                                        $currentStars = $getSatisfaction();
-                                        $starOptions = [
-                                            '⭐' => 1,
-                                            '⭐⭐' => 2,
-                                            '⭐⭐⭐' => 3,
-                                            '⭐⭐⭐⭐' => 4,
-                                            '⭐⭐⭐⭐⭐' => 5
-                                        ];
-                                        $currentStarValue = $starOptions[$currentStars] ?? 0;
-                                    ?>
-                                    <div class="d-inline-flex gap-2">
-                                        <?php for($i=1; $i<=5; $i++): ?>
-                                            <i class="fas fa-star star-item cursor-pointer <?php echo ($i <= $currentStarValue) ? 'text-warning' : 'text-secondary opacity-25'; ?>" 
-                                               data-value="<?php echo str_repeat('⭐', $i); ?>" 
-                                               onclick="setStars(<?php echo $i; ?>)"
-                                               id="star-<?php echo $i; ?>"></i>
-                                        <?php endfor; ?>
-                                    </div>
-                                    <input type="hidden" name="satisfaction" id="satisfactionInput" value="<?php echo htmlspecialchars($currentStars); ?>">
+                        <form id="reviewForm">
+                            <div id="reviewAlert" class="alert alert-success d-none small py-2 fade-in" role="alert"></div>
+
+                            <div class="glass-panel p-4 rounded-4 mb-4 text-center">
+                                <p class="text-white opacity-75 small mb-3"><?php echo t('dash_satisfaction_note'); ?></p>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <input type="hidden" name="satisfaction" id="satisfactionValue" value="<?php echo htmlspecialchars($getNote()); ?>">
+                                    <?php for($i=1; $i<=5; $i++): ?>
+                                        <i class="<?php echo ($i <= (int)$getNote() ? 'fas' : 'far'); ?> fa-star text-warning fa-2x cursor-pointer star-item" data-value="<?php echo $i; ?>" onclick="setStars(<?php echo $i; ?>)"></i>
+                                    <?php endfor; ?>
                                 </div>
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label text-white opacity-75 small">Votre Témoignage / Avis</label>
-                                <textarea class="form-control bg-dark border-secondary text-white" name="avis" rows="5" placeholder="Rédigez votre avis ici..."><?php echo htmlspecialchars($getAvis()); ?></textarea>
+                                <label class="form-label text-white opacity-75 small fw-bold text-uppercase mb-3"><?php echo t('dash_review_label'); ?></label>
+                                <textarea class="form-control premium-textarea" name="avis" rows="6" placeholder="<?php echo t('dash_review_placeholder'); ?>"><?php echo htmlspecialchars($getAvis()); ?></textarea>
                             </div>
 
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary btn-primary-glow px-4" id="btnSaveReview">
-                                    Enregistrer l'avis <i class="fas fa-paper-plane ms-2"></i>
+                                <button type="submit" class="btn btn-primary btn-primary-glow px-4 py-2 rounded-pill fw-bold" id="btnSaveReview">
+                                    <?php echo t('dash_review_save'); ?> <i class="fas fa-paper-plane ms-2"></i>
                                 </button>
                             </div>
                         </form>
@@ -351,7 +329,7 @@ async function handleUpdate(formId, btnId, alertId) {
     const alertBox = document.getElementById(alertId);
     const originalText = btn.innerHTML;
     
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sauvegarde...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <?php echo t('dash_saving'); ?>';
     btn.disabled = true;
     alertBox.classList.add('d-none');
     
@@ -369,18 +347,18 @@ async function handleUpdate(formId, btnId, alertId) {
         
         if (result.success) {
             alertBox.className = 'alert alert-success small py-2';
-            alertBox.textContent = result.message || 'Mise à jour réussie !';
+            alertBox.textContent = result.message || '<?php echo t('dash_update_success_default'); ?>';
             alertBox.classList.remove('d-none');
             // Reload page if name changed to update header
             if(data.name) setTimeout(() => location.reload(), 1500);
         } else {
             alertBox.className = 'alert alert-danger small py-2';
-            alertBox.textContent = result.error || 'Erreur de mise à jour.';
+            alertBox.textContent = result.error || '<?php echo t('dash_update_error_default'); ?>';
             alertBox.classList.remove('d-none');
         }
     } catch (err) {
         alertBox.className = 'alert alert-danger small py-2';
-        alertBox.textContent = 'Une erreur serveur est survenue.';
+        alertBox.textContent = '<?php echo t('login_error_server'); ?>';
         alertBox.classList.remove('d-none');
     } finally {
         btn.innerHTML = originalText;
@@ -434,6 +412,54 @@ document.getElementById('reviewForm').addEventListener('submit', e => {
 }
 .profile-pic-emoji {
     font-size: 2rem;
+}
+
+/* Disable default validation styles for dashboard */
+#profileForm .form-control:valid, 
+#reviewForm .form-control:valid,
+#profileForm .form-control:invalid,
+#reviewForm .form-control:invalid {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+#profileForm .form-control:focus, 
+#reviewForm .form-control:focus {
+    border-color: var(--accent-blue) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 0 15px rgba(41, 151, 255, 0.1) !important;
+}
+
+/* Premium Textarea for Review */
+.premium-textarea {
+    background: rgba(10, 10, 10, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 18px !important;
+    color: white !important;
+    padding: 1.25rem !important;
+    line-height: 1.6 !important;
+    resize: none;
+    transition: all 0.3s ease !important;
+}
+
+.premium-textarea:focus {
+    background: rgba(15, 15, 15, 0.9) !important;
+    border-color: var(--accent-blue) !important;
+}
+
+/* Custom Scrollbar for Textarea */
+.premium-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+.premium-textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+.premium-textarea::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.premium-textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 </style>
 

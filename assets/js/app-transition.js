@@ -72,20 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.initLightbox) window.initLightbox();
         } catch (e) { console.error("Lightbox init failed", e); }
 
-        // Re-init Cloudflare Turnstile and Form logic (contact page) — needs delay for dynamic widgets
+        // Re-init Cloudflare Turnstile and Form logic (contact page) — now using data-rendered guard in contact-form.js
         try {
             if (window.initContactFormHelpers) {
                 window.initContactFormHelpers();
             }
-            const tryTurnstile = () => {
-                if (window.initContactTurnstile) {
-                    window.initContactTurnstile();
-                }
-            };
-            // Try immediately, then retry after scripts have loaded
-            tryTurnstile();
-            setTimeout(tryTurnstile, 300);
-            setTimeout(tryTurnstile, 800);
+            // Give Turnstile script a tiny bit of breath to pick up the new containers
+            if (window.initContactTurnstile) setTimeout(window.initContactTurnstile, 150);
+            if (window.initLoginTurnstile) setTimeout(window.initLoginTurnstile, 150);
         } catch (e) { console.error("Contact Form/Turnstile init failed", e); }
 
         // Re-init Counter Animations (index page)

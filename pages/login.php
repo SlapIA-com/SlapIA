@@ -2,8 +2,9 @@
 include_once '../includes/config.php';
 include_once '../includes/lang.php';
 
-$page_title = 'Connexion - SlapIA';
-$page_description = 'Connectez-vous à votre espace personnel SlapIA';
+$page_title = t('login_title');
+$page_description = t('login_meta_desc');
+$page_needs_turnstile = true;
 include '../includes/header.php';
 include '../includes/components.php';
 
@@ -29,27 +30,30 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             <div class="login-card-container fade-in-up">
                 <div class="glass-card login-glass">
                     <div class="text-center mb-5">
-                        <div class="login-logo mb-3">
-                            <span class="slap-dot"></span>
+                        <div class="login-logo-container mb-4">
+                            <img src="/assets/img/brand/logo.svg" alt="SlapIA" class="login-brand-logo">
                         </div>
-                        <h1 class="h2 text-white fw-bold mb-2">Bon retour</h1>
-                        <p class="text-secondary small">Accédez à votre intelligence SlapIA</p>
+                        <h1 class="h2 text-white fw-bold mb-2"><?php echo t('login_welcome_back'); ?></h1>
+                        <p class="text-secondary small"><?php echo t('login_subtitle'); ?></p>
                     </div>
 
                     <form id="loginForm">
-                        <div id="loginAlert" class="alert alert-danger d-none small py-2 mb-4" role="alert"></div>
+                        <div id="loginAlert" class="alert-premium-error d-none mb-4 fade-in" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span class="alert-text"></span>
+                        </div>
 
                         <div class="input-group-premium mb-4">
-                            <label class="premium-label">Adresse Email</label>
+                            <label class="premium-label"><?php echo t('login_email_label'); ?></label>
                             <div class="input-wrapper">
                                 <i class="fas fa-envelope input-icon"></i>
                                 <input type="email" class="premium-input" id="email" name="email" required placeholder="nom@entreprise.com">
                             </div>
                         </div>
 
-                        <div class="input-group-premium mb-5">
+                        <div class="input-group-premium mb-4">
                             <div class="d-flex justify-content-between">
-                                <label class="premium-label">Mot de passe</label>
+                                <label class="premium-label"><?php echo t('login_password_label'); ?></label>
                             </div>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock input-icon"></i>
@@ -57,8 +61,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             </div>
                         </div>
 
+                        <!-- Cloudflare Turnstile -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div id="cf-turnstile-login" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
+                        </div>
+
                         <button type="submit" class="btn-premium-action w-100" id="btnLogin">
-                            <span>Se connecter</span>
+                            <span><?php echo t('login_btn'); ?></span>
                             <i class="fas fa-arrow-right ms-2 fs-small"></i>
                         </button>
 
@@ -66,8 +75,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             <div class="notice-content">
                                 <i class="fas fa-user-shield notice-icon"></i>
                                 <p class="notice-text">
-                                    L'accès est réservé aux comptes validés via notre 
-                                    <a href="/contact" class="notice-link">formulaire de contact</a>.
+                                    <?php echo t('login_notice_prefix'); ?> 
+                                    <a href="/contact" class="notice-link"><?php echo t('login_contact_form'); ?></a>.
                                 </p>
                             </div>
                         </div>
@@ -172,19 +181,23 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     border-color: rgba(255, 255, 255, 0.15);
 }
 
-.login-logo {
-    display: inline-block;
+.login-logo-container {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
 }
 
-.slap-dot {
-    width: 40px;
-    height: 40px;
-    background: var(--accent-gradient);
-    border-radius: 12px;
-    display: inline-block;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-    position: relative;
-    transform: rotate(45deg);
+.login-brand-logo {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(41, 151, 255, 0.3));
 }
 
 /* INPUTS */
@@ -299,9 +312,22 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     transition: all 0.3s ease;
 }
 
-.notice-link:hover {
-    color: var(--accent-blue);
-    border-color: var(--accent-blue);
+/* ALERTS */
+.alert-premium-error {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-left: 4px solid #ef4444;
+    color: #fca5a5;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.alert-text {
+    flex: 1;
 }
 
 /* RESPONSIVE */
@@ -323,7 +349,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const originalText = btn.innerHTML;
     
     // UI Loading state
-    btn.innerHTML = '<span>Connexion en cours...</span>';
+    btn.innerHTML = '<span><?php echo t('login_connecting'); ?></span>';
     btn.disabled = true;
     alert.classList.add('d-none');
     
@@ -342,15 +368,21 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         if (result.success) {
             window.location.href = result.redirect || '/dashboard';
         } else {
-            alert.textContent = result.error || 'Erreur de connexion.';
+            const alertText = alert.querySelector('.alert-text');
+            alertText.textContent = result.error || '<?php echo t('login_error_fail'); ?>';
             alert.classList.remove('d-none');
             // Shake effect
             const card = document.querySelector('.login-glass');
             card.style.animation = 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both';
             setTimeout(() => card.style.animation = '', 500);
+            
+            // Reset turnstile if exists
+            if (typeof turnstile !== 'undefined') {
+                try { turnstile.reset('#cf-turnstile-login'); } catch(e) {}
+            }
         }
     } catch (err) {
-        alert.textContent = 'Une erreur serveur est survenue.';
+        alert.textContent = '<?php echo t('login_error_server'); ?>';
         alert.classList.remove('d-none');
     } finally {
         if (!window.location.href.includes('/dashboard')) {
