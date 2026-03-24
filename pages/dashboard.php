@@ -45,9 +45,18 @@ $getUserIcon = function() use ($icon) {
 // Sync session with Notion photo/name
 $_SESSION['user_name'] = $props['Prenom NOM']['title'][0]['text']['content'] ?? $_SESSION['user_name'];
 $photoProperty = $props['Photo']['files'] ?? [];
+$photoUrl = '';
 if (count($photoProperty) > 0) {
-    $_SESSION['user_photo'] = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
+    $photoUrl = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
 }
+
+// Fallback to Icon if Photo property is empty
+if (empty($photoUrl)) {
+    if ($icon && ($icon['type'] === 'external' || $icon['type'] === 'file')) {
+        $photoUrl = ($icon['type'] === 'external') ? $icon['external']['url'] : $icon['file']['url'];
+    }
+}
+$_SESSION['user_photo'] = $photoUrl;
 
 // Helper functions to safely extract data
 $getUserName = fn() => $props['Prenom NOM']['title'][0]['text']['content'] ?? '';

@@ -215,12 +215,25 @@ try {
     $_SESSION['user_email'] = $email;
     $_SESSION['user_name'] = $fullName;
     
-    // Extract Photo URL
-    $photoProperty = $userPage['properties']['Photo']['files'] ?? [];
+    // Extract Photo URL (from 'Photo' property or fallback to Page Icon)
     $photoUrl = '';
+    
+    // 1. Try 'Photo' property (Files & Media)
+    $photoProperty = $userPage['properties']['Photo']['files'] ?? [];
     if (count($photoProperty) > 0) {
         $photoUrl = $photoProperty[0]['file']['url'] ?? $photoProperty[0]['external']['url'] ?? '';
     }
+    
+    // 2. Fallback to Notion Page Icon if no photo property found
+    if (empty($photoUrl)) {
+        $icon = $userPage['icon'] ?? null;
+        if ($icon) {
+            if ($icon['type'] === 'external') $photoUrl = $icon['external']['url'];
+            elseif ($icon['type'] === 'file') $photoUrl = $icon['file']['url'];
+            // Note: Emoji icons aren't URLs, so we leave as empty (fallback to FontAwesome)
+        }
+    }
+    
     $_SESSION['user_photo'] = $photoUrl;
     
     $_SESSION['logged_in'] = true;

@@ -29,12 +29,23 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="login-card-container fade-in-up">
                 <div class="glass-card login-glass">
-                    <div class="text-center mb-5">
+                    <div class="text-center mb-4">
                         <div class="login-logo-container mb-4">
                             <img src="/assets/img/brand/logo.svg" alt="SlapIA" class="login-brand-logo">
                         </div>
                         <h1 class="h2 text-white fw-bold mb-2"><?php echo t('login_welcome_back'); ?></h1>
-                        <p class="text-secondary small"><?php echo t('login_subtitle'); ?></p>
+                        <p class="text-secondary small mb-4"><?php echo t('login_subtitle'); ?></p>
+                        
+                        <!-- Onboarding Notice (Moved to Top for better visibility) -->
+                        <div class="onboarding-notice mb-4">
+                            <div class="notice-content">
+                                <i class="fas fa-user-shield notice-icon"></i>
+                                <p class="notice-text">
+                                    <?php echo t('login_notice_prefix'); ?> 
+                                    <a href="/contact" class="notice-link"><?php echo t('login_contact_form'); ?></a>.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <form id="loginForm">
@@ -70,16 +81,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             <span><?php echo t('login_btn'); ?></span>
                             <i class="fas fa-arrow-right ms-2 fs-small"></i>
                         </button>
-
-                        <div class="onboarding-notice mt-5">
-                            <div class="notice-content">
-                                <i class="fas fa-user-shield notice-icon"></i>
-                                <p class="notice-text">
-                                    <?php echo t('login_notice_prefix'); ?> 
-                                    <a href="/contact" class="notice-link"><?php echo t('login_contact_form'); ?></a>.
-                                </p>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -382,7 +383,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             }
         }
     } catch (err) {
-        alert.textContent = '<?php echo t('login_error_server'); ?>';
+        const alertText = alert.querySelector('.alert-text');
+        if (alertText) {
+            alertText.textContent = '<?php echo t('login_error_server'); ?>';
+        } else {
+            alert.textContent = '<?php echo t('login_error_server'); ?>';
+        }
         alert.classList.remove('d-none');
     } finally {
         if (!window.location.href.includes('/dashboard')) {

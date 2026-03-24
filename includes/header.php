@@ -213,7 +213,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
 </nav>
 
 <!-- Right Side Floating Account (Outside Dock) -->
-<div class="header-right-actions">
+<div class="header-right-actions d-none d-md-flex">
     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
         <a href="/dashboard" class="account-pill hover-glow shadow-sm" title="<?php echo t('dash_title'); ?>">
             <?php if (!empty($_SESSION['user_photo'])): ?>
