@@ -56,8 +56,11 @@ try {
     ]);
 
     $userPageId = null;
+    $userName   = 'Utilisateur'; // Default fallback
+
     foreach ($result['results'] ?? [] as $page) {
         $userPageId = $page['id'];
+        $userName   = NotionAPI::richText($page['properties']['Prenom NOM'] ?? [], 'title') ?: 'Utilisateur';
         break;
     }
 
@@ -68,7 +71,6 @@ try {
         $expiry  = date('c', $now + 3600); // 1 hour from now, ISO8601
 
         // 3. Update Notion with Token and Expiry
-        // Note: Properties "Reset Token" and "Reset Expiry" must exist in Notion
         $updateData = [
             'properties' => [
                 'Reset Token' => [
@@ -84,7 +86,6 @@ try {
 
         if (isset($updateResult['error']) || ($updateResult['http_code'] ?? 0) >= 400) {
             error_log('[SlapIA Reset] Notion update failed: ' . json_encode($updateResult));
-            // We still return 200 to avoid enumeration, but log the error
         } else {
             // 4. Trigger n8n webhook
             $resetUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
@@ -94,6 +95,7 @@ try {
             if ($webhookUrl) {
                 $payload = json_encode([
                     'email'     => $email,
+                    'name'      => $userName,
                     'reset_url' => $resetUrl,
                 ]);
                 $chWh = curl_init($webhookUrl);

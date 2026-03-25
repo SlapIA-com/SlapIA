@@ -12,6 +12,31 @@ $token = trim($_GET['token'] ?? '');
 $email = strtolower(trim($_GET['email'] ?? ''));
 $mode  = ($token && $email) ? 'reset' : 'request'; // which step to show
 
+// If in reset mode, check token validity immediately (to prevent showing form for used/invalid tokens)
+if ($mode === 'reset') {
+    include_once __DIR__ . '/../includes/notion.php';
+    $dbId   = config('NOTION_SATISFACTION_DATABASE_ID');
+    $result = notion()->queryDatabase($dbId, [
+        'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
+    ]);
+
+    $isValid = false;
+    foreach ($result['results'] ?? [] as $page) {
+        $storedToken = NotionAPI::richText($page['properties']['Reset Token'] ?? []);
+        $expiry      = $page['properties']['Reset Expiry']['date']['start'] ?? '';
+        
+        if ($storedToken && $token === $storedToken && strtotime($expiry) > time()) {
+            $isValid = true;
+        }
+        break;
+    }
+
+    if (!$isValid) {
+        header('Location: /404');
+        exit;
+    }
+}
+
 $page_title       = t('reset_password_title');
 $page_description = t('reset_password_meta_desc');
 include '../includes/header.php';
