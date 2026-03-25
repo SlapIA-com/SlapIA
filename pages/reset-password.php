@@ -40,6 +40,7 @@ if ($mode === 'reset') {
 
 $page_title       = t('reset_password_title');
 $page_description = t('reset_password_meta_desc');
+$page_needs_turnstile = true;
 include '../includes/header.php';
 ?>
 
@@ -88,6 +89,11 @@ include '../includes/header.php';
                                 <input type="email" class="premium-input" id="resetEmail" name="email" required
                                        placeholder="nom@entreprise.com" autocomplete="email">
                             </div>
+                        </div>
+
+                        <!-- Cloudflare Turnstile -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div id="cf-turnstile-reset" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
                         </div>
 
                         <button type="submit" class="btn-premium-action w-100" id="btnResetRequest">

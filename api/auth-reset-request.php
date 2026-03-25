@@ -25,6 +25,41 @@ try {
         exit;
     }
 
+    // ── Cloudflare Turnstile ─────────────────────────────────────────────────
+    $turnstileResponse = $input['cf-turnstile-response'] ?? '';
+    if (empty($turnstileResponse)) {
+        ob_clean();
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Veuillez compléter la sécurité Cloudflare.']);
+        exit;
+    }
+
+    $secretKey  = config('TURNSTILE_SECRET_KEY');
+    $verifyData = [
+        'secret'   => $secretKey,
+        'response' => $turnstileResponse,
+        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+    ];
+
+    $chVerify = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($chVerify, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($verifyData),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+    ]);
+    $responseVerify = curl_exec($chVerify);
+    $httpCodeVerify = curl_getinfo($chVerify, CURLINFO_HTTP_CODE);
+    curl_close($chVerify);
+
+    $responseKeys = json_decode($responseVerify, true);
+    if ($httpCodeVerify !== 200 || empty($responseKeys['success'])) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Validation de sécurité échouée.']);
+        exit;
+    }
+
     // Rate limit: max 3 requests per 15 min per email
     $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     $rlKey    = 'reset_rl_' . md5($email);

@@ -12,7 +12,13 @@ window.initResetPasswordForm = function () {
             e.preventDefault();
             const btn   = document.getElementById('btnResetRequest');
             const email = document.getElementById('resetEmail').value.trim();
+            const turnstileResponse = typeof turnstile !== 'undefined' ? turnstile.getResponse('#cf-turnstile-reset') : '';
             showResetAlert(null);
+
+            if (!turnstileResponse) {
+                showResetAlert('Veuillez compléter la sécurité Cloudflare.');
+                return;
+            }
 
             btn.disabled  = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Envoi...';
@@ -21,7 +27,7 @@ window.initResetPasswordForm = function () {
                 const res  = await fetch('/api/auth-reset-request.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email }),
+                    body: JSON.stringify({ email, 'cf-turnstile-response': turnstileResponse }),
                 });
                 const data = await res.json();
 
@@ -32,11 +38,13 @@ window.initResetPasswordForm = function () {
                     showResetAlert(data.error || 'Erreur serveur.');
                     btn.disabled  = false;
                     btn.innerHTML = '<span>Envoyer le lien</span><i class="fas fa-paper-plane ms-2"></i>';
+                    if (typeof turnstile !== 'undefined') turnstile.reset('#cf-turnstile-reset');
                 }
             } catch (err) {
                 showResetAlert('Erreur de connexion.');
                 btn.disabled  = false;
                 btn.innerHTML = '<span>Envoyer le lien</span><i class="fas fa-paper-plane ms-2"></i>';
+                if (typeof turnstile !== 'undefined') turnstile.reset('#cf-turnstile-reset');
             }
         });
     }
