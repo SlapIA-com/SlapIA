@@ -77,6 +77,7 @@ window._initAllTurnstiles = function () {
     window.initContactTurnstile();
     window.initLoginTurnstile();
     window.initRssTurnstile();
+    if (window.initResetTurnstile) window.initResetTurnstile();
 };
 
 // Real callback redefinition (header.php may have pre-fired with the stub)

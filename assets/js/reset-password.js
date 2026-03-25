@@ -1,9 +1,26 @@
-/**
- * reset-password.js
- * Handles Password Reset forms (request & exec) with Swup SPA compatibility.
- */
+window.initResetTurnstile = function () {
+    const container = document.getElementById('cf-turnstile-reset');
+    if (!container || typeof turnstile === 'undefined') return;
+
+    if (container.dataset.rendered === 'true' || container.querySelector('iframe')) return;
+
+    const sitekey = container.getAttribute('data-sitekey');
+    if (!sitekey) return;
+
+    container.dataset.rendered = 'true';
+    try {
+        turnstile.render(container, {
+            sitekey: sitekey,
+            theme: 'dark'
+        });
+    } catch (e) {
+        container.dataset.rendered = 'false';
+    }
+};
 
 window.initResetPasswordForm = function () {
+    // Render Turnstile widget
+    window.initResetTurnstile();
     // ── Step 1: Request reset ──
     const requestForm = document.getElementById('resetRequestForm');
     if (requestForm && !requestForm.dataset.initialized) {
