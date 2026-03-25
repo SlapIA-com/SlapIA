@@ -160,7 +160,6 @@ try {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlErr  = curl_error($ch);
-    curl_close($ch);
 
     if ($curlErr || $httpCode >= 400) {
         $notionMsg = json_decode($response, true)['message'] ?? 'Erreur inconnue';

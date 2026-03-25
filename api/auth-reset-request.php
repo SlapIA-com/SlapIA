@@ -107,7 +107,6 @@ try {
                     CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
                 ]);
                 curl_exec($chWh);
-                curl_close($chWh);
             } else {
                 error_log('[SlapIA Reset] No N8N_RESET_WEBHOOK_URL configured. URL: ' . $resetUrl);
             }

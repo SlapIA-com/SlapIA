@@ -170,7 +170,6 @@ class NotionAPI
         $raw      = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlErr  = curl_error($ch);
-        curl_close($ch);
 
         if ($curlErr) {
             return ['error' => $curlErr, 'http_code' => 0];

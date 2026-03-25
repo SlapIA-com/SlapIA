@@ -1,4 +1,5 @@
 <?php
+ob_start();
 include_once '../includes/config.php';
 include_once '../includes/lang.php';
 
