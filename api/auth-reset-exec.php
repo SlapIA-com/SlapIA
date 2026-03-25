@@ -34,55 +34,62 @@ try {
         exit;
     }
 
-    // Load stored token data
-    $tokenFile = sys_get_temp_dir() . '/reset_token_' . md5($email) . '.json';
+    // 1. Find user in Notion by email
+    $dbId   = config('NOTION_SATISFACTION_DATABASE_ID');
+    $result = notion()->queryDatabase($dbId, [
+        'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
+    ]);
 
-    if (!file_exists($tokenFile)) {
+    $userData = null;
+    foreach ($result['results'] ?? [] as $page) {
+        $props   = $page['properties'];
+        $storedToken = $props['Reset Token']['rich_text'][0]['text']['content'] ?? '';
+        $expiry      = $props['Reset Expiry']['date']['start'] ?? '';
+        
+        $userData = [
+            'id'    => $page['id'],
+            'token' => $storedToken,
+            'expiry'=> $expiry ? strtotime($expiry) : 0
+        ];
+        break;
+    }
+
+    if (!$userData || empty($userData['token'])) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Lien invalide ou expiré.']);
         exit;
     }
 
-    $data = json_decode(file_get_contents($tokenFile), true);
-    if (!$data) {
-        ob_clean();
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Lien invalide.']);
-        exit;
-    }
-
-    // Check expiry
-    if (time() > ($data['expires'] ?? 0)) {
-        @unlink($tokenFile);
+    // 2. Check expiry
+    if (time() > $userData['expiry']) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Ce lien a expiré. Veuillez en demander un nouveau.']);
         exit;
     }
 
-    // Constant-time token comparison (compare sha256 hashes)
-    if (!hash_equals($data['token'] ?? '', hash('sha256', $token))) {
+    // 3. Constant-time token comparison
+    if (!hash_equals($userData['token'], $token)) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Lien invalide.']);
         exit;
     }
 
-    if (strtolower($data['email'] ?? '') !== $email) {
-        ob_clean();
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Lien invalide.']);
-        exit;
-    }
-
-    // Update the password in Notion
+    // 4. Update the password in Notion and CLEAR token fields
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-    $updateResult   = notion()->updatePage($data['user_id'], [
+    $updateResult   = notion()->updatePage($userData['id'], [
         'properties' => [
             'Mot de passe' => [
                 'rich_text' => [['text' => ['content' => $hashedPassword]]],
             ],
+            'Reset Token' => [
+                'rich_text' => [] // clear
+            ],
+            'Reset Expiry' => [
+                'date' => null // clear
+            ]
         ],
     ]);
 
@@ -92,9 +99,6 @@ try {
         echo json_encode(['success' => false, 'error' => 'Impossible de mettre à jour le mot de passe. Réessayez.']);
         exit;
     }
-
-    // Invalidate the token
-    @unlink($tokenFile);
 
     ob_clean();
     echo json_encode(['success' => true]);

@@ -1,7 +1,7 @@
 <?php
 /**
  * Password Reset — Step 1
- * Generates a token, stores it server-side, and triggers an n8n webhook to send the email.
+ * Generates a token, stores it in Notion, and triggers an n8n webhook to send the email.
  */
 
 include_once __DIR__ . '/../includes/config.php';
@@ -27,7 +27,10 @@ try {
 
     // Rate limit: max 3 requests per 15 min per email
     $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    $rlFile   = sys_get_temp_dir() . '/rl_reset_' . md5($email) . '.json';
+    $rlKey    = 'reset_rl_' . md5($email);
+    
+    // Simple rate limit using temp file (since it's just for throttling)
+    $rlFile   = sys_get_temp_dir() . '/' . $rlKey . '.json';
     $now      = time();
     $attempts = [];
 
@@ -46,59 +49,66 @@ try {
     $attempts[] = $now;
     file_put_contents($rlFile, json_encode(array_values($attempts)), LOCK_EX);
 
-    // Check if email exists in Notion (don't reveal if it doesn't — always return success)
+    // 1. Find user in Notion
     $dbId   = config('NOTION_SATISFACTION_DATABASE_ID');
     $result = notion()->queryDatabase($dbId, [
         'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
     ]);
 
-    $userExists = false;
-    $userId     = null;
+    $userPageId = null;
     foreach ($result['results'] ?? [] as $page) {
-        $hash = $page['properties']['Mot de passe']['rich_text'][0]['text']['content'] ?? '';
-        if (!empty($hash)) {
-            $userExists = true;
-            $userId     = $page['id'];
-            break;
-        }
+        $userPageId = $page['id'];
+        break;
     }
 
-    if ($userExists) {
-        // Generate a secure token
+    // If user exists, process reset
+    if ($userPageId) {
+        // 2. Generate secure token
         $token   = bin2hex(random_bytes(32));
-        $expires = $now + 3600; // 1 hour
+        $expiry  = date('c', $now + 3600); // 1 hour from now, ISO8601
 
-        $tokenFile = sys_get_temp_dir() . '/reset_token_' . md5($email) . '.json';
-        file_put_contents($tokenFile, json_encode([
-            'token'   => hash('sha256', $token), // store hash only
-            'user_id' => $userId,
-            'email'   => $email,
-            'expires' => $expires,
-        ]), LOCK_EX);
+        // 3. Update Notion with Token and Expiry
+        // Note: Properties "Reset Token" and "Reset Expiry" must exist in Notion
+        $updateData = [
+            'properties' => [
+                'Reset Token' => [
+                    'rich_text' => [['text' => ['content' => $token]]]
+                ],
+                'Reset Expiry' => [
+                    'date' => ['start' => $expiry]
+                ]
+            ]
+        ];
 
-        $resetUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
-            . '/reset-password?token=' . urlencode($token) . '&email=' . urlencode($email);
+        $updateResult = notion()->updatePage($userPageId, $updateData);
 
-        // Trigger n8n webhook if configured
-        $webhookUrl = config('N8N_RESET_WEBHOOK_URL');
-        if ($webhookUrl) {
-            $payload = json_encode([
-                'email'     => $email,
-                'reset_url' => $resetUrl,
-            ]);
-            $chWh = curl_init($webhookUrl);
-            curl_setopt_array($chWh, [
-                CURLOPT_POST           => true,
-                CURLOPT_POSTFIELDS     => $payload,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 5,
-                CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-            ]);
-            curl_exec($chWh);
-            curl_close($chWh);
+        if (isset($updateResult['error']) || ($updateResult['http_code'] ?? 0) >= 400) {
+            error_log('[SlapIA Reset] Notion update failed: ' . json_encode($updateResult));
+            // We still return 200 to avoid enumeration, but log the error
         } else {
-            // Dev fallback: log to error_log
-            error_log('[SlapIA Reset] URL: ' . $resetUrl);
+            // 4. Trigger n8n webhook
+            $resetUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
+                . '/reset-password?token=' . urlencode($token) . '&email=' . urlencode($email);
+
+            $webhookUrl = config('N8N_RESET_WEBHOOK_URL');
+            if ($webhookUrl) {
+                $payload = json_encode([
+                    'email'     => $email,
+                    'reset_url' => $resetUrl,
+                ]);
+                $chWh = curl_init($webhookUrl);
+                curl_setopt_array($chWh, [
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => $payload,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT        => 5,
+                    CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+                ]);
+                curl_exec($chWh);
+                curl_close($chWh);
+            } else {
+                error_log('[SlapIA Reset] No N8N_RESET_WEBHOOK_URL configured. URL: ' . $resetUrl);
+            }
         }
     }
 
