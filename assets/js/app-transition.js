@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Give Turnstile script a tiny bit of breath to pick up the new containers
             if (window._initAllTurnstiles) setTimeout(window._initAllTurnstiles, 150);
             if (window.initLoginForm) window.initLoginForm();
+            if (window.initResetPasswordForm) window.initResetPasswordForm();
         } catch (e) { console.error("Contact Form/Turnstile init failed", e); }
 
         // Re-init Counter Animations (index page)
