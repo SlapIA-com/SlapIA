@@ -70,20 +70,12 @@
         var readtime = btn.getAttribute('data-article-readtime') || '1';
         var content = btn.getAttribute('data-article-content') || '';
         var slug = btn.getAttribute('data-article-slug') || '';
+        var id = btn.getAttribute('data-article-id') || '';
 
         // Update URL hash dynamically
         if (slug && ('#' + slug) !== window.location.hash) {
             history.replaceState(null, null, '#' + slug);
         }
-
-        // Convert newlines to <br> (already escaped by escapeHtml in content build)
-        // Here we assume content might have some entities but we want to display it as text with line breaks
-        // BUT wait, most content from Notion is already HTML-ish or sanitized.
-        // Let's decode basic entities then re-sanitize for safety.
-        var tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        var cleanContent = tempDiv.textContent || tempDiv.innerText || '';
-        var contentHtml = escapeHtml(cleanContent).replace(/\n/g, '<br>');
 
         var overlay = getOrCreateOverlay();
 
@@ -101,6 +93,12 @@
                 '<h2 style="color:#fff;font-weight:700;margin:0;">' + escapeHtml(title) + '</h2>' +
                 '</div>';
         }
+
+        // initial content (summary)
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        var cleanContent = tempDiv.textContent || tempDiv.innerText || '';
+        var contentHtml = escapeHtml(cleanContent).replace(/\n/g, '<br>');
 
         overlay.innerHTML =
             '<div class="article-overlay-backdrop"></div>' +
@@ -121,7 +119,10 @@
                                 '<span style="background:rgba(255,255,255,0.08);color:var(--accent-blue,#2997ff);padding:6px 14px;border-radius:20px;font-size:0.8rem;"><i class="fas fa-clock" style="margin-right:4px;"></i>' + escapeHtml(readtime) + ' min read</span>' +
                             '</div>' +
                         '</div>' +
-                        '<div class="article-content" style="padding-bottom:2rem;">' + contentHtml + '</div>' +
+                        '<div class="article-content" style="padding-bottom:2rem;">' + 
+                            '<div class="article-content-loader" style="display:none; text-align:center; padding: 2rem;"><i class="fas fa-spinner fa-spin text-primary"></i></div>' +
+                            '<div class="article-content-body">' + contentHtml + '</div>' + 
+                        '</div>' +
                     '</div>' +
                 '</div>' +
                 '<div class="article-overlay-footer">' +
@@ -130,6 +131,33 @@
                     '</a>' +
                 '</div>' +
             '</div>';
+
+        // Attempt to load full content if ID is available
+        if (id) {
+            var contentBody = overlay.querySelector('.article-content-body');
+            var loader = overlay.querySelector('.article-content-loader');
+            
+            // Show loader if we're going to fetch
+            loader.style.display = 'block';
+            contentBody.style.opacity = '0.5';
+
+            fetch('/api/notion-blog.php?id=' + id)
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    loader.style.display = 'none';
+                    contentBody.style.opacity = '1';
+                    if (data && data.content) {
+                        // Replace double newlines with <p> equivalent or just nl2br
+                        var fullHtml = escapeHtml(data.content).replace(/\n\n/g, '</div><div style="margin-bottom:1.2rem;">').replace(/\n/g, '<br>');
+                        contentBody.innerHTML = '<div style="margin-bottom:1.2rem;">' + fullHtml + '</div>';
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Error fetching full content:', err);
+                    loader.style.display = 'none';
+                    contentBody.style.opacity = '1';
+                });
+        }
 
         // Attach event listeners
         overlay.querySelector('.article-overlay-backdrop').addEventListener('click', window.closeBlogOverlay);

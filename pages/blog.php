@@ -75,7 +75,8 @@ $articles = getBlogArticles(100);
                             data-article-date="<?php echo date('d M Y', strtotime($article['date'])); ?>"
                             data-article-readtime="<?php echo max(1, round(str_word_count(strip_tags($article['contenu'])) / 200)); ?>"
                             data-article-content="<?php echo htmlspecialchars($article['contenu'], ENT_QUOTES, 'UTF-8'); ?>"
-                            data-article-slug="<?php echo htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8'); ?>">
+                            data-article-slug="<?php echo htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8'); ?>"
+                            data-article-id="<?php echo htmlspecialchars($article['id'], ENT_QUOTES, 'UTF-8'); ?>">
                             
                             <!-- Internal glow orbs -->
                             <div class="card-glow-orb orb-purple" style="opacity: 0.2"></div>

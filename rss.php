@@ -16,7 +16,7 @@ $rssUrl = $siteUrl . '/rss.xml';
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>SlapIA Blog</title>
     <link><?php echo htmlspecialchars($blogUrl); ?></link>
@@ -28,13 +28,23 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
       <lastBuildDate><?php echo htmlspecialchars($articles[0]['date_rss']); ?></lastBuildDate>
     <?php endif; ?>
     
-    <?php foreach ($articles as $article): ?>
+    <?php foreach ($articles as $article): 
+        // Récupérer le contenu complet via les blocs Notion pour le flux RSS
+        $fullContent = getNotionBlocks($article['id']);
+        if (empty($fullContent)) {
+            $fullContent = !empty($article['extrait']) ? $article['extrait'] : $article['contenu_raw'];
+        }
+        
+        // Nettoyage et formatage minimal pour XML
+        $description = htmlspecialchars($article['extrait'] ?: mb_strimwidth(strip_tags($fullContent), 0, 300, "..."));
+    ?>
     <item>
       <title><?php echo htmlspecialchars($article['titre']); ?></title>
       <link><?php echo htmlspecialchars($article['url']); ?></link>
       <guid isPermaLink="true"><?php echo htmlspecialchars($article['url']); ?></guid>
       <pubDate><?php echo htmlspecialchars($article['date_rss']); ?></pubDate>
-      <description><![CDATA[<?php echo (!empty($article['extrait']) ? $article['extrait'] : $article['contenu_raw']); ?>]]></description>
+      <description><?php echo $description; ?></description>
+      <content:encoded><![CDATA[<?php echo nl2br(htmlspecialchars($fullContent)); ?>]]></content:encoded>
       <?php if (!empty($article['image'])): 
           // Extract extension or fallback to jpeg
           $ext = pathinfo(parse_url($article['image'], PHP_URL_PATH), PATHINFO_EXTENSION);

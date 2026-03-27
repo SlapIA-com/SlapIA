@@ -55,6 +55,57 @@ function getNotionImage($prop)
 }
 
 /**
+ * Helper pour extraire les blocs d'une page (le contenu complet)
+ */
+function getNotionBlocks($pageId)
+{
+    $notionApiKey = config('NOTION_API_KEY');
+    if (empty($pageId) || empty($notionApiKey)) return '';
+
+    $ch = curl_init('https://api.notion.com/v1/blocks/' . $pageId . '/children?page_size=100');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $notionApiKey,
+            'Notion-Version: 2022-06-28',
+            'User-Agent: FormationIA/1.0'
+        ],
+        CURLOPT_TIMEOUT => 10
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    unset($ch);
+
+    if ($httpCode !== 200) return '';
+
+    $data = json_decode($response, true);
+    $blocks = $data['results'] ?? [];
+    
+    $fullText = '';
+    foreach ($blocks as $block) {
+        $type = $block['type'] ?? '';
+        if (isset($block[$type]['rich_text'])) {
+            $parts = $block[$type]['rich_text'];
+            $blockText = '';
+            foreach ($parts as $p) {
+                $blockText .= ($p['plain_text'] ?? '');
+            }
+            
+            // Basic formatting based on block type
+            if ($type === 'heading_1') $fullText .= "\n# " . $blockText . "\n";
+            elseif ($type === 'heading_2') $fullText .= "\n## " . $blockText . "\n";
+            elseif ($type === 'heading_3') $fullText .= "\n### " . $blockText . "\n";
+            elseif ($type === 'bulleted_list_item') $fullText .= "• " . $blockText . "\n";
+            elseif ($type === 'numbered_list_item') $fullText .= "1. " . $blockText . "\n";
+            else $fullText .= $blockText . "\n\n";
+        }
+    }
+    
+    return trim($fullText);
+}
+
+/**
  * Récupère les articles de blog depuis Notion (avec cache de 30 minutes)
  */
 function getBlogArticles($limit = 50)
@@ -181,5 +232,11 @@ function getBlogArticles($limit = 50)
 // Si appelé directement, retourner le JSON pour débug ou API
 if (basename($_SERVER['PHP_SELF']) === 'notion-blog.php') {
     header('Content-Type: application/json');
-    echo json_encode(getBlogArticles());
+    
+    // Si un ID est passé, on ne renvoie que les blocs de cet article
+    if (isset($_GET['id'])) {
+        echo json_encode(['content' => getNotionBlocks($_GET['id'])]);
+    } else {
+        echo json_encode(getBlogArticles());
+    }
 }
