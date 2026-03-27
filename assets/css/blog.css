@@ -184,13 +184,19 @@
     margin: 2.5rem 0;
     font-size: 1.2rem;
 }
-.article-overlay .article-content ul, 
 .article-overlay .article-content ol {
     margin-bottom: 2rem;
-    padding-left: 1.5rem;
+    padding-left: 2rem;
+    list-style-type: decimal;
 }
 .article-overlay .article-content li {
     margin-bottom: 0.75rem;
+}
+.article-overlay .article-content li > ul,
+.article-overlay .article-content li > ol {
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+    margin-left: 0.5rem;
 }
 .article-overlay .article-content .notion-callout {
     background: rgba(41, 151, 255, 0.05);
@@ -200,6 +206,12 @@
     padding: 2rem;
     margin: 3rem 0;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.article-overlay .article-content .notion-callout p {
+    margin-bottom: 0;
+}
+.article-overlay .article-content .notion-callout p + p {
+    margin-top: 1rem;
 }
 .article-overlay .article-content a {
     color: var(--accent-blue, #2997ff);

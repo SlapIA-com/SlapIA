@@ -57,8 +57,10 @@ function getNotionImage($prop)
 /**
  * Helper pour extraire les blocs d'une page (le contenu complet)
  */
-function getNotionBlocks($pageId)
+function getNotionBlocks($pageId, $depth = 0)
 {
+    if ($depth > 2) return ''; // Limit recursion to 2 levels (enough for nested lists)
+
     $notionApiKey = config('NOTION_API_KEY');
     if (empty($pageId) || empty($notionApiKey)) return '';
 
@@ -87,6 +89,15 @@ function getNotionBlocks($pageId)
         $type = $block['type'] ?? '';
         if (empty($type)) continue;
 
+        $blockId = $block['id'] ?? '';
+        $hasChildren = $block['has_children'] ?? false;
+        $childrenHtml = '';
+        
+        // Recursively get children if they exist
+        if ($hasChildren && $depth < 2) {
+            $childrenHtml = getNotionBlocks($blockId, $depth + 1);
+        }
+
         // List of types that use 'rich_text' property directly
         $richTextTypes = ['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'todo'];
         
@@ -105,43 +116,42 @@ function getNotionBlocks($pageId)
             if (empty($blockText) && !in_array($type, ['paragraph', 'toggle', 'todo'])) continue;
 
             if ($type === 'paragraph') {
-                // Basic markdown-style detection for automation-generated blocks (###, ##, #, -, *)
-                if (strpos($blockText, '### ') === 0) $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
-                elseif (strpos($blockText, '## ') === 0) $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
-                elseif (strpos($blockText, '# ') === 0) $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
-                elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) $fullText .= "<li>" . substr($blockText, 2) . "</li>";
-                elseif (preg_match('/^\d+\.\s/', $blockText)) {
+                // Check for markdown shortcuts in paragraph text (###, ##, #, -, *, 1.)
+                if (strpos($blockText, '### ') === 0) {
+                    $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
+                } elseif (strpos($blockText, '## ') === 0) {
+                    $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
+                } elseif (strpos($blockText, '# ') === 0) {
+                    $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
+                } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
+                    $fullText .= "<li>" . substr($blockText, 2) . "</li>";
+                } elseif (preg_match('/^\d+\.\s/', $blockText)) {
                     $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>";
                 } else {
                     // Global replacements for markdown markers within the text block
-                    // Handle bold: **text** -> <strong>text</strong>
                     $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
-                    
-                    // Handle italic: *text* (avoiding match with lonely bullet points)
                     $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
                     
-                    // Handle "inline" bullet points used in clumps (like " * ", " * **", etc.)
-                    // This handles n8n clumped content more aggressively with better spacing
                     $bulletHtml = '<br><span style="margin-left:1.5rem;display:inline-block;color:var(--accent-blue,#2997ff);margin-right:8px;">•</span>';
                     $blockText = preg_replace('/\s+\*\s+/', $bulletHtml, $blockText);
-                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText); // After a colon + space
-                    $blockText = preg_replace('/(?<=\*)\*\s+/', $bulletHtml, $blockText); // After an existing asterisk clump
+                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText);
                     
-                    // Final cleanup for PROTECTED markers and parasitic **
                     $blockText = str_replace('**', '', $blockText); 
-                    $blockText = nl2br($blockText); // Preserve any SHIFT+ENTER newlines
+                    $blockText = nl2br($blockText);
                     
-                    $fullText .= "<p>" . (empty($blockText) ? "&nbsp;" : $blockText) . "</p>";
+                    $fullText .= "<p>" . (empty($blockText) && empty($childrenHtml) ? "&nbsp;" : $blockText) . "</p>";
                 }
-            } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
-            elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
-            elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
-            elseif ($type === 'quote') $fullText .= "<blockquote>" . $blockText . "</blockquote>";
-            elseif ($type === 'toggle') $fullText .= "<details><summary style='cursor:pointer;font-weight:600;margin-bottom:0.5rem;'>" . $blockText . "</summary><p style='padding-left:1rem;opacity:0.8;'><em>(Contenu du dossier masqué)</em></p></details>";
-            elseif ($type === 'todo') $fullText .= "<div><input type='checkbox' disabled " . ($block['todo']['checked'] ? 'checked' : '') . "> " . $blockText . "</div>";
-            elseif ($type === 'callout') $fullText .= "<div class='notion-callout' style='background:rgba(255,255,255,0.05);padding:1.2rem;border-radius:12px;margin-bottom:1.5rem;border-left:4px solid #2997ff;'>" . $blockText . "</div>";
-            elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
-            else $fullText .= "<p>" . $blockText . "</p>";
+                $fullText .= $childrenHtml;
+            } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>" . $childrenHtml;
+            elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>" . $childrenHtml;
+            elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>" . $childrenHtml;
+            elseif ($type === 'quote') $fullText .= "<blockquote>" . $blockText . $childrenHtml . "</blockquote>";
+            elseif ($type === 'toggle') $fullText .= "<details><summary style='cursor:pointer;font-weight:600;margin-bottom:0.5rem;'>" . $blockText . "</summary>" . ($childrenHtml ?: "<p style='padding-left:1rem;opacity:0.8;'><em>(Vide)</em></p>") . "</details>";
+            elseif ($type === 'todo') $fullText .= "<div><input type='checkbox' disabled " . ($block['todo']['checked'] ? 'checked' : '') . "> " . $blockText . "</div>" . $childrenHtml;
+            elseif ($type === 'callout') $fullText .= "<div class='notion-callout'>" . $blockText . $childrenHtml . "</div>";
+            elseif ($type === 'bulleted_list_item') $fullText .= "<li class='list-bullet'>" . $blockText . ($childrenHtml ? "<ul>$childrenHtml</ul>" : "") . "</li>";
+            elseif ($type === 'numbered_list_item') $fullText .= "<li class='list-number'>" . $blockText . ($childrenHtml ? "<ol>$childrenHtml</ol>" : "") . "</li>";
+            else $fullText .= "<p>" . $blockText . "</p>" . $childrenHtml;
         } elseif ($type === 'divider') {
             $fullText .= "<hr style='border:0;border-top:1px solid rgba(255,255,255,0.1);margin:2rem 0;'>";
         } elseif ($type === 'image') {
@@ -152,8 +162,12 @@ function getNotionBlocks($pageId)
         }
     }
     
-    // Wrap lists if needed (simplified conversion)
-    $fullText = preg_replace('/(<li>.*<\/li>)+/s', '<ul>$0</ul>', $fullText);
+    // Wrap adjacent list items into <ul> or <ol>
+    $fullText = preg_replace('/(<li class=\'list-bullet\'>.*?<\/li>)+/s', '<ul>$0</ul>', $fullText);
+    $fullText = preg_replace('/(<li class=\'list-number\'>.*?<\/li>)+/s', '<ol>$0</ol>', $fullText);
+    
+    // Clean up temporary classes
+    $fullText = str_replace([' class=\'list-bullet\'', ' class=\'list-number\''], '', $fullText);
     
     return trim($fullText);
 }
