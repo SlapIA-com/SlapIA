@@ -113,8 +113,21 @@ function getNotionBlocks($pageId)
                 elseif (preg_match('/^\d+\.\s/', $blockText)) {
                     $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>";
                 } else {
+                    // Global replacements for markdown markers within the text block
+                    // Handle bold: **text** -> <strong>text</strong>
                     $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
-                    $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
+                    
+                    // Handle italic: *text* (avoiding match with lonely bullet points)
+                    $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
+                    
+                    // Handle "inline" bullet points used in clumps: " * " or " * **"
+                    $blockText = str_replace(' * ', '<br>• ', $blockText);
+                    $blockText = str_replace(' * **', '<br>• <strong>', $blockText); 
+                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', '<br>• ', $blockText); // After a colon
+                    
+                    // Final cleanup for ANY remaining ** that might be broken or lone *
+                    $blockText = str_replace('**', '', $blockText); 
+                    
                     $fullText .= "<p>" . (empty($blockText) ? "&nbsp;" : $blockText) . "</p>";
                 }
             } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
