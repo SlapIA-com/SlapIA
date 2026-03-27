@@ -99,36 +99,44 @@ function getNotionBlocks($pageId)
             }
             
             
-            // If the block is a paragraph but starts with markdown symbols (often from n8n automation)
-            // we handle it here.
-            if ($type === 'paragraph') {
-                if (empty($blockText)) continue;
-                
-                // Very basic markdown patterns for common cases
-                if (strpos($blockText, '### ') === 0) {
-                    $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
-                } elseif (strpos($blockText, '## ') === 0) {
-                    $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
-                } elseif (strpos($blockText, '# ') === 0) {
-                    $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
-                } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
-                    $fullText .= "<li>" . substr($blockText, 2) . "</li>";
-                } else {
-                    // Handle inline bold/italic if not already handled by annotations
-                    $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
-                    $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
-                    $fullText .= "<p>" . $blockText . "</p>";
+            // List of types that use 'rich_text' property directly
+            $richTextTypes = ['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'todo'];
+            
+            if (in_array($type, $richTextTypes) && isset($block[$type]['rich_text'])) {
+                $parts = $block[$type]['rich_text'];
+                $blockText = '';
+                foreach ($parts as $p) {
+                    $blockHtml = htmlspecialchars($p['plain_text'] ?? '');
+                    $ann = $p['annotations'] ?? [];
+                    if ($ann['bold'] ?? false) $blockHtml = '<strong>' . $blockHtml . '</strong>';
+                    if ($ann['italic'] ?? false) $blockHtml = '<em>' . $blockHtml . '</em>';
+                    $blockText .= $blockHtml;
                 }
-            } elseif ($type === 'heading_1') {
-                $fullText .= "<h1>" . $blockText . "</h1>";
-            } elseif ($type === 'heading_2') {
-                $fullText .= "<h2>" . $blockText . "</h2>";
-            } elseif ($type === 'heading_3') {
-                $fullText .= "<h3>" . $blockText . "</h3>";
-            } elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') {
-                $fullText .= "<li>" . $blockText . "</li>";
-            } else {
-                $fullText .= $blockText . "<br>";
+                
+                if (empty($blockText)) continue;
+
+                // Handle specifically paragraph with markdown symbols (n8n style)
+                if ($type === 'paragraph') {
+                    if (strpos($blockText, '### ') === 0) {
+                        $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
+                    } elseif (strpos($blockText, '## ') === 0) {
+                        $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
+                    } elseif (strpos($blockText, '# ') === 0) {
+                        $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
+                    } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
+                        $fullText .= "<li>" . substr($blockText, 2) . "</li>";
+                    } else {
+                        $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
+                        $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
+                        $fullText .= "<p>" . $blockText . "</p>";
+                    }
+                } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
+                elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
+                elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
+                elseif ($type === 'quote') $fullText .= "<blockquote>" . $blockText . "</blockquote>";
+                elseif ($type === 'callout') $fullText .= "<div class='notion-callout' style='background:rgba(255,255,255,0.05);padding:1rem;border-radius:8px;margin-bottom:1rem;border-left:4px solid var(--accent-blue);'>" . $blockText . "</div>";
+                elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
+                else $fullText .= "<p>" . $blockText . "</p>";
             }
         }
     }
@@ -211,17 +219,38 @@ function getBlogArticles($limit = 50)
     foreach ($allResults as $page) {
         $props = $page['properties'] ?? [];
 
-        $titre = getNotionText($props['Titre'] ?? null);
+        // Dynamic property detection
+        $titre = getNotionText($props['Titre'] ?? $props['Title'] ?? $props['Name'] ?? null);
+        
+        // If still empty, find the first 'title' type property
+        if (empty($titre)) {
+            foreach ($props as $p) {
+                if (($p['type'] ?? '') === 'title') {
+                    $titre = getNotionText($p);
+                    break;
+                }
+            }
+        }
 
         // Ignorer les lignes sans titre (souvent des brouillons vides dans Notion)
         if (empty($titre))
             continue;
 
         $contenu = getNotionText($props['Contenu'] ?? null);
-        $extrait = getNotionText($props['Extrait'] ?? null);
+        // If 'Contenu' is missing, try to find another rich_text property that isn't 'Extrait' or 'slug'
+        if (empty($contenu)) {
+            foreach ($props as $name => $p) {
+                if ($name !== 'Extrait' && ($p['type'] ?? '') === 'rich_text') {
+                    $contenu = getNotionText($p);
+                    if (!empty($contenu)) break;
+                }
+            }
+        }
+
+        $extrait = getNotionText($props['Extrait'] ?? $props['Summary'] ?? null);
 
         // Utiliser Publication Date si dispo, sinon la date de création de la ligne Notion
-        $pubDateTmp = getNotionDate($props['Publication Date'] ?? null);
+        $pubDateTmp = getNotionDate($props['Publication Date'] ?? $props['Date'] ?? null);
         if (empty($pubDateTmp)) {
             $pubDateTmp = $page['created_time'] ?? date('Y-m-d\TH:i:s\Z');
         }

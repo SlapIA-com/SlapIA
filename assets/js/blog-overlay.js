@@ -161,11 +161,16 @@
             fetch('/api/notion-blog.php?id=' + id)
                 .then(function(res) { return res.json(); })
                 .then(function(data) {
-                    if (data && data.content) {
+                    if (data && typeof data.content === 'string' && data.content.trim().length > 0) {
                         displayContent(data.content);
                     } else {
-                        // Fallback to the post (summary) if API failed for blocks
-                        displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                        // If full content is empty, maybe it's still being generated or missing
+                        // Show the 'post' summary as fallback if available, or a generic message
+                        if (content && content.trim().length > 0) {
+                            displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                        } else {
+                            displayContent('<p class="text-secondary">Cet article n\'a pas encore de contenu détaillé ou est en cours de génération.</p>');
+                        }
                     }
                 })
                 .catch(function(err) {
