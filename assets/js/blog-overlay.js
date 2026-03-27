@@ -138,11 +138,21 @@
         function displayContent(htmlContent) {
             var loader = overlay.querySelector('.article-content-loader');
             var contentBody = overlay.querySelector('.article-content-body');
+            var readTimeBadge = overlay.querySelector('.article-overlay-content-wrap span'); // The "min read" span
+
             if (loader) loader.style.display = 'none';
             if (contentBody) {
                 contentBody.innerHTML = htmlContent;
                 contentBody.style.opacity = '1';
                 contentBody.style.transition = 'opacity 0.3s ease';
+
+                // Recalculate read time
+                var text = contentBody.innerText || contentBody.textContent || '';
+                var words = text.trim().split(/\s+/).filter(Boolean).length;
+                var newTime = Math.max(1, Math.round(words / 200));
+                if (readTimeBadge) {
+                    readTimeBadge.innerHTML = '<i class="fas fa-clock" style="margin-right:4px;"></i>' + newTime + ' min read';
+                }
             }
         }
 

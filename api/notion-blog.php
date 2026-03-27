@@ -98,14 +98,35 @@ function getNotionBlocks($pageId)
                 $blockText .= $blockHtml;
             }
             
-            // Basic formatting based on block type
-            if ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
-            elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
-            elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
-            elseif ($type === 'bulleted_list_item') $fullText .= "<li>" . $blockText . "</li>";
-            elseif ($type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
-            elseif ($type === 'paragraph') {
-                if (!empty($blockText)) $fullText .= "<p>" . $blockText . "</p>";
+            
+            // If the block is a paragraph but starts with markdown symbols (often from n8n automation)
+            // we handle it here.
+            if ($type === 'paragraph') {
+                if (empty($blockText)) continue;
+                
+                // Very basic markdown patterns for common cases
+                if (strpos($blockText, '### ') === 0) {
+                    $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
+                } elseif (strpos($blockText, '## ') === 0) {
+                    $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
+                } elseif (strpos($blockText, '# ') === 0) {
+                    $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
+                } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
+                    $fullText .= "<li>" . substr($blockText, 2) . "</li>";
+                } else {
+                    // Handle inline bold/italic if not already handled by annotations
+                    $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
+                    $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
+                    $fullText .= "<p>" . $blockText . "</p>";
+                }
+            } elseif ($type === 'heading_1') {
+                $fullText .= "<h1>" . $blockText . "</h1>";
+            } elseif ($type === 'heading_2') {
+                $fullText .= "<h2>" . $blockText . "</h2>";
+            } elseif ($type === 'heading_3') {
+                $fullText .= "<h3>" . $blockText . "</h3>";
+            } elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') {
+                $fullText .= "<li>" . $blockText . "</li>";
             } else {
                 $fullText .= $blockText . "<br>";
             }
