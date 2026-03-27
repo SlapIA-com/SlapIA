@@ -44,7 +44,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
       <guid isPermaLink="true"><?php echo htmlspecialchars($article['url']); ?></guid>
       <pubDate><?php echo htmlspecialchars($article['date_rss']); ?></pubDate>
       <description><?php echo $description; ?></description>
-      <content:encoded><![CDATA[<?php echo nl2br(htmlspecialchars($fullContent)); ?>]]></content:encoded>
+      <content:encoded><![CDATA[<?php echo $fullContent; ?>]]></content:encoded>
       <?php if (!empty($article['image'])): 
           // Extract extension or fallback to jpeg
           $ext = pathinfo(parse_url($article['image'], PHP_URL_PATH), PATHINFO_EXTENSION);

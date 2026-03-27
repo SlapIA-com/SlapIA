@@ -68,6 +68,7 @@
         var image = btn.getAttribute('data-article-image') || '';
         var date = btn.getAttribute('data-article-date') || '';
         var readtime = btn.getAttribute('data-article-readtime') || '1';
+        var excerpt = btn.getAttribute('data-article-excerpt') || '';
         var content = btn.getAttribute('data-article-content') || '';
         var slug = btn.getAttribute('data-article-slug') || '';
         var id = btn.getAttribute('data-article-id') || '';
@@ -94,11 +95,11 @@
                 '</div>';
         }
 
-        // initial content (summary)
-        var tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        var cleanContent = tempDiv.textContent || tempDiv.innerText || '';
-        var contentHtml = escapeHtml(cleanContent).replace(/\n/g, '<br>');
+        // Setup introductory text (Excerpt if available, otherwise first part of content/post)
+        var introHtml = '';
+        if (excerpt) {
+            introHtml = '<p class="article-excerpt" style="font-size:1.1rem; color: rgba(255,255,255,0.8); font-style: italic; margin-bottom: 1.5rem;">' + escapeHtml(excerpt) + '</p>';
+        }
 
         overlay.innerHTML =
             '<div class="article-overlay-backdrop"></div>' +
@@ -120,8 +121,9 @@
                             '</div>' +
                         '</div>' +
                         '<div class="article-content" style="padding-bottom:2rem;">' + 
-                            '<div class="article-content-loader" style="display:none; text-align:center; padding: 2rem;"><i class="fas fa-spinner fa-spin text-primary"></i></div>' +
-                            '<div class="article-content-body">' + contentHtml + '</div>' + 
+                            introHtml +
+                            '<div class="article-content-loader" style="text-align:center; padding: 2rem;"><i class="fas fa-spinner fa-spin text-primary"></i></div>' +
+                            '<div class="article-content-body" style="opacity:0;"></div>' + 
                         '</div>' +
                     '</div>' +
                 '</div>' +
@@ -132,31 +134,37 @@
                 '</div>' +
             '</div>';
 
+        // Helper to load content
+        function displayContent(htmlContent) {
+            var loader = overlay.querySelector('.article-content-loader');
+            var contentBody = overlay.querySelector('.article-content-body');
+            if (loader) loader.style.display = 'none';
+            if (contentBody) {
+                contentBody.innerHTML = htmlContent;
+                contentBody.style.opacity = '1';
+                contentBody.style.transition = 'opacity 0.3s ease';
+            }
+        }
+
         // Attempt to load full content if ID is available
         if (id) {
-            var contentBody = overlay.querySelector('.article-content-body');
-            var loader = overlay.querySelector('.article-content-loader');
-            
-            // Show loader if we're going to fetch
-            loader.style.display = 'block';
-            contentBody.style.opacity = '0.5';
-
             fetch('/api/notion-blog.php?id=' + id)
                 .then(function(res) { return res.json(); })
                 .then(function(data) {
-                    loader.style.display = 'none';
-                    contentBody.style.opacity = '1';
                     if (data && data.content) {
-                        // Replace double newlines with <p> equivalent or just nl2br
-                        var fullHtml = escapeHtml(data.content).replace(/\n\n/g, '</div><div style="margin-bottom:1.2rem;">').replace(/\n/g, '<br>');
-                        contentBody.innerHTML = '<div style="margin-bottom:1.2rem;">' + fullHtml + '</div>';
+                        displayContent(data.content);
+                    } else {
+                        // Fallback to the post (summary) if API failed for blocks
+                        displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
                     }
                 })
                 .catch(function(err) {
                     console.error('Error fetching full content:', err);
-                    loader.style.display = 'none';
-                    contentBody.style.opacity = '1';
+                    displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
                 });
+        } else {
+            // No ID, just use the post/summary immediately
+            displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
         }
 
         // Attach event listeners

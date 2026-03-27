@@ -89,18 +89,31 @@ function getNotionBlocks($pageId)
             $parts = $block[$type]['rich_text'];
             $blockText = '';
             foreach ($parts as $p) {
-                $blockText .= ($p['plain_text'] ?? '');
+                $blockHtml = htmlspecialchars($p['plain_text'] ?? '');
+                // Handle bold/italic from Notion annotations if needed, 
+                // but let's keep it simple for now as requested.
+                $ann = $p['annotations'] ?? [];
+                if ($ann['bold'] ?? false) $blockHtml = '<strong>' . $blockHtml . '</strong>';
+                if ($ann['italic'] ?? false) $blockHtml = '<em>' . $blockHtml . '</em>';
+                $blockText .= $blockHtml;
             }
             
             // Basic formatting based on block type
-            if ($type === 'heading_1') $fullText .= "\n# " . $blockText . "\n";
-            elseif ($type === 'heading_2') $fullText .= "\n## " . $blockText . "\n";
-            elseif ($type === 'heading_3') $fullText .= "\n### " . $blockText . "\n";
-            elseif ($type === 'bulleted_list_item') $fullText .= "• " . $blockText . "\n";
-            elseif ($type === 'numbered_list_item') $fullText .= "1. " . $blockText . "\n";
-            else $fullText .= $blockText . "\n\n";
+            if ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
+            elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
+            elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
+            elseif ($type === 'bulleted_list_item') $fullText .= "<li>" . $blockText . "</li>";
+            elseif ($type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
+            elseif ($type === 'paragraph') {
+                if (!empty($blockText)) $fullText .= "<p>" . $blockText . "</p>";
+            } else {
+                $fullText .= $blockText . "<br>";
+            }
         }
     }
+    
+    // Wrap lists if needed (simplified conversion)
+    $fullText = preg_replace('/(<li>.*<\/li>)+/s', '<ul>$0</ul>', $fullText);
     
     return trim($fullText);
 }
