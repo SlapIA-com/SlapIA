@@ -112,7 +112,7 @@
                             '<div style="display:flex;align-items:center;">' +
                                 '<img src="/assets/img/team/Thomas-Lapierre.jpg" alt="Author" style="width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:10px;">' +
                                 '<div>' +
-                                    '<div style="color:#fff;font-size:0.85rem;font-weight:700;">SlapIA Team</div>' +
+                                    '<div style="color:#fff;font-size:0.85rem;font-weight:700;">Thomas LAPIERRE</div>' +
                                     '<div style="color:rgba(255,255,255,0.5);font-size:0.75rem;"><i class="far fa-calendar-alt" style="margin-right:4px;"></i>' + escapeHtml(date) + '</div>' +
                                 '</div>' +
                             '</div>' +
