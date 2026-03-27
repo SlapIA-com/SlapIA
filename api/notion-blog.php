@@ -110,7 +110,9 @@ function getNotionBlocks($pageId)
                 elseif (strpos($blockText, '## ') === 0) $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
                 elseif (strpos($blockText, '# ') === 0) $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
                 elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) $fullText .= "<li>" . substr($blockText, 2) . "</li>";
-                else {
+                elseif (preg_match('/^\d+\.\s/', $blockText)) {
+                    $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>";
+                } else {
                     $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
                     $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
                     $fullText .= "<p>" . (empty($blockText) ? "&nbsp;" : $blockText) . "</p>";
