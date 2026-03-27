@@ -133,7 +133,6 @@ function getNotionBlocks($pageId)
             }
         }
     }
-    }
     
     // Wrap lists if needed (simplified conversion)
     $fullText = preg_replace('/(<li>.*<\/li>)+/s', '<ul>$0</ul>', $fullText);
