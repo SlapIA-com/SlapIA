@@ -85,60 +85,54 @@ function getNotionBlocks($pageId)
     $fullText = '';
     foreach ($blocks as $block) {
         $type = $block['type'] ?? '';
-        if (isset($block[$type]['rich_text'])) {
+        if (empty($type)) continue;
+
+        // List of types that use 'rich_text' property directly
+        $richTextTypes = ['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'todo'];
+        
+        if (in_array($type, $richTextTypes) && isset($block[$type]['rich_text'])) {
             $parts = $block[$type]['rich_text'];
             $blockText = '';
             foreach ($parts as $p) {
-                $blockHtml = htmlspecialchars($p['plain_text'] ?? '');
-                // Handle bold/italic from Notion annotations if needed, 
-                // but let's keep it simple for now as requested.
+                $blockHtml = htmlspecialchars($p['plain_text'] ?? ($p['text']['content'] ?? ''));
                 $ann = $p['annotations'] ?? [];
                 if ($ann['bold'] ?? false) $blockHtml = '<strong>' . $blockHtml . '</strong>';
                 if ($ann['italic'] ?? false) $blockHtml = '<em>' . $blockHtml . '</em>';
                 $blockText .= $blockHtml;
             }
             
-            
-            // List of types that use 'rich_text' property directly
-            $richTextTypes = ['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'todo'];
-            
-            if (in_array($type, $richTextTypes) && isset($block[$type]['rich_text'])) {
-                $parts = $block[$type]['rich_text'];
-                $blockText = '';
-                foreach ($parts as $p) {
-                    $blockHtml = htmlspecialchars($p['plain_text'] ?? '');
-                    $ann = $p['annotations'] ?? [];
-                    if ($ann['bold'] ?? false) $blockHtml = '<strong>' . $blockHtml . '</strong>';
-                    if ($ann['italic'] ?? false) $blockHtml = '<em>' . $blockHtml . '</em>';
-                    $blockText .= $blockHtml;
-                }
-                
-                if (empty($blockText)) continue;
+            // Don't skip paragraphs if they are just placeholders for spacing
+            if (empty($blockText) && !in_array($type, ['paragraph', 'toggle', 'todo'])) continue;
 
-                // Handle specifically paragraph with markdown symbols (n8n style)
-                if ($type === 'paragraph') {
-                    if (strpos($blockText, '### ') === 0) {
-                        $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
-                    } elseif (strpos($blockText, '## ') === 0) {
-                        $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
-                    } elseif (strpos($blockText, '# ') === 0) {
-                        $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
-                    } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
-                        $fullText .= "<li>" . substr($blockText, 2) . "</li>";
-                    } else {
-                        $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
-                        $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
-                        $fullText .= "<p>" . $blockText . "</p>";
-                    }
-                } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
-                elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
-                elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
-                elseif ($type === 'quote') $fullText .= "<blockquote>" . $blockText . "</blockquote>";
-                elseif ($type === 'callout') $fullText .= "<div class='notion-callout' style='background:rgba(255,255,255,0.05);padding:1rem;border-radius:8px;margin-bottom:1rem;border-left:4px solid var(--accent-blue);'>" . $blockText . "</div>";
-                elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
-                else $fullText .= "<p>" . $blockText . "</p>";
+            if ($type === 'paragraph') {
+                // Basic markdown-style detection for automation-generated blocks (###, ##, #, -, *)
+                if (strpos($blockText, '### ') === 0) $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
+                elseif (strpos($blockText, '## ') === 0) $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
+                elseif (strpos($blockText, '# ') === 0) $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
+                elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) $fullText .= "<li>" . substr($blockText, 2) . "</li>";
+                else {
+                    $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
+                    $blockText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $blockText);
+                    $fullText .= "<p>" . (empty($blockText) ? "&nbsp;" : $blockText) . "</p>";
+                }
+            } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>";
+            elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>";
+            elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>";
+            elseif ($type === 'quote') $fullText .= "<blockquote>" . $blockText . "</blockquote>";
+            elseif ($type === 'toggle') $fullText .= "<details><summary style='cursor:pointer;font-weight:600;margin-bottom:0.5rem;'>" . $blockText . "</summary><p style='padding-left:1rem;opacity:0.8;'><em>(Contenu du dossier masqué)</em></p></details>";
+            elseif ($type === 'todo') $fullText .= "<div><input type='checkbox' disabled " . ($block['todo']['checked'] ? 'checked' : '') . "> " . $blockText . "</div>";
+            elseif ($type === 'callout') $fullText .= "<div class='notion-callout' style='background:rgba(255,255,255,0.05);padding:1.2rem;border-radius:12px;margin-bottom:1.5rem;border-left:4px solid #2997ff;'>" . $blockText . "</div>";
+            elseif ($type === 'bulleted_list_item' || $type === 'numbered_list_item') $fullText .= "<li>" . $blockText . "</li>";
+            else $fullText .= "<p>" . $blockText . "</p>";
+        } elseif ($type === 'divider') {
+            $fullText .= "<hr style='border:0;border-top:1px solid rgba(255,255,255,0.1);margin:2rem 0;'>";
+        } elseif ($type === 'image') {
+            $imgUrl = $block['image']['file']['url'] ?? $block['image']['external']['url'] ?? '';
+            if ($imgUrl) {
+                $fullText .= "<div style='margin:2rem 0;'><img src='" . htmlspecialchars($imgUrl) . "' style='width:100%;border-radius:12px;' loading='lazy'></div>";
             }
         }
+    }
     }
     
     // Wrap lists if needed (simplified conversion)
@@ -237,6 +231,8 @@ function getBlogArticles($limit = 50)
             continue;
 
         $contenu = getNotionText($props['Contenu'] ?? null);
+        $extrait = getNotionText($props['Extrait'] ?? $props['Summary'] ?? null);
+
         // If 'Contenu' is missing, try to find another rich_text property that isn't 'Extrait' or 'slug'
         if (empty($contenu)) {
             foreach ($props as $name => $p) {
@@ -246,8 +242,11 @@ function getBlogArticles($limit = 50)
                 }
             }
         }
-
-        $extrait = getNotionText($props['Extrait'] ?? $props['Summary'] ?? null);
+        
+        // Final fallback for contenu is extrait
+        if (empty($contenu)) {
+            $contenu = $extrait;
+        }
 
         // Utiliser Publication Date si dispo, sinon la date de création de la ligne Notion
         $pubDateTmp = getNotionDate($props['Publication Date'] ?? $props['Date'] ?? null);

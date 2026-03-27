@@ -140,16 +140,23 @@
             var contentBody = overlay.querySelector('.article-content-body');
             var readTimeBadge = overlay.querySelector('.article-overlay-content-wrap span'); // The "min read" span
 
-            if (loader) loader.style.display = 'none';
+            if (loader) {
+                loader.style.display = 'none';
+            }
             if (contentBody) {
+                // If the new content is exactly the same as the excerpt, maybe don't wrap it differently? 
+                // But usually it's HTML vs plain text.
                 contentBody.innerHTML = htmlContent;
                 contentBody.style.opacity = '1';
-                contentBody.style.transition = 'opacity 0.3s ease';
+                contentBody.style.transition = 'opacity 0.5s ease';
 
-                // Recalculate read time
+                // Recalculate read time based on the full text
                 var text = contentBody.innerText || contentBody.textContent || '';
-                var words = text.trim().split(/\s+/).filter(Boolean).length;
+                var introText = excerpt || '';
+                var fullText = (introText + ' ' + text).trim();
+                var words = fullText.split(/\s+/).filter(Boolean).length;
                 var newTime = Math.max(1, Math.round(words / 200));
+                
                 if (readTimeBadge) {
                     readTimeBadge.innerHTML = '<i class="fas fa-clock" style="margin-right:4px;"></i>' + newTime + ' min read';
                 }
@@ -159,23 +166,29 @@
         // Attempt to load full content if ID is available
         if (id) {
             fetch('/api/notion-blog.php?id=' + id)
-                .then(function(res) { return res.json(); })
+                .then(function(res) { 
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json(); 
+                })
                 .then(function(data) {
                     if (data && typeof data.content === 'string' && data.content.trim().length > 0) {
                         displayContent(data.content);
                     } else {
-                        // If full content is empty, maybe it's still being generated or missing
-                        // Show the 'post' summary as fallback if available, or a generic message
+                        // Fallback: If no blocks found, use the 'content' attribute (post summary)
                         if (content && content.trim().length > 0) {
-                            displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                            displayContent('<div class="alert alert-info py-2 small mb-3 border-0 bg-white bg-opacity-5 text-secondary">Note : Affichage de la version courte car l\'article long n\'est pas encore disponible.</div>' + escapeHtml(content).replace(/\n/g, '<br>'));
                         } else {
-                            displayContent('<p class="text-secondary">Cet article n\'a pas encore de contenu détaillé ou est en cours de génération.</p>');
+                            displayContent('<div class="py-5 text-center text-secondary opacity-50"><i class="fas fa-ghost fa-3x mb-3"></i><p>Cet article semble vide pour le moment.</p></div>');
                         }
                     }
                 })
                 .catch(function(err) {
                     console.error('Error fetching full content:', err);
-                    displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                    if (content && content.trim().length > 0) {
+                        displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                    } else {
+                        displayContent('<p class="text-danger">Erreur de chargement du contenu détaillé. Veuillez réessayer plus tard.</p>');
+                    }
                 });
         } else {
             // No ID, just use the post/summary immediately
