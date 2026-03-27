@@ -112,6 +112,17 @@ function getNotionBlocks($pageId, $depth = 0)
                 $blockText .= $blockHtml;
             }
             
+            // Global Markdown-style replacements for ALL rich text types
+            $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
+            $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
+            $blockText = str_replace('**', '', $blockText);
+            if (in_array($type, ['paragraph', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout'])) {
+                $bulletHtml = '<br><span style="margin-left:1.5rem;display:inline-block;color:var(--accent-blue,#2997ff);margin-right:8px;">•</span>';
+                $blockText = preg_replace('/\s+\*\s+/', $bulletHtml, $blockText);
+                $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText);
+                $blockText = nl2br($blockText);
+            }
+            
             // Don't skip paragraphs if they are just placeholders for spacing
             if (empty($blockText) && !in_array($type, ['paragraph', 'toggle', 'todo'])) continue;
 
@@ -128,17 +139,6 @@ function getNotionBlocks($pageId, $depth = 0)
                 } elseif (preg_match('/^\d+\.\s/', $blockText)) {
                     $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>";
                 } else {
-                    // Global replacements for markdown markers within the text block
-                    $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
-                    $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
-                    
-                    $bulletHtml = '<br><span style="margin-left:1.5rem;display:inline-block;color:var(--accent-blue,#2997ff);margin-right:8px;">•</span>';
-                    $blockText = preg_replace('/\s+\*\s+/', $bulletHtml, $blockText);
-                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText);
-                    
-                    $blockText = str_replace('**', '', $blockText); 
-                    $blockText = nl2br($blockText);
-                    
                     $fullText .= "<p>" . (empty($blockText) && empty($childrenHtml) ? "&nbsp;" : $blockText) . "</p>";
                 }
                 $fullText .= $childrenHtml;

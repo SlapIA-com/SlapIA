@@ -119,9 +119,11 @@
 .article-overlay-hero-title {
     position: absolute;
     bottom: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    padding: 2.5rem 2rem;
     z-index: 2;
 }
 
@@ -137,8 +139,8 @@
 
 /* Article content styles */
 .article-overlay-content-wrap {
-    padding: 3rem 2rem;
-    max-width: 900px;
+    padding: 4rem 2rem;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
 }
