@@ -120,13 +120,16 @@ function getNotionBlocks($pageId)
                     // Handle italic: *text* (avoiding match with lonely bullet points)
                     $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
                     
-                    // Handle "inline" bullet points used in clumps: " * " or " * **"
-                    $blockText = str_replace(' * ', '<br>• ', $blockText);
-                    $blockText = str_replace(' * **', '<br>• <strong>', $blockText); 
-                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', '<br>• ', $blockText); // After a colon
+                    // Handle "inline" bullet points used in clumps (like " * ", " * **", etc.)
+                    // This handles n8n clumped content more aggressively with better spacing
+                    $bulletHtml = '<br><span style="margin-left:1.5rem;display:inline-block;color:var(--accent-blue,#2997ff);margin-right:8px;">•</span>';
+                    $blockText = preg_replace('/\s+\*\s+/', $bulletHtml, $blockText);
+                    $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText); // After a colon + space
+                    $blockText = preg_replace('/(?<=\*)\*\s+/', $bulletHtml, $blockText); // After an existing asterisk clump
                     
-                    // Final cleanup for ANY remaining ** that might be broken or lone *
+                    // Final cleanup for PROTECTED markers and parasitic **
                     $blockText = str_replace('**', '', $blockText); 
+                    $blockText = nl2br($blockText); // Preserve any SHIFT+ENTER newlines
                     
                     $fullText .= "<p>" . (empty($blockText) ? "&nbsp;" : $blockText) . "</p>";
                 }
