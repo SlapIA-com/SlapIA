@@ -117,7 +117,7 @@
                                 '</div>' +
                             '</div>' +
                             '<div style="margin-left:auto;">' +
-                                '<span style="background:rgba(255,255,255,0.08);color:var(--accent-blue,#2997ff);padding:6px 14px;border-radius:20px;font-size:0.8rem;"><i class="fas fa-clock" style="margin-right:4px;"></i>' + escapeHtml(readtime) + ' min read</span>' +
+                                '<span class="article-readtime-badge" style="background:rgba(255,255,255,0.08);color:var(--accent-blue,#2997ff);padding:6px 14px;border-radius:20px;font-size:0.8rem;transition:opacity 0.3s ease;"><i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>Chargement...</span>' +
                             '</div>' +
                         '</div>' +
                         '<div class="article-content" style="padding-bottom:2rem;">' + 
@@ -132,20 +132,25 @@
                         '<i class="fas fa-link" style="margin-right:8px;"></i>Partager l\'article' +
                     '</a>' +
                 '</div>' +
+                '<div class="article-progress-btn" id="article-progress-btn" title="Retour en haut" style="position:fixed;bottom:2rem;right:2rem;z-index:99999;cursor:pointer;opacity:0;visibility:hidden;transition:opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;transform:scale(0.8);">' +
+                    '<svg width="52" height="52" viewBox="0 0 52 52">' +
+                        '<circle cx="26" cy="26" r="23" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"></circle>' +
+                        '<circle class="progress-ring" cx="26" cy="26" r="23" fill="none" stroke="var(--accent-blue,#2997ff)" stroke-width="3" stroke-linecap="round" stroke-dasharray="144.51" stroke-dashoffset="144.51" transform="rotate(-90 26 26)" style="transition:stroke-dashoffset 0.15s ease;"></circle>' +
+                    '</svg>' +
+                    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:0.85rem;"><i class="fas fa-arrow-up"></i></div>' +
+                '</div>' +
             '</div>';
 
         // Helper to load content
         function displayContent(htmlContent) {
             var loader = overlay.querySelector('.article-content-loader');
             var contentBody = overlay.querySelector('.article-content-body');
-            var readTimeBadge = overlay.querySelector('.article-overlay-content-wrap span'); // The "min read" span
+            var readTimeBadge = overlay.querySelector('.article-readtime-badge');
 
             if (loader) {
                 loader.style.display = 'none';
             }
             if (contentBody) {
-                // If the new content is exactly the same as the excerpt, maybe don't wrap it differently? 
-                // But usually it's HTML vs plain text.
                 contentBody.innerHTML = htmlContent;
                 contentBody.style.opacity = '1';
                 contentBody.style.transition = 'opacity 0.5s ease';
@@ -158,9 +163,46 @@
                 var newTime = Math.max(1, Math.round(words / 200));
                 
                 if (readTimeBadge) {
-                    readTimeBadge.innerHTML = '<i class="fas fa-clock" style="margin-right:4px;"></i>' + newTime + ' min read';
+                    readTimeBadge.style.opacity = '0';
+                    setTimeout(function() {
+                        readTimeBadge.innerHTML = '<i class="fas fa-clock" style="margin-right:4px;"></i>' + newTime + ' min read';
+                        readTimeBadge.style.opacity = '1';
+                    }, 300);
                 }
             }
+        }
+
+        // Setup reading progress tracker
+        var scrollBody = overlay.querySelector('.article-overlay-body');
+        var progressBtn = overlay.querySelector('#article-progress-btn');
+        var progressRing = overlay.querySelector('.progress-ring');
+        var circumference = 2 * Math.PI * 23; // r=23
+
+        if (scrollBody && progressBtn && progressRing) {
+            scrollBody.addEventListener('scroll', function() {
+                var scrollTop = scrollBody.scrollTop;
+                var scrollHeight = scrollBody.scrollHeight - scrollBody.clientHeight;
+                var progress = scrollHeight > 0 ? Math.min(scrollTop / scrollHeight, 1) : 0;
+                
+                // Update ring
+                var offset = circumference - (progress * circumference);
+                progressRing.style.strokeDashoffset = offset;
+                
+                // Show/hide button
+                if (scrollTop > 300) {
+                    progressBtn.style.opacity = '1';
+                    progressBtn.style.visibility = 'visible';
+                    progressBtn.style.transform = 'scale(1)';
+                } else {
+                    progressBtn.style.opacity = '0';
+                    progressBtn.style.visibility = 'hidden';
+                    progressBtn.style.transform = 'scale(0.8)';
+                }
+            });
+
+            progressBtn.addEventListener('click', function() {
+                scrollBody.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         }
 
         // Attempt to load full content if ID is available
