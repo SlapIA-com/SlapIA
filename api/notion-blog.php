@@ -146,13 +146,24 @@ function getNotionBlocks($pageId, $depth = 0)
                             $fullText .= "<h2>" . substr($section, 3) . "</h2>";
                         } elseif (strpos($section, '# ') === 0) {
                             $fullText .= "<h1>" . substr($section, 2) . "</h1>";
-                        } elseif (preg_match('/^(\d+)\.\s+\*?\*?(.*?)\*?\*?\s*:?\s*\n?(.*)/s', $section, $olM)) {
-                            // Numbered list: "1. **Title:**\nDescription"
-                            $liTitle = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', htmlspecialchars_decode($olM[2]));
-                            $liDesc  = trim($olM[3]);
-                            $liHtml  = $liTitle;
-                            if ($liDesc) $liHtml .= '<span class="article-li-desc">' . nl2br(htmlspecialchars($liDesc)) . '</span>';
-                            $fullText .= "<li class='list-number'>" . $liHtml . "</li>";
+                        } elseif (preg_match('/^\d+\./', $section)) {
+                            // Numbered list — may contain 1 item or multiple items separated by \n
+                            // Split on any line that starts with a number followed by "."
+                            $items = preg_split('/\n(?=\d+\.\s)/', $section);
+                            foreach ($items as $item) {
+                                $item = trim($item);
+                                if ($item === '') continue;
+                                // Split on first newline: title line vs description
+                                $parts2 = explode("\n", $item, 2);
+                                // Strip leading "1. " from title; <strong> already applied by markdown pass
+                                $liTitle = preg_replace('/^\d+\.\s+/', '', trim($parts2[0]));
+                                $liDesc  = isset($parts2[1]) ? trim($parts2[1]) : '';
+                                $liHtml  = $liTitle;
+                                if ($liDesc !== '') {
+                                    $liHtml .= '<span class="article-li-desc">' . nl2br($liDesc) . '</span>';
+                                }
+                                $fullText .= "<li class='list-number'>" . $liHtml . "</li>";
+                            }
                         } elseif (strpos($section, '- ') === 0 || strpos($section, '* ') === 0) {
                             $fullText .= "<li class='list-bullet'>" . substr($section, 2) . "</li>";
                         } elseif (strpos($section, '> ') === 0) {
