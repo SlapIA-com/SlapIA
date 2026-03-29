@@ -51,6 +51,54 @@
     }
 
     /**
+     * Lightweight Markdown → HTML for blog fallback content
+     */
+    function markdownToHtml(md) {
+        if (!md) return '';
+        var lines = md.split('\n');
+        var html = '', inOl = false, inUl = false;
+
+        function closeList() {
+            if (inOl) { html += '</ol>'; inOl = false; }
+            if (inUl) { html += '</ul>'; inUl = false; }
+        }
+
+        function fmt(t) {
+            t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            t = t.replace(/`([^`]+)`/g,'<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9em;">$1</code>');
+            t = t.replace(/\*\*\*(.*?)\*\*\*/g,'<strong><em>$1</em></strong>');
+            t = t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+            t = t.replace(/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s)\*(?!\*)/g,'<em>$1</em>');
+            t = t.replace(/#([\wÀ-ÿ]+)/g,'<span style="display:inline-block;background:rgba(108,0,255,.15);border:1px solid rgba(108,0,255,.3);color:rgba(180,130,255,.9);border-radius:999px;padding:2px 10px;font-size:.8em;margin:2px;">&#x23;$1</span>');
+            return t;
+        }
+
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i], tr = line.trim();
+            if (!tr) { closeList(); continue; }
+            if (/^### /.test(tr)) { closeList(); html += '<h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin:1.8rem 0 .6rem;">'+fmt(tr.slice(4))+'</h3>'; continue; }
+            if (/^## /.test(tr))  { closeList(); html += '<h2 style="font-size:1.35rem;font-weight:700;color:#fff;margin:2rem 0 .75rem;">'+fmt(tr.slice(3))+'</h2>'; continue; }
+            if (/^# /.test(tr))   { closeList(); html += '<h1 style="font-size:1.6rem;font-weight:800;color:#fff;margin:2rem 0 1rem;">'+fmt(tr.slice(2))+'</h1>'; continue; }
+            if (/^(-{3,}|\*{3,})$/.test(tr)) { closeList(); html += '<hr style="border:0;border-top:1px solid rgba(255,255,255,.1);margin:2rem 0;">'; continue; }
+            if (/^> /.test(tr)) { closeList(); html += '<blockquote style="border-left:3px solid rgba(108,0,255,.6);margin:1rem 0;padding:.5rem 0 .5rem 1.25rem;color:rgba(255,255,255,.75);font-style:italic;">'+fmt(tr.slice(2))+'</blockquote>'; continue; }
+            var olM = tr.match(/^(\d+)\.\s+(.*)/);
+            if (olM) { if (inUl){html+='</ul>';inUl=false;} if (!inOl){html+='<ol style="margin:.75rem 0 .75rem 1.5rem;padding:0;color:rgba(255,255,255,.85);line-height:1.8;">';inOl=true;} html += '<li style="margin-bottom:.5rem;">'+fmt(olM[2])+'</li>'; continue; }
+            var ulM = tr.match(/^[-*•]\s+(.*)/);
+            if (ulM) { if (inOl){html+='</ol>';inOl=false;} if (!inUl){html+='<ul style="margin:.75rem 0 .75rem 1.5rem;padding:0;list-style:none;color:rgba(255,255,255,.85);line-height:1.8;">';inUl=true;} html += '<li style="margin-bottom:.4rem;display:flex;gap:8px;"><span style="color:var(--accent-blue,#2997ff);flex-shrink:0;">•</span><span>'+fmt(ulM[1])+'</span></li>'; continue; }
+            closeList();
+            var para = [tr];
+            while (i+1 < lines.length) {
+                var nx = lines[i+1].trim();
+                if (!nx || /^(#{1,3} |[-*•]\s|\d+\.\s|> |---|---)/.test(nx)) break;
+                para.push(nx); i++;
+            }
+            html += '<p style="margin:0 0 1.1rem;line-height:1.8;color:rgba(255,255,255,.85);">'+fmt(para.join(' '))+'</p>';
+        }
+        closeList();
+        return html;
+    }
+
+    /**
      * Safely escape Attribute
      */
     function escapeAttr(str) {
@@ -218,7 +266,7 @@
                     } else {
                         // Fallback: If no blocks found, use the 'content' attribute (post summary)
                         if (content && content.trim().length > 0) {
-                            displayContent('<div class="alert alert-info py-2 small mb-3 border-0 bg-white bg-opacity-5 text-secondary">Note : Affichage de la version courte car l\'article long n\'est pas encore disponible.</div>' + escapeHtml(content).replace(/\n/g, '<br>'));
+                            displayContent('<div class="alert alert-info py-2 small mb-3 border-0 bg-white bg-opacity-5 text-secondary">Note : Affichage de la version courte car l\'article long n\'est pas encore disponible.</div>' + markdownToHtml(content));
                         } else {
                             displayContent('<div class="py-5 text-center text-secondary opacity-50"><i class="fas fa-ghost fa-3x mb-3"></i><p>Cet article semble vide pour le moment.</p></div>');
                         }
@@ -227,14 +275,14 @@
                 .catch(function(err) {
                     console.error('Error fetching full content:', err);
                     if (content && content.trim().length > 0) {
-                        displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+                        displayContent(markdownToHtml(content));
                     } else {
                         displayContent('<p class="text-danger">Erreur de chargement du contenu détaillé. Veuillez réessayer plus tard.</p>');
                     }
                 });
         } else {
             // No ID, just use the post/summary immediately
-            displayContent(escapeHtml(content).replace(/\n/g, '<br>'));
+            displayContent(markdownToHtml(content));
         }
 
         // Attach event listeners
