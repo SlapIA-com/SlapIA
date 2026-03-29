@@ -257,6 +257,180 @@
     background: rgba(255,255,255,0.3);
 }
 
+/* ===== Markdown-rendered article content ===== */
+
+/* Headings */
+.article-content-body h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+}
+.article-content-body h2::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-purple, #bf5af2), var(--accent-blue, #2997ff));
+    border-radius: 2px;
+}
+.article-content-body h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-blue, #2997ff);
+    margin: 2rem 0 0.75rem;
+}
+
+/* Paragraphs */
+.article-content-body p {
+    margin: 0 0 1.4rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.85);
+}
+
+/* Inline code */
+.article-content-body code {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.88em;
+    color: var(--accent-blue, #2997ff);
+}
+
+/* Blockquote */
+.article-content-body blockquote {
+    border-left: 3px solid var(--accent-purple, #bf5af2);
+    margin: 1.5rem 0;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+    font-size: 1.05rem;
+    background: rgba(191,90,242,0.04);
+    border-radius: 0 10px 10px 0;
+}
+
+/* Unordered list */
+.article-content-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 1.5rem;
+}
+.article-content-body ul > li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.5rem 0;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+}
+.article-content-body ul > li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    margin-top: 0.6em;
+    border-radius: 50%;
+    background: var(--accent-blue, #2997ff);
+    box-shadow: 0 0 6px rgba(41,151,255,0.6);
+}
+
+/* Ordered list — numbered bubbles */
+.article-content-body ol {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 2rem;
+    counter-reset: article-steps;
+}
+.article-content-body ol > li {
+    counter-increment: article-steps;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.article-content-body ol > li:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(108,0,255,0.3);
+}
+.article-content-body ol > li::before {
+    content: counter(article-steps);
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent-purple, #bf5af2), var(--accent-blue, #2997ff));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(108,0,255,0.35);
+    margin-top: 1px;
+}
+/* Description text below the bold title in a list item */
+.article-content-body .article-li-desc {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    font-weight: 400;
+    line-height: 1.7;
+}
+
+/* Standalone bold sub-label (e.g. **Impacts Positifs :**) */
+.article-content-body .article-label {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1rem;
+}
+.article-content-body .article-label strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, rgba(108,0,255,0.15), rgba(41,151,255,0.1));
+    border: 1px solid rgba(108,0,255,0.25);
+    border-radius: 999px;
+    color: rgba(200,170,255,0.95);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+}
+
+/* Hashtag pills */
+.article-content-body .article-tag {
+    display: inline-block;
+    background: rgba(108,0,255,0.12);
+    border: 1px solid rgba(108,0,255,0.28);
+    color: rgba(180,130,255,0.9);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.82em;
+    margin: 2px 2px;
+    transition: background 0.2s;
+}
+.article-content-body .article-tag:hover {
+    background: rgba(108,0,255,0.25);
+}
+
+/* HR */
+.article-content-body hr {
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 2.5rem 0;
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
     .article-overlay {

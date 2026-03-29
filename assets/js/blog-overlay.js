@@ -51,49 +51,131 @@
     }
 
     /**
-     * Lightweight Markdown → HTML for blog fallback content
+     * Lightweight Markdown → HTML for blog fallback content.
+     * Relies on .article-content CSS in blog.css for visual styling.
      */
     function markdownToHtml(md) {
         if (!md) return '';
+
         var lines = md.split('\n');
         var html = '', inOl = false, inUl = false;
+        var firstH3Skipped = false; // skip leading ### title (already shown in hero)
 
         function closeList() {
             if (inOl) { html += '</ol>'; inOl = false; }
             if (inUl) { html += '</ul>'; inUl = false; }
         }
 
+        // Inline formatting: bold, italic, code, hashtags
         function fmt(t) {
             t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            t = t.replace(/`([^`]+)`/g,'<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9em;">$1</code>');
+            t = t.replace(/`([^`]+)`/g,'<code>$1</code>');
             t = t.replace(/\*\*\*(.*?)\*\*\*/g,'<strong><em>$1</em></strong>');
             t = t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
             t = t.replace(/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s)\*(?!\*)/g,'<em>$1</em>');
-            t = t.replace(/#([\wÀ-ÿ]+)/g,'<span style="display:inline-block;background:rgba(108,0,255,.15);border:1px solid rgba(108,0,255,.3);color:rgba(180,130,255,.9);border-radius:999px;padding:2px 10px;font-size:.8em;margin:2px;">&#x23;$1</span>');
+            // Hashtags → pill (only after a space or at start to avoid collisions with URLs)
+            t = t.replace(/(^|\s)#([\wÀ-ÿ]+)/g,'$1<span class="article-tag">&#x23;$2</span>');
             return t;
+        }
+
+        // Detect if a line is a list/block marker
+        function isBlockStart(s) {
+            return !s || /^(#{1,3} |[-*•]\s|\d+\.\s|> |-{3,}|\*{3,})/.test(s);
         }
 
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i], tr = line.trim();
+
+            // Skip blank lines (close any open list)
             if (!tr) { closeList(); continue; }
-            if (/^### /.test(tr)) { closeList(); html += '<h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin:1.8rem 0 .6rem;">'+fmt(tr.slice(4))+'</h3>'; continue; }
-            if (/^## /.test(tr))  { closeList(); html += '<h2 style="font-size:1.35rem;font-weight:700;color:#fff;margin:2rem 0 .75rem;">'+fmt(tr.slice(3))+'</h2>'; continue; }
-            if (/^# /.test(tr))   { closeList(); html += '<h1 style="font-size:1.6rem;font-weight:800;color:#fff;margin:2rem 0 1rem;">'+fmt(tr.slice(2))+'</h1>'; continue; }
-            if (/^(-{3,}|\*{3,})$/.test(tr)) { closeList(); html += '<hr style="border:0;border-top:1px solid rgba(255,255,255,.1);margin:2rem 0;">'; continue; }
-            if (/^> /.test(tr)) { closeList(); html += '<blockquote style="border-left:3px solid rgba(108,0,255,.6);margin:1rem 0;padding:.5rem 0 .5rem 1.25rem;color:rgba(255,255,255,.75);font-style:italic;">'+fmt(tr.slice(2))+'</blockquote>'; continue; }
-            var olM = tr.match(/^(\d+)\.\s+(.*)/);
-            if (olM) { if (inUl){html+='</ul>';inUl=false;} if (!inOl){html+='<ol style="margin:.75rem 0 .75rem 1.5rem;padding:0;color:rgba(255,255,255,.85);line-height:1.8;">';inOl=true;} html += '<li style="margin-bottom:.5rem;">'+fmt(olM[2])+'</li>'; continue; }
-            var ulM = tr.match(/^[-*•]\s+(.*)/);
-            if (ulM) { if (inOl){html+='</ol>';inOl=false;} if (!inUl){html+='<ul style="margin:.75rem 0 .75rem 1.5rem;padding:0;list-style:none;color:rgba(255,255,255,.85);line-height:1.8;">';inUl=true;} html += '<li style="margin-bottom:.4rem;display:flex;gap:8px;"><span style="color:var(--accent-blue,#2997ff);flex-shrink:0;">•</span><span>'+fmt(ulM[1])+'</span></li>'; continue; }
-            closeList();
-            var para = [tr];
-            while (i+1 < lines.length) {
-                var nx = lines[i+1].trim();
-                if (!nx || /^(#{1,3} |[-*•]\s|\d+\.\s|> |---|---)/.test(nx)) break;
-                para.push(nx); i++;
+
+            // ### heading — skip first one (article title already in hero)
+            if (/^### /.test(tr)) {
+                if (!firstH3Skipped) { firstH3Skipped = true; continue; }
+                closeList();
+                html += '<h3>' + fmt(tr.slice(4)) + '</h3>';
+                continue;
             }
-            html += '<p style="margin:0 0 1.1rem;line-height:1.8;color:rgba(255,255,255,.85);">'+fmt(para.join(' '))+'</p>';
+
+            // ## heading
+            if (/^## /.test(tr)) {
+                closeList();
+                html += '<h2>' + fmt(tr.slice(3)) + '</h2>';
+                continue;
+            }
+
+            // # heading
+            if (/^# /.test(tr)) {
+                closeList();
+                html += '<h1>' + fmt(tr.slice(2)) + '</h1>';
+                continue;
+            }
+
+            // Horizontal rule
+            if (/^(-{3,}|\*{3,})$/.test(tr)) {
+                closeList();
+                html += '<hr>';
+                continue;
+            }
+
+            // Blockquote
+            if (/^> /.test(tr)) {
+                closeList();
+                html += '<blockquote>' + fmt(tr.slice(2)) + '</blockquote>';
+                continue;
+            }
+
+            // Ordered list — supports continuation line as description
+            var olM = tr.match(/^(\d+)\.\s+(.*)/);
+            if (olM) {
+                if (inUl) { html += '</ul>'; inUl = false; }
+                if (!inOl) { html += '<ol>'; inOl = true; }
+                var liContent = fmt(olM[2]);
+                // If next line is non-blank and not a new block, it's the description
+                if (i + 1 < lines.length) {
+                    var nextLine = lines[i + 1].trim();
+                    if (nextLine && !isBlockStart(nextLine)) {
+                        // Collect all continuation lines
+                        var desc = [];
+                        while (i + 1 < lines.length) {
+                            var nx = lines[i + 1].trim();
+                            if (!nx || isBlockStart(nx)) break;
+                            desc.push(nx); i++;
+                        }
+                        liContent += '<span class="article-li-desc">' + fmt(desc.join(' ')) + '</span>';
+                    }
+                }
+                html += '<li>' + liContent + '</li>';
+                continue;
+            }
+
+            // Unordered list
+            var ulM = tr.match(/^[-*•]\s+(.*)/);
+            if (ulM) {
+                if (inOl) { html += '</ol>'; inOl = false; }
+                if (!inUl) { html += '<ul>'; inUl = true; }
+                html += '<li>' + fmt(ulM[1]) + '</li>';
+                continue;
+            }
+
+            closeList();
+
+            // Standalone bold line → styled sub-label (e.g. **Impacts Positifs :**)
+            if (/^\*\*[^*]+\*\*\s*:?\s*$/.test(tr)) {
+                html += '<p class="article-label">' + fmt(tr) + '</p>';
+                continue;
+            }
+
+            // Regular paragraph — accumulate consecutive lines
+            var para = [tr];
+            while (i + 1 < lines.length) {
+                var nx2 = lines[i + 1].trim();
+                if (isBlockStart(nx2)) break;
+                para.push(nx2); i++;
+            }
+            html += '<p>' + fmt(para.join(' ')) + '</p>';
         }
+
         closeList();
         return html;
     }
