@@ -54,12 +54,14 @@
      * Lightweight Markdown → HTML for blog fallback content.
      * Relies on .article-content CSS in blog.css for visual styling.
      */
-    function markdownToHtml(md) {
+    function markdownToHtml(md, articleTitle) {
         if (!md) return '';
 
         var lines = md.split('\n');
         var html = '', inOl = false, inUl = false;
         var firstH3Skipped = false; // skip leading ### title (already shown in hero)
+        // Normalize title for comparison (strip ### prefix, trim)
+        var normTitle = (articleTitle || '').trim().replace(/^###\s*/, '');
 
         function closeList() {
             if (inOl) { html += '</ol>'; inOl = false; }
@@ -94,6 +96,12 @@
                 if (!firstH3Skipped) { firstH3Skipped = true; continue; }
                 closeList();
                 html += '<h3>' + fmt(tr.slice(4)) + '</h3>';
+                continue;
+            }
+
+            // Plain title line (no ### prefix) — skip if it matches the article title
+            if (normTitle && tr === normTitle) {
+                firstH3Skipped = true; // treat as skipped
                 continue;
             }
 
@@ -199,7 +207,8 @@
         var date = btn.getAttribute('data-article-date') || '';
         var readtime = btn.getAttribute('data-article-readtime') || '1';
         var excerpt = btn.getAttribute('data-article-excerpt') || '';
-        var content = btn.getAttribute('data-article-content') || '';
+        // Decode literal \n sequences back to real newlines (HTML attr normalization strips them)
+        var content = (btn.getAttribute('data-article-content') || '').replace(/\\n/g, '\n');
         var slug = btn.getAttribute('data-article-slug') || '';
         var id = btn.getAttribute('data-article-id') || '';
 
@@ -348,7 +357,7 @@
                     } else {
                         // Fallback: If no blocks found, use the 'content' attribute (post summary)
                         if (content && content.trim().length > 0) {
-                            displayContent('<div class="alert alert-info py-2 small mb-3 border-0 bg-white bg-opacity-5 text-secondary">Note : Affichage de la version courte car l\'article long n\'est pas encore disponible.</div>' + markdownToHtml(content));
+                            displayContent('<div class="alert alert-info py-2 small mb-3 border-0 bg-white bg-opacity-5 text-secondary">Note : Affichage de la version courte car l\'article long n\'est pas encore disponible.</div>' + markdownToHtml(content, title));
                         } else {
                             displayContent('<div class="py-5 text-center text-secondary opacity-50"><i class="fas fa-ghost fa-3x mb-3"></i><p>Cet article semble vide pour le moment.</p></div>');
                         }
@@ -357,14 +366,14 @@
                 .catch(function(err) {
                     console.error('Error fetching full content:', err);
                     if (content && content.trim().length > 0) {
-                        displayContent(markdownToHtml(content));
+                        displayContent(markdownToHtml(content, title));
                     } else {
                         displayContent('<p class="text-danger">Erreur de chargement du contenu détaillé. Veuillez réessayer plus tard.</p>');
                     }
                 });
         } else {
             // No ID, just use the post/summary immediately
-            displayContent(markdownToHtml(content));
+            displayContent(markdownToHtml(content, title));
         }
 
         // Attach event listeners
