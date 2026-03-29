@@ -105,7 +105,9 @@ function getNotionBlocks($pageId, $depth = 0)
             $parts = $block[$type]['rich_text'];
             $blockText = '';
             foreach ($parts as $p) {
-                $blockHtml = htmlspecialchars($p['plain_text'] ?? ($p['text']['content'] ?? ''));
+                // Convert literal \n escape sequences (stored as 2-char \+n in Notion) to real newlines
+                $rawText = str_replace('\n', "\n", $p['plain_text'] ?? ($p['text']['content'] ?? ''));
+                $blockHtml = htmlspecialchars($rawText);
                 $ann = $p['annotations'] ?? [];
                 if ($ann['bold'] ?? false) $blockHtml = '<strong>' . $blockHtml . '</strong>';
                 if ($ann['italic'] ?? false) $blockHtml = '<em>' . $blockHtml . '</em>';
@@ -116,32 +118,64 @@ function getNotionBlocks($pageId, $depth = 0)
             $blockText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $blockText);
             $blockText = preg_replace('/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/', '<em>$1</em>', $blockText);
             $blockText = str_replace('**', '', $blockText);
+            // Save raw text (with real newlines) before nl2br transforms them
+            $blockTextRaw = $blockText;
+
             if (in_array($type, ['paragraph', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout'])) {
                 $bulletHtml = '<br><span style="margin-left:1.5rem;display:inline-block;color:var(--accent-blue,#2997ff);margin-right:8px;">•</span>';
                 $blockText = preg_replace('/\s+\*\s+/', $bulletHtml, $blockText);
                 $blockText = preg_replace('/(?<=\:\s)\*\s+/', $bulletHtml, $blockText);
                 $blockText = nl2br($blockText);
             }
-            
+
             // Don't skip paragraphs if they are just placeholders for spacing
             if (empty($blockText) && !in_array($type, ['paragraph', 'toggle', 'todo'])) continue;
 
             if ($type === 'paragraph') {
-                // Check for markdown shortcuts in paragraph text (###, ##, #, -, *, 1.)
-                if (strpos($blockText, '### ') === 0) {
-                    $fullText .= "<h3>" . substr($blockText, 4) . "</h3>";
+                // If the raw text contains actual newlines (from literal \n conversion),
+                // it's a multi-section blob — split the RAW text on \n\n and render each section
+                if (strpos($blockTextRaw, "\n") !== false) {
+                    $blockText = $blockTextRaw; // work with raw text for proper splitting
+                    $sections = preg_split('/\n{2,}/', $blockText);
+                    foreach ($sections as $section) {
+                        $section = trim($section);
+                        if ($section === '') continue;
+                        if (strpos($section, '### ') === 0) {
+                            $fullText .= "<h3>" . substr($section, 4) . "</h3>";
+                        } elseif (strpos($section, '## ') === 0) {
+                            $fullText .= "<h2>" . substr($section, 3) . "</h2>";
+                        } elseif (strpos($section, '# ') === 0) {
+                            $fullText .= "<h1>" . substr($section, 2) . "</h1>";
+                        } elseif (preg_match('/^(\d+)\.\s+\*?\*?(.*?)\*?\*?\s*:?\s*\n?(.*)/s', $section, $olM)) {
+                            // Numbered list: "1. **Title:**\nDescription"
+                            $liTitle = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', htmlspecialchars_decode($olM[2]));
+                            $liDesc  = trim($olM[3]);
+                            $liHtml  = $liTitle;
+                            if ($liDesc) $liHtml .= '<span class="article-li-desc">' . nl2br(htmlspecialchars($liDesc)) . '</span>';
+                            $fullText .= "<li class='list-number'>" . $liHtml . "</li>";
+                        } elseif (strpos($section, '- ') === 0 || strpos($section, '* ') === 0) {
+                            $fullText .= "<li class='list-bullet'>" . substr($section, 2) . "</li>";
+                        } elseif (strpos($section, '> ') === 0) {
+                            $fullText .= "<blockquote>" . substr($section, 2) . "</blockquote>";
+                        } else {
+                            $fullText .= "<p>" . nl2br($section) . "</p>";
+                        }
+                    }
+                    $fullText .= $childrenHtml;
+                // Normal single-line paragraph
+                } elseif (strpos($blockText, '### ') === 0) {
+                    $fullText .= "<h3>" . substr($blockText, 4) . "</h3>" . $childrenHtml;
                 } elseif (strpos($blockText, '## ') === 0) {
-                    $fullText .= "<h2>" . substr($blockText, 3) . "</h2>";
+                    $fullText .= "<h2>" . substr($blockText, 3) . "</h2>" . $childrenHtml;
                 } elseif (strpos($blockText, '# ') === 0) {
-                    $fullText .= "<h1>" . substr($blockText, 2) . "</h1>";
+                    $fullText .= "<h1>" . substr($blockText, 2) . "</h1>" . $childrenHtml;
                 } elseif (strpos($blockText, '- ') === 0 || strpos($blockText, '* ') === 0) {
-                    $fullText .= "<li>" . substr($blockText, 2) . "</li>";
+                    $fullText .= "<li>" . substr($blockText, 2) . "</li>" . $childrenHtml;
                 } elseif (preg_match('/^\d+\.\s/', $blockText)) {
-                    $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>";
+                    $fullText .= "<li>" . preg_replace('/^\d+\.\s/', '', $blockText) . "</li>" . $childrenHtml;
                 } else {
-                    $fullText .= "<p>" . (empty($blockText) && empty($childrenHtml) ? "&nbsp;" : $blockText) . "</p>";
+                    $fullText .= "<p>" . (empty($blockText) && empty($childrenHtml) ? "&nbsp;" : $blockText) . "</p>" . $childrenHtml;
                 }
-                $fullText .= $childrenHtml;
             } elseif ($type === 'heading_1') $fullText .= "<h1>" . $blockText . "</h1>" . $childrenHtml;
             elseif ($type === 'heading_2') $fullText .= "<h2>" . $blockText . "</h2>" . $childrenHtml;
             elseif ($type === 'heading_3') $fullText .= "<h3>" . $blockText . "</h3>" . $childrenHtml;
