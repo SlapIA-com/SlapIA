@@ -68,7 +68,7 @@ $articles = getBlogArticles(100);
                 <?php foreach ($articles as $index => $article): ?>
                     <!-- Article Card -->
                     <div class="col-lg-4 col-md-6" id="<?php echo $article['slug']; ?>">
-                        <a href="/blog/<?php echo htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8'); ?>" class="bento-card bento-card-glow h-100 d-flex flex-column p-0 overflow-hidden scroll-reveal blog-read-btn text-decoration-none <?php echo ($index % 3 == 0) ? '' : ($index % 3 == 1 ? 'delay-100' : 'delay-200'); ?>"
+                        <div class="bento-card bento-card-glow h-100 d-flex flex-column p-0 overflow-hidden scroll-reveal blog-read-btn <?php echo ($index % 3 == 0) ? '' : ($index % 3 == 1 ? 'delay-100' : 'delay-200'); ?>"
                             style="cursor: pointer;"
                             data-article-title="<?php echo htmlspecialchars($article['titre'], ENT_QUOTES, 'UTF-8'); ?>"
                             data-article-image="<?php echo htmlspecialchars($article['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
@@ -108,7 +108,7 @@ $articles = getBlogArticles(100);
                                     <?php echo t('read_article'); ?> <i class="fas fa-arrow-right ms-2 fs-6"></i>
                                 </span>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

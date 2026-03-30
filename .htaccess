@@ -22,9 +22,6 @@
     # ROI Calculator
     RewriteRule ^Calcule-ROI-IA$ pages/Calcule-ROI-IA.php [L,QSA]
 
-    # Blog individual article pages (must be before the generic rule)
-    RewriteRule ^blog/([a-zA-Z0-9-]+)$ pages/article.php?slug=$1 [L,QSA]
-
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
     RewriteRule ^([^/]+)$ pages/$1.php [L,QSA]
