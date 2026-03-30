@@ -93,19 +93,6 @@ include '../includes/header.php'; ?>
             </div>
         </div>
 
-        <!-- Professional Summary -->
-        <div class="row mb-5 pb-5 border-bottom border-light border-opacity-10">
-            <div class="col-lg-12 text-center mb-4">
-                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill mb-3"><?php echo t('about_me_badge'); ?></span>
-                <h2 class="display-4 fw-bold text-white"><?php echo t('summary_title'); ?></h2>
-            </div>
-            <div class="col-lg-8 offset-lg-2">
-                <div class="bento-card p-4 p-md-5">
-                    <p class="text-secondary lh-lg mb-0"><?php echo t('summary_text'); ?></p>
-                </div>
-            </div>
-        </div>
-
         <!-- Certifications Hoshin Section -->
         <div class="row align-items-center mb-5 pb-5">
             <div class="col-lg-12 text-center mb-5">
@@ -165,101 +152,11 @@ include '../includes/header.php'; ?>
             </div>
         </div>
 
-        <!-- Experience & Education -->
+        <!-- Skills & Additional Certifications -->
         <div class="row mb-5 pb-5 border-bottom border-light border-opacity-10">
-
-            <!-- Experience -->
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <h2 class="text-white mb-4 fs-3"><i class="fas fa-briefcase text-primary me-2"></i><?php echo t('experience_title'); ?></h2>
-
-                <div class="bento-card p-4 mb-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-rocket text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('exp_slapia_title'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1">SlapIA</p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Fév. 2026 — <?php echo t('present'); ?> · Besançon, France</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bento-card p-4 mb-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-server text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('exp_micromega_title1'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1">Micro-Mega SA (COLTENE)</p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Nov. 2024 — <?php echo t('present'); ?> · Besançon</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bento-card p-4 mb-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-tools text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('exp_micromega_title2'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1">Micro-Mega SA (COLTENE)</p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Oct. 2022 — Oct. 2024 · Besançon</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bento-card p-4">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-user-graduate text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('exp_adeo_title'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1">ADEO INFORMATIQUE</p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Mai 2022 — Juin 2022 · Besançon</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Education -->
-            <div class="col-lg-6">
-                <h2 class="text-white mb-4 fs-3"><i class="fas fa-graduation-cap text-primary me-2"></i><?php echo t('education_title'); ?></h2>
-
-                <div class="bento-card p-4 mb-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-laptop-code text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('edu_bts_title'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1"><?php echo t('edu_bts_school'); ?></p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Sept. 2024 — Août 2026</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bento-card p-4 mb-4">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0" style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-microchip text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 h6"><?php echo t('edu_bac_title'); ?></h5>
-                            <p class="text-primary small fw-bold mb-1"><?php echo t('edu_bac_school'); ?></p>
-                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Sept. 2021 — Août 2024</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Skills, Languages & Additional Certifications -->
-                <h2 class="text-white mb-4 fs-3"><i class="fas fa-layer-group text-primary me-2"></i><?php echo t('skills_section_title'); ?></h2>
-
-                <div class="bento-card p-4 mb-3">
-                    <h6 class="text-white mb-3"><i class="fas fa-code text-primary me-2"></i><?php echo t('technical_expertise'); ?></h6>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="bento-card p-4 h-100">
+                    <h4 class="text-white mb-4 fs-5"><i class="fas fa-code text-primary me-2"></i><?php echo t('technical_expertise'); ?></h4>
                     <div class="d-flex flex-wrap gap-2">
                         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2"><?php echo t('skill_ai_tools'); ?></span>
                         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2">Visual Studio Code</span>
@@ -270,28 +167,11 @@ include '../includes/header.php'; ?>
                         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2">Notion API</span>
                     </div>
                 </div>
-
-                <div class="bento-card p-4 mb-3">
-                    <h6 class="text-white mb-3"><i class="fas fa-globe text-primary me-2"></i><?php echo t('languages_title'); ?></h6>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small">🇫🇷 Français</span>
-                            <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-25 px-2 py-1 small"><?php echo t('lang_native_bilingual'); ?></span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small">🇬🇧 English</span>
-                            <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-25 px-2 py-1 small"><?php echo t('lang_limited_working'); ?></span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small">🇪🇸 Español</span>
-                            <span class="badge bg-secondary bg-opacity-30 text-secondary border border-secondary border-opacity-25 px-2 py-1 small"><?php echo t('lang_elementary'); ?></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bento-card p-4">
-                    <h6 class="text-white mb-3"><i class="fas fa-certificate text-primary me-2"></i><?php echo t('additional_certs_title'); ?></h6>
-                    <div class="d-flex flex-column gap-2">
+            </div>
+            <div class="col-lg-6">
+                <div class="bento-card p-4 h-100">
+                    <h4 class="text-white mb-4 fs-5"><i class="fas fa-certificate text-primary me-2"></i><?php echo t('additional_certs_title'); ?></h4>
+                    <div class="d-flex flex-column gap-3">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-check-circle text-success small flex-shrink-0"></i>
                             <span class="text-secondary small">PIX — Certificat Pix</span>
@@ -303,6 +183,24 @@ include '../includes/header.php'; ?>
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-check-circle text-success small flex-shrink-0"></i>
                             <span class="text-secondary small">AI : Charges de travail & Machine Learning sur Azure</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SlapIA -->
+        <div class="row mb-5 pb-5 border-bottom border-light border-opacity-10">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="bento-card p-4 p-md-5">
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="flex-shrink-0" style="width:50px;height:50px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-rocket text-primary fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-1"><?php echo t('exp_slapia_title'); ?></h5>
+                            <p class="text-primary small fw-bold mb-1">SlapIA</p>
+                            <p class="text-secondary small mb-0"><i class="fas fa-calendar-alt me-1"></i>Fév. 2026 — <?php echo t('present'); ?> · Besançon, France</p>
                         </div>
                     </div>
                 </div>
