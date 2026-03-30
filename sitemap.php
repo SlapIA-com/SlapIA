@@ -6,6 +6,10 @@ header('Content-Type: application/xml; charset=utf-8');
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 $pagesDir = __DIR__ . '/pages';
 
+// Load blog articles for sitemap
+include_once __DIR__ . '/api/notion-blog.php';
+$blogArticles = getBlogArticles(100);
+
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -38,6 +42,20 @@ if (is_dir($pagesDir)) {
     </url>
             <?php
     }
+}
+
+// Blog articles
+foreach ($blogArticles as $article) {
+    $articleUrl = htmlspecialchars($baseUrl . '/blog/' . $article['slug'], ENT_XML1);
+    $articleDate = htmlspecialchars($article['date'], ENT_XML1);
+?>
+    <url>
+        <loc><?php echo $articleUrl; ?></loc>
+        <lastmod><?php echo $articleDate; ?></lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <?php
 }
 ?>
 </urlset>
