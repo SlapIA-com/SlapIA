@@ -78,6 +78,15 @@ try {
         $input = $_POST;
     }
 
+    // ── CSRF verification ────────────────────────────────────────────────────
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verifyCSRFToken($csrfToken)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Requête invalide.']);
+        exit;
+    }
+
     $email             = trim($input['email'] ?? '');
     $password          = $input['password'] ?? '';
     $turnstileResponse = $input['cf-turnstile-response'] ?? '';
@@ -163,17 +172,19 @@ try {
 
     if ($curlErr || $httpCode >= 400) {
         $notionMsg = json_decode($response, true)['message'] ?? 'Erreur inconnue';
+        error_log('[SlapIA Auth Login] Notion error ' . $httpCode . ': ' . $notionMsg);
         ob_clean();
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Notion HTTP ' . $httpCode . ' : ' . $notionMsg]);
+        echo json_encode(['success' => false, 'error' => 'Erreur de connexion. Veuillez réessayer.']);
         exit;
     }
 
     $responseData = json_decode($response, true);
     if (!isset($responseData['results'])) {
+        error_log('[SlapIA Auth Login] Notion API error: ' . ($responseData['message'] ?? 'Unknown'));
         ob_clean();
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Erreur API Notion : ' . ($responseData['message'] ?? 'Erreur inconnue')]);
+        echo json_encode(['success' => false, 'error' => 'Erreur de connexion. Veuillez réessayer.']);
         exit;
     }
 
@@ -305,5 +316,5 @@ try {
     ob_clean();
     error_log('[SlapIA Auth Login] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Exception PHP : ' . $e->getMessage() . ' à la ligne ' . $e->getLine()]);
+    echo json_encode(['success' => false, 'error' => 'Erreur serveur. Veuillez réessayer.']);
 }

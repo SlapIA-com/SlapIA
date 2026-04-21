@@ -16,6 +16,16 @@ try {
     header('Content-Type: application/json');
 
     $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+    // ── CSRF verification ────────────────────────────────────────────────────
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verifyCSRFToken($csrfToken)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Requête invalide.']);
+        exit;
+    }
+
     $email = strtolower(trim($input['email'] ?? ''));
 
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {

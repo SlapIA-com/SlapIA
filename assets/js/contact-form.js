@@ -179,7 +179,10 @@ async function handleContactFormSubmit(e) {
     try {
         const response = await fetch('/api/notion-contact.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
             body: JSON.stringify(data)
         });
 
@@ -272,7 +275,10 @@ window.initRssModalHelpers = function() {
 
             fetch('/api/subscribe-rss.php', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
                 body: JSON.stringify({ email: email, 'cf-turnstile-response': cfResponse })
             })
             .then(r => r.json())

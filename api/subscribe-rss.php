@@ -19,6 +19,15 @@ try {
         $input = [];
     }
 
+    // ── CSRF verification ────────────────────────────────────────────────────
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verifyCSRFToken($csrfToken)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['error' => 'Requête invalide.']);
+        exit;
+    }
+
     $email = trim($input['email'] ?? '');
     $turnstileResponse = $input['cf-turnstile-response'] ?? '';
 
@@ -136,11 +145,8 @@ try {
         error_log("[RSS Subscribe] Notion API Error: $httpCode - Response: $response");
         // Notion return error mesage
         $notionErr = json_decode($response, true);
-        $errMsg = 'Impossible de sauvegarder votre inscription';
-        if ($notionErr && isset($notionErr['message'])) {
-            $errMsg = "Notion a refusé: " . $notionErr['message'];
-        }
-        throw new Exception($errMsg, 500);
+        error_log('[RSS Subscribe] Notion API refused: ' . ($notionErr['message'] ?? 'Unknown') . ' HTTP ' . $httpCode);
+        throw new Exception('Impossible de sauvegarder votre inscription. Veuillez réessayer.', 500);
     }
 
     ob_clean();

@@ -27,7 +27,7 @@ try {
         header('Access-Control-Allow-Origin: ' . $origin);
     }
     header('Access-Control-Allow-Methods: POST');
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
 
     // Check if cURL is enabled
     if (!function_exists('curl_init')) {
@@ -41,6 +41,15 @@ try {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Données invalides']);
+        exit;
+    }
+
+    // ── CSRF verification ────────────────────────────────────────────────────
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verifyCSRFToken($csrfToken)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Requête invalide.']);
         exit;
     }
 
@@ -150,6 +159,19 @@ try {
         exit;
     }
 
+    if (strlen($prenom) > 100 || strlen($nom) > 100) {
+        ob_clean();
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Le nom est trop long (max. 100 caractères).']);
+        exit;
+    }
+
+    if (strlen($message) > 5000) {
+        ob_clean();
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Le message est trop long (max. 5000 caractères).']);
+        exit;
+    }
 
     // Validation
     if (empty($prenom) || empty($nom) || empty($email) || empty($message)) {
@@ -229,9 +251,10 @@ try {
     unset($ch);
 
     if ($error) {
+        error_log('[SlapIA Contact API] cURL error: ' . $error);
         ob_clean();
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Erreur de connexion: ' . $error]);
+        echo json_encode(['success' => false, 'error' => 'Erreur de connexion. Veuillez réessayer plus tard.']);
         exit;
     }
 

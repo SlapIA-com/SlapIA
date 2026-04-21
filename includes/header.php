@@ -10,6 +10,7 @@ $slug = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars(generateCSRFToken(), ENT_QUOTES, 'UTF-8'); ?>">
 
     <!-- DNS Prefetch & Preconnect for external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -142,8 +143,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-          .then(reg => console.log('[PWA] SW Registered'))
-          .catch(err => console.log('[PWA] SW Failed', err));
+          .then(() => {})
+          .catch(() => {});
       });
     }
     </script>

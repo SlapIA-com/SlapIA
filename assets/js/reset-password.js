@@ -43,7 +43,10 @@ window.initResetPasswordForm = function () {
             try {
                 const res  = await fetch('/api/auth-reset-request.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    },
                     body: JSON.stringify({ email, 'cf-turnstile-response': turnstileResponse }),
                 });
                 const data = await res.json();
@@ -93,7 +96,10 @@ window.initResetPasswordForm = function () {
             try {
                 const res  = await fetch('/api/auth-reset-exec.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    },
                     body: JSON.stringify({ token, email, password: pw }),
                 });
                 const data = await res.json();
