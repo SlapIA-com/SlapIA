@@ -164,15 +164,6 @@
     </span>
 </div>
 
-<!-- Scroll Indicator -->
-<div id="scroll-indicator" class="scroll-indicator-glass">
-    <svg width="100%" height="100%" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
-        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5" />
-        <circle id="scroll-progress" cx="50" cy="50" r="45" fill="none" stroke="#bf5af2" stroke-width="5"
-            stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" />
-    </svg>
-    <div class="arrow-icon">↑</div>
-</div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

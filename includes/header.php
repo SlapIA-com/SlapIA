@@ -191,6 +191,11 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
             <?php endif; ?>
             Mon Espace
         </a>
+        <a href="#" class="mobile-menu-link position-relative" onclick="event.preventDefault(); document.getElementById('globalNotifBtn').click();">
+            <i class="fas fa-bell"></i>
+            Notifications
+            <span id="mobileNotifBadge" class="badge rounded-pill bg-danger ms-1" style="display:none; font-size:0.6rem; padding:0.25em 0.5em;">0</span>
+        </a>
     <?php else: ?>
         <a href="/login" class="mobile-menu-link mobile-menu-link--account">
             <i class="fas fa-sign-in-alt"></i> <?php echo t('login_title'); ?>
@@ -260,8 +265,8 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
                 <div id="globalNotifContainer" style="max-height: 400px; overflow-y: auto;">
                     <li class="p-4 text-center text-secondary small opacity-50">Aucune notification</li>
                 </div>
-                <li><hr class="dropdown-divider opacity-10"></li>
-                <li><button onclick="markAllRead()" class="dropdown-item text-center small text-primary fw-medium py-2 rounded-3">Marquer tout comme lu</button></li>
+                <li><hr class="dropdown-divider opacity-10" id="notifDivider" style="display:none;"></li>
+                <li><button onclick="markAllRead()" id="markAllReadBtn" class="dropdown-item text-center small text-primary fw-medium py-2 rounded-3" style="display:none;">Marquer tout comme lu</button></li>
             </ul>
         </div>
 
@@ -300,65 +305,149 @@ function toggleMobileMenu() {
     document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
 }
 
-// Notification Management
-let lastReadNotif = localStorage.getItem('slapia_notif_read') || 0;
+// ── Notifications ────────────────────────────────────────────────────────────
+function timeAgo(ts) {
+    const diff = Math.floor(Date.now() / 1000) - ts;
+    if (diff < 60)     return "À l'instant";
+    if (diff < 3600)   return Math.floor(diff / 60) + ' min';
+    if (diff < 86400)  return Math.floor(diff / 3600) + 'h';
+    if (diff < 604800) return Math.floor(diff / 86400) + 'j';
+    return Math.floor(diff / 604800) + ' sem.';
+}
 
-async function fetchNotifications() {
-    const list = document.getElementById('globalNotifContainer');
-    const badge = document.getElementById('globalNotifBadge');
-    if (!list) return;
+function _updateBadges(unread) {
+    const badge       = document.getElementById('globalNotifBadge');
+    const mobileBadge = document.getElementById('mobileNotifBadge');
+    const label       = unread > 9 ? '9+' : String(unread);
+    const bell        = document.querySelector('#globalNotifBtn .fa-bell');
 
-    try {
-        const res = await fetch('/api/check-notifications.php');
-        const data = await res.json();
-        
-        if (data.success && data.notifications.length > 0) {
-            let html = '';
-            let unreadCount = 0;
-            
-            data.notifications.forEach(n => {
-                const isNew = n.ts > lastReadNotif;
-                if (isNew) unreadCount++;
-                
-                html += `
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-3 py-3 rounded-4 ${isNew ? 'bg-white bg-opacity-5' : ''}" href="${n.link || '#'}">
-                            <div class="rounded-circle p-2 ${n.icon_bg || 'bg-primary'} bg-opacity-10">
-                                <i class="${n.icon || 'fas fa-info-circle'} ${n.icon_color || 'text-primary'}"></i>
-                            </div>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <div class="text-white small fw-bold text-truncate">${n.title}</div>
-                                <div class="text-secondary smaller text-truncate opacity-75">${n.desc}</div>
-                            </div>
-                            ${isNew ? '<div class="rounded-circle bg-danger" style="width: 6px; height: 6px;"></div>' : ''}
-                        </a>
-                    </li>`;
+    if (unread > 0) {
+        if (badge)       { badge.textContent = label; badge.style.display = 'block'; }
+        if (mobileBadge) { mobileBadge.textContent = label; mobileBadge.style.display = 'inline'; }
+        // Pulse animation on bell
+        if (bell) {
+            bell.style.animation = 'none';
+            requestAnimationFrame(() => {
+                bell.style.animation = 'notifBellRing 0.6s ease';
             });
-            
-            list.innerHTML = html;
-            if (unreadCount > 0) {
-                badge.textContent = unreadCount;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
-            }
         }
-    } catch (e) {
-        console.error('Notif error:', e);
+    } else {
+        if (badge)       badge.style.display = 'none';
+        if (mobileBadge) mobileBadge.style.display = 'none';
     }
 }
 
-function markAllRead() {
-    lastReadNotif = Date.now() / 1000;
-    localStorage.setItem('slapia_notif_read', lastReadNotif);
-    fetchNotifications();
+function _renderNotifications(notifications, unreadCount) {
+    const list        = document.getElementById('globalNotifContainer');
+    const markAllBtn  = document.getElementById('markAllReadBtn');
+    const divider     = document.getElementById('notifDivider');
+    if (!list) return;
+
+    if (!notifications || notifications.length === 0) {
+        list.innerHTML = '<li class="p-4 text-center text-secondary small opacity-50"><i class="fas fa-bell-slash mb-2 d-block fs-4 opacity-25"></i>Aucune notification</li>';
+        if (markAllBtn) markAllBtn.style.display = 'none';
+        if (divider)    divider.style.display    = 'none';
+        return;
+    }
+
+    let html = '';
+    notifications.forEach(n => {
+        const unreadDot = !n.read
+            ? '<div class="rounded-circle bg-danger flex-shrink-0" style="width:7px;height:7px;margin-top:4px;"></div>'
+            : '';
+        html += `
+            <li>
+                <a class="dropdown-item d-flex align-items-start gap-3 py-2 px-3 rounded-4 notif-item ${!n.read ? 'bg-white bg-opacity-5' : ''}"
+                   href="${n.link || '#'}"
+                   data-notif-id="${n.id}"
+                   onclick="markOneRead(this)">
+                    <div class="rounded-circle p-2 flex-shrink-0 ${n.icon_bg || 'bg-primary'} bg-opacity-10" style="margin-top:2px;">
+                        <i class="${n.icon || 'fas fa-info-circle'} ${n.icon_color || 'text-primary'}" style="font-size:0.75rem;width:12px;text-align:center;"></i>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="text-white small fw-semibold text-truncate">${n.title}</div>
+                        <div class="text-secondary text-truncate opacity-75" style="font-size:0.72rem;">${n.desc}</div>
+                        <div class="text-secondary opacity-40" style="font-size:0.65rem;margin-top:2px;">${timeAgo(n.ts)}</div>
+                    </div>
+                    ${unreadDot}
+                </a>
+            </li>`;
+    });
+
+    list.innerHTML = html;
+
+    const hasUnread = unreadCount > 0;
+    if (markAllBtn) markAllBtn.style.display = hasUnread ? 'block' : 'none';
+    if (divider)    divider.style.display    = hasUnread ? 'block' : 'none';
 }
 
-// Initial fetch
+async function fetchNotifications() {
+    const list = document.getElementById('globalNotifContainer');
+    if (!list) return;
+
+    try {
+        const res  = await fetch('/api/check-notifications.php');
+        const data = await res.json();
+        if (!data.success) return;
+
+        _renderNotifications(data.notifications, data.unread_count || 0);
+        _updateBadges(data.unread_count || 0);
+    } catch (e) {}
+}
+
+function markOneRead(el) {
+    const id = el.dataset.notifId;
+    if (!id) return;
+
+    // Mise à jour UI immédiate sans attendre le serveur
+    el.classList.remove('bg-white', 'bg-opacity-5');
+    const dot = el.querySelector('.bg-danger.rounded-circle');
+    if (dot) dot.remove();
+
+    // Recalcule badge localement
+    const remaining = document.querySelectorAll('.notif-item.bg-white.bg-opacity-5').length;
+    _updateBadges(remaining);
+    const markAllBtn = document.getElementById('markAllReadBtn');
+    const divider    = document.getElementById('notifDivider');
+    if (remaining === 0) {
+        if (markAllBtn) markAllBtn.style.display = 'none';
+        if (divider)    divider.style.display    = 'none';
+    }
+
+    // Appel serveur en arrière-plan
+    fetch('/api/notifications-mark-read.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+        },
+        body: JSON.stringify({ id })
+    }).catch(() => {});
+}
+
+async function markAllRead() {
+    try {
+        await fetch('/api/notifications-mark-read.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            body: JSON.stringify({ mark_all: true })
+        });
+        fetchNotifications();
+    } catch (e) {}
+}
+
 <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
 document.addEventListener('DOMContentLoaded', fetchNotifications);
-// Refresh occasionally
-setInterval(fetchNotifications, 60000); 
+// Rafraîchit à l'ouverture du dropdown
+const _notifDropdownEl = document.getElementById('globalNotifList');
+if (_notifDropdownEl) {
+    _notifDropdownEl.closest('.dropdown')?.addEventListener('show.bs.dropdown', fetchNotifications);
+}
+// Rafraîchit toutes les 2 minutes en arrière-plan
+setInterval(fetchNotifications, 120000);
 <?php endif; ?>
 
 // Close menu on escape key
@@ -429,6 +518,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<style>
+@keyframes notifBellRing {
+    0%,100% { transform: rotate(0); }
+    20%      { transform: rotate(-15deg); }
+    40%      { transform: rotate(15deg); }
+    60%      { transform: rotate(-10deg); }
+    80%      { transform: rotate(8deg); }
+}
+</style>
 
 <!-- Spacer for fixed nav -->
 <div class="nav-spacer" style="height: 120px;"></div>

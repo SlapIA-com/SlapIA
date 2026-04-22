@@ -14,6 +14,14 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     exit;
 }
 
+$csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+if (!verifyCSRFToken($csrfToken)) {
+    ob_clean();
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Requête invalide.']);
+    exit;
+}
+
 $data = json_decode(file_get_contents('php://input'), true);
 $notifId  = $data['id']       ?? null;
 $markAll  = $data['mark_all'] ?? false;
