@@ -184,7 +184,6 @@ if (!function_exists('asset_url')) {
 <script src="<?php echo asset_url('/assets/js/cookie-banner.js'); ?>"></script>
 <!-- Removed tilt.js as requested -->
 <script src="<?php echo asset_url('/assets/js/console-egg.js'); ?>"></script>
-<script src="<?php echo asset_url('/assets/js/scroll-indicator.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/emoji-rain.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/interactions.js'); ?>"></script>
 <script src="<?php echo asset_url('/assets/js/contact-form.js'); ?>"></script>
