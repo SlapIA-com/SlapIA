@@ -73,7 +73,7 @@ $completionPct  = (int) round(($completedCount / $totalFields) * 100);
 $invoices = $props['Factures']['files'] ?? [];
 
 // Status
-$isAdmin  = ($getUserStatus() === 'Admin');
+$isAdmin  = ($getUserStatus() === 'Admin' || $getUserStatus() === '');
 
 // Admin data is loaded lazily via /api/admin-data.php when admin tabs are first opened.
 

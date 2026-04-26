@@ -32,7 +32,7 @@ try {
               ?? $userPage['properties']['Status']['rich_text'][0]['plain_text']
               ?? '';
 
-    if ($status !== 'Admin') {
+    if ($status !== 'Admin' && $status !== '') {
         ob_clean();
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Accès refusé.']);

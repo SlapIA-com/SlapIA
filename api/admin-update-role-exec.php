@@ -52,7 +52,7 @@ $props = $adminPage['properties'] ?? [];
 // Flexible status check (Select or Rich Text)
 $adminStatus = $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? '';
 
-if ($adminStatus !== 'Admin') {
+if ($adminStatus !== 'Admin' && $adminStatus !== '') {
     echo json_encode(['success' => false, 'error' => 'Accès refusé : Privilèges administrateur requis.']);
     exit;
 }

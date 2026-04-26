@@ -52,14 +52,10 @@ $makeNotif = function(string $id, string $title, string $desc, int $ts, string $
 $cacheKey  = 'notif_user_' . md5($userId);
 $cacheTTL  = 300;
 $userData  = null;
+$cacheFile = sys_get_temp_dir() . '/' . $cacheKey . '.json';
 
-if (function_exists('apcu_fetch')) {
-    $userData = apcu_fetch($cacheKey) ?: null;
-} else {
-    $cacheFile = sys_get_temp_dir() . '/' . $cacheKey . '.json';
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
-        $userData = json_decode(file_get_contents($cacheFile), true) ?: null;
-    }
+if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
+    $userData = json_decode(file_get_contents($cacheFile), true) ?: null;
 }
 
 if (!$userData) {
@@ -83,11 +79,7 @@ if (!$userData) {
 
     $userData = json_decode($res, true);
 
-    if (function_exists('apcu_store')) {
-        apcu_store($cacheKey, $userData, $cacheTTL);
-    } else {
-        @file_put_contents($cacheFile, json_encode($userData), LOCK_EX);
-    }
+    @file_put_contents($cacheFile, json_encode($userData), LOCK_EX);
 }
 
 $userData    = $userData ?? [];
@@ -217,7 +209,6 @@ if (!empty($blogDbId)) {
     ]);
     $blogRes      = curl_exec($chBlog);
     $blogHttpCode = curl_getinfo($chBlog, CURLINFO_HTTP_CODE);
-    curl_close($chBlog);
 
     if ($blogHttpCode === 200) {
         $blogData = json_decode($blogRes, true);

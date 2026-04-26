@@ -135,7 +135,6 @@ try {
     ]);
     $responseVerify = curl_exec($chVerify);
     $httpCodeVerify = curl_getinfo($chVerify, CURLINFO_HTTP_CODE);
-    curl_close($chVerify);
 
     $responseKeys = json_decode($responseVerify, true);
     if ($httpCodeVerify !== 200 || empty($responseKeys['success'])) {
@@ -268,7 +267,6 @@ try {
             ],
         ]);
         curl_exec($chUpd);
-        curl_close($chUpd);
     }
 
     // ── Success — reset rate limits, build session ────────────────────────────

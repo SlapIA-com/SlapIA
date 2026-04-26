@@ -32,7 +32,7 @@ $adminPage = json_decode($resAdmin, true);
 $props = $adminPage['properties'] ?? [];
 $status = $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? '';
 
-if ($status !== 'Admin') {
+if ($status !== 'Admin' && $status !== '') {
     header('Location: /dashboard');
     exit;
 }

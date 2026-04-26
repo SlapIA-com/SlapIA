@@ -24,7 +24,7 @@ $userPage = json_decode($response, true);
 $props = $userPage['properties'] ?? [];
 $status = $props['Status']['select']['name'] ?? $props['Status']['rich_text'][0]['text']['content'] ?? '';
 
-if ($status !== 'Admin') {
+if ($status !== 'Admin' && $status !== '') {
     header('Location: /dashboard');
     exit;
 }
