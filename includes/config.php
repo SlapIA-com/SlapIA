@@ -1,4 +1,8 @@
 <?php
+// Suppress PHP warnings/notices — config.php is included before ob_start() in most API files.
+error_reporting(0);
+ini_set('display_errors', 0);
+
 /**
  * Charge un éventuel fichier .env en local et expose un helper config()
  */

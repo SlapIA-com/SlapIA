@@ -4,13 +4,13 @@
  * Only accessible to authenticated admin users.
  */
 
-include_once __DIR__ . '/../includes/config.php';
-include_once __DIR__ . '/../includes/lang.php';
-include_once __DIR__ . '/../includes/notion.php';
-
 error_reporting(0);
 ini_set('display_errors', 0);
 ob_start();
+
+include_once __DIR__ . '/../includes/config.php';
+include_once __DIR__ . '/../includes/lang.php';
+include_once __DIR__ . '/../includes/notion.php';
 
 header('Content-Type: application/json');
 
