@@ -54,7 +54,7 @@ $getFacturationStatus = fn() => $props['Facturation']['select']['name']         
 $getAvis             = fn() => $props['Avis clients']['rich_text'][0]['text']['content']             ?? '';
 $getUserStatus       = fn() => $props['Status']['select']['name']
                                ?? $props['Status']['rich_text'][0]['text']['content']
-                               ?? 'Client';
+                               ?? '';
 
 // ─── Profile completion ───────────────────────────────────────────────────────
 $profileFields = [
@@ -73,7 +73,7 @@ $completionPct  = (int) round(($completedCount / $totalFields) * 100);
 $invoices = $props['Factures']['files'] ?? [];
 
 // Status
-$isAdmin  = ($getUserStatus() === 'Admin' || $getUserStatus() === '');
+$isAdmin = ($getUserStatus() === 'Admin' || $getUserStatus() === '');
 
 // Admin data is loaded lazily via /api/admin-data.php when admin tabs are first opened.
 
