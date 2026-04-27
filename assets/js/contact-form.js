@@ -302,11 +302,19 @@ window.initUnsubscribeModalHelpers = function() {
                 },
                 body: JSON.stringify({ email: email, 'cf-turnstile-response': cfResponse })
             })
-            .then(r => r.json())
-            .then(data => {
+            .then(r => r.text().then(text => ({ status: r.status, text })))
+            .then(({ status, text }) => {
                 btn.disabled = false;
                 btn.innerHTML = 'Me désabonner';
                 msg.style.display = 'block';
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch(e) {
+                    console.error('[Unsubscribe] Réponse non-JSON (' + status + '):', text.substring(0, 300));
+                    msg.innerHTML = '<span class="text-danger">Erreur serveur (code ' + status + '). Voir la console pour les détails.</span>';
+                    return;
+                }
                 if (data.success) {
                     msg.innerHTML = `<span class="text-success">${data.message || 'Désabonnement effectué.'}</span>`;
                     unsubForm.reset();
@@ -319,13 +327,15 @@ window.initUnsubscribeModalHelpers = function() {
                     }, 2500);
                 } else {
                     msg.innerHTML = `<span class="text-danger">${data.error || 'Erreur inconnue.'}</span>`;
+                    try { turnstile.reset('#cf-turnstile-unsub'); } catch(e) {}
                 }
             })
-            .catch(() => {
+            .catch(err => {
                 btn.disabled = false;
                 btn.innerHTML = 'Me désabonner';
                 msg.style.display = 'block';
-                msg.innerHTML = '<span class="text-danger">Erreur de connexion au serveur.</span>';
+                console.error('[Unsubscribe] Fetch error:', err);
+                msg.innerHTML = '<span class="text-danger">Impossible de joindre le serveur. Vérifiez votre connexion.</span>';
             });
         });
     }

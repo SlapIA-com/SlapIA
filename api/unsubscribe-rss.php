@@ -51,6 +51,7 @@ try {
         'remoteip' => $ip
     ]));
     curl_setopt($chCF, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chCF, CURLOPT_TIMEOUT, 10);
     $responseCF  = curl_exec($chCF);
     $httpCodeCF  = curl_getinfo($chCF, CURLINFO_HTTP_CODE);
     curl_close($chCF);
@@ -130,15 +131,18 @@ try {
 
     ob_clean();
     echo json_encode(['success' => true, 'message' => 'Vous avez bien été désabonné de nos alertes.']);
+    exit;
 
 } catch (Exception $e) {
     ob_clean();
     $code = $e->getCode() ?: 500;
     http_response_code($code);
     echo json_encode(['error' => $e->getMessage()]);
+    exit;
 } catch (Throwable $e) {
     ob_clean();
     error_log('[RSS Unsubscribe] Fatal Error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Erreur critique du serveur.']);
+    exit;
 }
