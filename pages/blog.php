@@ -36,6 +36,9 @@ $articles = getBlogArticles(100);
                     <a href="/rss.xml" class="d-inline-flex align-items-center ms-3 text-secondary text-decoration-none hover-white small fade-in" target="_blank" title="Lien direct vers le flux">
                         <i class="fas fa-link me-1"></i> Flux direct
                     </a>
+                    <button type="button" class="btn btn-link d-inline-flex align-items-center ms-3 text-secondary text-decoration-none hover-white small fade-in p-0 border-0" data-bs-toggle="modal" data-bs-target="#rssUnsubscribeModal" title="Se désabonner des alertes">
+                        <i class="fas fa-bell-slash me-1"></i> Se désabonner
+                    </button>
                 </div>
             </div>
             

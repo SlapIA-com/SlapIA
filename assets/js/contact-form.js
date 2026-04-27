@@ -73,10 +73,32 @@ window.initRssTurnstile = function (force = false) {
 };
 
 // Central init — called either by onloadTurnstileCallback or on Swup page transitions
+// Initialize Turnstile for the Unsubscribe Modal
+window.initUnsubscribeTurnstile = function (force = false) {
+    const container = document.getElementById('cf-turnstile-unsub');
+    if (!container || typeof turnstile === 'undefined') return;
+
+    if (container.dataset.rendered === 'true' && !force) return;
+
+    const sitekey = container.getAttribute('data-sitekey');
+    if (!sitekey) return;
+
+    try {
+        if (force) {
+            try { turnstile.remove(container); } catch(e) {}
+        }
+        container.dataset.rendered = 'true';
+        turnstile.render(container, { sitekey: sitekey, theme: 'dark' });
+    } catch (e) {
+        container.dataset.rendered = 'false';
+    }
+};
+
 window._initAllTurnstiles = function () {
     window.initContactTurnstile();
     window.initLoginTurnstile();
     window.initRssTurnstile();
+    window.initUnsubscribeTurnstile();
     if (window.initResetTurnstile) window.initResetTurnstile();
 };
 
@@ -230,6 +252,85 @@ function handleCharacterCount(e) {
     }
 }
 
+// Unsubscribe Modal Global Handlers
+window.initUnsubscribeModalHelpers = function() {
+    const unsubModalEl = document.getElementById('rssUnsubscribeModal');
+    if (!unsubModalEl || unsubModalEl.dataset.helpersInitialized) return;
+    unsubModalEl.dataset.helpersInitialized = 'true';
+
+    unsubModalEl.addEventListener('show.bs.modal', function () {
+        const msg = document.getElementById('rss-unsub-msg');
+        if (msg) { msg.style.display = 'none'; msg.innerHTML = ''; }
+
+        if (typeof turnstile !== 'undefined') {
+            window.initUnsubscribeTurnstile(true);
+        } else {
+            let checkInt = setInterval(() => {
+                if (typeof turnstile !== 'undefined') {
+                    window.initUnsubscribeTurnstile(true);
+                    clearInterval(checkInt);
+                }
+            }, 500);
+            setTimeout(() => clearInterval(checkInt), 5000);
+        }
+    });
+
+    const unsubForm = document.getElementById('rss-unsubscribe-form');
+    if (unsubForm) {
+        unsubForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('rss-unsub-email-input').value;
+            const btn = document.getElementById('rss-unsub-btn');
+            const msg = document.getElementById('rss-unsub-msg');
+            const cfResponse = new FormData(unsubForm).get('cf-turnstile-response');
+
+            if (!cfResponse) {
+                msg.style.display = 'block';
+                msg.innerHTML = '<span class="text-danger">Veuillez valider le Captcha Cloudflare.</span>';
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+            btn.disabled = true;
+            msg.style.display = 'none';
+
+            fetch('/api/unsubscribe-rss.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify({ email: email, 'cf-turnstile-response': cfResponse })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = 'Me désabonner';
+                msg.style.display = 'block';
+                if (data.success) {
+                    msg.innerHTML = `<span class="text-success">${data.message || 'Désabonnement effectué.'}</span>`;
+                    unsubForm.reset();
+                    try { turnstile.reset('#cf-turnstile-unsub'); } catch(e) {}
+                    setTimeout(() => {
+                        if (window.bootstrap && bootstrap.Modal) {
+                            const modal = bootstrap.Modal.getInstance(unsubModalEl);
+                            if (modal) modal.hide();
+                        }
+                    }, 2500);
+                } else {
+                    msg.innerHTML = `<span class="text-danger">${data.error || 'Erreur inconnue.'}</span>`;
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = 'Me désabonner';
+                msg.style.display = 'block';
+                msg.innerHTML = '<span class="text-danger">Erreur de connexion au serveur.</span>';
+            });
+        });
+    }
+};
+
 // RSS Modal Global Handlers
 window.initRssModalHelpers = function() {
     const rssModalEl = document.getElementById('rssSubscribeModal');
@@ -315,8 +416,9 @@ window.initContactFormHelpers = function () {
     const form = document.getElementById('contactForm');
     const messageInput = document.getElementById('message');
 
-    // Re-init RSS and Login helpers too
+    // Re-init RSS, Unsubscribe and Login helpers too
     window.initRssModalHelpers();
+    window.initUnsubscribeModalHelpers();
     window.initLoginTurnstile();
 
     // Remove old listeners to prevent duplicates during Swup navigation
