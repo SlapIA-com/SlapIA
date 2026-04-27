@@ -119,7 +119,7 @@ try {
             'name'    => $getProp($props['Prenom NOM'])  ?: 'N.A',
             'email'   => $getProp($props['Email']),
             'company' => $getProp($props['Nom d\'entreprise']),
-            'status'  => $getProp($props['Status']) ?: 'Client',
+            'status'  => $getProp($props['Status']) ?: 'Admin',
         ];
     }, $listUsers);
 
