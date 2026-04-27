@@ -9,11 +9,76 @@ if (session_status() === PHP_SESSION_NONE) {
         'lifetime' => 86400, // 1 day
         'path' => '/',
         'domain' => '',
-        'secure' => isset($_SERVER['HTTPS']), // true on HTTPS
-        'httponly' => true, // prevent XSS
-        'samesite' => 'Lax' // prevent CSRF
+        'secure' => isset($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Lax'
     ]);
     session_start();
+    _restoreSessionFromRememberToken();
+}
+
+/**
+ * Restore an expired PHP session from a long-lived remember-me token stored on disk.
+ * Called once right after session_start(). Safe to call from any context (API or page).
+ */
+function _restoreSessionFromRememberToken(): void
+{
+    // Already authenticated — nothing to do.
+    if (!empty($_SESSION['logged_in'])) return;
+
+    $token = $_COOKIE['remember_token'] ?? '';
+
+    // Validate format: 64 lowercase hex chars.
+    if (!$token || !preg_match('/^[a-f0-9]{64}$/', $token)) return;
+
+    $file = sys_get_temp_dir() . '/slapia_rt_' . $token . '.json';
+
+    if (!is_readable($file)) {
+        // Cookie references a token that no longer exists — clear it.
+        if (!headers_sent()) {
+            setcookie('remember_token', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+        }
+        return;
+    }
+
+    $data = json_decode(@file_get_contents($file), true);
+
+    if (!$data || empty($data['user_id']) || ($data['expires'] ?? 0) < time()) {
+        @unlink($file);
+        if (!headers_sent()) {
+            setcookie('remember_token', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+        }
+        return;
+    }
+
+    // Restore session.
+    $_SESSION['user_id']    = $data['user_id'];
+    $_SESSION['user_email'] = $data['user_email'] ?? '';
+    $_SESSION['user_name']  = $data['user_name'] ?? '';
+    $_SESSION['logged_in']  = true;
+
+    session_regenerate_id(true);
+
+    // Occasional cleanup of stale token files (≈1% of restorations).
+    if (rand(1, 100) === 1) {
+        _cleanupExpiredRememberTokens();
+    }
+}
+
+/**
+ * Delete token files that have passed their expiry date.
+ */
+function _cleanupExpiredRememberTokens(): void
+{
+    $dir   = sys_get_temp_dir();
+    $now   = time();
+    $files = glob($dir . '/slapia_rt_*.json') ?: [];
+    foreach ($files as $f) {
+        $d = json_decode(@file_get_contents($f), true);
+        if (!$d || ($d['expires'] ?? 0) < $now) {
+            @unlink($f);
+        }
+    }
 }
 
 

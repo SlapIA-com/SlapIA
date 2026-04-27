@@ -287,24 +287,27 @@ try {
 
     $_SESSION['logged_in'] = true;
 
-    // ── Remember Me — extend session lifetime via a long-lived cookie ─────────
+    // ── Remember Me — persist a long-lived token to disk ────────────────────
     if ($rememberMe) {
         $cookieLifetime = 30 * 24 * 3600; // 30 days
-        $token          = bin2hex(random_bytes(32));
-        $_SESSION['remember_token']   = $token;
-        $_SESSION['remember_expires'] = time() + $cookieLifetime;
+        $token = bin2hex(random_bytes(32));
 
-        setcookie(
-            'remember_token',
-            $token,
-            [
-                'expires'  => time() + $cookieLifetime,
-                'path'     => '/',
-                'secure'   => isset($_SERVER['HTTPS']),
-                'httponly' => true,
-                'samesite' => 'Lax',
-            ]
-        );
+        // Store token on disk so it can restore the session after it expires.
+        $tokenFile = sys_get_temp_dir() . '/slapia_rt_' . $token . '.json';
+        file_put_contents($tokenFile, json_encode([
+            'user_id'    => $userPage['id'],
+            'user_email' => $email,
+            'user_name'  => $fullName,
+            'expires'    => time() + $cookieLifetime,
+        ]), LOCK_EX);
+
+        setcookie('remember_token', $token, [
+            'expires'  => time() + $cookieLifetime,
+            'path'     => '/',
+            'secure'   => isset($_SERVER['HTTPS']),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
     }
 
     ob_clean();
