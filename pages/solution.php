@@ -39,12 +39,12 @@ include '../includes/header.php'; ?>
 
                 <!-- Download CTA -->
                 <div class="d-flex flex-column align-items-center gap-3 mt-4">
-                    <a href="/downloads/latest/SlapIA-Tool-Setup.exe" id="solutionDownloadBtn" class="btn-primary-glow">
+                    <a href="/downloads/latest/SlapIA-Tool-Setup.exe" id="solutionDownloadBtn" class="btn-primary-glow" data-no-swup>
                         <i class="fas fa-download"></i> <span id="solutionDownloadLabel"><?php echo t('solution_download_btn'); ?></span>
                     </a>
                     <div class="text-secondary small" id="solutionReleaseMeta" style="min-height: 1.2em;"></div>
                     <div class="text-secondary small opacity-75"><?php echo t('solution_requirements'); ?></div>
-                    <a href="https://github.com/ThomasLap13/SlapIA-Tool" target="_blank" rel="noopener" class="text-secondary small text-decoration-none">
+                    <a href="https://github.com/ThomasLap13/SlapIA-Tool" target="_blank" rel="noopener" data-no-swup class="text-secondary small text-decoration-none">
                         <i class="fab fa-github me-1"></i> <?php echo t('solution_view_github'); ?>
                     </a>
                 </div>
