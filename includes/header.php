@@ -175,6 +175,9 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
     <a href="/expertise" class="mobile-menu-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>">
         <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
     </a>
+    <a href="/solution" class="mobile-menu-link <?php echo $slug == 'solution' ? 'active' : ''; ?>">
+        <i class="fas fa-download"></i> <?php echo t('solution'); ?>
+    </a>
     <a href="/blog" class="mobile-menu-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">
         <i class="fas fa-newspaper"></i> Blog
     </a>
@@ -224,6 +227,7 @@ $canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
         <a href="/formation" class="dock-link <?php echo $slug == 'formation' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
         <a href="/entreprises" class="dock-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
         <a href="/expertise" class="dock-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
+        <a href="/solution" class="dock-link <?php echo $slug == 'solution' ? 'active' : ''; ?>"><?php echo t('solution'); ?></a>
         <a href="/blog" class="dock-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">Blog</a>
     </div>
     

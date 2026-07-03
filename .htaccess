@@ -22,6 +22,11 @@
     # ROI Calculator
     RewriteRule ^Calcule-ROI-IA$ pages/Calcule-ROI-IA.php [L,QSA]
 
+    # SlapIA Tool — permanent download link, always resolves to the latest GitHub release asset.
+    # Uses GitHub's native "/releases/latest/download/<asset>" redirect, which never changes
+    # even as new versions are published. Suitable for Store submission / winget / App Installer.
+    RewriteRule ^downloads/latest/SlapIA-Tool-Setup\.exe$ https://github.com/ThomasLap13/SlapIA-Tool/releases/latest/download/SlapIA.Tool-win-Setup.exe [R=302,L,NE]
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
     RewriteRule ^([^/]+)$ pages/$1.php [L,QSA]
