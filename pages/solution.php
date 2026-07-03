@@ -39,7 +39,7 @@ include '../includes/header.php'; ?>
 
                 <!-- Download CTA -->
                 <div class="d-flex flex-column align-items-center gap-3 mt-4">
-                    <a href="https://github.com/ThomasLap13/SlapIA-Tool/releases/latest/download/SlapIA.Tool-win-Setup.exe" id="solutionDownloadBtn" class="btn-primary-glow" data-no-swup>
+                    <a href="/downloads/latest/SlapIA-Tool-Setup.exe" id="solutionDownloadBtn" class="btn-primary-glow" data-no-swup>
                         <i class="fas fa-download"></i> <span id="solutionDownloadLabel"><?php echo t('solution_download_btn'); ?></span>
                     </a>
                     <div class="text-secondary small" id="solutionReleaseMeta" style="min-height: 1.2em;"></div>
