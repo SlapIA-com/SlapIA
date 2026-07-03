@@ -1,4 +1,8 @@
 </main>
+<?php
+include_once 'github-release.php';
+$footerToolRelease = fetchLatestExeRelease();
+?>
 <footer class="text-center text-lg-start">
     <div class="container">
         <div class="row g-5">
@@ -36,6 +40,21 @@
                 <ul class="list-unstyled">
                     <li class="mb-3"><a href="/mentions-legales"
                             class="text-secondary text-decoration-none"><?php echo t('nav_mentions'); ?></a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <h6 class="text-white fw-bold mb-4"><?php echo t('solution_title'); ?></h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><a href="/solution"
+                            class="text-secondary text-decoration-none"><?php echo t('solution'); ?></a></li>
+                    <?php if ($footerToolRelease && !empty($footerToolRelease['version'])): ?>
+                        <li class="mb-3">
+                            <span class="badge bg-white bg-opacity-10 text-secondary fw-normal">
+                                <i class="fas fa-tag me-1"></i><?php echo htmlspecialchars($footerToolRelease['version'], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
