@@ -88,6 +88,24 @@ include '../includes/header.php'; ?>
                 <h4 class="why-card-title"><?php echo t('solution_feature_theme_title'); ?></h4>
                 <p class="why-card-desc"><?php echo t('solution_feature_theme_desc'); ?></p>
             </div>
+
+            <div class="why-card scroll-reveal">
+                <div class="why-icon icon-blue"><i class="fas fa-download"></i></div>
+                <h4 class="why-card-title"><?php echo t('solution_feature_installpilot_title'); ?></h4>
+                <p class="why-card-desc"><?php echo t('solution_feature_installpilot_desc'); ?></p>
+            </div>
+
+            <div class="why-card scroll-reveal delay-100">
+                <div class="why-icon icon-purple"><i class="fas fa-sliders"></i></div>
+                <h4 class="why-card-title"><?php echo t('solution_feature_preferences_title'); ?></h4>
+                <p class="why-card-desc"><?php echo t('solution_feature_preferences_desc'); ?></p>
+            </div>
+
+            <div class="why-card scroll-reveal delay-200">
+                <div class="why-icon icon-green"><i class="fas fa-language"></i></div>
+                <h4 class="why-card-title"><?php echo t('solution_feature_languages_title'); ?></h4>
+                <p class="why-card-desc"><?php echo t('solution_feature_languages_desc'); ?></p>
+            </div>
         </div>
 
     </div>
