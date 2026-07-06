@@ -1,7 +1,7 @@
 </main>
 <?php
 include_once 'github-release.php';
-$footerToolRelease = fetchLatestExeRelease();
+$footerToolCommit = fetchLatestCommitSubject();
 ?>
 <footer class="text-center text-lg-start">
     <div class="container">
@@ -48,10 +48,12 @@ $footerToolRelease = fetchLatestExeRelease();
                 <ul class="list-unstyled">
                     <li class="mb-3"><a href="/solution"
                             class="text-secondary text-decoration-none"><?php echo t('solution'); ?></a></li>
-                    <?php if ($footerToolRelease && !empty($footerToolRelease['version'])): ?>
+                    <?php if (!empty($footerToolCommit)): ?>
                         <li class="mb-3">
-                            <span class="badge bg-white bg-opacity-10 text-secondary fw-normal">
-                                <i class="fas fa-tag me-1"></i><?php echo htmlspecialchars($footerToolRelease['version'], ENT_QUOTES, 'UTF-8'); ?>
+                            <span class="badge bg-white bg-opacity-10 text-secondary fw-normal text-truncate d-inline-block"
+                                style="max-width: 100%; vertical-align: bottom;"
+                                title="<?php echo htmlspecialchars($footerToolCommit, ENT_QUOTES, 'UTF-8'); ?>">
+                                <i class="fas fa-code-commit me-1"></i><?php echo htmlspecialchars($footerToolCommit, ENT_QUOTES, 'UTF-8'); ?>
                             </span>
                         </li>
                     <?php endif; ?>

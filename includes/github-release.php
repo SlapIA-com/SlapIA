@@ -68,3 +68,49 @@ function fetchLatestExeRelease(): ?array
     @file_put_contents($cacheFile, json_encode($result));
     return $result;
 }
+
+/**
+ * Fetch the subject line (first line) of the latest commit on the repo's default branch.
+ */
+function fetchLatestCommitSubject(): ?string
+{
+    $cacheFile = sys_get_temp_dir() . '/slapia_gh_latest_commit.json';
+
+    if (is_readable($cacheFile) && (time() - filemtime($cacheFile)) < RELEASE_CACHE_TTL) {
+        $cached = json_decode(file_get_contents($cacheFile), true);
+        if ($cached && isset($cached['subject'])) return $cached['subject'];
+    }
+
+    $ch = curl_init('https://api.github.com/repos/' . GITHUB_REPO . '/commits/main');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'User-Agent: SlapIA-Website',
+            'Accept: application/vnd.github+json',
+        ],
+        CURLOPT_TIMEOUT => 8,
+    ]);
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false || $status !== 200) {
+        if (is_readable($cacheFile)) {
+            $cached = json_decode(file_get_contents($cacheFile), true);
+            if ($cached && isset($cached['subject'])) return $cached['subject'];
+        }
+        return null;
+    }
+
+    $data = json_decode($response, true);
+    $message = $data['commit']['message'] ?? null;
+    if (!$message) {
+        return null;
+    }
+
+    // Keep only the subject line (first line of the commit message).
+    $subject = trim(strtok($message, "\n"));
+
+    @file_put_contents($cacheFile, json_encode(['subject' => $subject]));
+    return $subject;
+}
