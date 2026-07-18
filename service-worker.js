@@ -1,4 +1,4 @@
-const CACHE_NAME = 'slapia-v5';
+const CACHE_NAME = 'slapia-v6';
 
 // Only pre-cache local assets — CDN resources (FA, Bootstrap, Google Fonts, etc.)
 // must NOT be intercepted by the SW because:
@@ -66,6 +66,10 @@ self.addEventListener('fetch', event => {
   // Network-first for HTML pages (always fresh content)
   event.respondWith(
     fetch(event.request)
-      .catch(() => caches.match(event.request))
+      .catch(() =>
+        caches.match(event.request).then(cached =>
+          cached || caches.match('/') || Response.error()
+        )
+      )
   );
 });
