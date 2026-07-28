@@ -1,12 +1,13 @@
 <?php
-include_once 'includes/config.php';
-include_once 'includes/lang.php';
+$basePath = __DIR__;
+include_once $basePath . '/includes/config.php';
+include_once $basePath . '/includes/lang.php';
 $page_title = t('meta_title');
 $page_description = t('meta_description');
 $page_image = '/assets/img/brand/logo.png';
-include 'includes/header.php';
-include 'includes/components.php';
-include_once 'api/notion-satisfaction.php';
+include $basePath . '/includes/header.php';
+include $basePath . '/includes/components.php';
+include_once $basePath . '/api/notion-satisfaction.php';
 
 // Redirection si URL avec anciens paramètres
 if (isset($_GET['refresh_stats'])) {

@@ -1,10 +1,11 @@
 <?php
-include_once 'includes/config.php';
-include_once 'includes/lang.php';
+$basePath = __DIR__;
+include_once $basePath . '/includes/config.php';
+include_once $basePath . '/includes/lang.php';
 
 $page_title = "404 - " . t('page_not_found') . " - SlapIA";
 $page_description = t('page_not_found');
-include 'includes/header.php';
+include $basePath . '/includes/header.php';
 
 ?>
 
