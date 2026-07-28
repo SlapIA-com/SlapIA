@@ -227,12 +227,17 @@ $footerToolCommit = fetchLatestCommitSubject();
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php
-// Helper for JS auto cache-busting based on file modification time
+// Helper for JS/CSS auto cache-busting based on file modification time.
+// Use project-relative paths instead of relying on $_SERVER['DOCUMENT_ROOT'].
 if (!function_exists('asset_url')) {
     function asset_url($path) {
-        $file = $_SERVER['DOCUMENT_ROOT'] . $path;
+        // Normalize incoming path and compute absolute file path from project root
+        $cleanPath = ltrim($path, '/\\');
+        $projectRoot = realpath(dirname(__DIR__));
+        $file = $projectRoot . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $cleanPath);
+
         $v = file_exists($file) ? filemtime($file) : time();
-        return $path . '?v=' . $v;
+        return '/' . $cleanPath . '?v=' . $v;
     }
 }
 ?>

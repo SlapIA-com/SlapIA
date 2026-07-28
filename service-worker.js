@@ -1,4 +1,4 @@
-const CACHE_NAME = 'slapia-v6';
+const CACHE_NAME = 'slapia-v7';
 
 // Only pre-cache local assets — CDN resources (FA, Bootstrap, Google Fonts, etc.)
 // must NOT be intercepted by the SW because:
@@ -54,8 +54,11 @@ self.addEventListener('fetch', event => {
   if (url.pathname.startsWith('/api/')) return;
   if (url.pathname.endsWith('.php')) return;
 
-  // Cache-first for local static assets (CSS, JS, images, fonts)
-  const isStatic = url.pathname.match(/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico)$/);
+  // Cache-first for local static assets (CSS, images, fonts).
+  // NOTE: we intentionally avoid intercepting `.js` files here to prevent
+  // accidentally serving an HTML error page cached under a JS URL
+  // which would produce 'Unexpected token "<"' in the browser.
+  const isStatic = url.pathname.match(/\.(css|svg|png|jpg|jpeg|webp|woff2?|ico)$/);
   if (isStatic) {
     event.respondWith(
       caches.match(event.request).then(cached => cached || fetch(event.request))
