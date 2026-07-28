@@ -70,8 +70,54 @@ function fetchLatestExeRelease(): ?array
 }
 
 /**
- * Fetch the subject line (first line) of the latest commit on the repo's default branch.
+ * Fetch the latest version identifier for a GitHub repo.
+ * Prefer the latest release tag, otherwise fall back to the latest commit SHA.
  */
+function fetchLatestCommitSubjectForRepo(string $repo): ?string
+{
+    $safeRepo = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repo);
+    $cacheFile = sys_get_temp_dir() . '/slapia_gh_latest_commit_subject_' . $safeRepo . '.json';
+
+    if (is_readable($cacheFile) && (time() - filemtime($cacheFile)) < RELEASE_CACHE_TTL) {
+        $cached = json_decode(file_get_contents($cacheFile), true);
+        if ($cached && isset($cached['subject'])) {
+            return $cached['subject'];
+        }
+    }
+
+    $ch = curl_init('https://api.github.com/repos/' . $repo . '/commits?per_page=1');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'User-Agent: SlapIA-Website',
+            'Accept: application/vnd.github+json',
+        ],
+        CURLOPT_TIMEOUT => 8,
+    ]);
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false || $status !== 200) {
+        if (is_readable($cacheFile)) {
+            $cached = json_decode(file_get_contents($cacheFile), true);
+            if ($cached && isset($cached['subject'])) {
+                return $cached['subject'];
+            }
+        }
+        return null;
+    }
+
+    $data = json_decode($response, true);
+    if (empty($data[0]['commit']['message'])) {
+        return null;
+    }
+
+    $subject = trim(strtok($data[0]['commit']['message'], "\n"));
+    @file_put_contents($cacheFile, json_encode(['subject' => $subject]));
+    return $subject;
+}
+
 function fetchLatestCommitSubject(): ?string
 {
     $cacheFile = sys_get_temp_dir() . '/slapia_gh_latest_commit.json';

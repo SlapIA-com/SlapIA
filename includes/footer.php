@@ -1,7 +1,7 @@
 </main>
 <?php
 include_once 'github-release.php';
-$footerToolCommit = fetchLatestCommitSubject();
+$footerToolCommit = fetchLatestCommitSubjectForRepo('SlapIA-com/SlapIA');
 ?>
 <footer class="text-center text-lg-start">
     <div class="container">
