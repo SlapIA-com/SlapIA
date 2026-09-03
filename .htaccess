@@ -4,7 +4,8 @@
     Redirect 301 /accompagnement /formation
 
     # Force https://www.slapia.com for all domains (.fr, .com, non-www)
-    # Exclude localhost for development
+    # Désactivé en développement (APP_ENV=dev)
+    RewriteCond %{ENV:APP_ENV} !=dev
     RewriteCond %{HTTP_HOST} !^www\.slapia\.com$ [NC]
     RewriteCond %{HTTP_HOST} !^localhost$ [NC]
     RewriteCond %{HTTP_HOST} !^127\.0\.0\.1$ [NC]
@@ -18,7 +19,7 @@
     RewriteRule ^mentions-legales$ pages/mentions-legales.php [L,QSA]
     RewriteRule ^politique-confidentialite$ pages/mentions-legales.php [L,R=301]
     RewriteRule ^cgv$ pages/mentions-legales.php [L,R=301]
-    
+
     # ROI Calculator
     RewriteRule ^Calcule-ROI-IA$ pages/Calcule-ROI-IA.php [L,QSA]
 
@@ -58,7 +59,9 @@
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    # HSTS uniquement en production (évite de bloquer le navigateur en https sur le dev local)
+    SetEnvIf APP_ENV "prod" IS_PROD
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=IS_PROD
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
     # Content Security Policy — covers all external sources used by the project
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com https://challenges.cloudflare.com https://*.n8n.cloud; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://unpkg.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; frame-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://api.notion.com https://*.n8n.cloud wss://*.n8n.cloud https://cdn.jsdelivr.net https://unpkg.com https://synologynasthomas.synology.me:5443; object-src 'none'; base-uri 'self';"
@@ -75,4 +78,3 @@
   ExpiresByType text/css "access plus 1 month"
   ExpiresDefault "access plus 2 days"
 </IfModule>
-
