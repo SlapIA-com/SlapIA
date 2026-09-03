@@ -1355,7 +1355,11 @@ a.review-name:hover { color: var(--forest); text-decoration: underline; }
 /* ============================================================
    User menu (header, logged-in state)
    ============================================================ */
-.user-menu { position: relative; }
+/* flex: none — like .theme-toggle and .logo__mark right next to it, this is
+   a fixed-size image-based control with no text to keep it from shrinking;
+   without this it gets flex-squeezed into a thin vertical sliver whenever
+   the header row runs a bit tight. */
+.user-menu { position: relative; flex: none; }
 .user-menu__trigger {
   display: flex;
   align-items: center;

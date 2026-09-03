@@ -584,6 +584,7 @@ return [
 
   'error404' => [
     'meta_title' => 'Seite nicht gefunden',
+    'meta_description' => 'Die gesuchte Seite existiert nicht oder wurde verschoben. Hier finden Sie unsere Schulungen, unsere PC-Services und unsere Kontaktdaten.',
     'eyebrow' => 'Fehler 404',
     'title_pre' => 'Diese Seite ',
     'title_mark' => 'gibt es nicht',

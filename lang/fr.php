@@ -584,6 +584,7 @@ return [
 
   'error404' => [
     'meta_title' => 'Page introuvable',
+    'meta_description' => "La page que vous cherchez n'existe pas ou a été déplacée. Retrouvez nos formations, nos services PC et nos coordonnées.",
     'eyebrow' => 'Erreur 404',
     'title_pre' => 'Cette page ',
     'title_mark' => "n'existe pas",

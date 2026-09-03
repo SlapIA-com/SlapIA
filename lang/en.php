@@ -584,6 +584,7 @@ return [
 
   'error404' => [
     'meta_title' => 'Page not found',
+    'meta_description' => "The page you're looking for doesn't exist or has moved. Find our courses, our PC services and our contact details.",
     'eyebrow' => '404 error',
     'title_pre' => 'This page ',
     'title_mark' => "doesn't exist",

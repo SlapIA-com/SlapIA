@@ -2,7 +2,7 @@
 http_response_code(404);
 require_once 'includes/i18n.php';
 $page_title = t('error404.meta_title');
-$page_description = t('error404.meta_title');
+$page_description = t('error404.meta_description');
 include 'includes/header.php';
 ?>
 
