@@ -40,7 +40,11 @@ function submitContactMessage(string $prenom, string $nom, string $email, string
         return false;
     }
 
-    $dbId = config('NOTION_CONTACT_DATABASE_ID');
+    $dbId = config('NOTION_CONTACT_DATABASE_ID', '');
+    if ($dbId === '') {
+        error_log('[SlapIA Contact] submitContactMessage: NOTION_CONTACT_DATABASE_ID is not configured.');
+        return false;
+    }
 
     $result = notion()->request('POST', '/pages', [
         'parent' => ['database_id' => $dbId],

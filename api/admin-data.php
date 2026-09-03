@@ -22,15 +22,16 @@ try {
     // returns display fields — use lastLogin-independent counts of 0 for accounts
     // this endpoint doesn't have creation dates for. Real per-month account growth
     // requires each page's created_time, added below via a second lightweight pass.
-    $dbId = config('NOTION_SATISFACTION_DATABASE_ID');
-    $rawAccounts = notion()->queryDatabaseAll($dbId);
+    $dbId = config('NOTION_SATISFACTION_DATABASE_ID', '');
+    $rawAccounts = $dbId !== '' ? notion()->queryDatabaseAll($dbId) : ['results' => []];
     foreach ($rawAccounts['results'] ?? [] as $page) {
         $hash = NotionAPI::richText($page['properties']['Mot de passe'] ?? []);
         if ($hash === '') continue;
         $m = date('M Y', strtotime($page['created_time']));
         if (isset($months[$m])) $months[$m]['accounts']++;
     }
-    $rawRss = notion()->queryDatabaseAll(config('NOTION_RSS_SUBSCRIBER_DATABASE_ID'));
+    $rssDbId = config('NOTION_RSS_SUBSCRIBER_DATABASE_ID', '');
+    $rawRss  = $rssDbId !== '' ? notion()->queryDatabaseAll($rssDbId) : ['results' => []];
     foreach ($rawRss['results'] ?? [] as $page) {
         $m = date('M Y', strtotime($page['created_time']));
         if (isset($months[$m])) $months[$m]['rss']++;

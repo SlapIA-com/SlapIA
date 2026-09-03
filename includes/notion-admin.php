@@ -107,7 +107,11 @@ function updateAccountBilling(string $pageId, string $billing): bool
 
 function listRssSubscribers(): array
 {
-    $dbId   = config('NOTION_RSS_SUBSCRIBER_DATABASE_ID');
+    $dbId = config('NOTION_RSS_SUBSCRIBER_DATABASE_ID', '');
+    if ($dbId === '') {
+        error_log('[SlapIA Admin] listRssSubscribers: NOTION_RSS_SUBSCRIBER_DATABASE_ID is not configured, returning empty list.');
+        return [];
+    }
     $result = notion()->queryDatabaseAll($dbId);
     if (!empty($result['error'])) {
         error_log('[SlapIA Admin] listRssSubscribers failed: ' . json_encode($result));

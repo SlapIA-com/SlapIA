@@ -17,7 +17,11 @@ function resolveUserRole(string $statusValue): string
 
 function findUserByEmail(string $email): ?array
 {
-    $dbId = config('NOTION_SATISFACTION_DATABASE_ID');
+    $dbId = config('NOTION_SATISFACTION_DATABASE_ID', '');
+    if ($dbId === '') {
+        error_log('[SlapIA Auth] findUserByEmail: NOTION_SATISFACTION_DATABASE_ID is not configured.');
+        return null;
+    }
     $result = notion()->queryDatabase($dbId, [
         'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
     ]);
@@ -91,7 +95,11 @@ function setResetToken(string $pageId): ?string
 
 function validateResetToken(string $email, string $token): ?array
 {
-    $dbId = config('NOTION_SATISFACTION_DATABASE_ID');
+    $dbId = config('NOTION_SATISFACTION_DATABASE_ID', '');
+    if ($dbId === '') {
+        error_log('[SlapIA Auth] validateResetToken: NOTION_SATISFACTION_DATABASE_ID is not configured.');
+        return null;
+    }
     $result = notion()->queryDatabase($dbId, [
         'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
     ]);
