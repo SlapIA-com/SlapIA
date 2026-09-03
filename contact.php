@@ -159,13 +159,6 @@ include 'includes/header.php';
         </div>
       </div>
       <div class="contact-info__item">
-        <span class="contact-info__icon">☎</span>
-        <div>
-          <h4><?php echo t('contact.info_phone_label'); ?></h4>
-          <a href="tel:+33100000000">+33 1 00 00 00 00</a>
-        </div>
-      </div>
-      <div class="contact-info__item">
         <span class="contact-info__icon">◎</span>
         <div>
           <h4><?php echo t('contact.info_zone_label'); ?></h4>

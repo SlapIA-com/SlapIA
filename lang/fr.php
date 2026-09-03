@@ -349,7 +349,7 @@ return [
 
     'label_firstname' => 'Prénom',
     'label_lastname' => 'Nom',
-    'label_email' => 'E-mail professionnel',
+    'label_email' => 'E-mail',
     'label_company' => 'Entreprise',
     'label_subject' => 'Sujet',
     'subject_placeholder' => 'Choisir un sujet',
