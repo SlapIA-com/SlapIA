@@ -6,7 +6,7 @@
     "ai_agent_desc": "Notre site intègre un agent IA conversationnel construit dans n8n. Quand un visiteur pose une question via le chat, le message est capté par un trigger et envoyé à un <strong>AI Agent</strong> propulsé par <strong>Google Gemini Flash</strong>.<br><br><strong>Comment ça fonctionne :</strong><br>1. L'agent dispose d'une <strong>mémoire conversationnelle</strong> (Simple Memory) pour garder le contexte de la discussion.<br>2. Il est connecté à <strong>7 outils HTTP</strong> qui lui permettent de consulter en temps réel chaque page du site (Accueil, Formations, Entreprises, Expertise, Contact, How-it-works, Mentions légales).<br>3. L'agent analyse la question, interroge les bonnes pages, et formule une réponse personnalisée basée sur le contenu réel du site.",
     "ai_agent_title": "L'Agent IA Autonome (n8n)",
     "ai_audit": "Audit IA",
-    "ai_training": "Formation IA & IT et zizi",
+    "ai_training": "Formation IA & IT",
     "all_rights_reserved": "Tous droits réservés",
     "auto_email_title": "Gestion des Emails Automatiques",
     "auto_email_desc": "Chaque interaction client déclenche un flux d'emails intelligents, entièrement automatisés via n8n. De la prise de contact jusqu'au remerciement final, aucun email n'est envoyé manuellement. Le système s'adapte à chaque étape du parcours client pour envoyer le bon message, au bon moment, à la bonne personne.",
