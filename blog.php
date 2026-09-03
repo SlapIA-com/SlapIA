@@ -10,7 +10,7 @@ $articles = listBlogArticles();
 include 'includes/header.php';
 ?>
 
-<link rel="stylesheet" href="assets/css/blog.css">
+<link rel="stylesheet" href="<?php echo assetUrl('assets/css/blog.css'); ?>">
 
 <section class="page-hero">
   <div class="page-hero-canvas" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>

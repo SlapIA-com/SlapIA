@@ -16,17 +16,32 @@
 
     # Remove .php extension and check in pages/ directory
     # Specific Legal Pages Rewrites
-    RewriteRule ^mentions-legales$ pages/mentions-legales.php [L,QSA]
-    RewriteRule ^politique-confidentialite$ pages/mentions-legales.php [L,R=301]
-    RewriteRule ^cgv$ pages/mentions-legales.php [L,R=301]
+    # NOTE: these three used to all point at pages/mentions-legales.php, which
+    # doesn't exist — the legal pages live at the site root, one file per topic
+    # (mentions-legales.php, confidentialite.php, cgv.php). Fixed to route each
+    # pretty URL to its real page.
+    RewriteRule ^mentions-legales$ mentions-legales.php [L,QSA]
+    RewriteRule ^politique-confidentialite$ confidentialite.php [L,R=301]
+    RewriteRule ^cgv$ cgv.php [L,R=301]
+
+    # Blog article pretty URLs: /blog/<slug> -> blog-article.php?slug=<slug>
+    # Was missing entirely — blog.php links to /blog/<slug> for every article,
+    # but nothing routed that URL anywhere, so every article link 404'd.
+    RewriteRule ^blog/([a-z0-9-]+)$ blog-article.php?slug=$1 [L,QSA]
 
     # ROI Calculator
+    # TODO: pages/Calcule-ROI-IA.php does not exist yet in this repo — this route
+    # currently 404s. Left in place since it looks like planned/in-progress work,
+    # not a bug to silently remove; build the page or drop the rule.
     RewriteRule ^Calcule-ROI-IA$ pages/Calcule-ROI-IA.php [L,QSA]
 
     # SlapIA Tool — permanent download link, always resolves to the latest GitHub release asset.
     # Routed internally to api/download-latest.php, which streams the .exe bytes through this
     # server instead of issuing an HTTP redirect: the Microsoft Store's package URL field (and
     # winget/App Installer) explicitly require a direct, non-redirecting download URL.
+    # TODO: api/download-latest.php does not exist yet in this repo — this route
+    # currently 404s. Left in place since the comment above describes deliberate,
+    # specific intent, not a bug to silently remove; build the endpoint or drop the rule.
     RewriteRule ^downloads/latest/SlapIA-Tool-Setup\.exe$ api/download-latest.php [L,NE]
 
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -45,6 +60,9 @@
     RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
     # RSS Feed
+    # TODO: rss.php does not exist yet in this repo — this route currently 404s,
+    # and nothing on the site links to /rss.xml today. Left in place in case a
+    # public RSS feed of the blog is planned; build it or drop the rule.
     RewriteRule ^rss\.xml$ rss.php [L]
 
     # SECURITY: Prevent access to sensitive files

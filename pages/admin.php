@@ -9,7 +9,7 @@ $page_title = t('admin.title');
 $csrf = generateCSRFToken();
 include __DIR__ . '/../includes/header.php';
 ?>
-<link rel="stylesheet" href="assets/css/admin.css">
+<link rel="stylesheet" href="<?php echo assetUrl('assets/css/admin.css'); ?>">
 
 <section class="section">
   <div class="container">
@@ -29,7 +29,7 @@ include __DIR__ . '/../includes/header.php';
   </div>
 </section>
 
-<script src="assets/js/vendor/chart.min.js"></script>
+<script src="<?php echo assetUrl('assets/js/vendor/chart.min.js'); ?>"></script>
 <script>
 window.ADMIN_CSRF_TOKEN = <?php echo json_encode($csrf); ?>;
 window.ADMIN_I18N = <?php echo json_encode([
@@ -44,6 +44,6 @@ window.ADMIN_I18N = <?php echo json_encode([
     'err_update_failed' => t('admin.err_update_failed'),
 ], JSON_UNESCAPED_UNICODE); ?>;
 </script>
-<script src="assets/js/admin.js"></script>
+<script src="<?php echo assetUrl('assets/js/admin.js'); ?>"></script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

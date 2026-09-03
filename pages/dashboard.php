@@ -15,7 +15,7 @@ $page_title = t('dashboard.title');
 $csrf = generateCSRFToken();
 include __DIR__ . '/../includes/header.php';
 ?>
-<link rel="stylesheet" href="assets/css/dashboard.css">
+<link rel="stylesheet" href="<?php echo assetUrl('assets/css/dashboard.css'); ?>">
 
 <section class="section">
   <div class="container">
@@ -91,6 +91,6 @@ window.DASHBOARD_I18N = <?php echo json_encode([
     'empty_orders' => t('dashboard.empty_orders'),
 ], JSON_UNESCAPED_UNICODE); ?>;
 </script>
-<script src="assets/js/dashboard.js"></script>
+<script src="<?php echo assetUrl('assets/js/dashboard.js'); ?>"></script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -25,7 +25,7 @@ if ($article['image']) {
 include 'includes/header.php';
 ?>
 
-<link rel="stylesheet" href="/assets/css/blog.css">
+<link rel="stylesheet" href="<?php echo assetUrl('/assets/css/blog.css'); ?>">
 
 <section class="page-hero">
   <div class="container">

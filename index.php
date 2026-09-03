@@ -324,5 +324,5 @@ include 'includes/header.php';
   </div>
 </section>
 
-<script src="assets/js/hero-canvas.js" defer></script>
+<script src="<?php echo assetUrl('assets/js/hero-canvas.js'); ?>" defer></script>
 <?php include 'includes/footer.php'; ?>

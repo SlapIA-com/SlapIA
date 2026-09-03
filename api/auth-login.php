@@ -111,7 +111,7 @@ try {
         setcookie('remember_token', $token, [
             'expires'  => time() + $lifetime,
             'path'     => '/',
-            'secure'   => isset($_SERVER['HTTPS']),
+            'secure'   => isSecureRequest(),
             'httponly' => true,
             'samesite' => 'Lax',
         ]);

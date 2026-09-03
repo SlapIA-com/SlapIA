@@ -46,6 +46,37 @@ function config(string $key, $default = null)
     return $value;
 }
 
+/**
+ * True if the request reached us over HTTPS. Checks both the standard
+ * $_SERVER['HTTPS'] flag AND the X-Forwarded-Proto header: in production
+ * the app container sits behind the Caddy reverse proxy, which terminates
+ * TLS and talks plain HTTP to PHP internally, so $_SERVER['HTTPS'] alone is
+ * never true there — without this, session and remember-me cookies would
+ * silently never get the Secure flag in production. Safe to trust the
+ * header here because the app containers aren't reachable except through
+ * the proxy (no public port maps directly to slapia-prod).
+ */
+function isSecureRequest(): bool
+{
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') return true;
+    $proto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+    return strcasecmp(trim(explode(',', $proto)[0]), 'https') === 0;
+}
+
+/**
+ * Appends a cache-busting query string (the file's last-modified time) to a
+ * site-root-relative asset path, e.g. assetUrl('/assets/css/style.css').
+ * Without this, updated CSS/JS wouldn't reach visitors with a warm cache
+ * until the 1-month Cache-Control on these files (see .htaccess) expires,
+ * since the filename itself never changes across deploys.
+ */
+function assetUrl(string $path): string
+{
+    $full = __DIR__ . '/../' . ltrim($path, '/');
+    $v = @filemtime($full);
+    return $path . ($v ? '?v=' . $v : '');
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 //  Session bootstrap (secure cookie params + remember-me restoration)
 // ─────────────────────────────────────────────────────────────────────────
@@ -55,7 +86,7 @@ if (session_status() === PHP_SESSION_NONE) {
         'lifetime' => 86400, // 1 day
         'path'     => '/',
         'domain'   => '',
-        'secure'   => isset($_SERVER['HTTPS']),
+        'secure'   => isSecureRequest(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
@@ -77,7 +108,7 @@ function _restoreSessionFromRememberToken(): void
 
     if (!is_readable($file)) {
         if (!headers_sent()) {
-            setcookie('remember_token', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+            setcookie('remember_token', '', time() - 3600, '/', '', isSecureRequest(), true);
         }
         return;
     }
@@ -87,7 +118,7 @@ function _restoreSessionFromRememberToken(): void
     if (!$data || empty($data['user_id']) || ($data['expires'] ?? 0) < time()) {
         @unlink($file);
         if (!headers_sent()) {
-            setcookie('remember_token', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+            setcookie('remember_token', '', time() - 3600, '/', '', isSecureRequest(), true);
         }
         return;
     }

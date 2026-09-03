@@ -54,7 +54,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
 <meta property="og:url" content="<?php echo $canonical; ?>">
 <meta property="og:image" content="<?php echo htmlspecialchars($og_image); ?>">
 <meta name="twitter:card" content="<?php echo isset($page_image) ? 'summary_large_image' : 'summary'; ?>">
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="<?php echo assetUrl('/assets/css/style.css'); ?>">
 <link rel="icon" type="image/png" href="/assets/img/brand/logo.png">
 <script type="application/ld+json">
 {

@@ -13,8 +13,8 @@ $title = isset($page_title) ? $page_title . ' — Slapia' : 'Slapia';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?php echo $title; ?></title>
-<link rel="stylesheet" href="/assets/css/style.css">
-<link rel="stylesheet" href="/assets/css/auth.css">
+<link rel="stylesheet" href="<?php echo assetUrl('/assets/css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo assetUrl('/assets/css/auth.css'); ?>">
 <link rel="icon" type="image/png" href="/assets/img/brand/logo.png">
 </head>
 <body class="auth-body">

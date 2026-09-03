@@ -147,7 +147,7 @@ include 'includes/header.php';
       </form>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="assets/js/contact.js"></script>
+<script src="<?php echo assetUrl('assets/js/contact.js'); ?>"></script>
     </div>
 
     <div class="contact-info reveal">
