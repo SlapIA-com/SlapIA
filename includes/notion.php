@@ -2,13 +2,13 @@
 /**
  * Notion API Helper
  *
- * Centralise tous les appels cURL vers l'API Notion avec cache APCu (si dispo)
- * ou fallback fichier. TTL par défaut : 5 min pour les listes, 1h pour les avatars.
+ * Centralise tous les appels cURL vers l'API Notion avec cache fichier.
  */
 
 if (!defined('NOTION_API_BASE')) {
     define('NOTION_API_BASE', 'https://api.notion.com/v1');
     define('NOTION_VERSION', '2022-06-28');
+    define('NOTION_FILE_UPLOAD_VERSION', '2026-03-11');
 }
 
 class NotionAPI
@@ -40,6 +40,73 @@ class NotionAPI
         return $this->request('PATCH', '/pages/' . $pageId, $body);
     }
 
+    /** POST /v1/file_uploads — step 1 of the Notion File Upload flow. */
+    public function createFileUpload(string $filename, string $contentType): array
+    {
+        $ch = curl_init(NOTION_API_BASE . '/file_uploads');
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => $this->timeout,
+            CURLOPT_HTTPHEADER     => [
+                'Authorization: Bearer ' . $this->apiKey,
+                'Notion-Version: ' . NOTION_FILE_UPLOAD_VERSION,
+                'Content-Type: application/json',
+            ],
+            CURLOPT_POSTFIELDS     => json_encode([
+                'mode'         => 'single_part',
+                'filename'     => $filename,
+                'content_type' => $contentType,
+            ]),
+        ]);
+
+        $raw      = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+
+        if ($curlErr) {
+            return ['error' => $curlErr, 'http_code' => 0];
+        }
+
+        $decoded = json_decode($raw, true) ?? [];
+        $decoded['http_code'] = $httpCode;
+        return $decoded;
+    }
+
+    /**
+     * POST to the file upload's own upload_url — step 2 of the Notion File
+     * Upload flow. Bypasses request() because this call needs
+     * multipart/form-data with raw file bytes, not JSON.
+     */
+    public function sendFileUpload(string $uploadUrl, string $localFilePath, string $filename, string $mimeType): array
+    {
+        $ch = curl_init($uploadUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_HTTPHEADER     => [
+                'Authorization: Bearer ' . $this->apiKey,
+                'Notion-Version: ' . NOTION_FILE_UPLOAD_VERSION,
+            ],
+            CURLOPT_POSTFIELDS     => [
+                'file' => new CURLFile($localFilePath, $mimeType, $filename),
+            ],
+        ]);
+
+        $raw      = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+
+        if ($curlErr) {
+            return ['error' => $curlErr, 'http_code' => 0];
+        }
+
+        $decoded = json_decode($raw, true) ?? [];
+        $decoded['http_code'] = $httpCode;
+        return $decoded;
+    }
+
     /** POST /databases/{id}/query */
     public function queryDatabase(string $dbId, array $body = [], int $cacheTtl = 0): array
     {
@@ -58,16 +125,27 @@ class NotionAPI
         return $result;
     }
 
-    /** POST /pages — create a new page */
-    public function createPage(array $body): array
+    /** Query every page of a database, following pagination automatically. */
+    public function queryDatabaseAll(string $dbId, array $body = []): array
     {
-        return $this->request('POST', '/pages', $body);
-    }
+        $all = [];
+        $cursor = null;
+        do {
+            $payload = $body;
+            $payload['page_size'] = 100;
+            if ($cursor) $payload['start_cursor'] = $cursor;
 
-    /** DELETE /blocks/{id} (archive a page) */
-    public function archivePage(string $pageId): array
-    {
-        return $this->updatePage($pageId, ['archived' => true]);
+            $result = $this->request('POST', '/databases/' . $dbId . '/query', $payload);
+            if (isset($result['error']) || ($result['http_code'] ?? 0) !== 200) {
+                return ['error' => true, 'message' => $result['message'] ?? ($result['error'] ?? 'Notion request failed'), 'results' => $all];
+            }
+
+            $all = array_merge($all, $result['results'] ?? []);
+            $hasMore = $result['has_more'] ?? false;
+            $cursor = $result['next_cursor'] ?? null;
+        } while ($hasMore);
+
+        return ['results' => $all, 'error' => false];
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -96,43 +174,23 @@ class NotionAPI
         return array_map(fn($s) => $s['name'], $prop['multi_select'] ?? []);
     }
 
-    public static function email(array $prop): string
-    {
-        return $prop['email'] ?? '';
-    }
-
-    public static function phone(array $prop): string
-    {
-        return $prop['phone_number'] ?? '';
-    }
-
-    public static function url(array $prop): string
-    {
-        return $prop['url'] ?? '';
-    }
-
     public static function number(array $prop): ?float
     {
         return $prop['number'] ?? null;
     }
 
+    public static function files(array $prop): array
+    {
+        $items = $prop['files'] ?? [];
+        return array_map(function ($f) {
+            $url = $f['file']['url'] ?? $f['external']['url'] ?? '';
+            return ['name' => $f['name'] ?? 'fichier', 'url' => $url];
+        }, $items);
+    }
+
     public static function checkbox(array $prop): bool
     {
         return (bool)($prop['checkbox'] ?? false);
-    }
-
-    public static function date(array $prop): string
-    {
-        return $prop['date']['start'] ?? '';
-    }
-
-    /** First file URL from a files property (returns empty string if none) */
-    public static function fileUrl(array $prop): string
-    {
-        $files = $prop['files'] ?? [];
-        if (empty($files)) return '';
-        $f = $files[0];
-        return $f['file']['url'] ?? $f['external']['url'] ?? '';
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -242,7 +300,7 @@ function notion(): NotionAPI
         if (!function_exists('config')) {
             include_once __DIR__ . '/config.php';
         }
-        $instance = new NotionAPI(config('NOTION_API_KEY'));
+        $instance = new NotionAPI(config('NOTION_API_KEY', ''));
     }
     return $instance;
 }

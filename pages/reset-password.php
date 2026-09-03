@@ -1,187 +1,91 @@
 <?php
-ob_start();
-include_once '../includes/config.php';
-include_once '../includes/lang.php';
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/notion-users.php';
 
-// Already logged in? No need to reset
-if (!empty($_SESSION['logged_in'])) {
-    header('Location: /dashboard');
+if ($me = currentUser()) {
+    header('Location: ' . ($me['role'] === 'admin' ? '/admin' : '/dashboard'));
     exit;
 }
 
 $token = trim($_GET['token'] ?? '');
 $email = strtolower(trim($_GET['email'] ?? ''));
-$mode  = ($token && $email) ? 'reset' : 'request'; // which step to show
+$mode  = ($token && $email) ? 'reset' : 'request';
 
-// If in reset mode, check token validity immediately (to prevent showing form for used/invalid tokens)
-if ($mode === 'reset') {
-    include_once __DIR__ . '/../includes/notion.php';
-    $dbId   = config('NOTION_SATISFACTION_DATABASE_ID');
-    $result = notion()->queryDatabase($dbId, [
-        'filter' => ['property' => 'Email', 'email' => ['equals' => $email]],
-    ]);
-
-    $isValid = false;
-    foreach ($result['results'] ?? [] as $page) {
-        $storedToken = NotionAPI::richText($page['properties']['Reset Token'] ?? []);
-        $expiry      = $page['properties']['Reset Expiry']['date']['start'] ?? '';
-        
-        if ($storedToken && $token === $storedToken && strtotime($expiry) > time()) {
-            $isValid = true;
-        }
-        break;
-    }
-
-    if (!$isValid) {
-        header('Location: /404');
-        exit;
-    }
+if ($mode === 'reset' && !validateResetToken($email, $token)) {
+    header('Location: /404');
+    exit;
 }
 
-$page_title       = t('reset_password_title');
-$page_description = t('reset_password_meta_desc');
-$page_needs_turnstile = true;
-include '../includes/header.php';
+$page_title = t('auth.reset_title');
+$csrf = generateCSRFToken();
+include __DIR__ . '/../includes/auth-header.php';
 ?>
 
-<div class="login-page-wrapper">
-    <div class="glow-system">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
-    <div class="grid-overlay"></div>
+    <div class="auth-card">
+      <h1 class="auth-title"><?php echo t('auth.reset_title'); ?></h1>
+      <div id="reset-alert"></div>
 
-    <section class="login-section">
-        <div class="container d-flex justify-content-center align-items-center min-vh-100">
-            <div class="login-card-container fade-in-up">
-                <div class="glass-card login-glass">
-
-                    <div class="text-center mb-4">
-                        <div class="login-logo-container mb-4">
-                            <img src="/assets/img/brand/logo.svg" alt="SlapIA" class="login-brand-logo">
-                        </div>
-                        <?php if ($mode === 'request'): ?>
-                            <h1 class="h2 text-white fw-bold mb-2"><?php echo t('reset_request_title'); ?></h1>
-                            <p class="text-secondary small"><?php echo t('reset_request_subtitle'); ?></p>
-                        <?php else: ?>
-                            <h1 class="h2 text-white fw-bold mb-2"><?php echo t('reset_new_password_title'); ?></h1>
-                            <p class="text-secondary small"><?php echo t('reset_new_password_subtitle'); ?></p>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Shared alert -->
-                    <div id="resetAlert" class="alert-premium-error d-none mb-4" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        <span class="alert-text"></span>
-                    </div>
-                    <div id="resetSuccess" class="alert-premium-success d-none mb-4" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <span class="alert-text"></span>
-                    </div>
-
-                    <?php if ($mode === 'request'): ?>
-                    <!-- ── Step 1: request reset ── -->
-                    <form id="resetRequestForm">
-                        <div class="input-group-premium mb-4">
-                            <label class="premium-label"><?php echo t('login_email_label'); ?></label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" class="premium-input" id="resetEmail" name="email" required
-                                       placeholder="nom@entreprise.com" autocomplete="email">
-                            </div>
-                        </div>
-
-                        <!-- Cloudflare Turnstile -->
-                        <div class="d-flex justify-content-center mb-4">
-                            <div id="cf-turnstile-reset" data-sitekey="<?php echo config('TURNSTILE_SITE_KEY'); ?>"></div>
-                        </div>
-
-                        <button type="submit" class="btn-premium-action w-100" id="btnResetRequest">
-                            <span><?php echo t('reset_send_link_btn'); ?></span>
-                            <i class="fas fa-paper-plane ms-2"></i>
-                        </button>
-                    </form>
-
-                    <?php else: ?>
-                    <!-- ── Step 2: set new password ── -->
-                    <form id="resetExecForm">
-                        <input type="hidden" id="resetToken" value="<?php echo htmlspecialchars($token); ?>">
-                        <input type="hidden" id="resetEmailHidden" value="<?php echo htmlspecialchars($email); ?>">
-
-                        <div class="input-group-premium mb-4">
-                            <label class="premium-label"><?php echo t('reset_new_password_label'); ?></label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock input-icon"></i>
-                                <input type="password" class="premium-input" id="newPassword" required
-                                       placeholder="••••••••" minlength="8" autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="input-group-premium mb-4">
-                            <label class="premium-label"><?php echo t('reset_confirm_password_label'); ?></label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock input-icon"></i>
-                                <input type="password" class="premium-input" id="confirmPassword" required
-                                       placeholder="••••••••" minlength="8" autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <!-- Password strength bar -->
-                        <div class="pw-strength-wrap mb-4">
-                            <div class="pw-strength-bar">
-                                <div class="pw-strength-fill" id="pwStrengthFill"></div>
-                            </div>
-                            <span class="pw-strength-label" id="pwStrengthLabel"></span>
-                        </div>
-
-                        <button type="submit" class="btn-premium-action w-100" id="btnResetExec">
-                            <span><?php echo t('reset_confirm_btn'); ?></span>
-                            <i class="fas fa-check ms-2"></i>
-                        </button>
-                    </form>
-                    <?php endif; ?>
-
-                    <div class="text-center mt-4">
-                        <a href="/login" class="forgot-link"><?php echo t('reset_back_to_login'); ?></a>
-                    </div>
-                </div>
-            </div>
+    <?php if ($mode === 'request'): ?>
+      <form id="reset-request-form" novalidate>
+        <div class="field">
+          <label for="email"><?php echo t('auth.label_email'); ?></label>
+          <input type="email" id="email" name="email" required>
         </div>
-    </section>
-</div>
+        <button type="submit" class="btn btn--primary btn--block" style="margin-top:20px;">
+          <?php echo t('auth.submit_reset_request'); ?>
+        </button>
+      </form>
+      <script>
+      document.getElementById('reset-request-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var alertBox = document.getElementById('reset-alert');
+        fetch('/api/auth-reset-request.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?php echo $csrf; ?>' },
+          body: JSON.stringify({ email: document.getElementById('email').value }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function () {
+            alertBox.innerHTML = '<div class="alert alert--success"><span>✓</span><span>' + <?php echo json_encode(t('auth.reset_request_sent')); ?> + '</span></div>';
+          });
+      });
+      </script>
+    <?php else: ?>
+      <form id="reset-exec-form" novalidate>
+        <div class="field">
+          <label for="password"><?php echo t('auth.label_new_password'); ?></label>
+          <input type="password" id="password" name="password" minlength="8" required>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block" style="margin-top:20px;">
+          <?php echo t('auth.submit_reset_exec'); ?>
+        </button>
+      </form>
+      <script>
+      document.getElementById('reset-exec-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var alertBox = document.getElementById('reset-alert');
+        fetch('/api/auth-reset-exec.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?php echo $csrf; ?>' },
+          body: JSON.stringify({
+            email: <?php echo json_encode($email); ?>,
+            token: <?php echo json_encode($token); ?>,
+            password: document.getElementById('password').value,
+          }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.success) {
+              window.location.href = data.redirect;
+            } else {
+              alertBox.innerHTML = '<div class="alert alert--error"><span>!</span><span>' + data.error + '</span></div>';
+            }
+          });
+      });
+      </script>
+    <?php endif; ?>
+    </div>
 
-<style>
-/* Reuse login page styles — must be duplicated here since it's a separate page */
-.login-page-wrapper { position:relative; background:#050505; min-height:100vh; overflow:hidden; margin-top:-100px; padding-top:100px; }
-.grid-overlay { position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,0.03) 1px,transparent 1px); background-size:40px 40px; mask-image:radial-gradient(circle at center,black,transparent 80%); pointer-events:none; }
-.glow-system { position:absolute; inset:0; filter:blur(80px); opacity:0.5; pointer-events:none; }
-.orb { position:absolute; border-radius:50%; animation:orbFloat 20s infinite alternate; }
-.orb-1 { width:400px; height:400px; background:radial-gradient(circle,var(--accent-blue) 0%,transparent 70%); top:10%; left:-100px; }
-.orb-2 { width:350px; height:350px; background:radial-gradient(circle,var(--accent-purple) 0%,transparent 70%); bottom:10%; right:-100px; animation-delay:-5s; }
-@keyframes orbFloat { from{transform:translate(0,0) scale(1)} to{transform:translate(100px,50px) scale(1.1)} }
-.login-card-container { width:100%; max-width:450px; }
-.login-glass { background:rgba(15,15,15,0.7); backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.08); border-radius:28px; padding:3rem; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); }
-.login-logo-container { display:inline-flex; justify-content:center; align-items:center; width:80px; height:80px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:15px; }
-.login-brand-logo { width:100%; height:auto; filter:drop-shadow(0 0 10px rgba(41,151,255,0.3)); }
-.input-group-premium { position:relative; }
-.premium-label { display:block; color:rgba(255,255,255,0.6); font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem; }
-.input-wrapper { position:relative; display:flex; align-items:center; }
-.input-icon { position:absolute; left:1rem; color:rgba(255,255,255,0.3); font-size:0.9rem; }
-.premium-input { width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:0.85rem 1rem 0.85rem 2.8rem; color:white; font-size:0.95rem; transition:all 0.3s; }
-.premium-input:focus { outline:none; border-color:rgba(59,130,246,0.5); background:rgba(255,255,255,0.06); box-shadow:0 0 0 4px rgba(59,130,246,0.15); }
-.btn-premium-action { background:white; color:black; border:none; border-radius:14px; padding:1rem; font-weight:700; font-size:1rem; display:flex; justify-content:center; align-items:center; transition:all 0.3s; box-shadow:0 10px 15px -3px rgba(255,255,255,0.1); width:100%; cursor:pointer; }
-.btn-premium-action:hover { transform:translateY(-2px); filter:brightness(1.1); }
-.btn-premium-action:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-.alert-premium-error { background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.2); border-left:4px solid #ef4444; color:#fca5a5; padding:1rem; border-radius:12px; font-size:0.85rem; display:flex; align-items:center; }
-.alert-premium-success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); border-left:4px solid #22c55e; color:#86efac; padding:1rem; border-radius:12px; font-size:0.85rem; display:flex; align-items:center; }
-.forgot-link { color:rgba(255,255,255,0.4); font-size:0.82rem; text-decoration:none; transition:color 0.2s; }
-.forgot-link:hover { color:white; }
-/* Password strength */
-.pw-strength-wrap { display:flex; align-items:center; gap:0.75rem; }
-.pw-strength-bar { flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
-.pw-strength-fill { height:100%; width:0; border-radius:4px; transition:width 0.3s, background 0.3s; }
-.pw-strength-label { font-size:0.75rem; color:rgba(255,255,255,0.5); min-width:70px; }
-@media(max-width:576px){ .login-glass{padding:2rem;} }
-</style>
-
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/auth-footer.php'; ?>

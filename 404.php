@@ -1,52 +1,51 @@
 <?php
-$basePath = __DIR__;
-include_once $basePath . '/includes/config.php';
-include_once $basePath . '/includes/lang.php';
-
-$page_title = "404 - " . t('page_not_found') . " - SlapIA";
-$page_description = t('page_not_found');
-include $basePath . '/includes/header.php';
-
+http_response_code(404);
+require_once 'includes/i18n.php';
+$page_title = t('error404.meta_title');
+$page_description = t('error404.meta_title');
+include 'includes/header.php';
 ?>
 
-<!-- New 404 Styles -->
-<link rel="stylesheet" href="/assets/css/404.css">
+<section class="page-hero">
+  <div class="page-hero-canvas page-hero-canvas--broken" aria-hidden="true">
+    <svg viewBox="0 0 300 160" class="broken-link-svg">
+      <line x1="40" y1="80" x2="140" y2="50" stroke="var(--signal)" stroke-width="2" opacity="0.5"/>
+      <line x1="140" y1="50" x2="150" y2="90" stroke="var(--forest)" stroke-width="2" stroke-dasharray="4 6" opacity="0.5"/>
+      <line x1="180" y1="100" x2="250" y2="70" stroke="var(--signal-pink)" stroke-width="2" opacity="0" class="broken-link-svg__spark"/>
+      <circle cx="40" cy="80" r="6" fill="var(--signal)"/>
+      <circle cx="140" cy="50" r="6" fill="var(--forest)"/>
+      <circle cx="180" cy="100" r="6" fill="var(--signal-pink)" class="broken-link-svg__node"/>
+      <circle cx="250" cy="70" r="6" fill="var(--signal-pink)" opacity="0.35"/>
+    </svg>
+  </div>
+  <div class="container">
+    <span class="eyebrow"><?php echo t('error404.eyebrow'); ?></span>
+    <h1 class="page-hero__title"><?php echo t('error404.title_pre'); ?><mark><?php echo t('error404.title_mark'); ?></mark><?php echo t('error404.title_post'); ?></h1>
+    <p class="page-hero__lede"><?php echo t('error404.lede'); ?></p>
+  </div>
+</section>
 
-<main class="error-container">
-    <!-- Background Animation -->
-    <div class="error-bg">
-        <div class="error-blob blob-1"></div>
-        <div class="error-blob blob-2"></div>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="grid-4">
+      <a href="index.php" class="value-card reveal" style="text-decoration:none">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('error404.link_home'); ?></h3>
+      </a>
+      <a href="formations.php" class="value-card reveal" style="text-decoration:none">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('error404.link_courses'); ?></h3>
+      </a>
+      <a href="services-pc.php" class="value-card reveal" style="text-decoration:none">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('error404.link_services'); ?></h3>
+      </a>
+      <a href="contact.php" class="value-card reveal" style="text-decoration:none">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('error404.link_contact'); ?></h3>
+      </a>
     </div>
+  </div>
+</section>
 
-    <!-- Content -->
-    <h1 class="big-404">404</h1>
-
-    <!-- Mini CMD Window -->
-    <div class="mini-cmd-window">
-        <div class="cmd-header">
-            <div class="cmd-dots">
-                <div class="dot dot-red"></div>
-                <div class="dot dot-yellow"></div>
-                <div class="dot dot-green"></div>
-            </div>
-            <div class="cmd-title">root@slapia-server:~</div>
-        </div>
-        <div class="cmd-body" id="cmd-output">
-            <!-- Content will be typed here by JS -->
-        </div>
-        <div class="cmd-input-area" style="padding: 0 20px 20px 20px;">
-            <span class="cmd-prompt">root@slapia:~#</span>
-            <span class="cmd-cursor"></span>
-        </div>
-    </div>
-
-    <a href="/" class="return-home-btn">
-        <i class="fas fa-home"></i> <?php echo t('home'); ?>
-    </a>
-
-</main>
-
-<script src="/assets/js/404-terminal.js"></script>
-
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>

@@ -1,542 +1,158 @@
 <?php
-include_once 'config.php';
-include_once 'lang.php';
+require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/auth.php';
 
-// Calculate the current page "slug" (filename without extension)
-$slug = basename($_SERVER['PHP_SELF'], '.php');
+$current = basename($_SERVER['PHP_SELF']);
+$nav_items = [
+  'index.php'        => t('nav.home'),
+  'formations.php'   => t('nav.courses'),
+  'services-pc.php'  => t('nav.services'),
+  'tarifs.php'       => t('nav.pricing'),
+  'blog.php'         => t('nav.blog'),
+  'a-propos.php'     => t('nav.about'),
+  'contact.php'      => t('nav.contact'),
+];
+
+$site_url = 'https://www.slapia.com/';
+$path = isset($page_path) ? $page_path : (($current === 'index.php') ? '' : $current);
+$canonical = isset($page_canonical) ? $page_canonical : ($site_url . $path . '?lang=' . $lang);
+$title = isset($page_title) ? htmlspecialchars($page_title) . ' — Slapia' : t('home.meta_title') . ' — Slapia';
+$description = isset($page_description) ? htmlspecialchars($page_description) : t('home.meta_description');
+$og_image = isset($page_image) ? $page_image : 'assets/img/brand/logo.png';
+if (!preg_match('#^https?://#i', $og_image)) {
+    $og_image = $site_url . $og_image;
+}
+
+$lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo $lang ?? 'fr'; ?>">
+<!doctype html>
+<html lang="<?php echo t('meta.html_lang'); ?>">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?php echo htmlspecialchars(generateCSRFToken(), ENT_QUOTES, 'UTF-8'); ?>">
-
-    <!-- DNS Prefetch & Preconnect for external domains -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
-    <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://api.notion.com">
-
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/img/brand/logo.svg">
-    <link rel="apple-touch-icon" href="/assets/img/brand/logo.svg">
-
-    <!-- Alternate Languages (SEO) -->
-    <?php
-    $canonical_path = strtok($_SERVER['REQUEST_URI'], '?');
-    $safe_host = htmlspecialchars($_SERVER['HTTP_HOST'], ENT_QUOTES, 'UTF-8');
-    $safe_path = htmlspecialchars($canonical_path, ENT_QUOTES, 'UTF-8');
-    ?>
-    <link rel="alternate" hreflang="fr" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>?lang=fr" />
-    <link rel="alternate" hreflang="en" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>?lang=en" />
-    <link rel="alternate" hreflang="x-default" href="https://<?php echo $safe_host; ?><?php echo $safe_path; ?>" />
-
-    <!-- Open Graph / Facebook -->
-    <?php
-$meta_title = isset($page_title) ? $page_title : t('meta_title');
-$meta_description = isset($page_description) ? $page_description : t('meta_description');
-$meta_image = isset($page_image) ? $page_image : "https://" . $_SERVER['HTTP_HOST'] . "/assets/img/brand/logo.png";
-
-// Ensure image URL is absolute
-if (strpos($meta_image, 'http') === false) {
-    $meta_image = "https://" . $_SERVER['HTTP_HOST'] . $meta_image;
-}
-
-// Build canonical URL (strip query params) — $canonical_path and $safe_host already set above
-$canonical_url = "https://" . $_SERVER['HTTP_HOST'] . $canonical_path;
-?>
-    <!-- Standard Meta Description (SEO) -->
-    <meta name="description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="og:title" content="<?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="og:image" content="<?php echo htmlspecialchars($meta_image, ENT_QUOTES, 'UTF-8'); ?>">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="<?php echo htmlspecialchars($canonical_url, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="twitter:title" content="<?php echo htmlspecialchars($meta_title, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="twitter:description" content="<?php echo htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta property="twitter:image" content="<?php echo htmlspecialchars($meta_image, ENT_QUOTES, 'UTF-8'); ?>">
-
-    <!-- n8n Chat Widget -->
-    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
-    <script type="module">
-        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-        createChat({
-            webhookUrl: '<?php echo config('N8N_CHAT_WEBHOOK'); ?>'
-        });
-    </script>
-
-    <!-- Cloudflare Turnstile — pre-define callback before async script loads to avoid race condition -->
-    <script>
-    // Queue fired before contact-form.js defines the real init functions
-    window.onloadTurnstileCallback = function () {
-        window._turnstileReady = true;
-        if (typeof window._initAllTurnstiles === 'function') window._initAllTurnstiles();
-    };
-    </script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" async defer></script>
-
-    <title><?php echo $meta_title; ?></title>
-    
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom Design System (auto cache-busting) -->
-    <?php
-    // Helper for auto cache-busting based on file modification time
-    function css_url($path) {
-        $file = $_SERVER['DOCUMENT_ROOT'] . $path;
-        $v = file_exists($file) ? filemtime($file) : time();
-        return $path . '?v=' . $v;
-    }
-    ?>
-    <link href="<?php echo css_url('/assets/css/header.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/footer.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/animations.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/reviews.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/theme-matrix.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/style.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/lightbox.css'); ?>" rel="stylesheet">
-    <?php
-    // Load ALL page-specific CSS globally so SPA (Swup) navigation always has styles ready.
-    // No conflicts because selectors target page-specific class names.
-    ?>
-    <link href="<?php echo css_url('/assets/css/homepage.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/formation.css'); ?>" rel="stylesheet">
-    <link href="<?php echo css_url('/assets/css/blog.css'); ?>" rel="stylesheet">
-
-    <!-- Schema.org Organization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "SlapIA",
-      "url": "https://<?php echo $safe_host; ?>",
-      "logo": "https://<?php echo $safe_host; ?>/assets/img/brand/logo.svg",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "contact@slapia.com",
-        "contactType": "customer service"
-      }
-    }
-    </script>
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- PWA Manifest & Service Worker Registration -->
-    <link rel="manifest" href="/manifest.json">
-    <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(() => {})
-          .catch(() => {});
-      });
-    }
-    </script>
-</head>
-<body>
-
-<!-- The Aurora Background -->
-<div class="aurora-bg">
-    <div class="aurora-orb orb-1"></div>
-    <div class="aurora-orb orb-2"></div>
-    <div class="aurora-orb orb-3"></div>
-</div>
-
-<!-- Mobile Menu Overlay -->
-<div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-<!-- Mobile Menu -->
-<nav class="mobile-menu">
-    <a href="/" class="mobile-menu-link <?php echo $slug == 'index' ? 'active' : ''; ?>">
-        <i class="fas fa-home"></i> <?php echo t('home'); ?>
-    </a>
-    <a href="/formation" class="mobile-menu-link <?php echo $slug == 'formation' ? 'active' : ''; ?>">
-        <i class="fas fa-graduation-cap"></i> <?php echo t('formations'); ?>
-    </a>
-    <a href="/entreprises" class="mobile-menu-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>">
-        <i class="fas fa-building"></i> <?php echo t('companies'); ?>
-    </a>
-    <a href="/expertise" class="mobile-menu-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>">
-        <i class="fas fa-star"></i> <?php echo t('expertise'); ?>
-    </a>
-    <a href="/solution" class="mobile-menu-link <?php echo $slug == 'solution' ? 'active' : ''; ?>">
-        <i class="fas fa-download"></i> <?php echo t('solution'); ?>
-    </a>
-    <a href="/blog" class="mobile-menu-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">
-        <i class="fas fa-newspaper"></i> Blog
-    </a>
-    <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="mobile-menu-link">
-        <i class="fas fa-globe"></i> <?php echo $lang === 'en' ? 'Français' : 'English'; ?>
-    </a>
-
-    <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-        <a href="/dashboard" class="mobile-menu-link mobile-menu-link--account">
-            <?php if (!empty($_SESSION['user_id'])): ?>
-                <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.3);" loading="lazy">
-            <?php else: ?>
-                <i class="fas fa-user-circle"></i>
-            <?php endif; ?>
-            Mon Espace
-        </a>
-        <a href="#" class="mobile-menu-link position-relative" onclick="event.preventDefault(); document.getElementById('globalNotifBtn').click();">
-            <i class="fas fa-bell"></i>
-            Notifications
-            <span id="mobileNotifBadge" class="badge rounded-pill bg-danger ms-1" style="display:none; font-size:0.6rem; padding:0.25em 0.5em;">0</span>
-        </a>
-    <?php else: ?>
-        <a href="/login" class="mobile-menu-link mobile-menu-link--account">
-            <i class="fas fa-sign-in-alt"></i> <?php echo t('login_title'); ?>
-        </a>
-    <?php endif; ?>
-
-    <div class="mobile-contact-btn">
-        <a href="/contact" class="btn-apple w-100 justify-content-center">
-            <i class="fas fa-envelope me-2"></i> <?php echo t('contact'); ?>
-        </a>
-    </div>
-</nav>
-
-<!-- Floating Dock Navbar -->
-<nav class="dock-nav">
-    <!-- Brand -->
-    <a href="/" class="dock-brand">
-        <img src="/assets/img/brand/logo.svg" alt="SlapIA Logo" style="height: 24px; width: auto;" loading="lazy">
-        <span class="ms-2 d-none d-lg-inline">SlapIA</span>
-    </a>
-    
-    <!-- Navigation Links -->
-    <div class="dock-links-container d-none d-md-flex">
-        <div class="nav-liquid-pill"></div>
-        <a href="/" class="dock-link <?php echo $slug == 'index' ? 'active' : ''; ?>"><?php echo t('home'); ?></a>
-        <a href="/formation" class="dock-link <?php echo $slug == 'formation' ? 'active' : ''; ?>"><?php echo t('formations'); ?></a>
-        <a href="/entreprises" class="dock-link <?php echo $slug == 'entreprises' ? 'active' : ''; ?>"><?php echo t('companies'); ?></a>
-        <a href="/expertise" class="dock-link <?php echo $slug == 'expertise' ? 'active' : ''; ?>"><?php echo t('expertise'); ?></a>
-        <a href="/solution" class="dock-link <?php echo $slug == 'solution' ? 'active' : ''; ?>"><?php echo t('solution'); ?></a>
-        <a href="/blog" class="dock-link <?php echo $slug == 'blog' ? 'active' : ''; ?>">Blog</a>
-    </div>
-    
-    <!-- Dock Actions (Wait, only Lang and Contact here) -->
-    <div class="d-flex align-items-center gap-2">
-        <a href="#" onclick="switchLanguage('<?php echo $lang === 'en' ? 'fr' : 'en'; ?>'); return false;" class="btn btn-sm btn-apple px-3 py-2 fw-bold d-none d-sm-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
-            <span><?php echo $lang === 'en' ? 'FR' : 'EN'; ?></span>
-        </a>
-        <a href="/contact" class="btn btn-sm btn-apple px-3 py-2 fw-bold d-none d-md-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
-            <?php echo t('contact'); ?>
-        </a>
-        
-        <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </button>
-    </div>
-</nav>
-
-<!-- Right Side Floating Account (Outside Dock) -->
-<div class="header-right-actions d-none d-md-flex align-items-center">
-    <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-        <!-- Global Notification Bell -->
-        <div class="dropdown me-3">
-            <button class="btn btn-link p-0 position-relative border-0 shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="globalNotifBtn" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
-                <i class="fas fa-bell text-white opacity-75 fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" id="globalNotifBadge" style="font-size: 0.55rem; padding: 0.35em 0.5em; display: none; box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);">
-                    0
-                </span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bento-card border-white border-opacity-10 p-2 shadow-lg mt-3" 
-                id="globalNotifList"
-                style="min-width: 300px; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(30px); border-radius: 20px;">
-                <li class="dropdown-header text-uppercase text-secondary small fw-bold mb-2 p-2">Notifications</li>
-                <div id="globalNotifContainer" style="max-height: 400px; overflow-y: auto;">
-                    <li class="p-4 text-center text-secondary small opacity-50">Aucune notification</li>
-                </div>
-                <li><hr class="dropdown-divider opacity-10" id="notifDivider" style="display:none;"></li>
-                <li><button onclick="markAllRead()" id="markAllReadBtn" class="dropdown-item text-center small text-primary fw-medium py-2 rounded-3" style="display:none;">Marquer tout comme lu</button></li>
-            </ul>
-        </div>
-
-        <a href="/dashboard" class="account-pill hover-glow shadow-sm" title="<?php echo t('dash_title'); ?>">
-            <?php if (!empty($_SESSION['user_id'])): ?>
-                <img src="/api/notion-avatar.php?id=<?php echo urlencode($_SESSION['user_id']); ?>" alt="Profile" class="account-img shadow-lg" loading="lazy">
-            <?php else: ?>
-                <i class="fas fa-user-circle text-white opacity-75 fs-5"></i>
-            <?php endif; ?>
-        </a>
-    <?php else: ?>
-        <a href="/login" class="btn btn-sm btn-primary-glow px-4 py-2 fw-bold d-none d-md-inline-flex" style="font-size: 0.8rem; border-radius: 999px;">
-            <i class="fas fa-sign-in-alt me-1"></i> <?php echo t('login_title'); ?>
-        </a>
-    <?php endif; ?>
-</div>
-
+<meta charset="UTF-8">
 <script>
-function switchLanguage(lang) {
-    // Force reload with new query param to ensure PHP session updates
-    const url = new URL(window.location.href);
-    url.searchParams.set('lang', lang);
-    window.location.href = url.toString();
-}
-
-function toggleMobileMenu() {
-    const btn = document.querySelector('.mobile-menu-btn');
-    const menu = document.querySelector('.mobile-menu');
-    const overlay = document.querySelector('.mobile-menu-overlay');
-    
-    btn.classList.toggle('active');
-    menu.classList.toggle('active');
-    overlay.classList.toggle('active');
-    
-    // Prevent body scroll when menu is open
-    document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
-}
-
-// ── Notifications ────────────────────────────────────────────────────────────
-function timeAgo(ts) {
-    const diff = Math.floor(Date.now() / 1000) - ts;
-    if (diff < 60)     return "À l'instant";
-    if (diff < 3600)   return Math.floor(diff / 60) + ' min';
-    if (diff < 86400)  return Math.floor(diff / 3600) + 'h';
-    if (diff < 604800) return Math.floor(diff / 86400) + 'j';
-    return Math.floor(diff / 604800) + ' sem.';
-}
-
-function _updateBadges(unread) {
-    const badge       = document.getElementById('globalNotifBadge');
-    const mobileBadge = document.getElementById('mobileNotifBadge');
-    const label       = unread > 9 ? '9+' : String(unread);
-    const bell        = document.querySelector('#globalNotifBtn .fa-bell');
-
-    if (unread > 0) {
-        if (badge)       { badge.textContent = label; badge.style.display = 'block'; }
-        if (mobileBadge) { mobileBadge.textContent = label; mobileBadge.style.display = 'inline'; }
-        // Pulse animation on bell
-        if (bell) {
-            bell.style.animation = 'none';
-            requestAnimationFrame(() => {
-                bell.style.animation = 'notifBellRing 0.6s ease';
-            });
-        }
-    } else {
-        if (badge)       badge.style.display = 'none';
-        if (mobileBadge) mobileBadge.style.display = 'none';
-    }
-}
-
-function _renderNotifications(notifications, unreadCount) {
-    const list        = document.getElementById('globalNotifContainer');
-    const markAllBtn  = document.getElementById('markAllReadBtn');
-    const divider     = document.getElementById('notifDivider');
-    if (!list) return;
-
-    if (!notifications || notifications.length === 0) {
-        list.innerHTML = '<li class="p-4 text-center text-secondary small opacity-50"><i class="fas fa-bell-slash mb-2 d-block fs-4 opacity-25"></i>Aucune notification</li>';
-        if (markAllBtn) markAllBtn.style.display = 'none';
-        if (divider)    divider.style.display    = 'none';
-        return;
-    }
-
-    let html = '';
-    notifications.forEach(n => {
-        const unreadDot = !n.read
-            ? '<div class="rounded-circle bg-danger flex-shrink-0" style="width:7px;height:7px;margin-top:4px;"></div>'
-            : '';
-        html += `
-            <li>
-                <a class="dropdown-item d-flex align-items-start gap-3 py-2 px-3 rounded-4 notif-item ${!n.read ? 'bg-white bg-opacity-5' : ''}"
-                   href="${n.link || '#'}"
-                   data-notif-id="${n.id}"
-                   onclick="markOneRead(this)">
-                    <div class="rounded-circle p-2 flex-shrink-0 ${n.icon_bg || 'bg-primary'} bg-opacity-10" style="margin-top:2px;">
-                        <i class="${n.icon || 'fas fa-info-circle'} ${n.icon_color || 'text-primary'}" style="font-size:0.75rem;width:12px;text-align:center;"></i>
-                    </div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <div class="text-white small fw-semibold text-truncate">${n.title}</div>
-                        <div class="text-secondary text-truncate opacity-75" style="font-size:0.72rem;">${n.desc}</div>
-                        <div class="text-secondary opacity-40" style="font-size:0.65rem;margin-top:2px;">${timeAgo(n.ts)}</div>
-                    </div>
-                    ${unreadDot}
-                </a>
-            </li>`;
-    });
-
-    list.innerHTML = html;
-
-    const hasUnread = unreadCount > 0;
-    if (markAllBtn) markAllBtn.style.display = hasUnread ? 'block' : 'none';
-    if (divider)    divider.style.display    = hasUnread ? 'block' : 'none';
-}
-
-async function fetchNotifications() {
-    const list = document.getElementById('globalNotifContainer');
-    if (!list) return;
-
-    try {
-        const res  = await fetch('/api/check-notifications.php');
-        const data = await res.json();
-        if (!data.success) return;
-
-        _renderNotifications(data.notifications, data.unread_count || 0);
-        _updateBadges(data.unread_count || 0);
-    } catch (e) {}
-}
-
-function markOneRead(el) {
-    const id = el.dataset.notifId;
-    if (!id) return;
-
-    // Mise à jour UI immédiate sans attendre le serveur
-    el.classList.remove('bg-white', 'bg-opacity-5');
-    const dot = el.querySelector('.bg-danger.rounded-circle');
-    if (dot) dot.remove();
-
-    // Recalcule badge localement
-    const remaining = document.querySelectorAll('.notif-item.bg-white.bg-opacity-5').length;
-    _updateBadges(remaining);
-    const markAllBtn = document.getElementById('markAllReadBtn');
-    const divider    = document.getElementById('notifDivider');
-    if (remaining === 0) {
-        if (markAllBtn) markAllBtn.style.display = 'none';
-        if (divider)    divider.style.display    = 'none';
-    }
-
-    // Appel serveur en arrière-plan
-    fetch('/api/notifications-mark-read.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
-        },
-        body: JSON.stringify({ id })
-    }).catch(() => {});
-}
-
-async function markAllRead() {
-    try {
-        await fetch('/api/notifications-mark-read.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            },
-            body: JSON.stringify({ mark_all: true })
-        });
-        fetchNotifications();
-    } catch (e) {}
-}
-
-<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-document.addEventListener('DOMContentLoaded', fetchNotifications);
-// Rafraîchit à l'ouverture du dropdown
-const _notifDropdownEl = document.getElementById('globalNotifList');
-if (_notifDropdownEl) {
-    _notifDropdownEl.closest('.dropdown')?.addEventListener('show.bs.dropdown', fetchNotifications);
-}
-// Rafraîchit toutes les 2 minutes en arrière-plan
-setInterval(fetchNotifications, 120000);
-<?php endif; ?>
-
-// Close menu on escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const menu = document.querySelector('.mobile-menu');
-        if (menu.classList.contains('active')) {
-            toggleMobileMenu();
-        }
-    }
-});
-
-// Liquid Glass Navigation Pill Effect (iOS 26 style)
-// Liquid Glass Navigation Pill Effect (iOS 26 style)
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.querySelector('.dock-links-container');
-    const pill = document.querySelector('.nav-liquid-pill');
-    const links = document.querySelectorAll('.dock-links-container .dock-link');
-    
-    if (!container || !pill) return;
-    
-    // Position pill on active link (Exposed globally for Swup)
-    window.moveNavPill = function(element, animate = true) {
-        if (!element) return;
-        
-        // Ensure container and pill are fresh references if needed, 
-        // though typically they are outside swup and static.
-        
-        const containerRect = container.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
-        
-        const left = elementRect.left - containerRect.left;
-        const width = elementRect.width;
-        
-        if (animate) {
-            pill.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.1, 1)';
-        } else {
-            pill.style.transition = 'none';
-        }
-        
-        pill.style.left = left + 'px';
-        pill.style.width = width + 'px';
-        pill.style.opacity = '1';
-    };
-    
-    // Initialize on active link
-    const activeLink = document.querySelector('.dock-links-container .dock-link.active');
-    if (activeLink) {
-        setTimeout(() => window.moveNavPill(activeLink, false), 50);
-    }
-    
-    // Pill moves only on click / page navigation
-    links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            links.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            window.moveNavPill(this, true);
-        });
-    });
-    
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        const currentActive = document.querySelector('.dock-links-container .dock-link.active');
-        if (currentActive) {
-            window.moveNavPill(currentActive, false);
-        }
-    });
-});
+(function(){
+  try {
+    var stored = localStorage.getItem('slapia-theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
 </script>
-<style>
-@keyframes notifBellRing {
-    0%,100% { transform: rotate(0); }
-    20%      { transform: rotate(-15deg); }
-    40%      { transform: rotate(15deg); }
-    60%      { transform: rotate(-10deg); }
-    80%      { transform: rotate(8deg); }
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?php echo $title; ?></title>
+<meta name="description" content="<?php echo $description; ?>">
+<link rel="canonical" href="<?php echo $canonical; ?>">
+<?php foreach ($supported_langs as $l): ?>
+<link rel="alternate" hreflang="<?php echo $l; ?>" href="<?php echo $site_url . $path . '?lang=' . $l; ?>">
+<?php endforeach; ?>
+<link rel="alternate" hreflang="x-default" href="<?php echo $site_url . $path; ?>">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="<?php echo t('meta.og_locale'); ?>">
+<meta property="og:site_name" content="Slapia">
+<meta property="og:title" content="<?php echo $title; ?>">
+<meta property="og:description" content="<?php echo $description; ?>">
+<meta property="og:url" content="<?php echo $canonical; ?>">
+<meta property="og:image" content="<?php echo htmlspecialchars($og_image); ?>">
+<meta name="twitter:card" content="<?php echo isset($page_image) ? 'summary_large_image' : 'summary'; ?>">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" type="image/png" href="/assets/img/brand/logo.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "<?php echo $site_url; ?>#organization",
+  "name": "Slapia",
+  "legalName": "SlapIA",
+  "url": "<?php echo $site_url; ?>",
+  "logo": "<?php echo $site_url; ?>assets/img/brand/logo.png",
+  "description": "<?php echo t('home.meta_description'); ?>"
 }
-</style>
+</script>
+<?php if (isset($jsonld) && $jsonld !== ''): ?>
+<script type="application/ld+json"><?php echo $jsonld; ?></script>
+<?php endif; ?>
+</head>
+<body class="has-rail">
 
-<!-- Spacer for fixed nav -->
-<div class="nav-spacer" style="height: 120px;"></div>
+<div class="rail" aria-hidden="true">
+  <img src="/assets/img/brand/logo.svg" alt="" class="rail__mark">
+  <span class="rail__label">FORMATIONS IA — SERVICES PC</span>
+  <span class="rail__track"><span class="rail__fill"></span></span>
+  <span class="rail__pct">0%</span>
+</div>
+<div class="progress-mobile" aria-hidden="true"><span class="progress-mobile__fill"></span></div>
 
-<!-- Main Content Container for Swup -->
-<main id="swup" class="swup-transition-main">
+<header class="site-header">
+  <div class="container">
+    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> Slapia</a>
 
+    <nav class="nav" aria-label="Navigation principale">
+      <?php foreach ($nav_items as $href => $label): ?>
+        <a class="nav__link<?php echo $current === $href ? ' is-active' : ''; ?>" href="/<?php echo $href; ?>"><?php echo $label; ?></a>
+      <?php endforeach; ?>
+    </nav>
 
+    <div class="header__actions">
+      <div class="lang-switch">
+        <?php foreach ($lang_names as $l => $label): ?>
+          <a href="?lang=<?php echo $l; ?>" class="lang-switch__link<?php echo $lang === $l ? ' is-active' : ''; ?>"><?php echo $label; ?></a>
+        <?php endforeach; ?>
+      </div>
+      <button class="theme-toggle" type="button" aria-label="<?php echo t('common.toggle_theme'); ?>" title="<?php echo t('common.toggle_theme'); ?>">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+      </button>
+      <?php $me = currentUser(); ?>
+      <?php if ($me): ?>
+        <?php $dashHref = $me['role'] === 'admin' ? '/admin' : '/dashboard'; ?>
+        <?php $dashLabel = $me['role'] === 'admin' ? t('nav.admin') : t('nav.dashboard'); ?>
+        <div class="user-menu">
+          <button type="button" class="user-menu__trigger" aria-haspopup="true" aria-expanded="false" aria-label="<?php echo t('nav.account_menu'); ?>">
+            <img src="/api/notion-avatar.php?id=<?php echo urlencode($me['id']); ?>" alt="" class="user-menu__avatar">
+          </button>
+          <div class="user-menu__dropdown">
+            <div class="user-menu__name"><?php echo htmlspecialchars($me['name']); ?></div>
+            <a href="<?php echo $dashHref; ?>" class="user-menu__link"><?php echo $dashLabel; ?></a>
+            <a href="/api/auth-logout.php" class="user-menu__link user-menu__link--danger"><?php echo t('nav.logout'); ?></a>
+          </div>
+        </div>
+      <?php else: ?>
+        <a href="/login" class="btn btn--ghost"><?php echo t('nav.login'); ?></a>
+      <?php endif; ?>
+      <a href="/contact.php" class="btn btn--primary"><?php echo t('common.book_call'); ?> <span class="btn__arrow">→</span></a>
+      <button class="nav-toggle" aria-label="<?php echo t('common.open_menu'); ?>"><span></span></button>
+    </div>
+  </div>
+</header>
 
+<div class="mobile-menu">
+  <div class="mobile-menu__top">
+    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> Slapia</a>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="theme-toggle theme-toggle--on-dark" type="button" aria-label="<?php echo t('common.toggle_theme'); ?>" title="<?php echo t('common.toggle_theme'); ?>">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+      </button>
+      <button class="mobile-menu__close" aria-label="<?php echo t('common.close_menu'); ?>">✕</button>
+    </div>
+  </div>
+  <nav class="mobile-menu__links" aria-label="Navigation mobile">
+    <?php foreach ($nav_items as $href => $label): ?>
+      <a class="<?php echo $current === $href ? 'is-active' : ''; ?>" href="/<?php echo $href; ?>"><?php echo $label; ?></a>
+    <?php endforeach; ?>
+  </nav>
+  <div class="mobile-menu__lang">
+    <?php foreach ($lang_names as $l => $label): ?>
+      <a href="?lang=<?php echo $l; ?>" class="lang-switch__link lang-switch__link--on-dark<?php echo $lang === $l ? ' is-active' : ''; ?>"><?php echo $label; ?></a>
+    <?php endforeach; ?>
+  </div>
+  <div class="mobile-menu__foot">
+    <?php if ($me): ?>
+      <a href="<?php echo $dashHref; ?>" class="btn btn--on-dark btn--block" style="margin-bottom:10px;"><?php echo $dashLabel; ?></a>
+      <a href="/api/auth-logout.php" class="btn btn--on-dark btn--block" style="margin-bottom:10px;"><?php echo t('nav.logout'); ?></a>
+    <?php else: ?>
+      <a href="/login" class="btn btn--on-dark btn--block" style="margin-bottom:10px;"><?php echo t('nav.login'); ?></a>
+    <?php endif; ?>
+    <a href="/contact.php" class="btn btn--signal btn--block"><?php echo t('common.book_call'); ?></a>
+  </div>
+</div>

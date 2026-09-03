@@ -1,425 +1,328 @@
 <?php
-$basePath = __DIR__;
-include_once $basePath . '/includes/config.php';
-include_once $basePath . '/includes/lang.php';
-$page_title = t('meta_title');
-$page_description = t('meta_description');
-$page_image = '/assets/img/brand/logo.png';
-include $basePath . '/includes/header.php';
-include $basePath . '/includes/components.php';
-include_once $basePath . '/api/notion-satisfaction.php';
+require_once 'includes/i18n.php';
+require_once 'includes/stats.php';
+require_once 'includes/reviews.php';
+$page_title = t('home.meta_title');
+$page_description = t('home.meta_description');
 
-// Redirection si URL avec anciens paramètres
-if (isset($_GET['refresh_stats'])) {
-    $cleanUrl = strtok($_SERVER['REQUEST_URI'], '?');
-    header('Location: ' . $cleanUrl);
-    exit;
+$stats = getSlapiaStats();
+$decimal_sep = $lang === 'en' ? '.' : ',';
+$stat1_html = statNumHtml($stats['is_live'] ? (float)$stats['entreprises'] : null, 0, '+', t('home.stat1_num'), $decimal_sep);
+$stat2_html = statNumHtml($stats['is_live'] ? (float)$stats['particuliers'] : null, 0, '+', t('home.stat2_num'), $decimal_sep);
+$stat3_html = statNumHtml(($stats['is_live'] && $stats['satisfaction'] !== null) ? (float)$stats['satisfaction'] : null, 1, '/5', t('home.stat3_num'), $decimal_sep);
+
+$reviews = getNotionReviews(12);
+
+function renderStarsHtml(?float $note): string
+{
+    $filled = $note !== null ? (int)round($note) : 0;
+    $filled = max(0, min(5, $filled));
+    return str_repeat('★', $filled) . str_repeat('☆', 5 - $filled);
 }
 
-// Appels Notion
-$stats = getSatisfactionStats(true);
+$course_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Course',
+    '@id' => 'https://www.slapia.com/formations.php#course',
+    'name' => 'Formation IA Slapia — Parcours en 3 niveaux',
+    'description' => t('courses_page.meta_description'),
+    'provider' => ['@id' => 'https://www.slapia.com/#organization'],
+];
+if ($stats['is_live'] && $stats['satisfaction'] !== null && $stats['satisfaction_count'] > 0) {
+    $course_schema['aggregateRating'] = [
+        '@type' => 'AggregateRating',
+        'ratingValue' => (string)$stats['satisfaction'],
+        'bestRating' => '5',
+        'reviewCount' => $stats['satisfaction_count'],
+    ];
+}
+if (!empty($reviews)) {
+    $reviewItems = [];
+    foreach ($reviews as $r) {
+        if ($r['note'] === null) continue;
+        $reviewItems[] = [
+            '@type' => 'Review',
+            'author' => ['@type' => 'Person', 'name' => trim($r['prenom'] . ' ' . $r['nom'])],
+            'reviewRating' => ['@type' => 'Rating', 'ratingValue' => (string)round($r['note'], 1), 'bestRating' => '5'],
+            'reviewBody' => $r['avis'],
+        ];
+    }
+    if (!empty($reviewItems)) $course_schema['review'] = $reviewItems;
+}
+$jsonld = json_encode($course_schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-
+include 'includes/header.php';
 ?>
 
-<!-- Subtle Grid Background -->
-<div class="grid-bg"></div>
-
-<!-- ============================================
-     HERO SECTION - Premium Enterprise
-     ============================================ -->
-<section class="hero-premium text-center position-relative">
-    <!-- Animated gradient mesh -->
-    <div class="hero-gradient-mesh"></div>
-
-    <!-- Floating particles -->
-    <div class="hero-particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+<section class="hero">
+  <div class="hero-canvas" aria-hidden="true"></div>
+  <div class="container hero__grid">
+    <div>
+      <span class="eyebrow hero-reveal" style="transition-delay:0.05s"><?php echo t('home.hero_eyebrow'); ?></span>
+      <h1 class="hero__title hero-reveal" style="transition-delay:0.15s"><?php echo t('home.hero_title_line1'); ?><br><mark><?php echo t('home.hero_title_mark'); ?></mark></h1>
+      <p class="hero__lede hero-reveal" style="transition-delay:0.28s"><?php echo t('home.hero_lede'); ?></p>
+      <div class="hero__ctas hero-reveal" style="transition-delay:0.4s">
+        <a href="formations.php" class="btn btn--primary"><?php echo t('home.cta_primary'); ?> <span class="btn__arrow">→</span></a>
+        <a href="contact.php" class="btn btn--ghost"><?php echo t('home.cta_secondary'); ?></a>
+      </div>
+      <div class="hero__stats hero-reveal" style="transition-delay:0.5s">
+        <div class="stat">
+          <?php echo $stat1_html; ?>
+          <div class="stat__label"><?php echo t('home.stat1_label'); ?></div>
+        </div>
+        <div class="stat">
+          <?php echo $stat2_html; ?>
+          <div class="stat__label"><?php echo t('home.stat2_label'); ?></div>
+        </div>
+        <div class="stat">
+          <?php echo $stat3_html; ?>
+          <div class="stat__label"><?php echo t('home.stat3_label'); ?></div>
+        </div>
+      </div>
     </div>
 
-    <div class="container position-relative" style="z-index: 2;">
-
-        <!-- Floating Badge -->
-        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary border-opacity-25 mb-4 fade-in-up"
-            style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
-            <span class="badge bg-primary rounded-pill shimmer-badge"
-                style="font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.2);"><?php echo t('3_courses'); ?></span>
-            <span class="text-secondary small fw-medium"><?php echo t('complete_training'); ?></span>
+    <div class="hero__panel hero-reveal hero-reveal--panel" style="transition-delay:0.35s">
+      <span class="hero__panel-label"><?php echo t('home.panel_label'); ?></span>
+      <div class="hero__panel-list">
+        <div class="hero__panel-item">
+          <span class="hero__panel-tag"><?php echo t('home.panel1_tag'); ?></span>
+          <div><strong><?php echo t('home.panel1_title'); ?></strong><span><?php echo t('home.panel1_meta'); ?></span></div>
         </div>
-
-        <!-- Main Title -->
-        <h1 class="hero-title-xl mb-4 fade-in-up delay-200">
-            <?php echo t('master_ai'); ?> <br>
-            <span class="text-gradient-animated" id="typewriter-text"
-                data-phrases='["<?php echo t('typewriter_1'); ?>", "<?php echo t('typewriter_2'); ?>", "<?php echo t('typewriter_3'); ?>"]'>
-                <?php echo t('typewriter_1'); ?>
-            </span>
-            <span class="cursor-blink">|</span>
-        </h1>
-
-        <!-- Sub-description -->
-        <p class="hero-description mx-auto mb-0 fade-in-up delay-400">
-            <?php echo t('structured_paths'); ?>
-        </p>
-
-        <!-- Dual CTA -->
-        <div class="hero-cta-group fade-in-up delay-600">
-            <a href="/formation" class="btn-primary-glow">
-                <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
-            </a>
-            <a href="/entreprises" class="btn-outline-glass">
-                <i class="fas fa-building"></i> <?php echo t('companies'); ?>
-            </a>
+        <div class="hero__panel-item">
+          <span class="hero__panel-tag"><?php echo t('home.panel2_tag'); ?></span>
+          <div><strong><?php echo t('home.panel2_title'); ?></strong><span><?php echo t('home.panel2_meta'); ?></span></div>
         </div>
-
-        <!-- Hero Stats Bar -->
-        <div class="hero-stats-bar fade-in-up delay-600">
-            <div class="hero-stat">
-                <div class="hero-stat-number"><?php echo ($stats['nombre'] > 0) ? '+' . (int)$stats['nombre'] : '50+'; ?></div>
-                <div class="hero-stat-label"><?php echo t('hero_stat_trained'); ?></div>
-            </div>
-            <div class="hero-stat">
-                <div class="hero-stat-number"><?php echo ($stats['pourcentage'] !== 'N.A') ? $stats['pourcentage'] . '%' : '98%'; ?></div>
-                <div class="hero-stat-label"><?php echo t('satisfaction'); ?></div>
-            </div>
-            <div class="hero-stat">
-                <div class="hero-stat-number">3</div>
-                <div class="hero-stat-label"><?php echo t('hero_stat_levels'); ?></div>
-            </div>
+        <div class="hero__panel-item">
+          <span class="hero__panel-tag"><?php echo t('home.panel3_tag'); ?></span>
+          <div><strong><?php echo t('home.panel3_title'); ?></strong><span><?php echo t('home.panel3_meta'); ?></span></div>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- ============================================
-     INFINITE MARQUEE - Tech Stack Logos
-     ============================================ -->
-<div class="marquee-container border-top border-bottom border-light border-opacity-10 mb-5 fade-in-up delay-600"
-    style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
-    <div class="marquee-content">
-        <?php
-        // Logo data for DRY marquee generation
-        $marquee_logos = [
-            ['src' => 'https://nxus.fr/wp-content/uploads/2025/02/logo-n8n.png', 'alt' => 'n8n', 'label' => 'n8n', 'style' => 'height:22px; filter: brightness(0) invert(1); opacity:0.8;'],
-            ['src' => 'https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/make-color.png', 'alt' => 'make', 'label' => 'Make', 'style' => 'height:22px; filter: brightness(0) invert(1); opacity:0.8;'],
-            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png', 'alt' => 'Notion', 'label' => 'Notion', 'style' => 'height:28px; border-radius: 4px;'],
-            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/960px-Google_Gemini_icon_2025.svg.png?20250728014952', 'alt' => 'Gemini', 'label' => 'Gemini', 'style' => 'height:28px;'],
-            ['src' => 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg', 'alt' => 'ChatGPT', 'label' => 'ChatGPT', 'style' => 'height:28px; filter: brightness(0) invert(1); opacity:0.8;'],
-            ['src' => 'https://upload.wikimedia.org/wikipedia/fr/0/02/Microsoft_365_Copilot.svg', 'alt' => 'Copilot', 'label' => 'Copilot', 'style' => 'height:28px;'],
-            ['icon' => 'fas fa-code', 'label' => 'API & Webhooks'],
-            ['src' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg', 'alt' => 'VS Code', 'label' => 'Visual Studio Code', 'style' => 'height:28px;'],
-        ];
-
-        // Repeat 4 sets for seamless loop
-        for ($set = 0; $set < 4; $set++):
-            foreach ($marquee_logos as $logo):
-                echo '<div class="marquee-item">';
-                if (isset($logo['src'])) {
-                    echo '<img src="' . $logo['src'] . '" alt="' . $logo['alt'] . '" style="' . $logo['style'] . '"> ';
-                } elseif (isset($logo['icon'])) {
-                    echo '<i class="' . $logo['icon'] . ' text-secondary" style="font-size: 1.2rem;"></i> ';
-                }
-                echo $logo['label'];
-                echo '</div>';
-            endforeach;
-        endfor;
-        ?>
+<section class="section section--dark">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><?php echo t('home.problem_eyebrow'); ?></span>
+        <h2 class="section-head__title"><?php echo t('home.problem_title'); ?></h2>
+      </div>
+      <p class="section-head__note"><?php echo t('home.problem_note'); ?></p>
     </div>
-</div>
-</div>
-
-<!-- ============================================
-     MAIN BENTO GRID - Enhanced
-     ============================================ -->
-<section class="pb-5">
-    <div class="container fade-in-up delay-600">
-        <div class="bento-grid">
-
-            <!-- Main Feature Card - Formation IA (Large) -->
-            <div class="bento-card bento-card-glow card-feature-main span-8 d-flex flex-column justify-content-between scroll-scale">
-                <!-- Internal glow orbs -->
-                <div class="card-glow-orb orb-blue"></div>
-                <div class="card-glow-orb orb-purple"></div>
-
-                <div style="position: relative; z-index: 2;">
-                    <div class="icon-box text-white border-0" style="background: var(--accent-blue);">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="text-white mb-2"><?php echo t('ai_training'); ?></h3>
-                    <p class="text-secondary" style="max-width: 400px;"><?php echo t('learn_ai_tools'); ?></p>
-                </div>
-
-                <!-- Mini Terminal Mockup -->
-                <div class="mini-terminal" style="position: relative; z-index: 2;">
-                    <div class="mini-terminal-header">
-                        <div class="terminal-dot red"></div>
-                        <div class="terminal-dot yellow"></div>
-                        <div class="terminal-dot green"></div>
-                        <span class="text-secondary small ms-2" style="font-size: 0.7rem;">slapia-training.sh</span>
-                    </div>
-                    <div class="mini-terminal-body">
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span>
-                            <span class="terminal-command"><?php echo t('terminal_line_1'); ?></span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span>
-                            <span class="terminal-command"><?php echo t('terminal_line_2'); ?></span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span>
-                            <span class="terminal-command"><?php echo t('terminal_line_3'); ?></span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span>
-                            <span class="terminal-command"><?php echo t('terminal_line_4'); ?></span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-info">→</span>
-                            <span class="terminal-success"><?php echo t('terminal_line_5'); ?></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Side Card (Stats) -->
-            <?php render_satisfaction_card($stats, $lang); ?>
-
-            <!-- Testimonials / Avis déroulants (from Notion) -->
-            <?php
-            $reviews = [];
-            if (function_exists('getNotionReviews')) {
-                try {
-                    $reviews = getNotionReviews(12, $lang ?? 'fr');
-                } catch (Exception $e) {
-                    $reviews = [];
-                }
-            }
-            render_reviews_section($reviews);
-            ?>
-
-            <!-- Enterprise Card -->
-            <div class="bento-card bento-card-glow card-enterprise span-6 d-flex flex-column justify-content-between scroll-scale">
-                <div>
-                    <div class="icon-box text-primary border-0 mb-3" style="background: rgba(41, 151, 255, 0.1);">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h4 class="text-white"><?php echo t('training_for_companies'); ?></h4>
-                    <p class="text-secondary small"><?php echo t('train_teams'); ?></p>
-
-                    <!-- Mini pills showing capabilities -->
-                    <div class="enterprise-logos">
-                        <div class="enterprise-logo-pill"><i class="fas fa-users"></i> <?php echo t('hero_stat_teams'); ?></div>
-                        <div class="enterprise-logo-pill"><i class="fas fa-chart-line"></i> ROI</div>
-                        <div class="enterprise-logo-pill"><i class="fas fa-certificate"></i> <?php echo t('hero_stat_certification'); ?></div>
-                    </div>
-                </div>
-                <a href="/entreprises" class="text-primary small text-decoration-none mt-3">
-                    <?php echo t('learn_more'); ?> <i class="fas fa-arrow-right ms-1"></i>
-                </a>
-            </div>
-
-            <!-- Coaching Card - Premium Purple -->
-            <div class="bento-card bento-card-glow card-coaching span-6 d-flex flex-column justify-content-between scroll-scale delay-100">
-                <div style="position: relative; z-index: 2;">
-                    <div class="card-coaching-badge">
-                        <i class="fas fa-crown"></i> VIP
-                    </div>
-                    <div class="icon-box text-white border-0 mb-3" style="background: rgba(255,255,255,0.2);">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <h5 class="text-white mb-1"><?php echo t('personal_coaching'); ?></h5>
-                    <p class="text-white opacity-75 small mb-3"><?php echo t('vip_mentoring'); ?></p>
-                </div>
-                <a href="/formation#formation" class="text-white text-decoration-none small fw-bold" style="position: relative; z-index: 2;">
-                    <?php echo t('book_slot'); ?> <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-
-        </div>
+    <div class="grid-3">
+      <div class="value-card" style="background:transparent;border-color:rgba(255,255,255,0.15);color:var(--on-dark)">
+        <div class="value-card__icon" style="background:rgba(255,255,255,0.08)">⚠</div>
+        <h3 style="color:var(--on-dark)"><?php echo t('home.problem_card1_title'); ?></h3>
+        <p style="color:rgba(245,242,250,0.65)"><?php echo t('home.problem_card1_text'); ?></p>
+      </div>
+      <div class="value-card" style="background:transparent;border-color:rgba(255,255,255,0.15);color:var(--on-dark)">
+        <div class="value-card__icon" style="background:rgba(255,255,255,0.08)">⏱</div>
+        <h3 style="color:var(--on-dark)"><?php echo t('home.problem_card2_title'); ?></h3>
+        <p style="color:rgba(245,242,250,0.65)"><?php echo t('home.problem_card2_text'); ?></p>
+      </div>
+      <div class="value-card" style="background:transparent;border-color:rgba(255,255,255,0.15);color:var(--on-dark)">
+        <div class="value-card__icon" style="background:rgba(255,255,255,0.08)">◎</div>
+        <h3 style="color:var(--on-dark)"><?php echo t('home.problem_card3_title'); ?></h3>
+        <p style="color:rgba(245,242,250,0.65)"><?php echo t('home.problem_card3_text'); ?></p>
+      </div>
     </div>
+  </div>
 </section>
 
-
-<!-- ============================================
-     WHY SLAPIA SECTION
-     ============================================ -->
-<section class="section-why">
-    <div class="container">
-        <div class="text-center">
-            <div class="section-badge scroll-reveal">
-                <i class="fas fa-bolt"></i> <?php echo t('why_badge'); ?>
-            </div>
-            <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('why_title'); ?></h2>
-            <p class="text-secondary mx-auto scroll-reveal delay-200" style="max-width: 600px; font-size: 1.1rem;">
-                <?php echo t('why_subtitle'); ?>
-            </p>
-        </div>
-
-        <div class="why-grid">
-            <!-- Card 1 - Progressive -->
-            <div class="why-card scroll-reveal">
-                <div class="why-icon icon-purple">
-                    <i class="fas fa-layer-group"></i>
-                </div>
-                <h4 class="why-card-title"><?php echo t('progressive_training'); ?></h4>
-                <p class="why-card-desc"><?php echo t('progressive_training_desc'); ?></p>
-            </div>
-
-            <!-- Card 2 - Pratique -->
-            <div class="why-card scroll-reveal delay-100">
-                <div class="why-icon icon-blue">
-                    <i class="fas fa-laptop-code"></i>
-                </div>
-                <h4 class="why-card-title"><?php echo t('immediate_practice'); ?></h4>
-                <p class="why-card-desc"><?php echo t('immediate_practice_desc'); ?></p>
-            </div>
-
-            <!-- Card 3 - Support -->
-            <div class="why-card scroll-reveal delay-200">
-                <div class="why-icon icon-green">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <h4 class="why-card-title"><?php echo t('continuous_support'); ?></h4>
-                <p class="why-card-desc"><?php echo t('continuous_support_desc'); ?></p>
-            </div>
-        </div>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><?php echo t('home.catalogue_eyebrow'); ?></span>
+        <h2 class="section-head__title"><?php echo t('home.catalogue_title'); ?></h2>
+      </div>
+      <p class="section-head__note"><?php echo t('home.catalogue_note'); ?></p>
     </div>
+
+    <div class="grid-3">
+      <?php foreach ($T['levels'] as $level): ?>
+      <a href="formations.php#<?php echo htmlspecialchars($level['anchor']); ?>" class="course-card reveal" style="text-decoration:none">
+        <div class="course-card__meta">
+          <span class="tag tag--signal">Niveau <?php echo htmlspecialchars($level['num']); ?></span>
+        </div>
+        <h3><?php echo htmlspecialchars($level['title']); ?></h3>
+        <p class="desc"><?php echo htmlspecialchars($level['teaser']); ?></p>
+        <div class="course-card__meta">
+          <?php foreach ($level['tools'] as $tool): ?>
+          <span class="tag tag--ghost"><?php echo htmlspecialchars($tool); ?></span>
+          <?php endforeach; ?>
+        </div>
+        <div class="course-card__foot course-card__foot--end">
+          <span class="course-card__link"><?php echo t('home.catalogue_link'); ?> <span class="btn__arrow">→</span></span>
+        </div>
+      </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
 </section>
 
-
-<!-- ============================================
-     NUMBERS / IMPACT SECTION
-     ============================================ -->
-<section class="numbers-section">
-    <div class="container">
-        <div class="numbers-grid">
-            <div class="number-item scroll-reveal">
-                <div class="number-value" data-count="<?php echo ($stats['nombre'] > 0) ? (int)$stats['nombre'] : 50; ?>">0</div>
-                <div class="number-label"><?php echo t('number_trained'); ?></div>
-            </div>
-            <div class="number-item scroll-reveal delay-100">
-                <div class="number-value" data-count="<?php echo ($stats['pourcentage'] !== 'N.A') ? (int)$stats['pourcentage'] : 98; ?>" data-suffix="%">0</div>
-                <div class="number-label"><?php echo t('satisfaction'); ?></div>
-            </div>
-            <div class="number-item scroll-reveal delay-200">
-                <div class="number-value" data-count="3">0</div>
-                <div class="number-label"><?php echo t('number_levels'); ?></div>
-            </div>
-            <div class="number-item scroll-reveal delay-300">
-                <div class="number-value" data-count="24" data-suffix="h">0</div>
-                <div class="number-label"><?php echo t('number_support'); ?></div>
-            </div>
-        </div>
+<section class="section section--paper">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><?php echo t('home.method_eyebrow'); ?></span>
+        <h2 class="section-head__title"><?php echo t('home.method_title'); ?></h2>
+      </div>
+      <p class="section-head__note"><?php echo t('home.method_note'); ?></p>
     </div>
+    <div class="method-list">
+      <div class="method-item reveal">
+        <span class="method-item__num">01</span>
+        <div><h3><?php echo t('home.method1_title'); ?></h3><p><?php echo t('home.method1_text'); ?></p></div>
+      </div>
+      <div class="method-item reveal">
+        <span class="method-item__num">02</span>
+        <div><h3><?php echo t('home.method2_title'); ?></h3><p><?php echo t('home.method2_text'); ?></p></div>
+      </div>
+      <div class="method-item reveal">
+        <span class="method-item__num">03</span>
+        <div><h3><?php echo t('home.method3_title'); ?></h3><p><?php echo t('home.method3_text'); ?></p></div>
+      </div>
+      <div class="method-item reveal">
+        <span class="method-item__num">04</span>
+        <div><h3><?php echo t('home.method4_title'); ?></h3><p><?php echo t('home.method4_text'); ?></p></div>
+      </div>
+    </div>
+  </div>
 </section>
 
-
-<!-- ============================================
-     ECOSYSTEM SECTION - Tools & Approach
-     ============================================ -->
-<section class="py-5">
-    <div class="container">
-        <div class="row align-items-center">
-
-            <!-- Features List -->
-            <div class="col-lg-5 mb-5 mb-lg-0">
-                <h2 class="display-6 fw-bold mb-4"><?php echo t('ecosystem_title'); ?></h2>
-                <div class="d-flex flex-column gap-4 scroll-reveal">
-                    <?php
-                    $features = [
-                        ['title' => 'progressive_training', 'desc' => 'progressive_training_desc'],
-                        ['title' => 'immediate_practice', 'desc' => 'immediate_practice_desc'],
-                        ['title' => 'continuous_support', 'desc' => 'continuous_support_desc']
-                    ];
-
-                    foreach ($features as $feature):
-                        ?>
-                        <div class="d-flex gap-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                style="width: 40px; height: 40px; background: rgba(255,255,255,0.1);">
-                                <i class="fas fa-check text-success"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-white mb-1"><?php echo t($feature['title']); ?></h5>
-                                <p class="text-secondary small m-0"><?php echo t($feature['desc']); ?></p>
-                            </div>
-                        </div>
-                        <?php
-                    endforeach; ?>
-                </div>
-            </div>
-
-            <!-- Tools Grid (App Icons) -->
-            <div class="col-lg-7">
-                <div class="position-relative">
-                    <!-- Glow behind -->
-                    <div class="position-absolute top-50 start-50 translate-middle"
-                        style="width: 300px; height: 300px; background: var(--accent-blue); filter: blur(100px); opacity: 0.2;">
-                    </div>
-
-                    <div class="row g-3">
-                        <?php
-                        $tools = [
-                            ['icon' => 'fab fa-python', 'label' => 'tool_chatbot', 'delay' => ''],
-                            ['icon' => 'fas fa-project-diagram', 'label' => 'tool_automation', 'delay' => 'delay-100'],
-                            ['icon' => 'fas fa-server', 'label' => 'tool_logic', 'delay' => 'delay-200'],
-                            ['icon' => 'fas fa-database', 'label' => 'tool_database', 'delay' => 'delay-300'],
-                            ['icon' => 'fas fa-laptop-code', 'label' => 'tool_code', 'delay' => 'delay-400'],
-                            ['icon' => 'fas fa-network-wired', 'label' => 'tool_api', 'delay' => 'delay-500'],
-                        ];
-
-                        foreach ($tools as $tool):
-                            ?>
-                            <div class="col-4">
-                                <div class="bento-card p-3 text-center h-100 border-0 scroll-reveal <?php echo $tool['delay']; ?>"
-                                    style="background: rgba(255,255,255,0.03);">
-                                    <i class="<?php echo $tool['icon']; ?> fs-1 text-white mb-3 d-block"></i>
-                                    <h6 class="text-white small m-0"><?php echo t($tool['label']); ?></h6>
-                                </div>
-                            </div>
-                            <?php
-                        endforeach; ?>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><?php echo t('home.testimonials_eyebrow'); ?></span>
+        <h2 class="section-head__title"><?php echo t('home.testimonials_title'); ?></h2>
+      </div>
+      <?php if (!empty($reviews)): ?>
+      <div class="reviews-nav">
+        <button id="prev-review" class="nav-btn" aria-label="Précédent" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button id="next-review" class="nav-btn" aria-label="Suivant" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <?php else: ?>
+      <p class="section-head__note"><?php echo t('home.testimonials_note'); ?></p>
+      <?php endif; ?>
     </div>
+
+    <?php if (!empty($reviews)): ?>
+    <div class="reviews-marquee">
+      <div class="reviews-inner">
+        <div class="reviews-track">
+          <?php foreach ($reviews as $r):
+            $name = trim($r['prenom'] . ' ' . $r['nom']);
+            $initials = strtoupper((($r['prenom'][0] ?? '')) . (($r['nom'][0] ?? '')));
+            $avatarSrc = $r['page_id'] ? 'api/notion-avatar.php?id=' . urlencode($r['page_id']) : $r['photo'];
+          ?>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">
+                <?php if ($avatarSrc): ?>
+                  <img src="<?php echo htmlspecialchars($avatarSrc); ?>" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <span style="display:none"><?php echo htmlspecialchars($initials); ?></span>
+                <?php else: ?>
+                  <?php echo htmlspecialchars($initials); ?>
+                <?php endif; ?>
+              </div>
+              <div class="review-info">
+                <?php if ($r['linkedin']): ?>
+                  <a href="<?php echo htmlspecialchars($r['linkedin']); ?>" target="_blank" rel="noopener noreferrer" class="review-name"><?php echo htmlspecialchars($name); ?></a>
+                <?php else: ?>
+                  <span class="review-name"><?php echo htmlspecialchars($name); ?></span>
+                <?php endif; ?>
+                <?php if ($r['profession']): ?>
+                <div class="review-profession"><?php echo htmlspecialchars($r['profession']); ?><?php if ($r['status'] === 'Entreprise' && $r['entreprise']): ?> <span class="company-name">· <?php echo htmlspecialchars($r['entreprise']); ?></span><?php endif; ?></div>
+                <?php endif; ?>
+              </div>
+            </div>
+            <div class="review-content-scroll">
+              <p class="review-text"><?php echo htmlspecialchars($r['avis']); ?></p>
+            </div>
+            <div class="review-stars"><?php echo renderStarsHtml($r['note']); ?></div>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+    <?php else: ?>
+    <div class="grid-3">
+      <div class="quote-card reveal">
+        <p>« <?php echo t('home.quote1_text'); ?> »</p>
+        <div class="quote-card__who">
+          <span class="quote-card__avatar">MC</span>
+          <div><strong><?php echo t('home.quote1_name'); ?></strong><span><?php echo t('home.quote1_role'); ?></span></div>
+        </div>
+      </div>
+      <div class="quote-card reveal">
+        <p>« <?php echo t('home.quote2_text'); ?> »</p>
+        <div class="quote-card__who">
+          <span class="quote-card__avatar">JL</span>
+          <div><strong><?php echo t('home.quote2_name'); ?></strong><span><?php echo t('home.quote2_role'); ?></span></div>
+        </div>
+      </div>
+      <div class="quote-card reveal">
+        <p>« <?php echo t('home.quote3_text'); ?> »</p>
+        <div class="quote-card__who">
+          <span class="quote-card__avatar">SB</span>
+          <div><strong><?php echo t('home.quote3_name'); ?></strong><span><?php echo t('home.quote3_role'); ?></span></div>
+        </div>
+      </div>
+    </div>
+    <?php endif; ?>
+  </div>
 </section>
 
-
-<!-- ============================================
-     FINAL CTA SECTION
-     ============================================ -->
-<section class="final-cta">
-    <div class="final-cta-bg"></div>
-    <div class="container position-relative" style="z-index: 2;">
-        <div class="section-badge mx-auto scroll-reveal">
-            <i class="fas fa-rocket"></i> <?php echo t('cta_badge'); ?>
-        </div>
-        <h2 class="section-title-lg scroll-reveal delay-100"><?php echo t('cta_title'); ?></h2>
-        <p class="final-cta-desc scroll-reveal delay-200"><?php echo t('cta_description'); ?></p>
-        <div class="hero-cta-group scroll-reveal delay-300">
-            <a href="/formation" class="btn-primary-glow">
-                <?php echo t('discover_trainings'); ?> <i class="fas fa-arrow-right"></i>
-            </a>
-            <a href="/contact" class="btn-outline-glass">
-                <i class="fas fa-envelope"></i> <?php echo t('contact'); ?>
-            </a>
-        </div>
+<section class="section section--paper">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><?php echo t('home.pc_teaser_eyebrow'); ?></span>
+        <h2 class="section-head__title"><?php echo t('home.pc_teaser_title'); ?></h2>
+      </div>
+      <p class="section-head__note"><?php echo t('home.pc_teaser_note'); ?></p>
     </div>
+    <div class="grid-3">
+      <div class="value-card reveal">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('home.pc_card1_title'); ?></h3>
+        <p><?php echo t('home.pc_card1_text'); ?></p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('home.pc_card2_title'); ?></h3>
+        <p><?php echo t('home.pc_card2_text'); ?></p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-card__icon">◆</div>
+        <h3><?php echo t('home.pc_card3_title'); ?></h3>
+        <p><?php echo t('home.pc_card3_text'); ?></p>
+      </div>
+    </div>
+    <div style="margin-top:32px">
+      <a href="services-pc.php" class="btn btn--ghost"><?php echo t('home.pc_teaser_link'); ?> <span class="btn__arrow">→</span></a>
+    </div>
+  </div>
 </section>
 
+<section class="section">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2><?php echo t('home.final_cta_title'); ?></h2>
+      <div class="cta-band__actions">
+        <a href="contact.php" class="btn btn--signal"><?php echo t('home.final_cta_primary'); ?> <span class="btn__arrow">→</span></a>
+        <a href="tarifs.php" class="btn btn--on-dark"><?php echo t('home.final_cta_secondary'); ?></a>
+      </div>
+    </div>
+  </div>
+</section>
 
-
-
+<script src="assets/js/hero-canvas.js" defer></script>
 <?php include 'includes/footer.php'; ?>

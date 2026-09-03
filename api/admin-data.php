@@ -1,169 +1,72 @@
 <?php
-/**
- * Admin Data API — returns dashboard admin data as JSON (lazy-loaded).
- * Only accessible to authenticated admin users.
- */
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/notion-admin.php';
 
-error_reporting(0);
-ini_set('display_errors', 0);
-ob_start();
-
-include_once __DIR__ . '/../includes/config.php';
-include_once __DIR__ . '/../includes/lang.php';
-include_once __DIR__ . '/../includes/notion.php';
+requireAdmin();
 
 header('Content-Type: application/json');
-
-// Auth check
-if (empty($_SESSION['logged_in'])) {
-    ob_clean();
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Non authentifié.']);
-    exit;
-}
+ob_start();
 
 try {
-    $userId = $_SESSION['user_id'] ?? '';
-    if (!$userId) throw new Exception('user_id manquant');
+    $accounts = listAllAccounts();
+    $rss      = listRssSubscribers();
 
-    // Verify admin status from Notion
-    $userPage = notion()->getPage($userId);
-    $status   = $userPage['properties']['Status']['select']['name']
-              ?? $userPage['properties']['Status']['rich_text'][0]['plain_text']
-              ?? '';
-
-    if ($status !== 'Admin' && $status !== '') {
-        ob_clean();
-        http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Accès refusé.']);
-        exit;
-    }
-
-    $notionApiKey = config('NOTION_API_KEY');
-    $usersDb      = config('NOTION_SATISFACTION_DATABASE_ID');
-    $leadsDb      = config('NOTION_CONTACT_DATABASE_ID');
-    $newsDb       = config('NOTION_Newsletter_DATABASE_ID');
-
-    // Helper for readable prop
-    $getProp = function ($p) {
-        if (!$p) return '';
-        $type = $p['type'] ?? '';
-        if (in_array($type, ['title', 'rich_text']) && !empty($p[$type])) {
-            return $p[$type][0]['plain_text'] ?? '';
-        }
-        if ($type === 'email')  return $p['email']          ?? '';
-        if ($type === 'select') return $p['select']['name'] ?? '';
-        return '';
-    };
-
-    // ── Parallel queries using notion() helper (with 5-min cache) ────────────
-    $listUsers      = notion()->queryDatabase($usersDb, ['page_size' => 100], 300)['results'] ?? [];
-    $listNewsletter = notion()->queryDatabase($newsDb,  ['page_size' => 100], 300)['results'] ?? [];
-    $pendingBilling = notion()->queryDatabase($usersDb, [
-        'filter' => ['property' => 'Facturation', 'select' => ['equals' => 'En attente']]
-    ], 120)['results'] ?? [];
-
-    // Recent leads
-    $recentLeads = notion()->queryDatabase($leadsDb, [
-        'page_size' => 5,
-        'sorts'     => [['timestamp' => 'created_time', 'direction' => 'descending']],
-    ])['results'] ?? [];
-
-    $recentNews = notion()->queryDatabase($newsDb, [
-        'page_size' => 5,
-        'sorts'     => [['timestamp' => 'created_time', 'direction' => 'descending']],
-    ])['results'] ?? [];
-
-    // Build recent activity
-    $recent = [];
-    foreach ($recentLeads as $l) {
-        $recent[] = [
-            'type'  => 'lead',
-            'name'  => $l['properties']['Prenom NOM']['title'][0]['text']['content'] ?? 'Anonyme',
-            'email' => $l['properties']['Email']['email'] ?? '',
-            'date'  => date('d/m H:i', strtotime($l['created_time'])),
-            'ts'    => strtotime($l['created_time']),
-        ];
-    }
-    foreach ($recentNews as $n) {
-        $recent[] = [
-            'type'  => 'newsletter',
-            'name'  => 'Subscriber',
-            'email' => $n['properties']['Email']['title'][0]['text']['content'] ?? '',
-            'date'  => date('d/m H:i', strtotime($n['created_time'])),
-            'ts'    => strtotime($n['created_time']),
-        ];
-    }
-    usort($recent, fn($a, $b) => $b['ts'] <=> $a['ts']);
-    $recent = array_slice($recent, 0, 10);
-
-    // Chart data (6 months)
+    // Growth chart: new accounts + new RSS subscribers per month, last 6 months.
     $months = [];
     for ($i = 5; $i >= 0; $i--) {
-        $months[date('M Y', strtotime("-$i months"))] = ['u' => 0, 'n' => 0];
+        $months[date('M Y', strtotime("-$i months"))] = ['accounts' => 0, 'rss' => 0];
     }
-    foreach ($listUsers as $u) {
-        $m = date('M Y', strtotime($u['created_time']));
-        if (isset($months[$m])) $months[$m]['u']++;
+    // Account creation date isn't directly exposed by listAllAccounts(); approximate
+    // growth using created_time is out of scope here since listAllAccounts() only
+    // returns display fields — use lastLogin-independent counts of 0 for accounts
+    // this endpoint doesn't have creation dates for. Real per-month account growth
+    // requires each page's created_time, added below via a second lightweight pass.
+    $dbId = config('NOTION_SATISFACTION_DATABASE_ID');
+    $rawAccounts = notion()->queryDatabaseAll($dbId);
+    foreach ($rawAccounts['results'] ?? [] as $page) {
+        $hash = NotionAPI::richText($page['properties']['Mot de passe'] ?? []);
+        if ($hash === '') continue;
+        $m = date('M Y', strtotime($page['created_time']));
+        if (isset($months[$m])) $months[$m]['accounts']++;
     }
-    foreach ($listNewsletter as $n) {
-        $m = date('M Y', strtotime($n['created_time']));
-        if (isset($months[$m])) $months[$m]['n']++;
+    $rawRss = notion()->queryDatabaseAll(config('NOTION_RSS_SUBSCRIBER_DATABASE_ID'));
+    foreach ($rawRss['results'] ?? [] as $page) {
+        $m = date('M Y', strtotime($page['created_time']));
+        if (isset($months[$m])) $months[$m]['rss']++;
     }
 
-    // Serialize user list (only needed fields)
-    $usersOut = array_map(function ($u) use ($getProp) {
-        $props = $u['properties'] ?? [];
-        return [
-            'id'      => $u['id'],
-            'name'    => $getProp($props['Prenom NOM'])  ?: 'N.A',
-            'email'   => $getProp($props['Email']),
-            'company' => $getProp($props['Nom d\'entreprise']),
-            'status'  => $getProp($props['Status']) ?: 'Admin',
-        ];
-    }, $listUsers);
+    // Billing status breakdown.
+    $billingCounts = array_fill_keys(ADMIN_BILLING_STATUSES, 0);
+    foreach ($accounts as $a) {
+        if (isset($billingCounts[$a['billing']])) $billingCounts[$a['billing']]++;
+    }
 
-    // Pending billing
-    $pendingOut = array_map(function ($pb) use ($getProp) {
-        $props = $pb['properties'] ?? [];
-        $files = $props['Factures']['files'] ?? [];
-        $docs  = array_map(fn($f) => [
-            'name' => $f['name'] ?? 'Doc',
-            'url'  => $f['file']['url'] ?? $f['external']['url'] ?? '#',
-        ], array_slice($files, 0, 2));
-
-        return [
-            'id'      => $pb['id'],
-            'name'    => $getProp($props['Prenom NOM'])  ?: 'N.A',
-            'email'   => $getProp($props['Email']),
-            'docs'    => $docs,
-        ];
-    }, $pendingBilling);
-
-    // Newsletter
-    $newsOut = array_map(function ($n) use ($getProp) {
-        return [
-            'email' => $getProp($n['properties']['Email']),
-            'date'  => date('d/m/Y H:i', strtotime($n['created_time'])),
-        ];
-    }, $listNewsletter);
+    // Role breakdown.
+    $roleCounts = ['particulier' => 0, 'entreprise' => 0, 'admin' => 0];
+    foreach ($accounts as $a) {
+        $roleCounts[$a['role']]++;
+    }
 
     ob_clean();
     echo json_encode([
-        'success'   => true,
-        'counts'    => [
-            'users'      => count($listUsers),
-            'newsletter' => count($listNewsletter),
-            'pending'    => count($pendingBilling),
-        ],
-        'users'     => $usersOut,
-        'newsletter'=> $newsOut,
-        'pending'   => $pendingOut,
-        'recent'    => $recent,
-        'chart'     => [
-            'labels' => array_keys($months),
-            'users'  => array_column(array_values($months), 'u'),
-            'news'   => array_column(array_values($months), 'n'),
+        'success'        => true,
+        'accounts'       => $accounts,
+        'rssSubscribers' => $rss,
+        'chart'          => [
+            'growth'  => [
+                'labels'   => array_keys($months),
+                'accounts' => array_column(array_values($months), 'accounts'),
+                'rss'      => array_column(array_values($months), 'rss'),
+            ],
+            'billing' => [
+                'labels' => array_keys($billingCounts),
+                'counts' => array_values($billingCounts),
+            ],
+            'roles'   => [
+                'labels' => array_keys($roleCounts),
+                'counts' => array_values($roleCounts),
+            ],
         ],
     ]);
 

@@ -1,0 +1,25 @@
+# Slapia
+
+> Slapia is a French AI training and IT hardware company. It designs and runs a 3-level AI training path (foundations & prompting, AI agents & automation, advanced n8n & Make) for teams and executives, and separately offers PC hardware services (custom builds, purchase quotes/advice, diagnostics & upgrades) for individuals and businesses. Founded and run by Thomas Lapierre, certified by Hoshin Partners.
+
+The site is available in French (default), English and German via a `?lang=fr|en|de` query parameter on any URL. Prices are in euros (EUR). Pricing, testimonials and a few statistics (companies trained, individuals trained, average satisfaction) on the site are pulled live from the company's internal records and may change over time; treat any specific numbers seen on a crawl as a snapshot, not a fixed fact.
+
+## Training
+
+- [Courses](https://www.slapia.com/formations.php): The 3-level AI training path — Level 1 Foundations & Prompting (ChatGPT, Notion), Level 2 AI Agents & Automation (ChatGPT, Notion, Logic), Level 3 Advanced n8n & Make (n8n, Make) — with a full module-by-module curriculum table per level.
+- [Pricing](https://www.slapia.com/tarifs.php): Training tiers (individual session, team/SME, custom enterprise programme), intensive mentoring add-on, and PC service tiers (free quote, custom build, business fleet).
+
+## PC hardware services
+
+- [PC services](https://www.slapia.com/services-pc.php): Custom PC builds, purchase quotes and advice (laptop or desktop), and diagnostics/upgrades for existing machines, for individuals and businesses.
+
+## Company
+
+- [About](https://www.slapia.com/a-propos.php): Company philosophy, method, founder bio (Thomas Lapierre) and his Hoshin Partners certifications.
+- [Contact](https://www.slapia.com/contact.php): Contact form for training requests, PC service requests, or general questions.
+
+## Optional
+
+- [Legal notice](https://www.slapia.com/mentions-legales.php): Publisher, hosting and company registration details (SlapIA, micro-entreprise, France).
+- [Privacy policy](https://www.slapia.com/confidentialite.php): GDPR data processing information.
+- [Terms of sale](https://www.slapia.com/cgv.php): Terms of sale for training and PC services.

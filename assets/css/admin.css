@@ -1,0 +1,165 @@
+/* Admin dashboard — loaded only by pages/admin.php, never the public site. */
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.admin-tab-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-fade);
+  cursor: pointer;
+}
+.admin-tab-btn.is-active {
+  color: var(--ink);
+  border-bottom-color: var(--signal);
+}
+.admin-tab-panel { display: none; }
+.admin-tab-panel.is-active { display: block; }
+
+.admin-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.admin-kpi-card {
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.admin-kpi-card .num { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); }
+.admin-kpi-card .label { font-size: 0.8rem; color: var(--ink-fade); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.admin-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+@media (max-width: 900px) { .admin-chart-grid { grid-template-columns: 1fr; } }
+.admin-chart-card {
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.admin-chart-card canvas { max-height: 260px; }
+
+.admin-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+
+.admin-table-wrap { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.admin-table th, .admin-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+.admin-table th {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+.admin-table select {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.admin-badge--admin { background: var(--forest-glow); color: var(--forest); }
+.admin-badge--entreprise { background: color-mix(in srgb, var(--signal) 15%, transparent); color: var(--signal-deep); }
+.admin-badge--particulier { background: var(--line); color: var(--ink-soft); }
+
+.admin-invoice-card {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  margin-bottom: 12px;
+}
+.admin-invoice-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.admin-invoice-list a {
+  color: var(--signal-deep);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.admin-invoice-list a:hover { text-decoration: underline; }
+.admin-invoice-empty {
+  color: var(--ink-fade);
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+.admin-invoice-upload {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.admin-details-row td { white-space: normal; }
+.admin-details-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  padding: 16px;
+  background: var(--paper);
+  border-radius: 10px;
+}
+.admin-details-field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+.admin-details-field--wide { flex: 1 1 260px; }
+.admin-details-field label {
+  font-size: 0.75rem;
+  color: var(--ink-fade);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.admin-details-field input, .admin-details-field textarea {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--white);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.admin-details-field textarea { min-height: 60px; resize: vertical; }
