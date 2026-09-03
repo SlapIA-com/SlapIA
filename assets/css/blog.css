@@ -77,4 +77,17 @@
 }
 
 .blog-article__back { margin-top: 40px; }
-.blog-article__back--top { margin-top: 0; margin-bottom: 20px; }
+
+/* Lightweight text link above the title — deliberately not a .btn (that
+   pill shape looked heavy sitting next to the date tag). */
+.blog-article__back-link {
+  display: block;
+  width: fit-content;
+  margin-bottom: 22px;
+  color: var(--ink-fade);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+}
+.blog-article__back-link:hover { color: var(--ink); }

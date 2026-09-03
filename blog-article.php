@@ -29,7 +29,7 @@ include 'includes/header.php';
 
 <section class="page-hero">
   <div class="container">
-    <a href="/blog.php" class="btn btn--ghost blog-article__back blog-article__back--top">← <?php echo t('blog.back_to_list'); ?></a>
+    <a href="/blog.php" class="blog-article__back-link">← <?php echo t('blog.back_to_list'); ?></a>
     <span class="eyebrow"><?php echo date('d M Y', strtotime($article['date'])); ?></span>
     <h1 class="page-hero__title"><?php echo htmlspecialchars($article['title']); ?></h1>
   </div>
