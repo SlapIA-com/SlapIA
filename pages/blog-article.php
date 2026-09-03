@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/i18n.php';
-require_once 'includes/notion-blog.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/notion-blog.php';
 
 $slug = trim($_GET['slug'] ?? '');
 if ($slug === '' || !preg_match('/^[a-z0-9-]+$/', $slug)) {
@@ -22,7 +22,7 @@ if ($article['image']) {
     $page_image = $article['image'];
 }
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <link rel="stylesheet" href="<?php echo assetUrl('/assets/css/blog.css'); ?>">
@@ -49,4 +49,4 @@ include 'includes/header.php';
   </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -1,7 +1,7 @@
 <?php
-require_once 'includes/i18n.php';
-require_once 'includes/stats.php';
-require_once 'includes/reviews.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/stats.php';
+require_once __DIR__ . '/../includes/reviews.php';
 $page_title = t('home.meta_title');
 $page_description = t('home.meta_description');
 
@@ -51,7 +51,7 @@ if (!empty($reviews)) {
 }
 $jsonld = json_encode($course_schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="hero">
@@ -325,4 +325,4 @@ include 'includes/header.php';
 </section>
 
 <script src="<?php echo assetUrl('assets/js/hero-canvas.js'); ?>" defer></script>
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

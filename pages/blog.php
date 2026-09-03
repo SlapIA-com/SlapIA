@@ -1,13 +1,13 @@
 <?php
-require_once 'includes/i18n.php';
-require_once 'includes/notion-blog.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/notion-blog.php';
 
 $page_title = t('blog.meta_title');
 $page_description = t('blog.meta_description');
 
 $articles = listBlogArticles();
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <link rel="stylesheet" href="<?php echo assetUrl('assets/css/blog.css'); ?>">
@@ -46,4 +46,4 @@ include 'includes/header.php';
   </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

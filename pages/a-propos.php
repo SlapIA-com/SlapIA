@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/i18n.php';
-require_once 'includes/stats.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/stats.php';
 $page_title = t('about.meta_title');
 $page_description = t('about.meta_description');
 $page_image = 'assets/img/team/Thomas-Lapierre.jpg';
@@ -28,7 +28,7 @@ $jsonld = json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 
 $stats = getSlapiaStats();
 $decimal_sep = $lang === 'en' ? '.' : ',';
@@ -176,4 +176,4 @@ $stat4_html = statNumHtml(($stats['is_live'] && $stats['satisfaction'] !== null)
   </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

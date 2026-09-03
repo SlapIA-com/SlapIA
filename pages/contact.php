@@ -1,8 +1,8 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/i18n.php';
-require_once 'includes/auth.php';
-require_once 'includes/notion-contact.php';
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/notion-contact.php';
 
 $page_title = t('contact.meta_title');
 $page_description = t('contact.meta_description');
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="page-hero">
@@ -177,4 +177,4 @@ include 'includes/header.php';
   </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

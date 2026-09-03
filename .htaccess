@@ -14,20 +14,30 @@
     # Prevent potential loops
     RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
+    # Site pages now live in pages/ (index, formations, blog, legal pages,
+    # etc.) — public URLs are unchanged, only the physical files moved.
+    RewriteRule ^$ pages/index.php [L]
+
     # Remove .php extension and check in pages/ directory
     # Specific Legal Pages Rewrites
     # NOTE: these three used to all point at pages/mentions-legales.php, which
     # doesn't exist — the legal pages live at the site root, one file per topic
     # (mentions-legales.php, confidentialite.php, cgv.php). Fixed to route each
     # pretty URL to its real page.
-    RewriteRule ^mentions-legales$ mentions-legales.php [L,QSA]
-    RewriteRule ^politique-confidentialite$ confidentialite.php [L,R=301]
-    RewriteRule ^cgv$ cgv.php [L,R=301]
+    RewriteRule ^mentions-legales$ pages/mentions-legales.php [L,QSA]
+    RewriteRule ^politique-confidentialite$ pages/confidentialite.php [L,R=301]
+    RewriteRule ^cgv$ pages/cgv.php [L,R=301]
 
     # Blog article pretty URLs: /blog/<slug> -> blog-article.php?slug=<slug>
     # Was missing entirely — blog.php links to /blog/<slug> for every article,
     # but nothing routed that URL anywhere, so every article link 404'd.
-    RewriteRule ^blog/([a-z0-9-]+)$ blog-article.php?slug=$1 [L,QSA]
+    RewriteRule ^blog/([a-z0-9-]+)$ pages/blog-article.php?slug=$1 [L,QSA]
+
+    # Direct "/name.php" requests (nav links, footer links) — served
+    # transparently from pages/ now that the site templates live there.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/pages/$1 -f
+    RewriteRule ^([A-Za-z0-9_-]+\.php)$ pages/$1 [L,QSA]
 
     # ROI Calculator
     # TODO: pages/Calcule-ROI-IA.php does not exist yet in this repo — this route
@@ -57,7 +67,7 @@
     ErrorDocument 404 /404.php
 
     # Dynamic Sitemap
-    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+    RewriteRule ^sitemap\.xml$ pages/sitemap.php [L]
 
     # RSS Feed
     # TODO: rss.php does not exist yet in this repo — this route currently 404s,

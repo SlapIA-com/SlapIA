@@ -8,8 +8,8 @@
  * /sitemap.xml — the URL robots.txt itself declares — was 404ing.
  */
 
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/notion-blog.php';
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/notion-blog.php';
 
 header('Content-Type: application/xml; charset=UTF-8');
 

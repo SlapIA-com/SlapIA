@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/i18n.php';
+require_once __DIR__ . '/../includes/i18n.php';
 $page_title = t('courses_page.meta_title');
 $page_description = t('courses_page.meta_description');
 
@@ -22,7 +22,7 @@ $jsonld = json_encode([
     'hasPart' => $level_courses,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-include 'includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="page-hero">
@@ -121,4 +121,4 @@ include 'includes/header.php';
   </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
