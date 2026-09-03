@@ -8,8 +8,10 @@ RUN apt-get update && apt-get install -y \
 
 # .htaccess : activer la réécriture + autoriser AllowOverride
 RUN a2enmod rewrite headers \
-RUN echo 'PassEnv APP_ENV' > /etc/apache2/conf-enabled/passenv.conf
  && sed -ri 's#AllowOverride None#AllowOverride All#g' /etc/apache2/apache2.conf
+
+# Passer APP_ENV à Apache (pour les règles .htaccess conditionnelles)
+RUN echo 'PassEnv APP_ENV' > /etc/apache2/conf-enabled/passenv.conf
 
 # Composer (génère l'autoloader)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
