@@ -136,6 +136,11 @@
 }
 
 .admin-details-row td { white-space: normal; }
+.admin-last-login {
+  font-size: 0.78rem;
+  color: var(--ink-fade);
+  margin-bottom: 10px;
+}
 .admin-details-panel {
   display: flex;
   flex-wrap: wrap;

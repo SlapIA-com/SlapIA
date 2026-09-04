@@ -100,18 +100,20 @@
   var ROLE_OPTIONS = ['particulier', 'entreprise', 'admin'];
 
   function accountRowHtml(a) {
+    // Service et Dernière connexion sont retirés du tableau compact (source de
+    // la barre de défilement horizontal) — Service est de toute façon visible
+    // en détail dans "Prestations", et Dernière connexion est reportée dans
+    // le panneau Détails.
     return '<tr data-id="' + escHtml(a.id) + '" data-search="' + escHtml((a.name + ' ' + a.email + ' ' + a.company).toLowerCase()) + '">' +
       '<td><div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy">' + escHtml(a.name) + '</div></td>' +
       '<td>' + escHtml(a.email) + '</td>' +
       '<td>' + escHtml(a.company) + '</td>' +
-      '<td>' + escHtml(a.service) + '</td>' +
       '<td><select class="role-select">' + ROLE_OPTIONS.map(function (r) {
         return '<option value="' + r + '"' + (a.role === r ? ' selected' : '') + '>' + r + '</option>';
       }).join('') + '</select></td>' +
       '<td><select class="billing-select">' + BILLING_OPTIONS.map(function (b) {
         return '<option value="' + escHtml(b) + '"' + (a.billing === b ? ' selected' : '') + '>' + escHtml(b) + '</option>';
       }).join('') + '</select></td>' +
-      '<td>' + (a.lastLogin ? new Date(a.lastLogin).toLocaleString('fr-FR') : '—') + '</td>' +
       '<td><button class="btn btn--ghost reset-pwd-btn" data-email="' + escHtml(a.email) + '">Reset MDP</button> ' +
         '<button class="btn btn--ghost details-toggle-btn" data-id="' + escHtml(a.id) + '">' + escHtml(I18N.details_btn) + '</button></td>' +
     '</tr>';
@@ -190,7 +192,8 @@
     if (!prestationsHtml) prestationsHtml = '<div class="admin-invoice-empty">' + escHtml(I18N.no_prestations) + '</div>';
 
     return '<tr class="admin-details-row" data-details-for="' + escHtml(a.id) + '" style="display:none;">' +
-      '<td colspan="8">' +
+      '<td colspan="6">' +
+        '<div class="admin-last-login">Dernière connexion : ' + (a.lastLogin ? new Date(a.lastLogin).toLocaleString('fr-FR') : '—') + '</div>' +
         '<div class="admin-details-panel">' +
           '<div class="admin-details-field">' +
             '<label>' + escHtml(I18N.label_full_name) + '</label>' +
@@ -304,7 +307,7 @@
         '<button class="btn btn--signal" id="admin-new-client-toggle">' + escHtml(I18N.new_client_btn) + '</button>' +
       '</div>' +
       '<div class="admin-table-wrap"><table class="admin-table" id="accountsTable"><thead><tr>' +
-        '<th>Nom</th><th>Email</th><th>Entreprise</th><th>Service</th><th>Rôle</th><th>Facturation</th><th>Dernière connexion</th><th>Actions</th>' +
+        '<th>Nom</th><th>Email</th><th>Entreprise</th><th>Rôle</th><th>Facturation</th><th>Actions</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>';
 
     window.__adminFilterAccounts = function (q) { filterTable('accountsTable', q); };
@@ -550,9 +553,14 @@
           }).join('') + '</ul>'
         : '<div class="admin-invoice-empty">Aucune facture attachée.</div>';
 
+      var serviceLine = a.service || a.billing
+        ? '<div>' + (a.service ? escHtml(a.service) : 'Aucun service') + (a.price ? ' — ' + a.price + ' €' : '') +
+          (a.billing ? ' — <span class="admin-badge admin-badge--' + escHtml(a.role) + '">' + escHtml(a.billing) + '</span>' : '') + '</div>'
+        : '<div class="admin-invoice-empty">Aucune prestation enregistrée.</div>';
+
       return '<div class="admin-invoice-card">' +
         '<div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy"><strong>' + escHtml(a.name) + '</strong> — ' + escHtml(a.email) + '</div>' +
-        '<div>' + escHtml(a.service) + (a.price ? ' — ' + a.price + ' €' : '') + ' — <span class="admin-badge admin-badge--' + escHtml(a.role) + '">' + escHtml(a.billing) + '</span></div>' +
+        serviceLine +
         filesHtml +
         '<form class="admin-invoice-upload" data-id="' + escHtml(a.id) + '">' +
           '<input type="file" accept="application/pdf" required>' +

@@ -34,7 +34,6 @@
         <h4><?php echo t('footer.contact_heading'); ?></h4>
         <ul>
           <li><a href="mailto:contact@slapia.com">contact@slapia.com</a></li>
-          <li><a href="tel:+33100000000"><?php echo t('footer.phone'); ?></a></li>
         </ul>
       </div>
     </div>
