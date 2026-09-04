@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-client.php';
+require_once __DIR__ . '/../includes/client-account.php';
 
 requireLogin();
 
@@ -29,7 +29,7 @@ try {
     }
 
     $me = currentUser();
-    if (!updateOwnLinkedin($me['id'], $linkedin)) {
+    if (!updateOwnLinkedin((int)$me['id'], $linkedin)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('dashboard.err_linkedin_failed')]);

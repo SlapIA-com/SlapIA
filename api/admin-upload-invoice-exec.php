@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-admin.php';
+require_once __DIR__ . '/../includes/admin-accounts.php';
 
 requireAdmin();
 
@@ -19,8 +19,8 @@ try {
         exit;
     }
 
-    $pageId = trim($_POST['page_id'] ?? '');
-    if ($pageId === '' || empty($_FILES['file']) || ($_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+    $clientId = filter_var($_POST['page_id'] ?? '', FILTER_VALIDATE_INT);
+    if (!$clientId || empty($_FILES['file']) || ($_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => t('admin.err_upload_fields')]);
@@ -45,14 +45,12 @@ try {
         exit;
     }
 
-    // Sanitize the filename Notion will display (strip path separators and
-    // control characters; keep it under Notion's 900-byte filename limit).
     $originalName = basename($file['name']);
     $safeName     = preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
     $safeName     = substr($safeName, 0, 200);
     if ($safeName === '') $safeName = 'facture.pdf';
 
-    if (!uploadInvoiceFile($pageId, $file['tmp_name'], $safeName, $mimeType)) {
+    if (!uploadInvoiceFile($clientId, $file['tmp_name'], $safeName, $mimeType)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('admin.err_upload_failed')]);

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-admin.php';
+require_once __DIR__ . '/../includes/admin-accounts.php';
 
 requireAdmin();
 
@@ -17,23 +17,21 @@ try {
     for ($i = 5; $i >= 0; $i--) {
         $months[date('M Y', strtotime("-$i months"))] = ['accounts' => 0, 'rss' => 0];
     }
-    // Account creation date isn't directly exposed by listAllAccounts(); approximate
-    // growth using created_time is out of scope here since listAllAccounts() only
-    // returns display fields — use lastLogin-independent counts of 0 for accounts
-    // this endpoint doesn't have creation dates for. Real per-month account growth
-    // requires each page's created_time, added below via a second lightweight pass.
-    $dbId = config('NOTION_SATISFACTION_DATABASE_ID', '');
-    $rawAccounts = $dbId !== '' ? notion()->queryDatabaseAll($dbId) : ['results' => []];
-    foreach ($rawAccounts['results'] ?? [] as $page) {
-        $hash = NotionAPI::richText($page['properties']['Mot de passe'] ?? []);
-        if ($hash === '') continue;
-        $m = date('M Y', strtotime($page['created_time']));
+
+    $pdo = db();
+
+    $accountRows = $pdo->query(
+        "SELECT a.created_at FROM comptes a
+         WHERE a.mot_de_passe_hash IS NOT NULL AND a.mot_de_passe_hash != ''"
+    )->fetchAll();
+    foreach ($accountRows as $r) {
+        $m = date('M Y', strtotime($r['created_at']));
         if (isset($months[$m])) $months[$m]['accounts']++;
     }
-    $rssDbId = config('NOTION_RSS_SUBSCRIBER_DATABASE_ID', '');
-    $rawRss  = $rssDbId !== '' ? notion()->queryDatabaseAll($rssDbId) : ['results' => []];
-    foreach ($rawRss['results'] ?? [] as $page) {
-        $m = date('M Y', strtotime($page['created_time']));
+
+    $rssRows = $pdo->query('SELECT date_creation FROM rss_subscriber')->fetchAll();
+    foreach ($rssRows as $r) {
+        $m = date('M Y', strtotime($r['date_creation']));
         if (isset($months[$m])) $months[$m]['rss']++;
     }
 

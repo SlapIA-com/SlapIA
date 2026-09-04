@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/stats.php';
-require_once __DIR__ . '/../includes/reviews.php';
+require_once __DIR__ . '/../includes/reviews.php'; // getClientReviews() — MySQL, plus Notion
 $page_title = t('home.meta_title');
 $page_description = t('home.meta_description');
 
@@ -11,7 +11,7 @@ $stat1_html = statNumHtml($stats['is_live'] ? (float)$stats['entreprises'] : nul
 $stat2_html = statNumHtml($stats['is_live'] ? (float)$stats['particuliers'] : null, 0, '+', t('home.stat2_num'), $decimal_sep);
 $stat3_html = statNumHtml(($stats['is_live'] && $stats['satisfaction'] !== null) ? (float)$stats['satisfaction'] : null, 1, '/5', t('home.stat3_num'), $decimal_sep);
 
-$reviews = getNotionReviews(12);
+$reviews = getClientReviews(12);
 
 function renderStarsHtml(?float $note): string
 {
@@ -220,7 +220,7 @@ include __DIR__ . '/../includes/header.php';
           <?php foreach ($reviews as $r):
             $name = trim($r['prenom'] . ' ' . $r['nom']);
             $initials = strtoupper((($r['prenom'][0] ?? '')) . (($r['nom'][0] ?? '')));
-            $avatarSrc = $r['page_id'] ? 'api/notion-avatar.php?id=' . urlencode($r['page_id']) : $r['photo'];
+            $avatarSrc = 'api/avatar.php?id=' . urlencode((string)$r['client_id']);
           ?>
           <div class="review-item">
             <div class="review-header">

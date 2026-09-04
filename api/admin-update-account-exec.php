@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-admin.php';
+require_once __DIR__ . '/../includes/admin-accounts.php';
 
 requireAdmin();
 
@@ -18,26 +18,26 @@ try {
         exit;
     }
 
-    $input  = json_decode(file_get_contents('php://input'), true) ?: [];
-    $pageId = trim($input['page_id'] ?? '');
-    $role   = $input['role'] ?? null;
+    $input   = json_decode(file_get_contents('php://input'), true) ?: [];
+    $clientId = filter_var($input['page_id'] ?? '', FILTER_VALIDATE_INT);
+    $role    = $input['role'] ?? null;
     $billing = $input['billing'] ?? null;
 
-    if ($pageId === '' || ($role === null && $billing === null)) {
+    if (!$clientId || ($role === null && $billing === null)) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => t('admin.err_fields')]);
         exit;
     }
 
-    if ($role !== null && !updateAccountRole($pageId, $role)) {
+    if ($role !== null && !updateAccountRole($clientId, $role)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('admin.err_update_failed')]);
         exit;
     }
 
-    if ($billing !== null && !updateAccountBilling($pageId, $billing)) {
+    if ($billing !== null && !updateAccountBilling($clientId, $billing)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('admin.err_update_failed')]);

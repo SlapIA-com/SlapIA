@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-admin.php';
+require_once __DIR__ . '/../includes/admin-accounts.php';
 
 requireAdmin();
 
@@ -19,19 +19,19 @@ try {
     }
 
     $input    = json_decode(file_get_contents('php://input'), true) ?: [];
-    $pageId   = trim($input['page_id'] ?? '');
+    $clientId = filter_var($input['page_id'] ?? '', FILTER_VALIDATE_INT);
     $phone    = array_key_exists('phone', $input) ? $input['phone'] : null;
     $location = array_key_exists('location', $input) ? $input['location'] : null;
     $orders   = array_key_exists('orders', $input) ? $input['orders'] : null;
 
-    if ($pageId === '' || $phone === null || $location === null || $orders === null) {
+    if (!$clientId || $phone === null || $location === null || $orders === null) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => t('admin.err_fields')]);
         exit;
     }
 
-    if (!updateAccountContactDetails($pageId, (string)$phone, (string)$location, (string)$orders)) {
+    if (!updateAccountContactDetails($clientId, (string)$phone, (string)$location, (string)$orders)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('admin.err_update_failed')]);

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
+require_once __DIR__ . '/../includes/users.php';
 
 header('Content-Type: application/json');
 ob_start();
@@ -64,36 +64,38 @@ try {
         exit;
     }
 
-    $userPage = findUserByEmail($email);
-    if (!$userPage || !verifyPassword($userPage, $password)) {
-        logFailedLogin($email, $userPage ? 'wrong_password' : 'email_not_found', $ip);
+    $userRow = findUserByEmail($email);
+    if (!$userRow || !verifyPassword($userRow, $password)) {
+        logFailedLogin($email, $userRow ? 'wrong_password' : 'email_not_found', $ip);
         ob_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => t('auth.err_invalid')]);
         exit;
     }
 
-    $hash = NotionAPI::richText($userPage['properties']['Mot de passe'] ?? []);
-    if (strpos($hash, '$2y$') !== 0) {
-        // auto-upgrade legacy plain-text; best-effort, must not block login
-        if (!upgradePasswordHash($userPage['id'], $password)) {
-            error_log('[SlapIA Auth Login] Failed to upgrade legacy password hash for user ' . $userPage['id']);
+    $clientId = (int)$userRow['client_id'];
+
+    $hash = $userRow['mot_de_passe_hash'] ?? '';
+    if (!preg_match('/^\$2[axy]\$/', $hash)) {
+        // auto-upgrade any non-bcrypt legacy hash; best-effort, must not block login
+        if (!upgradePasswordHash($clientId, $password)) {
+            error_log('[SlapIA Auth Login] Failed to upgrade legacy password hash for client ' . $clientId);
         }
     }
 
     rateLimitReset('login_ip_' . $ip);
     rateLimitReset('login_email_' . strtolower($email));
 
-    $_SESSION['user_id']    = $userPage['id'];
+    $_SESSION['user_id']    = $clientId;
     $_SESSION['user_email'] = $email;
-    $_SESSION['user_name']  = userDisplayName($userPage);
-    $_SESSION['user_role']  = userRole($userPage);
+    $_SESSION['user_name']  = userDisplayName($userRow);
+    $_SESSION['user_role']  = userRole($userRow);
     session_regenerate_id(true);
     $_SESSION['logged_in']  = true;
 
-    // Best-effort; never blocks login even if the Notion property doesn't exist yet.
-    if (!setLastLogin($userPage['id'])) {
-        error_log('[SlapIA Auth Login] Failed to record last login for user ' . $userPage['id']);
+    // Best-effort; never blocks login even on failure.
+    if (!setLastLogin($clientId)) {
+        error_log('[SlapIA Auth Login] Failed to record last login for client ' . $clientId);
     }
 
     if ($rememberMe) {

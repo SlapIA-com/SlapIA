@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-client.php';
+require_once __DIR__ . '/../includes/client-account.php';
 
 requireLogin();
 
@@ -10,7 +10,7 @@ ob_start();
 
 try {
     $me = currentUser();
-    $account = getOwnAccountDetails($me['id']);
+    $account = getOwnAccountDetails((int)$me['id']);
 
     if ($account === null) {
         ob_clean();

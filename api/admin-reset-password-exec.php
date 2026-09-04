@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
-require_once __DIR__ . '/../includes/notion-admin.php';
+require_once __DIR__ . '/../includes/users.php';
+require_once __DIR__ . '/../includes/admin-accounts.php';
 
 requireAdmin();
 
@@ -30,15 +30,15 @@ try {
         exit;
     }
 
-    $userPage = findUserByEmail($email);
-    if (!$userPage) {
+    $userRow = findUserByEmail($email);
+    if (!$userRow) {
         ob_clean();
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => t('admin.err_account_not_found')]);
         exit;
     }
 
-    if (!resetAccountPassword($userPage['id'], $newPassword)) {
+    if (!resetAccountPassword((int)$userRow['client_id'], $newPassword)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('admin.err_update_failed')]);

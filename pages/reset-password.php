@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
+require_once __DIR__ . '/../includes/users.php';
 
 if ($me = currentUser()) {
     header('Location: ' . ($me['role'] === 'admin' ? '/admin' : '/dashboard'));

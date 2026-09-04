@@ -3,8 +3,8 @@ require_once __DIR__ . '/config.php';
 
 /**
  * Session-based auth helpers: current user, route guards, rate limiting.
- * Role resolution from Notion data lives in notion-users.php (co-located
- * with the code that reads the Notion "Status" property).
+ * Role resolution from MySQL data lives in users.php (co-located with the
+ * code that reads clients.type_client).
  */
 
 function currentUser(): ?array

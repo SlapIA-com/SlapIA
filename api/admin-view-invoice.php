@@ -3,29 +3,24 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 
-requireLogin();
+requireAdmin();
 
-$index = filter_input(INPUT_GET, 'index', FILTER_VALIDATE_INT);
-if ($index === null || $index === false || $index < 0) {
+$invoiceId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$invoiceId) {
     http_response_code(400);
     exit;
 }
 
-$me = currentUser();
+$stmt = db()->prepare('SELECT nom_fichier, chemin_fichier, mime_type FROM factures WHERE id = :id LIMIT 1');
+$stmt->execute(['id' => $invoiceId]);
+$invoice = $stmt->fetch();
 
-// Vérifie que la facture appartient bien à l'utilisateur connecté (jamais un
-// autre client), via la même liste ordonnée que le tableau de bord.
-$stmt = db()->prepare('SELECT id, nom_fichier, chemin_fichier, mime_type FROM factures WHERE client_id = :id ORDER BY id ASC');
-$stmt->execute(['id' => (int)$me['id']]);
-$invoices = $stmt->fetchAll();
-
-if (!isset($invoices[$index])) {
+if (!$invoice) {
     http_response_code(404);
     exit;
 }
 
-$invoice = $invoices[$index];
-$path    = STORAGE_DIR . '/' . $invoice['chemin_fichier'];
+$path = STORAGE_DIR . '/' . $invoice['chemin_fichier'];
 if (!is_readable($path)) {
     http_response_code(404);
     exit;

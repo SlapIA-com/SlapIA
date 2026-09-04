@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-contact.php';
+require_once __DIR__ . '/../includes/contact-form.php';
 
 $page_title = t('contact.meta_title');
 $page_description = t('contact.meta_description');

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
+require_once __DIR__ . '/../includes/users.php';
 
 header('Content-Type: application/json');
 ob_start();
@@ -35,12 +35,13 @@ try {
         exit;
     }
 
-    $userPage = findUserByEmail($email);
+    $userRow = findUserByEmail($email);
 
-    if ($userPage) {
-        $token = setResetToken($userPage['id']);
+    if ($userRow) {
+        $clientId = (int)$userRow['client_id'];
+        $token = setResetToken($clientId);
         if ($token === null) {
-            error_log('[SlapIA Reset] setResetToken failed for user ' . $userPage['id'] . ', reset email not sent.');
+            error_log('[SlapIA Reset] setResetToken failed for client ' . $clientId . ', reset email not sent.');
         } else {
             $resetUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
                       . '/reset-password?token=' . urlencode($token) . '&email=' . urlencode($email);
@@ -53,7 +54,7 @@ try {
                     CURLOPT_POSTFIELDS     => json_encode([
                         'event'     => 'password_reset',
                         'email'     => $email,
-                        'name'      => userDisplayName($userPage),
+                        'name'      => userDisplayName($userRow),
                         'reset_url' => $resetUrl,
                     ]),
                     CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],

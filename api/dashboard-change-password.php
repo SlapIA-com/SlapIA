@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
+require_once __DIR__ . '/../includes/users.php';
 
 requireLogin();
 
@@ -29,24 +29,25 @@ try {
         exit;
     }
 
-    $me   = currentUser();
-    $page = notion()->getPage($me['id']);
+    $me = currentUser();
+    $clientId = (int)$me['id'];
+    $userRow = getUserById($clientId);
 
-    if (!empty($page['error']) || ($page['http_code'] ?? 0) >= 300) {
+    if (!$userRow) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('auth.err_server')]);
         exit;
     }
 
-    if (!verifyPassword($page, $currentPassword)) {
+    if (!verifyPassword($userRow, $currentPassword)) {
         ob_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => t('dashboard.err_wrong_current_password')]);
         exit;
     }
 
-    if (!updatePassword($me['id'], $newPassword)) {
+    if (!updatePassword($clientId, $newPassword)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('dashboard.err_password_update_failed')]);

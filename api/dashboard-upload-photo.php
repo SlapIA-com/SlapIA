@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-client.php';
+require_once __DIR__ . '/../includes/client-account.php';
 
 requireLogin();
 
@@ -47,19 +47,12 @@ try {
     $safeName = 'photo-profil.' . $allowedTypes[$mimeType];
 
     $me = currentUser();
-    if (!uploadOwnPhoto($me['id'], $file['tmp_name'], $safeName, $mimeType)) {
+    if (!uploadOwnPhoto((int)$me['id'], $file['tmp_name'], $safeName, $mimeType)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('dashboard.err_photo_failed')]);
         exit;
     }
-
-    // Invalidate api/notion-avatar.php's cache for this page so the new
-    // photo shows immediately instead of after its 1-hour TTL.
-    $pageIdClean = preg_replace('/[^a-f0-9]/i', '', $me['id']);
-    $cacheDir    = sys_get_temp_dir();
-    @unlink($cacheDir . '/slapia_avatar_' . $pageIdClean . '.meta');
-    @unlink($cacheDir . '/slapia_avatar_' . $pageIdClean . '.img');
 
     ob_clean();
     echo json_encode(['success' => true]);

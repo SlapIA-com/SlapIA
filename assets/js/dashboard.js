@@ -36,7 +36,7 @@
     });
 
   function avatarUrl(bust) {
-    var url = '/api/notion-avatar.php?id=' + encodeURIComponent(account.id);
+    var url = '/api/avatar.php?id=' + encodeURIComponent(account.id);
     if (bust) url += '&v=' + Date.now();
     return url;
   }

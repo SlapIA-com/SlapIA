@@ -93,7 +93,7 @@
 
   function accountRowHtml(a) {
     return '<tr data-id="' + escHtml(a.id) + '" data-search="' + escHtml((a.name + ' ' + a.email + ' ' + a.company).toLowerCase()) + '">' +
-      '<td><div style="display:flex; align-items:center; gap:10px;"><img src="/api/notion-avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy">' + escHtml(a.name) + '</div></td>' +
+      '<td><div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy">' + escHtml(a.name) + '</div></td>' +
       '<td>' + escHtml(a.email) + '</td>' +
       '<td>' + escHtml(a.company) + '</td>' +
       '<td>' + escHtml(a.service) + '</td>' +
@@ -268,7 +268,7 @@
         : '<div class="admin-invoice-empty">Aucune facture attachée.</div>';
 
       return '<div class="admin-invoice-card">' +
-        '<div style="display:flex; align-items:center; gap:10px;"><img src="/api/notion-avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy"><strong>' + escHtml(a.name) + '</strong> — ' + escHtml(a.email) + '</div>' +
+        '<div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy"><strong>' + escHtml(a.name) + '</strong> — ' + escHtml(a.email) + '</div>' +
         '<div>' + escHtml(a.service) + (a.price ? ' — ' + a.price + ' €' : '') + ' — <span class="admin-badge admin-badge--' + escHtml(a.role) + '">' + escHtml(a.billing) + '</span></div>' +
         filesHtml +
         '<form class="admin-invoice-upload" data-id="' + escHtml(a.id) + '">' +

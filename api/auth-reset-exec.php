@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/notion-users.php';
+require_once __DIR__ . '/../includes/users.php';
 
 header('Content-Type: application/json');
 ob_start();
@@ -29,15 +29,15 @@ try {
         exit;
     }
 
-    $userPage = validateResetToken($email, $token);
-    if (!$userPage) {
+    $userRow = validateResetToken($email, $token);
+    if (!$userRow) {
         ob_clean();
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => t('auth.err_reset_invalid')]);
         exit;
     }
 
-    if (!updatePassword($userPage['id'], $password)) {
+    if (!updatePassword((int)$userRow['client_id'], $password)) {
         ob_clean();
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => t('auth.err_server')]);

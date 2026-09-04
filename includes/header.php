@@ -108,7 +108,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
         <?php $dashLabel = $me['role'] === 'admin' ? t('nav.admin') : t('nav.dashboard'); ?>
         <div class="user-menu">
           <button type="button" class="user-menu__trigger" aria-haspopup="true" aria-expanded="false" aria-label="<?php echo t('nav.account_menu'); ?>">
-            <img src="/api/notion-avatar.php?id=<?php echo urlencode($me['id']); ?>" alt="" class="user-menu__avatar">
+            <img src="/api/avatar.php?id=<?php echo urlencode($me['id']); ?>" alt="" class="user-menu__avatar">
           </button>
           <div class="user-menu__dropdown">
             <div class="user-menu__name"><?php echo htmlspecialchars($me['name']); ?></div>
