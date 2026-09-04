@@ -11,6 +11,7 @@ ob_start();
 try {
     $accounts = listAllAccounts();
     $rss      = listRssSubscribers();
+    $reviews  = listAdminReviews();
 
     // Growth chart: new accounts + new RSS subscribers per month, last 6 months.
     $months = [];
@@ -52,6 +53,7 @@ try {
         'success'        => true,
         'accounts'       => $accounts,
         'rssSubscribers' => $rss,
+        'reviews'        => $reviews,
         'chart'          => [
             'growth'  => [
                 'labels'   => array_keys($months),

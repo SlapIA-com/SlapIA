@@ -163,3 +163,57 @@
   font-size: 0.85rem;
 }
 .admin-details-field textarea { min-height: 60px; resize: vertical; }
+
+.btn--danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn--danger:hover { background: var(--danger); color: #fff; }
+
+.admin-new-client-panel {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  margin-bottom: 16px;
+}
+
+.admin-prestations-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+.admin-prestations-title {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+.admin-prestations-list { display: flex; flex-direction: column; gap: 10px; }
+.admin-prestation-row {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+.admin-prestation-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.admin-prestation-fields .admin-details-field { min-width: 130px; }
+.admin-prestation-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.rv-comment-preview {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  color: var(--ink-fade);
+  max-width: 700px;
+}
