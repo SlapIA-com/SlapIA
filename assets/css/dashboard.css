@@ -87,7 +87,7 @@
 .dash-field-edit label { display: block; color: var(--ink-fade); font-size: 0.85rem; margin-bottom: 8px; }
 .dash-field-edit__row { display: flex; gap: 10px; }
 .dash-field-edit__row input {
-  flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
+  flex: 1; min-width: 0; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
   background: var(--paper); color: var(--ink); font-size: 0.9rem;
 }
 
@@ -113,3 +113,27 @@
 }
 .dash-avis-preview__empty { color: var(--ink-fade); font-size: 0.88rem; }
 .dash-avis-preview .review-item { border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+
+/* ============================================================
+   Mobile — the fixed-width/no-wrap rows above are fine on desktop
+   but overflow (get clipped, since body has overflow-x:hidden) on
+   narrow phones: a nowrap "Changer la photo" button next to the
+   avatar, a save button squeezed against an input, a long invoice
+   filename, or a long field value with no room to wrap.
+   ============================================================ */
+@media (max-width: 640px) {
+  .dash-summary { padding: 18px 20px; }
+  .dash-card { padding: 20px; }
+
+  .dash-field { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .dash-field__value { overflow-wrap: anywhere; }
+
+  .dash-photo { flex-wrap: wrap; }
+
+  .dash-field-edit__row { flex-wrap: wrap; }
+  .dash-field-edit__row input { flex-basis: 100%; }
+  .dash-field-edit__row .btn { flex: none; }
+
+  .dash-invoice-row { flex-wrap: wrap; gap: 8px 14px; }
+  .dash-invoice-row__name { overflow-wrap: anywhere; }
+}

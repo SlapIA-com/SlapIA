@@ -101,6 +101,7 @@ button { font-family: inherit; }
   margin: 0 auto;
   padding: 0 28px;
 }
+@media (max-width: 420px) { .container { padding: 0 18px; } }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -1196,10 +1197,11 @@ a.tag--ghost:hover { border-color: var(--forest); color: var(--forest); }
 .reviews-track { display: flex; align-items: stretch; gap: 24px; flex: 0 0 auto; width: max-content; }
 
 .review-item {
-  min-width: 320px;
-  max-width: 340px;
-  width: 320px;
-  flex-shrink: 0;
+  /* Fluid by default — this class is also reused standalone (client dashboard
+     avis preview), not just inside the homepage marquee. The fixed carousel
+     card width lives in .reviews-track .review-item below so it never forces
+     the dashboard preview wider than its container on small screens. */
+  width: 100%;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1211,6 +1213,12 @@ a.tag--ghost:hover { border-color: var(--forest); color: var(--forest); }
   transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
 .review-item:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.reviews-track .review-item {
+  min-width: 320px;
+  max-width: 340px;
+  width: 320px;
+  flex-shrink: 0;
+}
 
 .review-header { display: flex; align-items: center; gap: 14px; }
 .review-avatar {
@@ -1258,7 +1266,7 @@ a.review-name:hover { color: var(--forest); text-decoration: underline; }
 .review-stars { margin-top: auto; color: var(--signal-deep); font-size: 0.8rem; letter-spacing: 3px; }
 
 @media (max-width: 560px) {
-  .review-item { min-width: 260px; width: 260px; }
+  .reviews-track .review-item { min-width: 260px; width: 260px; }
 }
 
 /* ============================================================

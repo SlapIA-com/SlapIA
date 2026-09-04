@@ -105,7 +105,7 @@
     // en détail dans "Prestations", et Dernière connexion est reportée dans
     // le panneau Détails.
     return '<tr data-id="' + escHtml(a.id) + '" data-search="' + escHtml((a.name + ' ' + a.email + ' ' + a.company).toLowerCase()) + '">' +
-      '<td><div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy">' + escHtml(a.name) + '</div></td>' +
+      '<td><div class="admin-inline-avatar"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy">' + escHtml(a.name) + '</div></td>' +
       '<td>' + escHtml(a.email) + '</td>' +
       '<td>' + escHtml(a.company) + '</td>' +
       '<td><select class="role-select">' + ROLE_OPTIONS.map(function (r) {
@@ -229,13 +229,13 @@
           '</div>' +
           '<div class="admin-details-field">' +
             '<label>' + escHtml(I18N.label_photo) + '</label>' +
-            '<div style="display:flex; align-items:center; gap:10px;">' +
+            '<div class="admin-inline-avatar">' +
               '<img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" style="width:44px;height:44px;">' +
               '<button type="button" class="btn btn--ghost detail-photo-btn">' + escHtml(I18N.change_photo) + '</button>' +
               '<input type="file" class="detail-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none;">' +
             '</div>' +
           '</div>' +
-          '<div style="flex-basis:100%; display:flex; gap:10px; align-items:center;">' +
+          '<div class="admin-action-row">' +
             '<button type="button" class="btn btn--primary detail-save-btn" data-id="' + escHtml(a.id) + '">' + escHtml(I18N.save) + '</button>' +
             '<div class="detail-alert"></div>' +
           '</div>' +
@@ -286,7 +286,7 @@
           return '<option value="' + r + '"' + (r === 'particulier' ? ' selected' : '') + '>' + r + '</option>';
         }).join('') + '</select></div>' +
         '<div class="admin-details-field"><label>' + escHtml(I18N.label_password) + '</label><input type="text" class="nc-password"></div>' +
-        '<div style="flex-basis:100%; display:flex; gap:10px; align-items:center;">' +
+        '<div class="admin-action-row">' +
           '<button type="button" class="btn btn--primary nc-create-btn">' + escHtml(I18N.create_btn) + '</button>' +
           '<button type="button" class="btn btn--ghost nc-cancel-btn">' + escHtml(I18N.cancel_btn) + '</button>' +
           '<div class="nc-alert"></div>' +
@@ -472,7 +472,7 @@
             return '<option value="' + n + '"' + (r.satisfaction === n ? ' selected' : '') + '>' + n + ' ⭐</option>';
           }).join('') + '</select></div>' +
         '<div class="admin-details-field admin-details-field--wide"><label>' + escHtml(I18N.label_description) + '</label><textarea class="rv-comment">' + escHtml(r.comment) + '</textarea></div>' +
-        '<div style="flex-basis:100%; display:flex; gap:10px; align-items:center;">' +
+        '<div class="admin-action-row">' +
           '<button type="button" class="btn btn--primary rv-save-btn">' + escHtml(I18N.save) + '</button>' +
           '<div class="rv-alert"></div>' +
         '</div>' +
@@ -559,7 +559,7 @@
         : '<div class="admin-invoice-empty">Aucune prestation enregistrée.</div>';
 
       return '<div class="admin-invoice-card">' +
-        '<div style="display:flex; align-items:center; gap:10px;"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy"><strong>' + escHtml(a.name) + '</strong> — ' + escHtml(a.email) + '</div>' +
+        '<div class="admin-inline-avatar"><img src="/api/avatar.php?id=' + encodeURIComponent(a.id) + '" alt="" class="admin-avatar" loading="lazy"><strong>' + escHtml(a.name) + '</strong> — ' + escHtml(a.email) + '</div>' +
         serviceLine +
         filesHtml +
         '<form class="admin-invoice-upload" data-id="' + escHtml(a.id) + '">' +
