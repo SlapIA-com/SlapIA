@@ -64,6 +64,17 @@
 
 * , *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+/* NOTE: overflow-x:hidden was briefly added here to stop iOS Safari from
+   letting the page pan sideways past .hero-canvas's oversized box (see
+   below). Reverted — on iOS Safari, giving <html> (or <body>) an
+   `overflow` value breaks `position: fixed` for any descendant elsewhere
+   in the document (it starts behaving like position:absolute instead),
+   which is exactly what made the closed .mobile-menu render in normal
+   flow — no longer a hidden fixed overlay — right under the header,
+   overlapping the tabs. Fixed at the real source instead: .hero now
+   clips its own oversized decorative child directly (see .hero below),
+   so body's existing overflow-x:hidden is enough again and position:fixed
+   stays untouched. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * , *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
@@ -382,6 +393,24 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
   .header__actions .btn { display: none; }
 }
 
+/* The header kept its desktop height/icon sizes at any width below 1080px,
+   which on a phone eats a big chunk of the viewport and crowds the logo,
+   theme toggle, avatar and hamburger together with barely any breathing
+   room. Shrink it — --header-h drives both .site-header's height and
+   .progress-mobile's sticky offset, so redefining it here keeps them in
+   sync automatically. */
+@media (max-width: 640px) {
+  :root { --header-h: 62px; }
+  .site-header .container { gap: 10px; }
+  .logo { font-size: 1.05rem; gap: 8px; }
+  .logo__mark { width: 22px; height: 22px; }
+  .header__actions { gap: 8px; }
+  .theme-toggle { width: 36px; height: 36px; border-radius: 8px; }
+  .theme-toggle__icon { width: 16px; height: 16px; }
+  .user-menu__avatar { width: 30px; height: 30px; }
+  .nav-toggle { width: 36px; height: 36px; }
+}
+
 /* mobile menu overlay */
 .mobile-menu {
   position: fixed;
@@ -478,6 +507,11 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
 .hero {
   padding: 76px 0 90px;
   position: relative;
+  /* Contains .hero-canvas directly below, which is intentionally larger
+     than .hero via a negative inset (see its comment) — clipping it here,
+     right at the source, keeps body/html from ever having to deal with
+     the overflow at all. */
+  overflow: hidden;
 }
 
 /* ============================================================
@@ -516,6 +550,9 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
 
 @media (max-width: 980px) {
   .hero-canvas { opacity: 0.3; }
+}
+@media (max-width: 640px) {
+  .hero-canvas { inset: -5% -2%; }
 }
 .hero__grid {
   display: grid;
@@ -1392,11 +1429,19 @@ a.review-name:hover { color: var(--forest); text-decoration: underline; }
   right: 0;
   min-width: 200px;
   background: var(--white);
-  border: 1px solid var(--line);
+  /* line-strong (not the lighter line) plus a stronger shadow — --white is
+     redefined as a dark surface in dark mode, close in value to the page's
+     own --mist background, so the default thin border/soft shadow barely
+     read as a floating panel and looked like the tab labels behind it
+     bleeding through rather than an open menu. */
+  border: 1px solid var(--line-strong);
   border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
   padding: 8px;
   z-index: 50;
+}
+:root[data-theme="dark"] .user-menu__dropdown {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
 }
 .user-menu.is-open .user-menu__dropdown { display: block; }
 .user-menu__name {

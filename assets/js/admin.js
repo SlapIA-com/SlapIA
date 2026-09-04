@@ -301,8 +301,8 @@
 
     el.innerHTML =
       newClientPanelHtml() +
-      '<div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">' +
-        '<input type="text" placeholder="Rechercher…" oninput="window.__adminFilterAccounts(this.value)" class="field" style="flex:1; max-width:280px;">' +
+      '<div class="admin-toolbar-row">' +
+        '<input type="text" placeholder="Rechercher…" oninput="window.__adminFilterAccounts(this.value)" class="field admin-toolbar-row__search">' +
         '<button class="btn btn--ghost" onclick="window.__adminExportAccounts()">Exporter CSV</button>' +
         '<button class="btn btn--signal" id="admin-new-client-toggle">' + escHtml(I18N.new_client_btn) + '</button>' +
       '</div>' +
