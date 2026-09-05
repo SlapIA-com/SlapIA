@@ -236,7 +236,9 @@ class AdminController extends Controller
         ]);
 
         $file = $request->file('invoice');
-        $path = $file->store('factures', 'local');
+        // Chemin identique à l'ancien site (includes/admin-accounts.php) :
+        // "invoices/<client_id>/<fichier>", relatif à storage/ — pas "factures/".
+        $path = $file->store('invoices/'.$client->id, 'local');
 
         $client->factures()->create([
             'nom_fichier' => $file->getClientOriginalName(),
