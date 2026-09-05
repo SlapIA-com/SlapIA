@@ -1,7 +1,15 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import type { SharedProps } from '../types';
+
+/**
+ * Port fidèle de includes/header.php + includes/footer.php (mêmes classes
+ * CSS que legacy/style.css : .site-header, .rail, .nav, .btn--primary,
+ * .mobile-menu, .site-footer, etc.) — remplace la version précédente qui
+ * réinterprétait le design en utilitaires Tailwind et ne ressemblait plus
+ * à l'ancien site.
+ */
 
 const NAV_ITEMS: Array<{ href: string; key: string }> = [
   { href: '/', key: 'nav.home' },
@@ -15,26 +23,70 @@ const NAV_ITEMS: Array<{ href: string; key: string }> = [
 
 const LANG_LABELS: Record<string, string> = { fr: 'FR', en: 'EN', de: 'DE' };
 
+function applyTheme(theme: 'light' | 'dark') {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+  try {
+    localStorage.setItem('slapia-theme', theme);
+  } catch {
+    /* ignore */
+  }
+}
+
 function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark');
-    setTheme(isDark ? 'dark' : 'light');
+    const attr = document.documentElement.getAttribute('data-theme');
+    setTheme(attr === 'dark' ? 'dark' : 'light');
   }, []);
 
   function toggle() {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    document.documentElement.classList.toggle('dark', next === 'dark');
-    try {
-      localStorage.setItem('slapia-theme', next);
-    } catch {
-      /* ignore */
-    }
+    applyTheme(next);
   }
 
   return { theme, toggle };
+}
+
+/** Port de la partie scroll de main.js : header ombré + jauge de progression de lecture (.rail / .progress-mobile). */
+function useScrollChrome() {
+  const [scrolled, setScrolled] = useState(false);
+  const [pct, setPct] = useState(0);
+
+  useEffect(() => {
+    function onScroll() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const p = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+      setScrolled(scrollTop > 8);
+      setPct(p);
+    }
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  return { scrolled, pct };
+}
+
+function ThemeToggleIcon() {
+  return (
+    <>
+      <svg className="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+        <circle cx="12" cy="12" r="4.5" />
+        <path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6l1.6-1.6M18 6l1.6-1.6" />
+      </svg>
+      <svg className="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
+      </svg>
+    </>
+  );
 }
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
@@ -42,10 +94,28 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   const { auth } = usePage<SharedProps>().props;
   const { url } = usePage();
   const { theme, toggle } = useTheme();
+  const { scrolled, pct } = useScrollChrome();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const dashHref = auth.user?.role === 'admin' ? '/admin' : '/dashboard';
   const dashLabel = auth.user?.role === 'admin' ? t('nav.admin') : t('nav.dashboard');
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) setLangOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserOpen(false);
+    }
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, []);
 
   function switchLang(l: string) {
     const params = new URLSearchParams(window.location.search);
@@ -54,175 +124,211 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-mist text-ink">
-      <header className="sticky top-0 z-40 border-b border-line bg-mist/90 backdrop-blur">
-        <div className="mx-auto flex h-20 max-w-container items-center justify-between px-5 sm:px-8">
-          <Link href="/" className="flex items-center gap-2 font-display text-lg font-semibold">
-            <img src="/assets/img/brand/logo.svg" alt="" className="h-7 w-7" />
-            SlapIa
+    <>
+      <div className="rail" aria-hidden="true">
+        <img src="/assets/img/brand/logo.svg" alt="" className="rail__mark" />
+        <span className="rail__label">FORMATIONS IA — SERVICES PC</span>
+        <span className="rail__track">
+          <span className="rail__fill" style={{ height: `${pct}%` }} />
+        </span>
+        <span className="rail__pct">{Math.round(pct)}%</span>
+      </div>
+      <div className="progress-mobile" aria-hidden="true">
+        <span className="progress-mobile__fill" style={{ width: `${pct}%` }} />
+      </div>
+
+      <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+        <div className="container">
+          <Link href="/" className="logo">
+            <img src="/assets/img/brand/logo.svg" alt="" className="logo__mark" /> SlapIa
           </Link>
 
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Navigation principale">
+          <nav className="nav" aria-label="Navigation principale">
             {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-medium transition-colors ${
-                  url === item.href ? 'text-signal-deep dark:text-signal' : 'text-ink-soft hover:text-ink'
-                }`}
-              >
+              <Link key={item.href} href={item.href} className={`nav__link${url === item.href ? ' is-active' : ''}`}>
                 {t(item.key)}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-1 rounded-full border border-line p-1 text-xs font-semibold sm:flex">
-              {Object.entries(LANG_LABELS).map(([l, label]) => (
-                <button
-                  key={l}
-                  onClick={() => switchLang(l)}
-                  className={`rounded-full px-2 py-1 ${locale === l ? 'bg-signal text-on-accent' : 'text-ink-fade hover:text-ink'}`}
-                >
-                  {label}
-                </button>
-              ))}
+          <div className="header__actions">
+            <div className={`lang-menu${langOpen ? ' is-open' : ''}`} ref={langMenuRef}>
+              <button
+                type="button"
+                className="lang-menu__trigger"
+                aria-haspopup="true"
+                aria-expanded={langOpen}
+                aria-label={t('common.switch_lang')}
+                title={t('common.switch_lang')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLangOpen((o) => !o);
+                }}
+              >
+                {LANG_LABELS[locale] ?? locale.toUpperCase()}
+              </button>
+              <div className="lang-menu__dropdown">
+                {Object.entries(LANG_LABELS)
+                  .filter(([l]) => l !== locale)
+                  .map(([l, label]) => (
+                    <button key={l} type="button" className="lang-menu__link" onClick={() => switchLang(l)}>
+                      {label}
+                    </button>
+                  ))}
+              </div>
             </div>
 
-            <button
-              onClick={toggle}
-              aria-label={t('common.toggle_theme')}
-              className="hidden h-9 w-9 items-center justify-center rounded-full border border-line text-ink-fade hover:text-ink sm:flex"
-            >
-              {theme === 'dark' ? '☀' : '☾'}
+            <button className="theme-toggle" type="button" aria-label={t('common.toggle_theme')} title={t('common.toggle_theme')} onClick={toggle}>
+              <ThemeToggleIcon />
             </button>
 
             {auth.user ? (
-              <div className="hidden items-center gap-3 lg:flex">
-                <Link href={dashHref} className="text-sm font-medium text-ink-soft hover:text-ink">
-                  {dashLabel}
-                </Link>
-                <Link href="/logout" method="post" as="button" className="text-sm font-medium text-ink-fade hover:text-danger">
-                  {t('nav.logout')}
-                </Link>
+              <div className={`user-menu${userOpen ? ' is-open' : ''}`} ref={userMenuRef}>
+                <button
+                  type="button"
+                  className="user-menu__trigger"
+                  aria-haspopup="true"
+                  aria-expanded={userOpen}
+                  aria-label={t('nav.account_menu')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUserOpen((o) => !o);
+                  }}
+                >
+                  <img src={`/api/avatar/${auth.user.id}`} alt="" className="user-menu__avatar" />
+                </button>
+                <div className="user-menu__dropdown">
+                  <div className="user-menu__name">{auth.user.name}</div>
+                  <Link href={dashHref} className="user-menu__link">
+                    {dashLabel}
+                  </Link>
+                  <Link href="/logout" method="post" as="button" className="user-menu__link user-menu__link--danger">
+                    {t('nav.logout')}
+                  </Link>
+                </div>
               </div>
             ) : (
-              <Link href="/login" className="hidden text-sm font-medium text-ink-soft hover:text-ink lg:block">
+              <Link href="/login" className="btn btn--ghost">
                 {t('nav.login')}
               </Link>
             )}
-
-            <Link
-              href="/contact"
-              className="hidden rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft dark:bg-white dark:text-ink lg:inline-flex"
-            >
-              {t('common.book_call')}
+            <Link href="/contact" className="btn btn--primary">
+              {t('common.book_call')} <span className="btn__arrow">→</span>
             </Link>
-
-            <button
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-line lg:hidden"
-              aria-label={t('common.open_menu')}
-              onClick={() => setMobileOpen(true)}
-            >
-              ☰
+            <button className="nav-toggle" aria-label={t('common.open_menu')} onClick={() => setMobileOpen(true)}>
+              <span />
             </button>
           </div>
         </div>
       </header>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-surface-dark p-6 text-on-dark lg:hidden">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="font-display text-lg font-semibold">SlapIa</Link>
-            <button aria-label={t('common.close_menu')} onClick={() => setMobileOpen(false)} className="text-2xl">✕</button>
-          </div>
-          <nav className="mt-10 flex flex-col gap-5">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className="text-lg font-medium" onClick={() => setMobileOpen(false)}>
-                {t(item.key)}
-              </Link>
-            ))}
-          </nav>
-          <div className="mt-8 flex gap-2">
-            {Object.entries(LANG_LABELS).map(([l, label]) => (
-              <button key={l} onClick={() => switchLang(l)} className={`rounded-full border border-white/20 px-3 py-1 text-sm ${locale === l ? 'bg-white/20' : ''}`}>
-                {label}
-              </button>
-            ))}
-          </div>
-          <div className="mt-auto flex flex-col gap-3">
-            {auth.user ? (
-              <>
-                <Link href={dashHref} className="rounded-full border border-white/20 py-3 text-center font-semibold">{dashLabel}</Link>
-                <Link href="/logout" method="post" as="button" className="rounded-full border border-white/20 py-3 text-center font-semibold">{t('nav.logout')}</Link>
-              </>
-            ) : (
-              <Link href="/login" className="rounded-full border border-white/20 py-3 text-center font-semibold">{t('nav.login')}</Link>
-            )}
-            <Link href="/contact" className="rounded-full bg-signal py-3 text-center font-semibold text-on-accent">{t('common.book_call')}</Link>
+      <div className={`mobile-menu${mobileOpen ? ' is-open' : ''}`}>
+        <div className="mobile-menu__top">
+          <Link href="/" className="logo" onClick={() => setMobileOpen(false)}>
+            <img src="/assets/img/brand/logo.svg" alt="" className="logo__mark" /> SlapIa
+          </Link>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <button className="theme-toggle theme-toggle--on-dark" type="button" aria-label={t('common.toggle_theme')} title={t('common.toggle_theme')} onClick={toggle}>
+              <ThemeToggleIcon />
+            </button>
+            <button className="mobile-menu__close" aria-label={t('common.close_menu')} onClick={() => setMobileOpen(false)}>
+              ✕
+            </button>
           </div>
         </div>
-      )}
+        <nav className="mobile-menu__links" aria-label="Navigation mobile">
+          {NAV_ITEMS.map((item) => (
+            <Link key={item.href} href={item.href} className={url === item.href ? 'is-active' : ''} onClick={() => setMobileOpen(false)}>
+              {t(item.key)}
+            </Link>
+          ))}
+        </nav>
+        <div className="mobile-menu__lang">
+          {Object.entries(LANG_LABELS).map(([l, label]) => (
+            <button
+              key={l}
+              type="button"
+              className={`lang-switch__link lang-switch__link--on-dark${locale === l ? ' is-active' : ''}`}
+              onClick={() => switchLang(l)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="mobile-menu__foot">
+          {auth.user ? (
+            <>
+              <Link href={dashHref} className="btn btn--on-dark btn--block" style={{ marginBottom: 10 }} onClick={() => setMobileOpen(false)}>
+                {dashLabel}
+              </Link>
+              <Link href="/logout" method="post" as="button" className="btn btn--on-dark btn--block" style={{ marginBottom: 10 }}>
+                {t('nav.logout')}
+              </Link>
+            </>
+          ) : (
+            <Link href="/login" className="btn btn--on-dark btn--block" style={{ marginBottom: 10 }} onClick={() => setMobileOpen(false)}>
+              {t('nav.login')}
+            </Link>
+          )}
+          <Link href="/contact" className="btn btn--signal btn--block" onClick={() => setMobileOpen(false)}>
+            {t('common.book_call')}
+          </Link>
+        </div>
+      </div>
 
-      <main className="flex-1">{children}</main>
+      {children}
 
-      <footer className="border-t border-line bg-surface-dark text-on-dark">
-        <Container>
-          <div className="grid grid-cols-2 gap-10 py-14 sm:grid-cols-3 lg:grid-cols-5">
-            <div className="col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-2 font-display text-lg font-semibold">
-                <img src="/assets/img/brand/logo.svg" alt="" className="h-6 w-6" />
-                SlapIa
-              </div>
-              <p className="mt-3 text-sm text-on-dark/65">{t('footer.tagline')}</p>
+      <footer className="site-footer">
+        <div className="container">
+          <div className="footer__top">
+            <div className="footer__brand">
+              <Link href="/" className="logo">
+                <img src="/assets/img/brand/logo.svg" alt="" className="logo__mark" /> SlapIa
+              </Link>
+              <p>{t('footer.tagline')}</p>
             </div>
-            <FooterCol title={t('footer.courses_heading')} links={[
-              ['/formations', t('footer.courses_all')],
-              ['/formations#niveau-1', t('footer.course_link_1')],
-              ['/formations#niveau-2', t('footer.course_link_2')],
-              ['/formations#niveau-3', t('footer.course_link_3')],
-            ]} />
-            <FooterCol title={t('footer.services_heading')} links={[
-              ['/services-pc#montage', t('footer.service_link_1')],
-              ['/services-pc#devis', t('footer.service_link_2')],
-              ['/services-pc#diagnostic', t('footer.service_link_3')],
-            ]} />
-            <FooterCol title={t('footer.company_heading')} links={[
-              ['/a-propos', t('footer.link_about')],
-              ['/tarifs', t('footer.link_pricing')],
-              ['/contact', t('footer.link_contact')],
-            ]} />
-            <FooterCol title={t('footer.contact_heading')} links={[['mailto:contact@slapia.com', 'contact@slapia.com']]} />
+            <div className="footer__col">
+              <h4>{t('footer.courses_heading')}</h4>
+              <ul>
+                <li><Link href="/formations">{t('footer.courses_all')}</Link></li>
+                <li><Link href="/formations#niveau-1">{t('footer.course_link_1')}</Link></li>
+                <li><Link href="/formations#niveau-2">{t('footer.course_link_2')}</Link></li>
+                <li><Link href="/formations#niveau-3">{t('footer.course_link_3')}</Link></li>
+              </ul>
+            </div>
+            <div className="footer__col">
+              <h4>{t('footer.services_heading')}</h4>
+              <ul>
+                <li><Link href="/services-pc#montage">{t('footer.service_link_1')}</Link></li>
+                <li><Link href="/services-pc#devis">{t('footer.service_link_2')}</Link></li>
+                <li><Link href="/services-pc#diagnostic">{t('footer.service_link_3')}</Link></li>
+              </ul>
+            </div>
+            <div className="footer__col">
+              <h4>{t('footer.company_heading')}</h4>
+              <ul>
+                <li><Link href="/a-propos">{t('footer.link_about')}</Link></li>
+                <li><Link href="/tarifs">{t('footer.link_pricing')}</Link></li>
+                <li><Link href="/contact">{t('footer.link_contact')}</Link></li>
+              </ul>
+            </div>
+            <div className="footer__col">
+              <h4>{t('footer.contact_heading')}</h4>
+              <ul>
+                <li><a href="mailto:contact@slapia.com">contact@slapia.com</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex flex-col gap-3 border-t border-white/10 py-6 text-xs text-on-dark/60 sm:flex-row sm:items-center sm:justify-between">
+          <div className="footer__bottom">
             <span>© {new Date().getFullYear()} {t('footer.copyright')}</span>
-            <span className="flex gap-3">
-              <Link href="/mentions-legales" className="hover:text-on-dark">{t('footer.legal_mentions')}</Link>
-              <Link href="/confidentialite" className="hover:text-on-dark">{t('footer.legal_privacy')}</Link>
-              <Link href="/cgv" className="hover:text-on-dark">{t('footer.legal_cgv')}</Link>
+            <span>
+              <Link href="/mentions-legales">{t('footer.legal_mentions')}</Link> ·{' '}
+              <Link href="/confidentialite">{t('footer.legal_privacy')}</Link> ·{' '}
+              <Link href="/cgv">{t('footer.legal_cgv')}</Link>
             </span>
           </div>
-        </Container>
+        </div>
       </footer>
-    </div>
-  );
-}
-
-function Container({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-container px-5 sm:px-8">{children}</div>;
-}
-
-function FooterCol({ title, links }: { title: string; links: Array<[string, string]> }) {
-  return (
-    <div>
-      <h4 className="font-display text-sm font-semibold">{title}</h4>
-      <ul className="mt-3 space-y-2 text-sm text-on-dark/65">
-        {links.map(([href, label]) => (
-          <li key={href}>
-            <Link href={href} className="hover:text-on-dark">{label}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    </>
   );
 }

@@ -1,12 +1,26 @@
 import { Head, Link } from '@inertiajs/react';
+import { useRef } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow, SectionHead, ValueCard, StatNumber, Tag } from '../Components/ui';
-import Reveal from '../Components/Reveal';
+import { useReveal } from '../hooks/useReveal';
+import HeroCanvas from '../Components/HeroCanvas';
+import HeroReveal from '../Components/HeroReveal';
+import RevealMark from '../Components/RevealMark';
+import LegacyStatNumber from '../Components/LegacyStatNumber';
+import ReviewsCarousel, { ReviewsNav, type ReviewsCarouselHandle } from '../Components/ReviewsCarousel';
 import type { Level, PublicReview, Stats } from '../types';
 
+/** Délai d'apparition par index dans un groupe (.reveal), plafonné à 5 — même règle que staggerGroups() dans main.js. */
+function staggerDelay(i: number) {
+  return Math.min(i, 5) * 0.08;
+}
+
+/** Port fidèle de pages/index.php (mêmes classes CSS legacy/style.css). */
 export default function Home({ stats, reviews }: { stats: Stats; reviews: PublicReview[] }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const levels: Level[] = t('levels');
+  const decimalSep = locale === 'en' ? '.' : ',';
+  const carouselRef = useRef<ReviewsCarouselHandle>(null);
+  const ctaBand = useReveal();
 
   return (
     <>
@@ -14,179 +28,277 @@ export default function Home({ stats, reviews }: { stats: Stats; reviews: Public
         <meta name="description" content={t('home.meta_description')} />
       </Head>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-line">
-        <Container className="grid gap-12 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
+      <section className="hero">
+        <HeroCanvas />
+        <div className="container hero__grid">
           <div>
-            <Eyebrow>{t('home.hero_eyebrow')}</Eyebrow>
-            <h1 className="mt-4 font-display text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">
+            <HeroReveal as="span" className="eyebrow" delay="0.05s">
+              {t('home.hero_eyebrow')}
+            </HeroReveal>
+            <HeroReveal as="h1" className="hero__title" delay="0.15s">
               {t('home.hero_title_line1')}
               <br />
-              <mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('home.hero_title_mark')}</mark>
-            </h1>
-            <p className="mt-6 max-w-lg text-base text-ink-fade">{t('home.hero_lede')}</p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/formations" className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-ink-soft">
-                {t('home.cta_primary')} <span>→</span>
+              <RevealMark>{t('home.hero_title_mark')}</RevealMark>
+            </HeroReveal>
+            <HeroReveal as="p" className="hero__lede" delay="0.28s">
+              {t('home.hero_lede')}
+            </HeroReveal>
+            <HeroReveal className="hero__ctas" delay="0.4s">
+              <Link href="/formations" className="btn btn--primary">
+                {t('home.cta_primary')} <span className="btn__arrow">→</span>
               </Link>
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm font-semibold text-ink hover:border-signal">
+              <Link href="/contact" className="btn btn--ghost">
                 {t('home.cta_secondary')}
               </Link>
-            </div>
-            <div className="mt-12 grid grid-cols-3 gap-6 border-t border-line pt-8">
-              <div>
-                <StatNumber value={stats.is_live ? stats.entreprises : null} fallback={t('home.stat1_num')} suffix="+" />
-                <div className="mt-1 text-xs text-ink-fade">{t('home.stat1_label')}</div>
+            </HeroReveal>
+            <HeroReveal className="hero__stats" delay="0.5s">
+              <div className="stat">
+                <LegacyStatNumber value={stats.is_live ? stats.entreprises : null} fallback={t('home.stat1_num')} suffix="+" decimalSep={decimalSep} />
+                <div className="stat__label">{t('home.stat1_label')}</div>
               </div>
-              <div>
-                <StatNumber value={stats.is_live ? stats.particuliers : null} fallback={t('home.stat2_num')} suffix="+" />
-                <div className="mt-1 text-xs text-ink-fade">{t('home.stat2_label')}</div>
+              <div className="stat">
+                <LegacyStatNumber value={stats.is_live ? stats.particuliers : null} fallback={t('home.stat2_num')} suffix="+" decimalSep={decimalSep} />
+                <div className="stat__label">{t('home.stat2_label')}</div>
               </div>
-              <div>
-                <StatNumber value={stats.is_live && stats.satisfaction !== null ? stats.satisfaction : null} decimals={1} fallback={t('home.stat3_num')} suffix="/5" />
-                <div className="mt-1 text-xs text-ink-fade">{t('home.stat3_label')}</div>
+              <div className="stat">
+                <LegacyStatNumber
+                  value={stats.is_live && stats.satisfaction !== null ? stats.satisfaction : null}
+                  decimals={1}
+                  fallback={t('home.stat3_num')}
+                  suffix="/5"
+                  decimalSep={decimalSep}
+                />
+                <div className="stat__label">{t('home.stat3_label')}</div>
               </div>
-            </div>
+            </HeroReveal>
           </div>
 
-          <Reveal className="rounded-3xl border border-line bg-paper p-6 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-wide text-ink-fade">{t('home.panel_label')}</span>
-            <div className="mt-4 space-y-3">
+          <HeroReveal className="hero__panel hero-reveal--panel" delay="0.35s">
+            <span className="hero__panel-label">{t('home.panel_label')}</span>
+            <div className="hero__panel-list">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="flex items-center justify-between rounded-xl border border-line bg-mist px-4 py-3">
-                  <Tag signal>{t(`home.panel${n}_tag`)}</Tag>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-ink">{t(`home.panel${n}_title`)}</div>
-                    <div className="text-xs text-ink-fade">{t(`home.panel${n}_meta`)}</div>
+                <div className="hero__panel-item" key={n}>
+                  <span className="hero__panel-tag">{t(`home.panel${n}_tag`)}</span>
+                  <div>
+                    <strong>{t(`home.panel${n}_title`)}</strong>
+                    <span>{t(`home.panel${n}_meta`)}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </Reveal>
-        </Container>
+          </HeroReveal>
+        </div>
       </section>
 
-      {/* Problem */}
-      <section className="bg-surface-dark py-20 text-on-dark">
-        <Container>
-          <SectionHead dark eyebrow={t('home.problem_eyebrow')} title={t('home.problem_title')} note={t('home.problem_note')} />
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[1, 2, 3].map((n) => (
-              <Reveal key={n} delay={n * 80}>
-                <div className="rounded-2xl border border-white/15 p-6">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10">{n === 1 ? '⚠' : n === 2 ? '⏱' : '◎'}</div>
-                  <h3 className="font-display text-lg font-semibold">{t(`home.problem_card${n}_title`)}</h3>
-                  <p className="mt-2 text-sm text-on-dark/65">{t(`home.problem_card${n}_text`)}</p>
-                </div>
-              </Reveal>
+      <section className="section section--dark">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('home.problem_eyebrow')}</span>
+              <h2 className="section-head__title">{t('home.problem_title')}</h2>
+            </div>
+            <p className="section-head__note">{t('home.problem_note')}</p>
+          </div>
+          <div className="grid-3">
+            {[1, 2, 3].map((n, i) => (
+              <ProblemCard key={n} n={n} delay={staggerDelay(i)} title={t(`home.problem_card${n}_title`)} text={t(`home.problem_card${n}_text`)} />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* Catalogue */}
-      <section className="py-20">
-        <Container>
-          <SectionHead eyebrow={t('home.catalogue_eyebrow')} title={t('home.catalogue_title')} note={t('home.catalogue_note')} />
-          <div className="grid gap-6 sm:grid-cols-3">
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('home.catalogue_eyebrow')}</span>
+              <h2 className="section-head__title">{t('home.catalogue_title')}</h2>
+            </div>
+            <p className="section-head__note">{t('home.catalogue_note')}</p>
+          </div>
+          <div className="grid-3">
             {levels.map((level, i) => (
-              <Reveal key={level.anchor} delay={i * 80}>
-                <Link href={`/formations#${level.anchor}`} className="flex h-full flex-col rounded-2xl border border-line bg-paper p-6 transition-shadow hover:shadow-lg">
-                  <Tag signal>Niveau {level.num}</Tag>
-                  <h3 className="mt-4 font-display text-lg font-semibold text-ink">{level.title}</h3>
-                  <p className="mt-2 flex-1 text-sm text-ink-fade">{level.teaser}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {level.tools.map((tool) => <Tag key={tool}>{tool}</Tag>)}
-                  </div>
-                  <span className="mt-6 text-sm font-semibold text-signal-deep dark:text-signal">{t('home.catalogue_link')} →</span>
-                </Link>
-              </Reveal>
+              <CourseCard key={level.anchor} level={level} delay={staggerDelay(i)} linkLabel={t('home.catalogue_link')} />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* Method */}
-      <section className="bg-paper py-20">
-        <Container>
-          <SectionHead eyebrow={t('home.method_eyebrow')} title={t('home.method_title')} note={t('home.method_note')} />
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((n) => (
-              <Reveal key={n} delay={n * 60}>
-                <span className="font-display text-3xl font-bold text-line-strong">{String(n).padStart(2, '0')}</span>
-                <h3 className="mt-2 font-display text-base font-semibold text-ink">{t(`home.method${n}_title`)}</h3>
-                <p className="mt-2 text-sm text-ink-fade">{t(`home.method${n}_text`)}</p>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20">
-        <Container>
-          <SectionHead eyebrow={t('home.testimonials_eyebrow')} title={t('home.testimonials_title')} note={reviews.length === 0 ? t('home.testimonials_note') : undefined} />
-          {reviews.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {reviews.slice(0, 6).map((r, i) => (
-                <Reveal key={i} delay={i * 60}>
-                  <div className="flex h-full flex-col rounded-2xl border border-line bg-paper p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-signal/15 text-sm font-semibold text-signal-deep">
-                        {(r.prenom[0] ?? '') + (r.nom[0] ?? '')}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-ink">{r.prenom} {r.nom}</div>
-                        {r.profession && <div className="text-xs text-ink-fade">{r.profession}{r.entreprise ? ` · ${r.entreprise}` : ''}</div>}
-                      </div>
-                    </div>
-                    <p className="mt-4 flex-1 text-sm text-ink-soft">« {r.avis} »</p>
-                    {r.note !== null && <div className="mt-4 text-signal-deep">{'★'.repeat(Math.round(r.note))}{'☆'.repeat(5 - Math.round(r.note))}</div>}
-                  </div>
-                </Reveal>
-              ))}
+      <section className="section section--paper">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('home.method_eyebrow')}</span>
+              <h2 className="section-head__title">{t('home.method_title')}</h2>
             </div>
+            <p className="section-head__note">{t('home.method_note')}</p>
+          </div>
+          <div className="method-list">
+            {[1, 2, 3, 4].map((n, i) => (
+              <MethodItem key={n} num={String(n).padStart(2, '0')} delay={staggerDelay(i)} title={t(`home.method${n}_title`)} text={t(`home.method${n}_text`)} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('home.testimonials_eyebrow')}</span>
+              <h2 className="section-head__title">{t('home.testimonials_title')}</h2>
+            </div>
+            {reviews.length > 0 ? (
+              <ReviewsNav onPrev={() => carouselRef.current?.prev()} onNext={() => carouselRef.current?.next()} />
+            ) : (
+              <p className="section-head__note">{t('home.testimonials_note')}</p>
+            )}
+          </div>
+
+          {reviews.length > 0 ? (
+            <ReviewsCarousel ref={carouselRef} reviews={reviews} />
           ) : (
-            <div className="grid gap-6 sm:grid-cols-3">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="rounded-2xl border border-line bg-paper p-6">
-                  <p className="text-sm text-ink-soft">« {t(`home.quote${n}_text`)} »</p>
-                  <div className="mt-4 text-sm font-semibold text-ink">{t(`home.quote${n}_name`)}</div>
-                  <div className="text-xs text-ink-fade">{t(`home.quote${n}_role`)}</div>
-                </div>
+            <div className="grid-3">
+              {[1, 2, 3].map((n, i) => (
+                <QuoteCard
+                  key={n}
+                  delay={staggerDelay(i)}
+                  avatar={['MC', 'JL', 'SB'][i]}
+                  text={t(`home.quote${n}_text`)}
+                  name={t(`home.quote${n}_name`)}
+                  role={t(`home.quote${n}_role`)}
+                />
               ))}
             </div>
           )}
-        </Container>
+        </div>
       </section>
 
-      {/* PC teaser */}
-      <section className="bg-paper py-20">
-        <Container>
-          <SectionHead eyebrow={t('home.pc_teaser_eyebrow')} title={t('home.pc_teaser_title')} note={t('home.pc_teaser_note')} />
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[1, 2, 3].map((n) => (
-              <ValueCard key={n} title={t(`home.pc_card${n}_title`)} text={t(`home.pc_card${n}_text`)} />
+      <section className="section section--paper">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('home.pc_teaser_eyebrow')}</span>
+              <h2 className="section-head__title">{t('home.pc_teaser_title')}</h2>
+            </div>
+            <p className="section-head__note">{t('home.pc_teaser_note')}</p>
+          </div>
+          <div className="grid-3">
+            {[1, 2, 3].map((n, i) => (
+              <PcCard key={n} delay={staggerDelay(i)} title={t(`home.pc_card${n}_title`)} text={t(`home.pc_card${n}_text`)} />
             ))}
           </div>
-          <Link href="/services-pc" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-signal-deep dark:text-signal">
-            {t('home.pc_teaser_link')} →
-          </Link>
-        </Container>
+          <div style={{ marginTop: 32 }}>
+            <Link href="/services-pc" className="btn btn--ghost">
+              {t('home.pc_teaser_link')} <span className="btn__arrow">→</span>
+            </Link>
+          </div>
+        </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20">
-        <Container>
-          <div className="rounded-3xl bg-surface-dark p-10 text-center text-on-dark sm:p-16">
-            <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t('home.final_cta_title')}</h2>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link href="/contact" className="rounded-full bg-signal px-6 py-3 text-sm font-semibold text-on-accent">{t('home.final_cta_primary')}</Link>
-              <Link href="/tarifs" className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-on-dark">{t('home.final_cta_secondary')}</Link>
+      <section className="section">
+        <div className="container">
+          <div ref={ctaBand.ref} className={`cta-band ${ctaBand.className}`}>
+            <h2>{t('home.final_cta_title')}</h2>
+            <div className="cta-band__actions">
+              <Link href="/contact" className="btn btn--signal">
+                {t('home.final_cta_primary')} <span className="btn__arrow">→</span>
+              </Link>
+              <Link href="/tarifs" className="btn btn--on-dark">
+                {t('home.final_cta_secondary')}
+              </Link>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
     </>
+  );
+}
+
+function ProblemCard({ n, delay, title, text }: { n: number; delay: number; title: string; text: string }) {
+  const reveal = useReveal(delay);
+  return (
+    <div
+      ref={reveal.ref}
+      className={`value-card ${reveal.className}`}
+      style={{ ...reveal.style, background: 'transparent', borderColor: 'rgba(255,255,255,0.15)', color: 'var(--on-dark)' }}
+    >
+      <div className="value-card__icon" style={{ background: 'rgba(255,255,255,0.08)' }}>
+        {n === 1 ? '⚠' : n === 2 ? '⏱' : '◎'}
+      </div>
+      <h3 style={{ color: 'var(--on-dark)' }}>{title}</h3>
+      <p style={{ color: 'rgba(245,242,250,0.65)' }}>{text}</p>
+    </div>
+  );
+}
+
+function CourseCard({ level, delay, linkLabel }: { level: Level; delay: number; linkLabel: string }) {
+  // Pas de ref ici : Inertia <Link> ne garantit pas de forwarder sa ref vers
+  // l'ancre — carte affichée directement (sans l'animation d'apparition au
+  // scroll) plutôt que de risquer de rester bloquée à opacity:0.
+  return (
+    <Link
+      href={`/formations#${level.anchor}`}
+      className="course-card reveal is-visible"
+      style={{ transitionDelay: `${delay}s`, textDecoration: 'none' }}
+    >
+      <div className="course-card__meta">
+        <span className="tag tag--signal">Niveau {level.num}</span>
+      </div>
+      <h3>{level.title}</h3>
+      <p className="desc">{level.teaser}</p>
+      <div className="course-card__meta">
+        {level.tools.map((tool) => (
+          <span className="tag tag--ghost" key={tool}>
+            {tool}
+          </span>
+        ))}
+      </div>
+      <div className="course-card__foot course-card__foot--end">
+        <span className="course-card__link">
+          {linkLabel} <span className="btn__arrow">→</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function MethodItem({ num, delay, title, text }: { num: string; delay: number; title: string; text: string }) {
+  const reveal = useReveal(delay);
+  return (
+    <div ref={reveal.ref} className={`method-item ${reveal.className}`} style={reveal.style}>
+      <span className="method-item__num">{num}</span>
+      <div>
+        <h3>{title}</h3>
+        <p>{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function QuoteCard({ delay, avatar, text, name, role }: { delay: number; avatar: string; text: string; name: string; role: string }) {
+  const reveal = useReveal(delay);
+  return (
+    <div ref={reveal.ref} className={`quote-card ${reveal.className}`} style={reveal.style}>
+      <p>« {text} »</p>
+      <div className="quote-card__who">
+        <span className="quote-card__avatar">{avatar}</span>
+        <div>
+          <strong>{name}</strong>
+          <span>{role}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PcCard({ delay, title, text }: { delay: number; title: string; text: string }) {
+  const reveal = useReveal(delay);
+  return (
+    <div ref={reveal.ref} className={`value-card ${reveal.className}`} style={reveal.style}>
+      <div className="value-card__icon">◆</div>
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </div>
   );
 }

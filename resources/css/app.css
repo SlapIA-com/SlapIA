@@ -3,6 +3,20 @@
 @tailwind utilities;
 
 /*
+ * CSS de l'ancien site, copiée telle quelle (voir C:\Users\thoma\Documents\
+ * Slapia\Slapia php\assets\css\). Le nouveau front (React/Inertia) reproduit
+ * le HTML de l'ancien site avec les mêmes classes (.hero, .btn--primary,
+ * .site-header, etc.) pour garder exactement le même rendu visuel — plutôt
+ * que de retraduire tout le design en classes utilitaires Tailwind.
+ * Importées après Tailwind pour que ces règles gagnent en cas de conflit.
+ */
+@import 'legacy/style.css';
+@import 'legacy/blog.css';
+@import 'legacy/auth.css';
+@import 'legacy/dashboard.css';
+@import 'legacy/admin.css';
+
+/*
  * Design tokens portés depuis l'ancien assets/css/style.css (mêmes valeurs
  * de marque : violet SlapIA, Bricolage Grotesque + IBM Plex). Exprimés en
  * "r g b" (sans virgules) pour être consommables par Tailwind via
