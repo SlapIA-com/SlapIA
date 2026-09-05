@@ -10,11 +10,11 @@
  * que de retraduire tout le design en classes utilitaires Tailwind.
  * Importées après Tailwind pour que ces règles gagnent en cas de conflit.
  */
-@import 'legacy/style.css';
-@import 'legacy/blog.css';
-@import 'legacy/auth.css';
-@import 'legacy/dashboard.css';
-@import 'legacy/admin.css';
+@import './legacy/style.css';
+@import './legacy/blog.css';
+@import './legacy/auth.css';
+@import './legacy/dashboard.css';
+@import './legacy/admin.css';
 
 /*
  * Design tokens portés depuis l'ancien assets/css/style.css (mêmes valeurs
