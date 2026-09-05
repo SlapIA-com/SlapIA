@@ -36,7 +36,13 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'locale' => app()->getLocale(),
-            'translations' => trans('messages'),
+            // Fusionné sur le FR : si une clé manque (ou n'est pas encore
+            // traduite) dans la langue active, on retombe sur sa valeur
+            // française plutôt que de renvoyer un tableau incomplet — c'est
+            // ce qui faisait planter le front (ex. Home/Courses/About/Pricing
+            // font `t('levels').map(...)`, qui explose si 'levels' est absent
+            // de la langue active au lieu de renvoyer un tableau vide/partiel).
+            'translations' => array_replace_recursive(trans('messages', [], 'fr'), trans('messages')),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
