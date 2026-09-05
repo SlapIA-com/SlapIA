@@ -15,28 +15,34 @@ function Login() {
   return (
     <>
       <Head title={t('auth.login_title')} />
-      <form onSubmit={submit} className="space-y-4">
-        {errors.email && <div className="rounded-lg bg-danger/10 px-4 py-2 text-sm text-danger">{errors.email}</div>}
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-ink-soft">{t('auth.label_email')}</label>
-          <input type="email" required value={data.email} onChange={(e) => setData('email', e.target.value)} className="input" />
+      {errors.email && (
+        <div className="alert alert--error">
+          <span>!</span>
+          <span>{errors.email}</span>
         </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-ink-soft">{t('auth.label_password')}</label>
-          <input type="password" required value={data.password} onChange={(e) => setData('password', e.target.value)} className="input" />
+      )}
+      <form onSubmit={submit} noValidate>
+        <div className="field">
+          <label htmlFor="email">{t('auth.label_email')}</label>
+          <input type="email" id="email" name="email" required value={data.email} onChange={(e) => setData('email', e.target.value)} />
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 text-ink-fade">
-            <input type="checkbox" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} />
-            {t('auth.remember_me')}
-          </label>
-          <Link href="/mot-de-passe-oublie" className="text-signal-deep dark:text-signal">{t('auth.forgot_password')}</Link>
+        <div className="field" style={{ marginTop: 16 }}>
+          <label htmlFor="password">{t('auth.label_password')}</label>
+          <input type="password" id="password" name="password" required value={data.password} onChange={(e) => setData('password', e.target.value)} />
         </div>
-        <button type="submit" disabled={processing} className="w-full rounded-full bg-signal py-3 text-sm font-semibold text-on-accent disabled:opacity-60">
+        <label className="consent-check" style={{ marginTop: 16 }}>
+          <input type="checkbox" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} />
+          <span>{t('auth.remember_me')}</span>
+        </label>
+
+        <button type="submit" disabled={processing} className="btn btn--primary btn--block" style={{ marginTop: 20 }}>
           {t('auth.submit_login')}
         </button>
       </form>
-      <style>{`.input { width:100%; border:1px solid rgb(var(--c-line)); border-radius:0.75rem; padding:0.65rem 0.9rem; background:rgb(var(--c-paper)); color:rgb(var(--c-ink)); font-size:0.9rem; } .input:focus { outline:2px solid rgb(var(--c-signal)); outline-offset:1px; }`}</style>
+
+      <p className="auth-links">
+        <Link href="/mot-de-passe-oublie">{t('auth.forgot_password')}</Link>
+      </p>
     </>
   );
 }

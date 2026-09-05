@@ -1,7 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Container, Eyebrow } from '../../Components/ui';
-import Reveal from '../../Components/Reveal';
 import type { BlogArticle } from '../../types';
 
 export default function BlogIndex({ articles }: { articles: BlogArticle[] }) {
@@ -13,40 +11,55 @@ export default function BlogIndex({ articles }: { articles: BlogArticle[] }) {
         <meta name="description" content={t('blog.meta_description')} />
       </Head>
 
-      <section className="border-b border-line py-20">
-        <Container>
-          <Eyebrow>{t('blog.eyebrow')}</Eyebrow>
-          <h1 className="mt-4 font-display text-4xl font-bold text-ink sm:text-5xl">
-            {t('blog.title_pre')}<mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('blog.title_mark')}</mark>
+      <section className="page-hero">
+        <div className="page-hero-canvas" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div className="container">
+          <span className="eyebrow">{t('blog.eyebrow')}</span>
+          <h1 className="page-hero__title">
+            {t('blog.title_pre')}<mark>{t('blog.title_mark')}</mark>
           </h1>
-          <p className="mt-6 max-w-xl text-ink-fade">{t('blog.lede')}</p>
-        </Container>
+          <p className="page-hero__lede">{t('blog.lede')}</p>
+        </div>
       </section>
 
-      <section className="py-16">
-        <Container>
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
           {articles.length === 0 ? (
-            <p className="text-ink-fade">{t('blog.empty')}</p>
+            <p className="blog-empty">{t('blog.empty')}</p>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {articles.map((article, i) => (
-                <Reveal key={article.id} delay={(i % 6) * 60}>
-                  <Link href={`/blog/${article.slug}`} className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-paper hover:shadow-lg">
-                    {article.image && <img src={article.image} alt="" className="h-44 w-full object-cover" />}
-                    <div className="flex flex-1 flex-col p-5">
-                      <time className="text-xs font-semibold uppercase tracking-wide text-ink-fade">
-                        {new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </time>
-                      <h3 className="mt-2 font-display text-base font-semibold text-ink">{article.title}</h3>
-                      <p className="mt-2 flex-1 text-sm text-ink-fade line-clamp-3">{article.excerpt}</p>
-                    </div>
-                  </Link>
-                </Reveal>
+            <div className="blog-grid">
+              {articles.map((article) => (
+                <BlogCard key={article.id} article={article} />
               ))}
             </div>
           )}
-        </Container>
+        </div>
       </section>
     </>
+  );
+}
+
+// Pas de useReveal ici : Inertia <Link> ne garantit pas de forwarder sa ref
+// vers l'ancre — carte affichée directement (sans l'animation d'apparition
+// au scroll) plutôt que de risquer de rester bloquée à opacity:0, même
+// précédent que CourseCard dans Home.tsx.
+function BlogCard({ article }: { article: BlogArticle }) {
+  return (
+    <Link href={`/blog/${article.slug}`} className="blog-card reveal is-visible">
+      {article.image && (
+        <div className="blog-card__image">
+          <img src={article.image} alt="" loading="lazy" />
+        </div>
+      )}
+      <div className="blog-card__body">
+        <span className="blog-card__date">
+          {new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+        </span>
+        <h2 className="blog-card__title">{article.title}</h2>
+        <p className="blog-card__excerpt">{article.excerpt}</p>
+      </div>
+    </Link>
   );
 }

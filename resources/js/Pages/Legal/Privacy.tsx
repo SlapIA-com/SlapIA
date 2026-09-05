@@ -7,8 +7,7 @@ export default function Privacy() {
   return (
     <>
       <Head title={t('legal_privacy.meta_title')}><meta name="description" content={t('legal_privacy.meta_description')} /></Head>
-      <LegalLayout title={t('legal_privacy.title')}>
-        <p className="lead">{t('legal_privacy.lede')}</p>
+      <LegalLayout title={t('legal_privacy.title')} lede={t('legal_privacy.lede')}>
         <h2>{t('legal_privacy.h1')}</h2>
         <p>{t('legal_privacy.h1_text')} contact@slapia.com.</p>
         <h2>{t('legal_privacy.h2')}</h2>

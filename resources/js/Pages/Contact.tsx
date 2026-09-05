@@ -1,7 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow } from '../Components/ui';
+import { useReveal } from '../hooks/useReveal';
 
+/** Port fidèle de pages/contact.php (mêmes classes CSS legacy/style.css). */
 export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: boolean; subjects: Record<string, string>; turnstileSiteKey: string }) {
   const { t } = useTranslation();
   const { data, setData, post, processing, errors } = useForm({
@@ -14,6 +15,8 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
     consent: false as boolean,
     'cf-turnstile-response': '',
   });
+  const card = useReveal<HTMLDivElement>();
+  const info = useReveal<HTMLDivElement>();
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,100 +29,147 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
         <meta name="description" content={t('contact.meta_description')} />
       </Head>
 
-      <section className="border-b border-line py-20">
-        <Container>
-          <Eyebrow>{t('contact.eyebrow')}</Eyebrow>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl font-bold text-ink sm:text-5xl">
-            {t('contact.title_pre')}<mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('contact.title_mark')}</mark>{t('contact.title_post')}
+      <section className="page-hero">
+        <div className="page-hero-canvas" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div className="container">
+          <span className="eyebrow">{t('contact.eyebrow')}</span>
+          <h1 className="page-hero__title">
+            {t('contact.title_pre')}<mark>{t('contact.title_mark')}</mark>{t('contact.title_post')}
           </h1>
-          <p className="mt-6 max-w-xl text-ink-fade">{t('contact.lede')}</p>
-        </Container>
+          <p className="page-hero__lede">{t('contact.lede')}</p>
+        </div>
       </section>
 
-      <section className="py-16">
-        <Container className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-2xl border border-line bg-paper p-6 sm:p-8">
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container contact-layout">
+          <div ref={card.ref} className={`contact-card ${card.className}`} style={card.style}>
             {sent && (
-              <div className="mb-6 rounded-xl bg-success/10 px-4 py-3 text-sm text-success">✓ {t('contact.success')}</div>
-            )}
-            {Object.keys(errors).length > 0 && (
-              <div className="mb-6 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
-                {Object.values(errors).join(' ')}
+              <div className="alert alert--success">
+                <span>✓</span>
+                <span>{t('contact.success')}</span>
               </div>
             )}
 
-            <form onSubmit={submit} className="space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label={t('contact.label_firstname')}>
-                  <input required value={data.firstname} onChange={(e) => setData('firstname', e.target.value)} className="input" />
-                </Field>
-                <Field label={t('contact.label_lastname')}>
-                  <input value={data.lastname} onChange={(e) => setData('lastname', e.target.value)} className="input" />
-                </Field>
-                <Field label={t('contact.label_email')}>
-                  <input required type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} className="input" />
-                </Field>
-                <Field label={t('contact.label_company')}>
-                  <input value={data.company} onChange={(e) => setData('company', e.target.value)} className="input" />
-                </Field>
-                <Field label={t('contact.label_subject')} full>
-                  <select required value={data.subject} onChange={(e) => setData('subject', e.target.value)} className="input">
+            {Object.keys(errors).length > 0 && (
+              <div className="alert alert--error">
+                <span>!</span>
+                <span>{Object.values(errors).join(' ')}</span>
+              </div>
+            )}
+
+            <form onSubmit={submit}>
+              <div className="form-grid">
+                <div className="field">
+                  <label htmlFor="firstname">{t('contact.label_firstname')}</label>
+                  <input
+                    type="text"
+                    id="firstname"
+                    required
+                    value={data.firstname}
+                    onChange={(e) => setData('firstname', e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="lastname">{t('contact.label_lastname')}</label>
+                  <input
+                    type="text"
+                    id="lastname"
+                    value={data.lastname}
+                    onChange={(e) => setData('lastname', e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="email">{t('contact.label_email')}</label>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    value={data.email}
+                    onChange={(e) => setData('email', e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="company">{t('contact.label_company')}</label>
+                  <input
+                    type="text"
+                    id="company"
+                    value={data.company}
+                    onChange={(e) => setData('company', e.target.value)}
+                  />
+                </div>
+                <div className="field field--full">
+                  <label htmlFor="subject">{t('contact.label_subject')}</label>
+                  <select
+                    id="subject"
+                    required
+                    value={data.subject}
+                    onChange={(e) => setData('subject', e.target.value)}
+                  >
                     <option value="" disabled>{t('contact.subject_placeholder')}</option>
                     {Object.entries(subjects).map(([slug]) => (
                       <option key={slug} value={slug}>{t(`contact.${slug}`)}</option>
                     ))}
                   </select>
-                </Field>
-                <Field label={t('contact.label_message')} full>
-                  <textarea required rows={6} placeholder={t('contact.message_placeholder')} value={data.message} onChange={(e) => setData('message', e.target.value)} className="input" />
-                </Field>
+                </div>
+                <div className="field field--full">
+                  <label htmlFor="message">{t('contact.label_message')}</label>
+                  <textarea
+                    id="message"
+                    rows={6}
+                    required
+                    placeholder={t('contact.message_placeholder')}
+                    value={data.message}
+                    onChange={(e) => setData('message', e.target.value)}
+                  />
+                </div>
               </div>
 
-              <label className="flex items-start gap-2 text-sm text-ink-fade">
-                <input type="checkbox" required checked={data.consent} onChange={(e) => setData('consent', e.target.checked)} className="mt-1" />
-                <span>{t('contact.consent_text')} <Link href="/confidentialite" className="underline">{t('contact.consent_link')}</Link>.</span>
+              <label className="consent-check">
+                <input type="checkbox" required checked={data.consent} onChange={(e) => setData('consent', e.target.checked)} />
+                <span>
+                  {t('contact.consent_text')} <Link href="/confidentialite">{t('contact.consent_link')}</Link>.
+                </span>
               </label>
 
-              {turnstileSiteKey && <div className="cf-turnstile" data-sitekey={turnstileSiteKey} />}
+              {turnstileSiteKey && (
+                <div className="contact-turnstile-wrap">
+                  <div className="cf-turnstile" data-sitekey={turnstileSiteKey} />
+                </div>
+              )}
 
-              <button type="submit" disabled={processing} className="rounded-full bg-signal px-6 py-3 text-sm font-semibold text-on-accent disabled:opacity-60">
-                {t('contact.submit')} →
+              <button type="submit" disabled={processing} className="btn btn--signal">
+                {t('contact.submit')} <span className="btn__arrow">→</span>
               </button>
             </form>
           </div>
 
-          <div className="space-y-6">
-            <InfoItem icon="@" label={t('contact.info_email_label')}>
-              <a href="mailto:contact@slapia.com" className="text-signal-deep dark:text-signal">contact@slapia.com</a>
-            </InfoItem>
-            <InfoItem icon="◎" label={t('contact.info_zone_label')}>{t('contact.info_zone_text')}</InfoItem>
-            <InfoItem icon="✓" label={t('contact.info_delay_label')}>{t('contact.info_delay_text')}</InfoItem>
+          <div ref={info.ref} className={`contact-info ${info.className}`} style={info.style}>
+            <div className="contact-info__item">
+              <span className="contact-info__icon">@</span>
+              <div>
+                <h4>{t('contact.info_email_label')}</h4>
+                <a href="mailto:contact@slapia.com">contact@slapia.com</a>
+              </div>
+            </div>
+            <div className="contact-info__item">
+              <span className="contact-info__icon">◎</span>
+              <div>
+                <h4>{t('contact.info_zone_label')}</h4>
+                <p>{t('contact.info_zone_text')}</p>
+              </div>
+            </div>
+            <div className="contact-info__item">
+              <span className="contact-info__icon">✓</span>
+              <div>
+                <h4>{t('contact.info_delay_label')}</h4>
+                <p>{t('contact.info_delay_text')}</p>
+              </div>
+            </div>
           </div>
-        </Container>
+        </div>
       </section>
-
-      <style>{`.input { width:100%; border:1px solid rgb(var(--c-line)); border-radius:0.75rem; padding:0.65rem 0.9rem; background:rgb(var(--c-paper)); color:rgb(var(--c-ink)); font-size:0.9rem; } .input:focus { outline:2px solid rgb(var(--c-signal)); outline-offset:1px; }`}</style>
     </>
-  );
-}
-
-function Field({ label, children, full = false }: { label: string; children: React.ReactNode; full?: boolean }) {
-  return (
-    <div className={full ? 'sm:col-span-2' : ''}>
-      <label className="mb-1.5 block text-sm font-medium text-ink-soft">{label}</label>
-      {children}
-    </div>
-  );
-}
-
-function InfoItem({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-4">
-      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-signal/10 text-signal-deep dark:text-signal">{icon}</span>
-      <div>
-        <h4 className="font-display text-sm font-semibold text-ink">{label}</h4>
-        <div className="mt-1 text-sm text-ink-fade">{children}</div>
-      </div>
-    </div>
   );
 }

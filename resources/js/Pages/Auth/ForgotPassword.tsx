@@ -16,18 +16,27 @@ function ForgotPassword() {
   return (
     <>
       <Head title={t('auth.reset_title')} />
-      {flash.success && <div className="mb-4 rounded-lg bg-success/10 px-4 py-2 text-sm text-success">{flash.success}</div>}
-      {errors.email && <div className="mb-4 rounded-lg bg-danger/10 px-4 py-2 text-sm text-danger">{errors.email}</div>}
-      <form onSubmit={submit} className="space-y-4">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-ink-soft">{t('auth.label_email')}</label>
-          <input type="email" required value={data.email} onChange={(e) => setData('email', e.target.value)} className="input" />
+      {flash.success && (
+        <div className="alert alert--success">
+          <span>✓</span>
+          <span>{flash.success}</span>
         </div>
-        <button type="submit" disabled={processing} className="w-full rounded-full bg-signal py-3 text-sm font-semibold text-on-accent disabled:opacity-60">
+      )}
+      {errors.email && (
+        <div className="alert alert--error">
+          <span>!</span>
+          <span>{errors.email}</span>
+        </div>
+      )}
+      <form onSubmit={submit} noValidate>
+        <div className="field">
+          <label htmlFor="email">{t('auth.label_email')}</label>
+          <input type="email" id="email" name="email" required value={data.email} onChange={(e) => setData('email', e.target.value)} />
+        </div>
+        <button type="submit" disabled={processing} className="btn btn--primary btn--block" style={{ marginTop: 20 }}>
           {t('auth.submit_reset_request')}
         </button>
       </form>
-      <style>{`.input { width:100%; border:1px solid rgb(var(--c-line)); border-radius:0.75rem; padding:0.65rem 0.9rem; background:rgb(var(--c-paper)); color:rgb(var(--c-ink)); font-size:0.9rem; }`}</style>
     </>
   );
 }

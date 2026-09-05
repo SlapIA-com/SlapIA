@@ -1,6 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow } from '../Components/ui';
 
 /** Rendu pour toute erreur HTTP (404 en particulier) — voir bootstrap/app.php ->withExceptions(). */
 export default function Error({ status }: { status: number }) {
@@ -10,20 +9,51 @@ export default function Error({ status }: { status: number }) {
   return (
     <>
       <Head title={t('error404.meta_title')}><meta name="description" content={t('error404.meta_description')} /></Head>
-      <section className="flex min-h-[60vh] items-center py-20">
-        <Container className="text-center">
-          <Eyebrow>{is404 ? t('error404.eyebrow') : `Erreur ${status}`}</Eyebrow>
-          <h1 className="mt-4 font-display text-4xl font-bold text-ink sm:text-5xl">
-            {t('error404.title_pre')}<mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('error404.title_mark')}</mark>{t('error404.title_post')}
-          </h1>
-          <p className="mx-auto mt-6 max-w-md text-ink-fade">{t('error404.lede')}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/" className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white">{t('error404.link_home')}</Link>
-            <Link href="/formations" className="rounded-full border border-line-strong px-5 py-2.5 text-sm font-semibold text-ink">{t('error404.link_courses')}</Link>
-            <Link href="/services-pc" className="rounded-full border border-line-strong px-5 py-2.5 text-sm font-semibold text-ink">{t('error404.link_services')}</Link>
-            <Link href="/contact" className="rounded-full border border-line-strong px-5 py-2.5 text-sm font-semibold text-ink">{t('error404.link_contact')}</Link>
+
+      <section className="page-hero">
+        {is404 && (
+          <div className="page-hero-canvas page-hero-canvas--broken" aria-hidden="true">
+            <svg viewBox="0 0 300 160" className="broken-link-svg">
+              <line x1="40" y1="80" x2="140" y2="50" stroke="var(--signal)" strokeWidth="2" opacity="0.5" />
+              <line x1="140" y1="50" x2="150" y2="90" stroke="var(--forest)" strokeWidth="2" strokeDasharray="4 6" opacity="0.5" />
+              <line x1="180" y1="100" x2="250" y2="70" stroke="var(--signal-pink)" strokeWidth="2" opacity="0" className="broken-link-svg__spark" />
+              <circle cx="40" cy="80" r="6" fill="var(--signal)" />
+              <circle cx="140" cy="50" r="6" fill="var(--forest)" />
+              <circle cx="180" cy="100" r="6" fill="var(--signal-pink)" className="broken-link-svg__node" />
+              <circle cx="250" cy="70" r="6" fill="var(--signal-pink)" opacity="0.35" />
+            </svg>
           </div>
-        </Container>
+        )}
+        <div className="container">
+          <span className="eyebrow">{is404 ? t('error404.eyebrow') : `Erreur ${status}`}</span>
+          <h1 className="page-hero__title">
+            {t('error404.title_pre')}<mark>{t('error404.title_mark')}</mark>{t('error404.title_post')}
+          </h1>
+          <p className="page-hero__lede">{t('error404.lede')}</p>
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="grid-4">
+            <Link href="/" className="value-card reveal is-visible" style={{ textDecoration: 'none' }}>
+              <div className="value-card__icon">◆</div>
+              <h3>{t('error404.link_home')}</h3>
+            </Link>
+            <Link href="/formations" className="value-card reveal is-visible" style={{ textDecoration: 'none' }}>
+              <div className="value-card__icon">◆</div>
+              <h3>{t('error404.link_courses')}</h3>
+            </Link>
+            <Link href="/services-pc" className="value-card reveal is-visible" style={{ textDecoration: 'none' }}>
+              <div className="value-card__icon">◆</div>
+              <h3>{t('error404.link_services')}</h3>
+            </Link>
+            <Link href="/contact" className="value-card reveal is-visible" style={{ textDecoration: 'none' }}>
+              <div className="value-card__icon">◆</div>
+              <h3>{t('error404.link_contact')}</h3>
+            </Link>
+          </div>
+        </div>
       </section>
     </>
   );

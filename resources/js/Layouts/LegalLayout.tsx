@@ -1,26 +1,43 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow } from '../Components/ui';
 
-export default function LegalLayout({ title, children }: { title: string; children: ReactNode }) {
+const NAV_ITEMS = [
+  { href: '/mentions-legales', labelKey: 'legal_common.nav_mentions' },
+  { href: '/confidentialite', labelKey: 'legal_common.nav_privacy' },
+  { href: '/cgv', labelKey: 'legal_common.nav_cgv' },
+] as const;
+
+export default function LegalLayout({ title, lede, children }: { title: string; lede?: string; children: ReactNode }) {
   const { t } = useTranslation();
+  const { url } = usePage();
+  const currentPath = url.split(/[?#]/)[0];
 
   return (
-    <section className="py-16">
-      <Container className="max-w-3xl">
-        <Eyebrow>{t('legal_common.eyebrow')}</Eyebrow>
-        <h1 className="mt-3 font-display text-3xl font-bold text-ink">{title}</h1>
-        <p className="mt-2 text-xs text-ink-fade">{t('legal_common.updated')}</p>
-        <nav className="mt-6 flex flex-wrap gap-4 border-b border-line pb-6 text-sm font-medium">
-          <Link href="/mentions-legales" className="text-ink-soft hover:text-signal-deep">{t('legal_common.nav_mentions')}</Link>
-          <Link href="/confidentialite" className="text-ink-soft hover:text-signal-deep">{t('legal_common.nav_privacy')}</Link>
-          <Link href="/cgv" className="text-ink-soft hover:text-signal-deep">{t('legal_common.nav_cgv')}</Link>
-        </nav>
-        <div className="prose prose-slate mt-8 max-w-none prose-headings:font-display prose-headings:text-ink prose-p:text-ink-soft dark:prose-invert">
+    <>
+      <section className="page-hero">
+        <div className="container">
+          <span className="eyebrow">{t('legal_common.eyebrow')}</span>
+          <h1 className="page-hero__title">{title}</h1>
+          {lede && <p className="page-hero__lede">{lede}</p>}
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container legal">
+          <p className="legal-meta">{t('legal_common.updated')}</p>
+
+          <nav className="legal-nav" aria-label="Legal pages">
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} className={item.href === currentPath ? 'tag' : 'tag tag--ghost'}>
+                {t(item.labelKey)}
+              </Link>
+            ))}
+          </nav>
+
           {children}
         </div>
-      </Container>
-    </section>
+      </section>
+    </>
   );
 }

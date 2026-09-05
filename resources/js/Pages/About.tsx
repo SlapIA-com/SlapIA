@@ -1,12 +1,14 @@
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow, SectionHead, ValueCard, StatNumber } from '../Components/ui';
-import Reveal from '../Components/Reveal';
+import { useReveal } from '../hooks/useReveal';
+import LegacyStatNumber from '../Components/LegacyStatNumber';
 import type { Level, Stats } from '../types';
 
+/** Port fidèle de pages/a-propos.php (mêmes classes CSS legacy/style.css). */
 export default function About({ stats }: { stats: Stats }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const levels: Level[] = t('levels');
+  const decimalSep = locale === 'en' ? '.' : ',';
 
   return (
     <>
@@ -14,93 +16,203 @@ export default function About({ stats }: { stats: Stats }) {
         <meta name="description" content={t('about.meta_description')} />
       </Head>
 
-      <section className="border-b border-line py-20">
-        <Container>
-          <Eyebrow>{t('about.eyebrow')}</Eyebrow>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl font-bold text-ink sm:text-5xl">
-            {t('about.title_pre')}<mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('about.title_mark')}</mark>{t('about.title_post')}
+      <section className="page-hero">
+        <div className="page-hero-canvas" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div className="container">
+          <span className="eyebrow">{t('about.eyebrow')}</span>
+          <h1 className="page-hero__title">
+            {t('about.title_pre')}<mark>{t('about.title_mark')}</mark>{t('about.title_post')}
           </h1>
-          <p className="mt-6 max-w-xl text-ink-fade">{t('about.lede')}</p>
-        </Container>
+          <p className="page-hero__lede">{t('about.lede')}</p>
+        </div>
       </section>
 
-      <section className="py-14">
-        <Container>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            <div><StatNumber value={stats.is_live ? stats.entreprises : null} suffix="+" fallback={t('about.stat1_num')} /><div className="mt-1 text-xs text-ink-fade">{t('about.stat1_label')}</div></div>
-            <div><StatNumber value={stats.is_live ? stats.particuliers : null} suffix="+" fallback={t('about.stat2_num')} /><div className="mt-1 text-xs text-ink-fade">{t('about.stat2_label')}</div></div>
-            <div><StatNumber value={levels.length} fallback={t('about.stat3_num')} /><div className="mt-1 text-xs text-ink-fade">{t('about.stat3_label')}</div></div>
-            <div><StatNumber value={stats.is_live && stats.satisfaction !== null ? stats.satisfaction : null} decimals={1} suffix="/5" fallback={t('about.stat4_num')} /><div className="mt-1 text-xs text-ink-fade">{t('about.stat4_label')}</div></div>
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="about-stats">
+            <AboutStat
+              value={stats.is_live ? stats.entreprises : null}
+              suffix="+"
+              fallback={t('about.stat1_num')}
+              label={t('about.stat1_label')}
+              decimalSep={decimalSep}
+            />
+            <AboutStat
+              value={stats.is_live ? stats.particuliers : null}
+              suffix="+"
+              fallback={t('about.stat2_num')}
+              label={t('about.stat2_label')}
+              decimalSep={decimalSep}
+            />
+            <AboutStat value={levels.length} fallback={t('about.stat3_num')} label={t('about.stat3_label')} decimalSep={decimalSep} />
+            <AboutStat
+              value={stats.is_live && stats.satisfaction !== null ? stats.satisfaction : null}
+              decimals={1}
+              suffix="/5"
+              fallback={t('about.stat4_num')}
+              label={t('about.stat4_label')}
+              decimalSep={decimalSep}
+            />
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="bg-paper py-16">
-        <Container>
-          <SectionHead eyebrow={t('about.philosophy_eyebrow')} title={t('about.philosophy_title')} />
-          <div className="grid gap-6 sm:grid-cols-3">
+      <section className="section section--paper">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('about.philosophy_eyebrow')}</span>
+              <h2 className="section-head__title">{t('about.philosophy_title')}</h2>
+            </div>
+          </div>
+          <div className="grid-3">
             {[1, 2, 3].map((n) => (
-              <ValueCard key={n} title={t(`about.value${n}_title`)} text={t(`about.value${n}_text`)} />
+              <PhilosophyCard key={n} title={t(`about.value${n}_title`)} text={t(`about.value${n}_text`)} />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="py-16">
-        <Container>
-          <SectionHead eyebrow={t('about.team_eyebrow')} title={t('about.team_title')} />
-          <div className="flex flex-col gap-6 rounded-2xl border border-line bg-paper p-6 sm:flex-row sm:items-center">
-            <img src="/assets/img/team/Thomas-Lapierre.jpg" alt={t('about.founder_name')} className="h-28 w-28 rounded-2xl object-cover" />
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
             <div>
-              <h3 className="font-display text-xl font-semibold text-ink">{t('about.founder_name')}</h3>
-              <span className="text-sm font-medium text-signal-deep dark:text-signal">{t('about.founder_role')}</span>
-              <p className="mt-3 text-sm text-ink-fade">{t('about.founder_bio')}</p>
+              <span className="eyebrow">{t('about.team_eyebrow')}</span>
+              <h2 className="section-head__title">{t('about.team_title')}</h2>
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[1, 2].map((n) => (
-              <a
-                key={n}
-                href={`/assets/img/certifications/Formation_iA_Niveau_${n}_Entreprise.jpg`}
-                target="_blank"
-                rel="noopener"
-                className="flex items-center gap-4 rounded-2xl border border-line bg-paper p-4 hover:shadow"
-              >
-                <img src={`/assets/img/certifications/Formation_iA_Niveau_${n}_Entreprise.jpg`} alt={t(`about.cert${n}_title`)} className="h-16 w-16 rounded-lg object-cover" />
-                <div>
-                  <div className="text-sm font-semibold text-ink">{t(`about.cert${n}_title`)}</div>
-                  <div className="text-xs text-ink-fade">{t(`about.cert${n}_meta`)}</div>
-                </div>
-              </a>
-            ))}
+          <Founder name={t('about.founder_name')} role={t('about.founder_role')} bio={t('about.founder_bio')} />
+
+          <div className="cert-grid">
+            <CertCard n={1} title={t('about.cert1_title')} meta={t('about.cert1_meta')} />
+            <CertCard n={2} title={t('about.cert2_title')} meta={t('about.cert2_meta')} />
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="bg-paper py-16">
-        <Container>
-          <SectionHead eyebrow={t('about.timeline_eyebrow')} title={t('about.timeline_title')} />
-          <div className="space-y-6 border-l border-line pl-6">
+      <section className="section section--paper">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{t('about.timeline_eyebrow')}</span>
+              <h2 className="section-head__title">{t('about.timeline_title')}</h2>
+            </div>
+          </div>
+          <div className="timeline">
             {[1, 2, 3, 4].map((n) => (
-              <Reveal key={n} delay={n * 60}>
-                <time className="text-xs font-semibold uppercase tracking-wide text-signal-deep dark:text-signal">{t(`about.tl${n}_year`)}</time>
-                <h4 className="mt-1 font-display text-base font-semibold text-ink">{t(`about.tl${n}_title`)}</h4>
-                <p className="mt-1 text-sm text-ink-fade">{t(`about.tl${n}_text`)}</p>
-              </Reveal>
+              <TimelineItem key={n} year={t(`about.tl${n}_year`)} title={t(`about.tl${n}_title`)} text={t(`about.tl${n}_text`)} />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="py-20">
-        <Container>
-          <div className="rounded-3xl bg-surface-dark p-10 text-center text-on-dark sm:p-16">
-            <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t('about.cta_title')}</h2>
-            <Link href="/contact" className="mt-6 inline-flex rounded-full bg-signal px-6 py-3 text-sm font-semibold text-on-accent">{t('about.cta_btn')} →</Link>
-          </div>
-        </Container>
+      <section className="section">
+        <div className="container">
+          <CtaBand title={t('about.cta_title')} btnLabel={t('about.cta_btn')} />
+        </div>
       </section>
     </>
+  );
+}
+
+function AboutStat({
+  value,
+  decimals = 0,
+  suffix = '',
+  fallback,
+  label,
+  decimalSep,
+}: {
+  value: number | null;
+  decimals?: number;
+  suffix?: string;
+  fallback: string;
+  label: string;
+  decimalSep: string;
+}) {
+  const reveal = useReveal<HTMLDivElement>();
+  return (
+    <div ref={reveal.ref} className={`about-stat ${reveal.className}`} style={reveal.style}>
+      <LegacyStatNumber value={value} decimals={decimals} suffix={suffix} fallback={fallback} decimalSep={decimalSep} />
+      <div className="stat__label">{label}</div>
+    </div>
+  );
+}
+
+function PhilosophyCard({ title, text }: { title: string; text: string }) {
+  const reveal = useReveal<HTMLDivElement>();
+  return (
+    <div ref={reveal.ref} className={`value-card ${reveal.className}`} style={reveal.style}>
+      <div className="value-card__icon">◆</div>
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </div>
+  );
+}
+
+function Founder({ name, role, bio }: { name: string; role: string; bio: string }) {
+  const reveal = useReveal<HTMLDivElement>();
+  return (
+    <div ref={reveal.ref} className={`founder ${reveal.className}`} style={reveal.style}>
+      <div className="founder__avatar">
+        <img src="/assets/img/team/Thomas-Lapierre.jpg" alt={name} />
+      </div>
+      <div>
+        <h3>{name}</h3>
+        <span className="founder__role">{role}</span>
+        <p className="bio">{bio}</p>
+      </div>
+    </div>
+  );
+}
+
+function CertCard({ n, title, meta }: { n: number; title: string; meta: string }) {
+  const reveal = useReveal<HTMLAnchorElement>();
+  const src = `/assets/img/certifications/Formation_iA_Niveau_${n}_Entreprise.jpg`;
+  return (
+    <a
+      ref={reveal.ref}
+      href={src}
+      target="_blank"
+      rel="noopener"
+      className={`cert-card ${reveal.className}`}
+      style={reveal.style}
+    >
+      <img src={src} alt={title} />
+      <div className="cert-card__body">
+        <div className="cert-card__title">{title}</div>
+        <div className="cert-card__meta">{meta}</div>
+      </div>
+    </a>
+  );
+}
+
+function TimelineItem({ year, title, text }: { year: string; title: string; text: string }) {
+  const reveal = useReveal<HTMLDivElement>();
+  return (
+    <div ref={reveal.ref} className={`timeline-item ${reveal.className}`} style={reveal.style}>
+      <time>{year}</time>
+      <div>
+        <h4>{title}</h4>
+        <p>{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function CtaBand({ title, btnLabel }: { title: string; btnLabel: string }) {
+  const reveal = useReveal<HTMLDivElement>();
+  return (
+    <div ref={reveal.ref} className={`cta-band ${reveal.className}`} style={reveal.style}>
+      <h2>{title}</h2>
+      <div className="cta-band__actions">
+        <Link href="/contact" className="btn btn--signal">
+          {btnLabel} <span className="btn__arrow">→</span>
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Container } from '../../Components/ui';
 import type { BlogArticle } from '../../types';
 
 export default function BlogShow({ article }: { article: BlogArticle }) {
@@ -12,20 +11,27 @@ export default function BlogShow({ article }: { article: BlogArticle }) {
         <meta name="description" content={article.excerpt} />
       </Head>
 
-      <article className="py-16">
-        <Container className="max-w-3xl">
-          <Link href="/blog" className="text-sm font-semibold text-signal-deep dark:text-signal">← {t('blog.back_to_list')}</Link>
-          <time className="mt-6 block text-xs font-semibold uppercase tracking-wide text-ink-fade">
+      <section className="page-hero">
+        <div className="container">
+          <Link href="/blog" className="blog-article__back-link">← {t('blog.back_to_list')}</Link>
+          <span className="eyebrow">
             {new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </time>
-          <h1 className="mt-2 font-display text-3xl font-bold text-ink sm:text-4xl">{article.title}</h1>
-          {article.image && <img src={article.image} alt="" className="mt-8 w-full rounded-2xl object-cover" />}
-          <div
-            className="prose prose-slate mt-8 max-w-none prose-headings:font-display prose-headings:text-ink prose-p:text-ink-soft prose-a:text-signal-deep dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: article.content ?? '' }}
-          />
-        </Container>
-      </article>
+          </span>
+          <h1 className="page-hero__title">{article.title}</h1>
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container blog-article-layout">
+          {article.image && (
+            <div className="blog-article__cover">
+              <img src={article.image} alt="" loading="lazy" />
+            </div>
+          )}
+          <div className="blog-article__content" dangerouslySetInnerHTML={{ __html: article.content ?? '' }} />
+          <Link href="/blog" className="btn btn--ghost blog-article__back">← {t('blog.back_to_list')}</Link>
+        </div>
+      </section>
     </>
   );
 }

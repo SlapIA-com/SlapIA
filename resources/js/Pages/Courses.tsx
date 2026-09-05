@@ -1,12 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '../hooks/useTranslation';
-import { Container, Eyebrow, Tag } from '../Components/ui';
-import Reveal from '../Components/Reveal';
+import { useReveal } from '../hooks/useReveal';
 import type { Level } from '../types';
 
+/** Port fidèle de pages/formations.php (mêmes classes CSS legacy/style.css). */
 export default function Courses() {
   const { t } = useTranslation();
   const levels: Level[] = t('levels');
+  const ctaBand = useReveal();
 
   return (
     <>
@@ -14,92 +15,160 @@ export default function Courses() {
         <meta name="description" content={t('courses_page.meta_description')} />
       </Head>
 
-      <section className="border-b border-line py-20">
-        <Container>
-          <Eyebrow>{t('courses_page.eyebrow')}</Eyebrow>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl font-bold text-ink sm:text-5xl">
-            {t('courses_page.title_pre')}<mark className="rounded bg-signal/20 px-1 text-signal-deep dark:text-signal">{t('courses_page.title_mark')}</mark>{t('courses_page.title_post')}
+      <section className="page-hero">
+        <div className="page-hero-canvas" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div className="container">
+          <span className="eyebrow">{t('courses_page.eyebrow')}</span>
+          <h1 className="page-hero__title">
+            {t('courses_page.title_pre')}
+            <mark>{t('courses_page.title_mark')}</mark>
+            {t('courses_page.title_post')}
           </h1>
-          <p className="mt-6 max-w-xl text-ink-fade">{t('courses_page.lede')}</p>
-        </Container>
+          <p className="page-hero__lede">{t('courses_page.lede')}</p>
+        </div>
       </section>
 
-      <section className="py-16">
-        <Container>
-          <div className="grid gap-6 sm:grid-cols-3">
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="grid-3">
             {levels.map((level) => (
-              <a key={level.anchor} href={`#${level.anchor}`} className="flex flex-col rounded-2xl border border-line bg-paper p-6 hover:shadow-lg">
-                <Tag signal>Niveau {level.num}</Tag>
-                <h3 className="mt-4 font-display text-lg font-semibold text-ink">{level.title}</h3>
-                <p className="mt-2 flex-1 text-sm text-ink-fade">{level.teaser}</p>
-                <div className="mt-4 flex flex-wrap gap-2">{level.tools.map((tl) => <Tag key={tl}>{tl}</Tag>)}</div>
-                <span className="mt-6 text-sm font-semibold text-signal-deep dark:text-signal">{t('courses_page.levels_cta')} →</span>
-              </a>
+              <LevelCard key={level.anchor} level={level} cta={t('courses_page.levels_cta')} />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="bg-paper py-16">
-        <Container>
+      <section className="section section--paper">
+        <div className="container">
           {levels.map((level) => (
-            <Reveal key={level.anchor} className="mb-14" >
-              <div id={level.anchor} className="scroll-mt-24">
-                <div className="mb-6 flex items-start gap-4">
-                  <span className="font-display text-3xl font-bold text-line-strong">{level.num}</span>
-                  <div>
-                    <h3 className="font-display text-xl font-semibold text-ink">{level.detail_title}</h3>
-                    <p className="text-sm text-ink-fade">{level.detail_subtitle}</p>
-                  </div>
-                </div>
-                <div className="overflow-x-auto rounded-2xl border border-line bg-paper">
-                  <table className="w-full min-w-[640px] text-left text-sm">
-                    <thead className="border-b border-line text-xs uppercase tracking-wide text-ink-fade">
-                      <tr>
-                        <th className="px-4 py-3">{t('courses_page.module_label')}</th>
-                        <th className="px-4 py-3">{t('courses_page.theme_label')}</th>
-                        <th className="px-4 py-3">{t('courses_page.action_label')}</th>
-                        <th className="px-4 py-3">{t('courses_page.tools_label')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {level.modules.map((m) => (
-                        <tr key={m.code} className="border-b border-line last:border-0">
-                          <td className="px-4 py-3 font-semibold text-ink">{m.code}</td>
-                          <td className="px-4 py-3 text-ink-soft">{m.theme}</td>
-                          <td className="px-4 py-3 text-ink-fade">{m.desc}</td>
-                          <td className="px-4 py-3">
-                            {m.tools.length === 0 ? (
-                              <span className="text-ink-fade">{t('courses_page.no_tool')}</span>
-                            ) : (
-                              <div className="flex flex-wrap gap-1">{m.tools.map((tl) => <Tag key={tl}>{tl}</Tag>)}</div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </Reveal>
+            <LevelBlock
+              key={level.anchor}
+              level={level}
+              moduleLabel={t('courses_page.module_label')}
+              themeLabel={t('courses_page.theme_label')}
+              actionLabel={t('courses_page.action_label')}
+              toolsLabel={t('courses_page.tools_label')}
+              noTool={t('courses_page.no_tool')}
+            />
           ))}
-        </Container>
+        </div>
       </section>
 
-      <section className="py-20">
-        <Container>
-          <p className="mb-8 text-center text-sm text-ink-fade">
+      <section className="section section--paper">
+        <div className="container">
+          <p style={{ textAlign: 'center', color: 'var(--ink-fade)', marginBottom: 28 }}>
             {t('courses_page.vip_title')}{' '}
-            <Link href="/tarifs#mentorat" className="font-semibold text-forest underline underline-offset-2">{t('courses_page.vip_cta')} →</Link>
-          </p>
-          <div className="rounded-3xl bg-surface-dark p-10 text-center text-on-dark sm:p-16">
-            <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t('courses_page.bottom_cta_title')}</h2>
-            <Link href="/contact" className="mt-6 inline-flex rounded-full bg-signal px-6 py-3 text-sm font-semibold text-on-accent">
-              {t('courses_page.bottom_cta_btn')} →
+            <Link href="/tarifs#mentorat" style={{ color: 'var(--forest)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+              {t('courses_page.vip_cta')} →
             </Link>
+          </p>
+          <div ref={ctaBand.ref} className={`cta-band ${ctaBand.className}`}>
+            <h2>{t('courses_page.bottom_cta_title')}</h2>
+            <div className="cta-band__actions">
+              <Link href="/contact" className="btn btn--signal">
+                {t('courses_page.bottom_cta_btn')} <span className="btn__arrow">→</span>
+              </Link>
+            </div>
           </div>
-        </Container>
+        </div>
       </section>
     </>
+  );
+}
+
+function LevelCard({ level, cta }: { level: Level; cta: string }) {
+  // Pas de ref ici : ancre de même page, pas de <Link> Inertia nécessaire —
+  // affichée directement (sans l'animation d'apparition au scroll), comme
+  // Home.tsx's CourseCard.
+  return (
+    <a href={`#${level.anchor}`} className="course-card reveal is-visible" style={{ textDecoration: 'none' }}>
+      <div className="course-card__meta">
+        <span className="tag tag--signal">Niveau {level.num}</span>
+      </div>
+      <h3>{level.title}</h3>
+      <p className="desc">{level.teaser}</p>
+      <div className="course-card__meta">
+        {level.tools.map((tool) => (
+          <span className="tag tag--ghost" key={tool}>
+            {tool}
+          </span>
+        ))}
+      </div>
+      <div className="course-card__foot course-card__foot--end">
+        <span className="course-card__link">
+          {cta} <span className="btn__arrow">→</span>
+        </span>
+      </div>
+    </a>
+  );
+}
+
+function LevelBlock({
+  level,
+  moduleLabel,
+  themeLabel,
+  actionLabel,
+  toolsLabel,
+  noTool,
+}: {
+  level: Level;
+  moduleLabel: string;
+  themeLabel: string;
+  actionLabel: string;
+  toolsLabel: string;
+  noTool: string;
+}) {
+  const reveal = useReveal();
+  return (
+    <div ref={reveal.ref} className={`level-block ${reveal.className}`} style={reveal.style} id={level.anchor}>
+      <div className="level-block__head">
+        <span className="level-block__num">{level.num}</span>
+        <div>
+          <h3>{level.detail_title}</h3>
+          <p>{level.detail_subtitle}</p>
+        </div>
+      </div>
+      <div className="curriculum-table-wrap">
+        <table className="curriculum-table">
+          <thead>
+            <tr>
+              <th>{moduleLabel}</th>
+              <th>{themeLabel}</th>
+              <th>{actionLabel}</th>
+              <th>{toolsLabel}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {level.modules.map((m) => (
+              <tr key={m.code}>
+                <td>{m.code}</td>
+                <td>{m.theme}</td>
+                <td>{m.desc}</td>
+                <td>
+                  {m.tools.length === 0 ? (
+                    <span className="curriculum-table__none">{noTool}</span>
+                  ) : (
+                    <div className="curriculum-table__tools">
+                      {m.tools.map((tool) => (
+                        <span className="tag" key={tool}>
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
