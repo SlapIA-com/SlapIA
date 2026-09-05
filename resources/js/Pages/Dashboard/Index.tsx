@@ -1,4 +1,5 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
 import type { SharedProps } from '../../types';
 
@@ -46,6 +47,8 @@ function Dashboard({
   const linkedinForm = useForm({ linkedin: client.linkedin ?? '' });
   const contactForm = useForm({ telephone: client.telephone ?? '', location: client.location ?? '' });
   const reviewForm = useForm({ commentaire: avis?.commentaire ?? '', satisfaction: avis?.satisfaction ?? 5 });
+  const [photoFileName, setPhotoFileName] = useState<string | null>(null);
+  const photoForm = useForm<{ photo: File | null }>({ photo: null });
 
   return (
     <>
@@ -85,6 +88,47 @@ function Dashboard({
           <div className="dash-grid">
             <div className="dash-card">
               <h2>{t('dashboard.label_profile')}</h2>
+
+              <div className="dash-photo">
+                {client.photo_url ? (
+                  <img
+                    src={client.photo_url}
+                    alt=""
+                    className="dash-photo__img"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                ) : (
+                  <span className="dash-photo__img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--forest)', background: 'var(--forest-glow)' }}>
+                    {client.nom_complet.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? '').join('') || '?'}
+                  </span>
+                )}
+                <form
+                  className="dash-photo__actions"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    photoForm.post('/dashboard/photo', { forceFormData: true, onSuccess: () => { photoForm.reset(); setPhotoFileName(null); } });
+                  }}
+                >
+                  <label className="btn btn--ghost" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <span>{t('dashboard.change_photo')}</span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', opacity: 0 }}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        photoForm.setData('photo', f);
+                        setPhotoFileName(f?.name ?? null);
+                      }}
+                    />
+                  </label>
+                  <span className="dash-photo__hint">{photoFileName ?? "Aucun fichier n'a été sélectionné"}</span>
+                  {photoFileName && (
+                    <button type="submit" disabled={photoForm.processing} className="btn btn--primary">{t('dashboard.save')}</button>
+                  )}
+                </form>
+              </div>
+
               <DashField label={t('dashboard.label_name')} value={client.nom_complet} />
               <DashField label={t('dashboard.label_email')} value={client.email} />
               {client.nom_entreprise && <DashField label={t('dashboard.label_company')} value={client.nom_entreprise} />}

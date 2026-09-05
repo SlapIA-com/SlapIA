@@ -108,6 +108,17 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
   }, [mobileOpen]);
 
+  // .has-rail réserve la place de la rail verticale (--rail-w) sur desktop —
+  // seul SiteLayout affiche la rail (pas AuthLayout : login/reset-password
+  // n'ont pas de nav). Posé/retiré ici plutôt qu'en dur dans app.blade.php,
+  // qui sert le même <body> à toutes les pages Inertia (SPA, une seule
+  // page HTML) : sans ce nettoyage, la bande gauche restait vide et noire
+  // sur les pages sans rail après une navigation côté client.
+  useEffect(() => {
+    document.body.classList.add('has-rail');
+    return () => document.body.classList.remove('has-rail');
+  }, []);
+
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) setLangOpen(false);

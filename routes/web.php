@@ -86,4 +86,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/avis/{avis}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
     Route::post('/comptes/{client}/factures', [AdminController::class, 'uploadInvoice'])->name('invoices.upload');
     Route::get('/factures/{facture}', [AdminController::class, 'viewInvoice'])->name('invoices.view');
+    Route::post('/comptes/{client}/photo', [AdminController::class, 'uploadPhoto'])->name('accounts.photo');
+    Route::post('/abonnes-rss', [AdminController::class, 'storeRssSubscriber'])->name('rss.store');
+    Route::delete('/abonnes-rss/{subscriber}', [AdminController::class, 'destroyRssSubscriber'])->name('rss.destroy');
 });

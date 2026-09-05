@@ -30,7 +30,7 @@ class AdminController extends Controller
             ->get()
             ->map(fn (Client $c) => $this->accountRow($c));
 
-        $rss = RssSubscriber::orderByDesc('date_creation')->get(['email', 'date_creation']);
+        $rss = RssSubscriber::orderByDesc('date_creation')->get(['id', 'email', 'date_creation']);
 
         $reviews = AvisClient::with('client')->orderByDesc('created_at')->get()->map(fn (AvisClient $a) => [
             'id' => $a->id,
@@ -50,11 +50,24 @@ class AdminController extends Controller
             'admin' => Client::whereNull('type_client')->count(),
         ];
 
+        // Chiffre d'affaires = prestations effectivement facturées ou réglées
+        // (on exclut "En cours"/"En attente"/"Dispensé" du total encaissé).
+        $chiffreAffaires = (float) Prestation::whereIn('statut_facturation', ['Payé', 'Facturé'])->sum('prix');
+
+        $nouveauxClientsMois = Client::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        $satisfactionMoyenne = AvisClient::where('satisfaction', '>', 0)->avg('satisfaction');
+
         return Inertia::render('Admin/Index', [
             'kpis' => [
                 'comptes' => $clients->count(),
                 'abonnes_rss' => $rss->count(),
                 'factures_en_attente' => Prestation::where('statut_facturation', 'En attente')->count(),
+                'chiffre_affaires' => $chiffreAffaires,
+                'nouveaux_clients_mois' => $nouveauxClientsMois,
+                'satisfaction_moyenne' => $satisfactionMoyenne !== null ? round((float) $satisfactionMoyenne, 1) : null,
             ],
             'billingBreakdown' => $billingBreakdown,
             'roleBreakdown' => $roleBreakdown,
@@ -73,8 +86,11 @@ class AdminController extends Controller
             'nom_entreprise' => $c->nom_entreprise,
             'telephone' => $c->telephone,
             'location' => $c->location,
+            'job_domaine' => $c->job_domaine,
+            'linkedin' => $c->linkedin,
             'role' => $c->role(),
             'derniere_connexion' => $c->compte->derniere_connexion,
+            'photo_url' => $c->photo_path ? route('avatar', $c->id) : null,
             'prestations' => $c->prestations->map(fn (Prestation $p) => [
                 'id' => $p->id,
                 'type_service' => $p->type_service,
@@ -109,14 +125,38 @@ class AdminController extends Controller
     public function updateProfile(Request $request, Client $client): RedirectResponse
     {
         $data = $request->validate([
+            'nom_complet' => ['nullable', 'string', 'max:255'],
+            'nom_entreprise' => ['nullable', 'string', 'max:255'],
             'telephone' => ['nullable', 'string', 'max:30'],
             'location' => ['nullable', 'string', 'max:500'],
+            'job_domaine' => ['nullable', 'string', 'max:255'],
+            'linkedin' => ['nullable', 'string', 'max:500'],
             'commandes_libres' => ['nullable', 'string'],
         ]);
 
         $client->update($data);
 
         return back()->with('success', 'Fiche mise à jour.');
+    }
+
+    public function uploadPhoto(Request $request, Client $client): RedirectResponse
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:5120'],
+        ]);
+
+        $path = $request->file('photo')->store('avatars', 'local');
+
+        if ($client->photo_path) {
+            Storage::disk('local')->delete($client->photo_path);
+        }
+
+        $client->update([
+            'photo_path' => $path,
+            'photo_mime' => $request->file('photo')->getMimeType(),
+        ]);
+
+        return back()->with('success', 'Photo mise à jour.');
     }
 
     public function resetPassword(Request $request): RedirectResponse
@@ -259,5 +299,23 @@ class AdminController extends Controller
             $facture->nom_fichier,
             ['Content-Type' => $facture->mime_type, 'Content-Disposition' => 'inline']
         );
+    }
+
+    public function storeRssSubscriber(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'max:255', 'unique:rss_subscriber,email'],
+        ]);
+
+        RssSubscriber::create($data);
+
+        return back()->with('success', 'Abonné RSS ajouté.');
+    }
+
+    public function destroyRssSubscriber(RssSubscriber $subscriber): RedirectResponse
+    {
+        $subscriber->delete();
+
+        return back()->with('success', 'Abonné RSS retiré.');
     }
 }

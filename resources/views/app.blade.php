@@ -21,7 +21,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
     @inertiaHead
 </head>
-<body class="has-rail">
+<body>
     @inertia
 </body>
 </html>

@@ -290,3 +290,89 @@
   .admin-toolbar-row .btn { width: 100%; justify-content: center; }
   .admin-tab-panel .btn { padding: 10px 16px; font-size: 0.78rem; }
 }
+
+/* ============================================================
+   Ajouts port React : avatars avec repli initiales (mêmes principes
+   que .review-avatar du site public), upload de photo dans la fiche
+   client, formulaire d'ajout d'abonné RSS, et zone de commentaire
+   complète pour les avis (l'ancien <input> tronquait le texte).
+   ============================================================ */
+.admin-avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: none;
+  background: var(--forest-glow);
+  color: var(--forest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.7rem;
+  border: 1px solid var(--line-strong);
+}
+.admin-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+.admin-avatar-circle--lg { width: 64px; height: 64px; font-size: 1.1rem; }
+
+.admin-photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.admin-photo-upload__hint {
+  font-size: 0.78rem;
+  color: var(--ink-fade);
+}
+
+.admin-rss-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.admin-review-comment {
+  width: 100%;
+  min-height: 70px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--white);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+/* Sélecteur de fichier custom (facture / photo) : le <input type="file">
+   natif reste accessible mais invisible, seul le libellé stylé + le nom du
+   fichier choisi (tenu à jour en JS) sont affichés — au lieu du bouton +
+   texte "Aucun fichier n'a été sélectionné" par défaut du navigateur. */
+.admin-file-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.admin-file-input input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+.admin-file-input__name {
+  font-size: 0.82rem;
+  color: var(--ink-fade);
+}
+
+@media (max-width: 640px) {
+  .admin-photo-upload { flex-direction: column; align-items: flex-start; }
+  .admin-rss-form { flex-direction: column; align-items: stretch; }
+  .admin-rss-form .admin-details-field { min-width: 0; }
+}
