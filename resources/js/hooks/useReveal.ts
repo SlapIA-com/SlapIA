@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
  * la mise en page CSS grid/flex (.grid-3, .course-card, etc. doivent rester
  * l'élément grid/flex direct, pas un wrapper).
  */
-export function useReveal<T extends HTMLElement = HTMLElement>(delay = 0) {
+export function useReveal<T extends HTMLElement = HTMLDivElement>(delay = 0) {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
