@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens portés depuis l'ancien assets/css/style.css (mêmes valeurs
+ * de marque : violet SlapIA, Bricolage Grotesque + IBM Plex). Exprimés en
+ * "r g b" (sans virgules) pour être consommables par Tailwind via
+ * rgb(var(--c-x) / <alpha-value>).
+ */
+:root {
+  --c-mist: 245 242 250;
+  --c-paper: 251 249 253;
+  --c-ink: 23 19 32;
+  --c-ink-soft: 68 58 88;
+  --c-ink-fade: 114 106 130;
+  --c-line: 225 220 235;
+  --c-line-strong: 199 190 218;
+  --c-forest: 122 63 135;
+
+  --c-signal: 179 111 224;
+  --c-signal-deep: 145 71 196;
+  --c-signal-pink: 227 111 196;
+  --c-on-accent: 26 16 36;
+
+  --c-surface-dark: 23 19 32;
+  --c-on-dark: 245 242 250;
+
+  --c-danger: 198 67 46;
+  --c-success: 14 159 110;
+  --c-warning: 180 83 9;
+
+  color-scheme: light;
+}
+
+:root.dark {
+  --c-mist: 18 15 26;
+  --c-paper: 27 22 38;
+  --c-ink: 242 238 249;
+  --c-ink-soft: 199 190 218;
+  --c-ink-fade: 148 138 170;
+  --c-line: 52 41 63;
+  --c-line-strong: 71 58 86;
+  --c-forest: 201 160 234;
+
+  color-scheme: dark;
+}
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: local('Bricolage Grotesque');
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-mist text-ink font-body antialiased;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
