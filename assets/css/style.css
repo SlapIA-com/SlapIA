@@ -357,7 +357,50 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
 }
 .lang-switch__link:hover { color: var(--ink); }
 .lang-switch__link.is-active { background: var(--ink); color: var(--mist); }
-@media (max-width: 1080px) { .lang-switch { display: none; } }
+
+/* Compact header language control: one button showing the current language
+   instead of three always-visible pills — same dropdown pattern as
+   .user-menu below, so it doesn't need its own JS story. */
+.lang-menu { position: relative; flex: none; }
+.lang-menu__trigger {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 30px;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+.lang-menu__trigger:hover { border-color: var(--forest); color: var(--forest); }
+.lang-menu__dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 96px;
+  background: var(--white);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+  padding: 6px;
+  z-index: 50;
+}
+:root[data-theme="dark"] .lang-menu__dropdown { box-shadow: 0 16px 40px rgba(0,0,0,0.6); }
+.lang-menu.is-open .lang-menu__dropdown { display: block; }
+.lang-menu__link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+.lang-menu__link:hover { background: var(--paper); }
+@media (max-width: 480px) { .lang-menu { display: none; } }
 
 .mobile-menu__lang { display: flex; gap: 8px; margin: 24px 0; }
 .lang-switch__link--on-dark { color: rgba(245,242,250,0.6); }
@@ -387,9 +430,20 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
 .nav-toggle span::before { position: absolute; top: -6px; }
 .nav-toggle span::after { position: absolute; top: 6px; }
 
-@media (max-width: 1080px) {
+/* Was a single hard cutoff at 1080px that hid the nav, the login link AND
+   the "book a call" CTA all at once — on a lot of real laptop widths
+   (1024-1280px) that left just a logo and a hamburger, with no way to see
+   where the primary conversion button had gone. Splitting it in two: the
+   nav collapses to the hamburger a bit later (freed up by the language
+   switcher above going from 3 pills to 1 button), the secondary "login"
+   link folds away with it, but the primary CTA stays on screen until the
+   header is genuinely phone-width, where the mobile menu has its own. */
+@media (max-width: 880px) {
   .nav { display: none; }
   .nav-toggle { display: flex; }
+  .header__actions .btn.btn--ghost { display: none; }
+}
+@media (max-width: 560px) {
   .header__actions .btn { display: none; }
 }
 
@@ -848,6 +902,15 @@ a.tag--ghost:hover { border-color: var(--forest); color: var(--forest); }
   padding: 5px 12px;
   border-radius: 20px;
 }
+.price-card__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-fade);
+  margin-bottom: 10px;
+}
+.price-card--featured .price-card__kicker { color: rgba(245,242,250,0.55); }
 .price-card__name { font-size: 1.2rem; margin-bottom: 6px; }
 .price-card__desc { color: var(--ink-fade); font-size: 0.9rem; margin-bottom: 20px; min-height: 40px; }
 .price-card__price { font-family: var(--font-mono); font-size: 2.1rem; font-weight: 600; margin-bottom: 4px; }

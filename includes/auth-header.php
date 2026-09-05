@@ -4,7 +4,7 @@
  * Volontairement séparé de includes/header.php : pas de nav, pas de footer du site,
  * toujours en mode sombre — un "moment" à part, pas soumis au thème clair/sombre global.
  */
-$title = isset($page_title) ? $page_title . ' — Slapia' : 'Slapia';
+$title = isset($page_title) ? $page_title . ' — SlapIa' : 'SlapIa';
 ?>
 <!doctype html>
 <html lang="<?php echo t('meta.html_lang'); ?>" data-theme="dark">
@@ -27,7 +27,7 @@ $title = isset($page_title) ? $page_title . ' — Slapia' : 'Slapia';
   </div>
 
   <a href="/index.php" class="auth-logo">
-    <img src="/assets/img/brand/logo.svg" alt="" class="auth-logo__mark"> Slapia
+    <img src="/assets/img/brand/logo.svg" alt="" class="auth-logo__mark"> SlapIa
   </a>
 
   <main class="auth-stage">

@@ -34,17 +34,16 @@ return [
     'courses_all' => 'Toutes les formations',
     'course_link_1' => 'Fondations & Prompting',
     'course_link_2' => 'Agents IA & Automatisation',
-    'course_link_3' => 'n8n & Make avancé',
+    'course_link_3' => 'Workflow (n8n & Make avancé)',
     'services_heading' => 'Services PC',
     'service_link_1' => 'Montage PC sur mesure',
     'service_link_2' => "Devis & conseil d'achat",
     'service_link_3' => 'Diagnostic & mise à niveau',
-    'company_heading' => 'Slapia',
+    'company_heading' => 'SlapIa',
     'link_about' => 'À propos',
     'link_pricing' => 'Tarifs',
     'link_contact' => 'Contact',
     'contact_heading' => 'Contact',
-    'phone' => '+33 1 00 00 00 00',
     'copyright' => 'SlapIA. Tous droits réservés.',
     'legal_mentions' => 'Mentions légales',
     'legal_privacy' => 'Confidentialité',
@@ -53,23 +52,23 @@ return [
 
   'home' => [
     'meta_title' => 'Formations en intelligence artificielle pour équipes et dirigeants',
-    'meta_description' => "Slapia forme vos équipes à l'IA générative, au prompt engineering et à l'automatisation, et vous accompagne aussi sur le montage, le devis et le conseil d'achat PC.",
+    'meta_description' => "SlapIa forme vos équipes à l'IA générative, au prompt engineering et à l'automatisation, et vous accompagne aussi sur le montage, le devis et le conseil d'achat PC.",
 
     'hero_eyebrow' => 'Formations en intelligence artificielle',
     'hero_title_line1' => "Votre équipe se sert déjà de l'IA.",
     'hero_title_mark' => "Apprenez-lui à bien s'en servir.",
-    'hero_lede' => "Slapia conçoit des formations concrètes en intelligence artificielle pour les équipes et les dirigeants qui veulent des résultats mesurables, pas des slogans marketing.",
+    'hero_lede' => "SlapIa conçoit des formations concrètes en intelligence artificielle pour les équipes et les dirigeants qui veulent des résultats mesurables, pas des slogans marketing.",
     'cta_primary' => 'Voir les formations',
     'cta_secondary' => 'Discuter de vos besoins',
 
     'stat1_num' => '40+', 'stat1_label' => 'entreprises formées',
-    'stat2_num' => '500+', 'stat2_label' => 'professionnels accompagnés',
+    'stat2_num' => '500+', 'stat2_label' => 'personnes accompagnées',
     'stat3_num' => '4,8/5', 'stat3_label' => 'satisfaction moyenne',
 
     'panel_label' => 'Le parcours en 3 niveaux',
-    'panel1_tag' => 'Niveau 01', 'panel1_title' => 'Fondations & Prompting', 'panel1_meta' => 'ChatGPT · Notion',
-    'panel2_tag' => 'Niveau 02', 'panel2_title' => 'Agents IA & Automatisation', 'panel2_meta' => 'ChatGPT · Notion · Logic',
-    'panel3_tag' => 'Niveau 03', 'panel3_title' => 'n8n & Make avancé', 'panel3_meta' => 'n8n · Make',
+    'panel1_tag' => 'Niveau 01', 'panel1_title' => 'Fondations & Prompting', 'panel1_meta' => 'LLM · Notion',
+    'panel2_tag' => 'Niveau 02', 'panel2_title' => 'Agents IA & Automatisation', 'panel2_meta' => 'LLM · Notion · Agent IA',
+    'panel3_tag' => 'Niveau 03', 'panel3_title' => 'Workflow', 'panel3_meta' => 'n8n · Make',
 
     'problem_eyebrow' => 'Le constat',
     'problem_title' => "La plupart des équipes utilisent déjà des outils d'IA au quotidien. Peu ont reçu une vraie formation pour en tirer parti.",
@@ -87,7 +86,7 @@ return [
     'catalogue_link' => 'Voir le programme',
 
     'method_eyebrow' => 'Méthode',
-    'method_title' => 'Comment se construit une formation Slapia',
+    'method_title' => 'Comment se construit une formation SlapIa',
     'method_note' => "Quatre étapes, dans cet ordre, à chaque fois — qu'il s'agisse d'une session ouverte ou d'un programme intra-entreprise.",
     'method1_title' => 'Diagnostic', 'method1_text' => 'On échange sur vos outils actuels, les usages réels de vos équipes et les objectifs concrets à atteindre.',
     'method2_title' => 'Programme sur-mesure', 'method2_text' => "On construit un parcours adapté à votre secteur, à votre niveau de départ et aux cas d'usage qui comptent vraiment pour vous.",
@@ -104,7 +103,7 @@ return [
     'quote3_text' => "Le module dirigeants nous a permis de poser un cadre clair avant même de lancer nos premiers projets IA.",
     'quote3_name' => 'Sophie B.', 'quote3_role' => 'Directrice générale',
 
-    'pc_teaser_eyebrow' => 'Aussi chez Slapia',
+    'pc_teaser_eyebrow' => 'Aussi chez SlapIa',
     'pc_teaser_title' => "Un PC bien choisi compte autant qu'une bonne formation",
     'pc_teaser_note' => 'Montage sur mesure, devis avant achat et conseils clairs, pour particuliers et professionnels.',
     'pc_card1_title' => 'Montage sur mesure', 'pc_card1_text' => "Un PC fixe assemblé et configuré pour votre usage réel, pas pour la fiche technique la plus impressionnante.",
@@ -122,7 +121,7 @@ return [
       'num' => '01', 'anchor' => 'niveau-1',
       'title' => 'Fondations & Prompting',
       'teaser' => "Comprendre l'IA, organiser ses idées, apprendre à prompter et maîtriser les bonnes pratiques.",
-      'tools' => ['ChatGPT', 'Notion'],
+      'tools' => ['LLM', 'Notion'],
       'detail_title' => "Acculturation & fondations au prompting et à l'utilisation globale",
       'detail_subtitle' => "Comprendre le « pourquoi » et le « quoi ». Découvrir les briques de l'IA et savoir les manipuler.",
       'modules' => [
@@ -136,7 +135,7 @@ return [
       'num' => '02', 'anchor' => 'niveau-2',
       'title' => 'Agents IA & Automatisation',
       'teaser' => "Créer des agents IA, comprendre leurs limites, et automatiser des processus complets.",
-      'tools' => ['ChatGPT', 'Notion', 'Logic'],
+      'tools' => ['LLM', 'Notion', 'Agent IA'],
       'detail_title' => "Agents IA et concept d'automatisation",
       'detail_subtitle' => "Créer des systèmes qui travaillent pour vous et accomplissent le travail sans valeur ajoutée de votre part.",
       'modules' => [
@@ -148,7 +147,7 @@ return [
     ],
     [
       'num' => '03', 'anchor' => 'niveau-3',
-      'title' => 'n8n & Make avancé',
+      'title' => 'Workflow',
       'teaser' => "Construire des workflows end-to-end, connecter des API, et choisir le bon outil.",
       'tools' => ['n8n', 'Make'],
       'detail_title' => 'Automatisation IA avancée',
@@ -164,7 +163,7 @@ return [
 
   'courses_page' => [
     'meta_title' => 'Formations',
-    'meta_description' => 'Le parcours de formation Slapia en 3 niveaux : fondations & prompting, agents IA & automatisation, n8n & Make avancé — avec un mentorat en option.',
+    'meta_description' => 'Le parcours de formation SlapIa en 3 niveaux : fondations & prompting, agents IA & automatisation, n8n & Make avancé — avec un mentorat en option.',
     'eyebrow' => 'Parcours',
     'title_pre' => 'Trois niveaux pour devenir ',
     'title_mark' => 'expert',
@@ -186,6 +185,7 @@ return [
     'vip_f2_title' => 'Aide technique', 'vip_f2_text' => 'On regarde votre écran et on corrige ensemble.',
     'vip_f3_title' => 'Parcours personnalisé', 'vip_f3_text' => 'On adapte le programme à vos objectifs spécifiques.',
     'vip_f4_title' => 'Mentorat intensif', 'vip_f4_text' => 'Pour ceux qui veulent des résultats immédiats.',
+    'vip_kicker' => 'Accompagnement individuel',
     'vip_price_name' => 'Mentorat intensif',
     'vip_price' => '60 €',
     'vip_unit' => 'par session · 1h par jour',
@@ -235,7 +235,7 @@ return [
 
   'pricing' => [
     'meta_title' => 'Tarifs',
-    'meta_description' => 'Tarifs des formations Slapia et de nos services PC : sessions de formation, montage sur mesure, devis et conseil d\'achat.',
+    'meta_description' => 'Tarifs des formations SlapIa et de nos services PC : sessions de formation, montage sur mesure, devis et conseil d\'achat.',
     'eyebrow' => 'Tarifs',
     'title_pre' => 'Un tarif ',
     'title_mark' => 'simple',
@@ -245,6 +245,7 @@ return [
     'formations_eyebrow' => 'Formations',
     'formations_title' => 'Une formule sur-mesure',
 
+    'tier3_kicker' => "Programme d'équipe",
     'tier3_name' => 'Entreprise', 'tier3_desc' => 'Pour un programme multi-équipes ou multi-sessions, sur-mesure.',
     'tier3_price' => 'Sur devis', 'tier3_unit' => "selon le nombre d'équipes et de modules",
     'tier3_f1' => 'Parcours combinant plusieurs modules du catalogue', 'tier3_f2' => 'Plusieurs équipes ou plusieurs sites',
@@ -292,12 +293,12 @@ return [
 
   'about' => [
     'meta_title' => 'À propos',
-    'meta_description' => "Slapia forme des équipes et des dirigeants à l'intelligence artificielle, et accompagne aussi particuliers et professionnels sur leur matériel PC. Méthode, philosophie et parcours.",
+    'meta_description' => "SlapIa forme des équipes et des dirigeants à l'intelligence artificielle, et accompagne aussi particuliers et professionnels sur leur matériel PC. Méthode, philosophie et parcours.",
     'eyebrow' => 'À propos',
     'title_pre' => 'Une formation IA, ça devrait ',
     'title_mark' => 'changer votre façon de travailler',
     'title_post' => ' — pas remplir un calendrier',
-    'lede' => "Slapia est né d'un constat simple : la plupart des formations en IA parlent de technologie, très peu parlent du travail réel des équipes qui vont s'en servir.",
+    'lede' => "SlapIa est né d'un constat simple : la plupart des formations en IA parlent de technologie, très peu parlent du travail réel des équipes qui vont s'en servir.",
 
     'stat1_num' => '40+', 'stat1_label' => 'entreprises accompagnées',
     'stat2_num' => '500+', 'stat2_label' => 'professionnels formés',
@@ -318,10 +319,10 @@ return [
     'cert1_meta' => 'Hoshin Partners · Niveau 1 · 4 décembre 2025',
     'cert2_title' => 'Intelligence Artificielle « Entreprise Augmentée »',
     'cert2_meta' => 'Hoshin Partners · Niveau 2 · 4 décembre 2025',
-    'founder_bio' => "Thomas conçoit et anime les formations Slapia avec une conviction : un bon formateur en IA passe plus de temps à écouter les usages réels d'une équipe qu'à présenter des slides. Chaque programme est ajusté en continu selon les retours du terrain. À côté des formations, il conseille aussi particuliers et professionnels sur le choix, le montage et l'entretien de leur matériel informatique.",
+    'founder_bio' => "Thomas conçoit et anime les formations SlapIa avec une conviction : un bon formateur en IA passe plus de temps à écouter les usages réels d'une équipe qu'à présenter des slides. Chaque programme est ajusté en continu selon les retours du terrain. À côté des formations, il conseille aussi particuliers et professionnels sur le choix, le montage et l'entretien de leur matériel informatique.",
 
     'timeline_eyebrow' => 'Parcours',
-    'timeline_title' => 'Les grandes étapes de Slapia',
+    'timeline_title' => 'Les grandes étapes de SlapIa',
     'tl1_year' => '2023', 'tl1_title' => 'Premières sessions', 'tl1_text' => 'Les premiers ateliers IA générative animés pour des petites équipes, en format court et pratique.',
     'tl2_year' => '2024', 'tl2_title' => 'Élargissement du catalogue', 'tl2_text' => 'Ajout des parcours prompt engineering avancé, automatisation et IA pour managers.',
     'tl3_year' => '2025', 'tl3_title' => 'Premiers programmes sur-mesure', 'tl3_text' => "Développement de parcours intra-entreprise combinant plusieurs modules selon les besoins de chaque organisation.",
@@ -333,7 +334,7 @@ return [
 
   'contact' => [
     'meta_title' => 'Contact',
-    'meta_description' => 'Contactez Slapia pour organiser une formation en intelligence artificielle pour votre équipe ou votre entreprise.',
+    'meta_description' => 'Contactez SlapIa pour organiser une formation en intelligence artificielle pour votre équipe ou votre entreprise.',
     'eyebrow' => 'Contact',
     'title_pre' => 'Parlons de ',
     'title_mark' => 'votre équipe',
@@ -547,7 +548,7 @@ return [
 
   'legal_mentions' => [
     'meta_title' => 'Mentions légales',
-    'meta_description' => 'Mentions légales du site Slapia : éditeur, hébergeur et informations légales de l\'entreprise.',
+    'meta_description' => 'Mentions légales du site SlapIa : éditeur, hébergeur et informations légales de l\'entreprise.',
     'title' => 'Mentions légales',
     'h1' => '1. Éditeur du site',
     'row_denomination' => 'Dénomination', 'row_forme' => 'Forme juridique', 'row_siren' => 'SIREN', 'row_siret' => 'SIRET',
@@ -570,7 +571,7 @@ return [
 
   'legal_privacy' => [
     'meta_title' => 'Politique de confidentialité',
-    'meta_description' => 'Politique de confidentialité et protection des données personnelles (RGPD) du site Slapia.',
+    'meta_description' => 'Politique de confidentialité et protection des données personnelles (RGPD) du site SlapIa.',
     'title' => 'Politique de confidentialité',
     'lede' => "Votre vie privée est notre priorité. Cette page explique simplement quelles données nous collectons, pourquoi, et comment les faire respecter.",
     'h1' => '1. Responsable du traitement',

@@ -37,6 +37,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  var langMenu = document.querySelector('.lang-menu');
+  var langMenuTrigger = document.querySelector('.lang-menu__trigger');
+  if (langMenu && langMenuTrigger) {
+    langMenuTrigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = langMenu.classList.toggle('is-open');
+      langMenuTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.addEventListener('click', function (e) {
+      if (!langMenu.contains(e.target)) {
+        langMenu.classList.remove('is-open');
+        langMenuTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   var userMenu = document.querySelector('.user-menu');
   var userMenuTrigger = document.querySelector('.user-menu__trigger');
   if (userMenu && userMenuTrigger) {

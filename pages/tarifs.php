@@ -49,6 +49,7 @@ include __DIR__ . '/../includes/header.php';
 
     <div class="pricing-grid pricing-grid--pair" id="mentorat">
       <div class="price-card price-card--featured reveal">
+        <div class="price-card__kicker"><?php echo t('pricing.tier3_kicker'); ?></div>
         <div class="price-card__name"><?php echo t('pricing.tier3_name'); ?></div>
         <div class="price-card__desc"><?php echo t('pricing.tier3_desc'); ?></div>
         <div class="price-card__price"><?php echo t('pricing.tier3_price'); ?></div>
@@ -64,6 +65,7 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div class="price-card price-card--featured reveal">
+        <div class="price-card__kicker"><?php echo t('courses_page.vip_kicker'); ?></div>
         <div class="price-card__name"><?php echo t('courses_page.vip_price_name'); ?></div>
         <div class="price-card__desc"><?php echo t('courses_page.vip_subtitle'); ?></div>
         <div class="price-card__price"><?php echo t('courses_page.vip_price'); ?></div>

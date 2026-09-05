@@ -2,7 +2,7 @@
   <div class="container">
     <div class="footer__top">
       <div class="footer__brand">
-        <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> Slapia</a>
+        <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> SlapIa</a>
         <p><?php echo t('footer.tagline'); ?></p>
       </div>
       <div class="footer__col">

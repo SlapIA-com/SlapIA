@@ -16,7 +16,7 @@ $nav_items = [
 $site_url = 'https://www.slapia.com/';
 $path = isset($page_path) ? $page_path : (($current === 'index.php') ? '' : $current);
 $canonical = isset($page_canonical) ? $page_canonical : ($site_url . $path . '?lang=' . $lang);
-$title = isset($page_title) ? htmlspecialchars($page_title) . ' — Slapia' : t('home.meta_title') . ' — Slapia';
+$title = isset($page_title) ? htmlspecialchars($page_title) . ' — SlapIa' : t('home.meta_title') . ' — SlapIa';
 $description = isset($page_description) ? htmlspecialchars($page_description) : t('home.meta_description');
 $og_image = isset($page_image) ? $page_image : 'assets/img/brand/logo.png';
 if (!preg_match('#^https?://#i', $og_image)) {
@@ -48,7 +48,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
 <link rel="alternate" hreflang="x-default" href="<?php echo $site_url . $path; ?>">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="<?php echo t('meta.og_locale'); ?>">
-<meta property="og:site_name" content="Slapia">
+<meta property="og:site_name" content="SlapIa">
 <meta property="og:title" content="<?php echo $title; ?>">
 <meta property="og:description" content="<?php echo $description; ?>">
 <meta property="og:url" content="<?php echo $canonical; ?>">
@@ -61,7 +61,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": "<?php echo $site_url; ?>#organization",
-  "name": "Slapia",
+  "name": "SlapIa",
   "legalName": "SlapIA",
   "url": "<?php echo $site_url; ?>",
   "logo": "<?php echo $site_url; ?>assets/img/brand/logo.png",
@@ -84,7 +84,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
 
 <header class="site-header">
   <div class="container">
-    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> Slapia</a>
+    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> SlapIa</a>
 
     <nav class="nav" aria-label="Navigation principale">
       <?php foreach ($nav_items as $href => $label): ?>
@@ -93,10 +93,17 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
     </nav>
 
     <div class="header__actions">
-      <div class="lang-switch">
-        <?php foreach ($lang_names as $l => $label): ?>
-          <a href="?lang=<?php echo $l; ?>" class="lang-switch__link<?php echo $lang === $l ? ' is-active' : ''; ?>"><?php echo $label; ?></a>
-        <?php endforeach; ?>
+      <div class="lang-menu">
+        <button type="button" class="lang-menu__trigger" aria-haspopup="true" aria-expanded="false" aria-label="<?php echo t('common.switch_lang'); ?>" title="<?php echo t('common.switch_lang'); ?>">
+          <?php echo htmlspecialchars($lang_names[$lang]); ?>
+        </button>
+        <div class="lang-menu__dropdown">
+          <?php foreach ($lang_names as $l => $label): ?>
+            <?php if ($l !== $lang): ?>
+            <a href="?lang=<?php echo $l; ?>" class="lang-menu__link"><?php echo $label; ?></a>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
       </div>
       <button class="theme-toggle" type="button" aria-label="<?php echo t('common.toggle_theme'); ?>" title="<?php echo t('common.toggle_theme'); ?>">
         <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>
@@ -127,7 +134,7 @@ $lang_names = ['fr' => 'FR', 'en' => 'EN', 'de' => 'DE'];
 
 <div class="mobile-menu">
   <div class="mobile-menu__top">
-    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> Slapia</a>
+    <a href="/index.php" class="logo"><img src="/assets/img/brand/logo.svg" alt="" class="logo__mark"> SlapIa</a>
     <div style="display:flex; gap:10px; align-items:center;">
       <button class="theme-toggle theme-toggle--on-dark" type="button" aria-label="<?php echo t('common.toggle_theme'); ?>" title="<?php echo t('common.toggle_theme'); ?>">
         <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>

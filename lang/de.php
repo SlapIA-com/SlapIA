@@ -34,17 +34,16 @@ return [
     'courses_all' => 'Alle Schulungen',
     'course_link_1' => 'Grundlagen & Prompting',
     'course_link_2' => 'KI-Agenten & Automatisierung',
-    'course_link_3' => 'Fortgeschrittenes n8n & Make',
+    'course_link_3' => 'Workflow (Fortgeschrittenes n8n & Make)',
     'services_heading' => 'PC-Service',
     'service_link_1' => 'PC-Zusammenbau nach Maß',
     'service_link_2' => 'Angebot & Kaufberatung',
     'service_link_3' => 'Diagnose & Aufrüstung',
-    'company_heading' => 'Slapia',
+    'company_heading' => 'SlapIa',
     'link_about' => 'Über uns',
     'link_pricing' => 'Preise',
     'link_contact' => 'Kontakt',
     'contact_heading' => 'Kontakt',
-    'phone' => '+33 1 00 00 00 00',
     'copyright' => 'SlapIA. Alle Rechte vorbehalten.',
     'legal_mentions' => 'Impressum',
     'legal_privacy' => 'Datenschutz',
@@ -53,23 +52,23 @@ return [
 
   'home' => [
     'meta_title' => 'KI-Schulungen für Teams und Führungskräfte',
-    'meta_description' => 'Slapia schult Ihre Teams in generativer KI, Prompt Engineering und Automatisierung und berät Sie außerdem beim PC-Zusammenbau, bei Angeboten und beim Kauf.',
+    'meta_description' => 'SlapIa schult Ihre Teams in generativer KI, Prompt Engineering und Automatisierung und berät Sie außerdem beim PC-Zusammenbau, bei Angeboten und beim Kauf.',
 
     'hero_eyebrow' => 'Schulungen für künstliche Intelligenz',
     'hero_title_line1' => 'Ihr Team nutzt bereits KI.',
     'hero_title_mark' => 'Zeit, dass es sie auch richtig einsetzt.',
-    'hero_lede' => 'Slapia entwickelt praxisnahe KI-Schulungen für Teams und Führungskräfte, die messbare Ergebnisse wollen, keine Marketing-Floskeln.',
+    'hero_lede' => 'SlapIa entwickelt praxisnahe KI-Schulungen für Teams und Führungskräfte, die messbare Ergebnisse wollen, keine Marketing-Floskeln.',
     'cta_primary' => 'Schulungen ansehen',
     'cta_secondary' => 'Bedarf besprechen',
 
     'stat1_num' => '40+', 'stat1_label' => 'geschulte Unternehmen',
-    'stat2_num' => '500+', 'stat2_label' => 'begleitete Fachkräfte',
+    'stat2_num' => '500+', 'stat2_label' => 'begleitete Personen',
     'stat3_num' => '4,8/5', 'stat3_label' => 'durchschnittliche Zufriedenheit',
 
     'panel_label' => 'Der Weg in 3 Stufen',
-    'panel1_tag' => 'Stufe 01', 'panel1_title' => 'Grundlagen & Prompting', 'panel1_meta' => 'ChatGPT · Notion',
-    'panel2_tag' => 'Stufe 02', 'panel2_title' => 'KI-Agenten & Automatisierung', 'panel2_meta' => 'ChatGPT · Notion · Logic',
-    'panel3_tag' => 'Stufe 03', 'panel3_title' => 'Fortgeschrittenes n8n & Make', 'panel3_meta' => 'n8n · Make',
+    'panel1_tag' => 'Stufe 01', 'panel1_title' => 'Grundlagen & Prompting', 'panel1_meta' => 'LLM · Notion',
+    'panel2_tag' => 'Stufe 02', 'panel2_title' => 'KI-Agenten & Automatisierung', 'panel2_meta' => 'LLM · Notion · KI-Agent',
+    'panel3_tag' => 'Stufe 03', 'panel3_title' => 'Workflow', 'panel3_meta' => 'n8n · Make',
 
     'problem_eyebrow' => 'Der Befund',
     'problem_title' => 'Die meisten Teams nutzen KI-Tools bereits täglich. Nur wenige haben eine echte Schulung erhalten, um sie wirklich zu nutzen.',
@@ -87,7 +86,7 @@ return [
     'catalogue_link' => 'Programm ansehen',
 
     'method_eyebrow' => 'Methode',
-    'method_title' => 'So entsteht eine Slapia-Schulung',
+    'method_title' => 'So entsteht eine SlapIa-Schulung',
     'method_note' => 'Vier Schritte, immer in dieser Reihenfolge — egal ob offene Sitzung oder internes Firmenprogramm.',
     'method1_title' => 'Analyse', 'method1_text' => 'Wir sprechen über Ihre aktuellen Tools, die tatsächliche Nutzung in Ihren Teams und die konkreten Ziele.',
     'method2_title' => 'Maßgeschneidertes Programm', 'method2_text' => 'Wir entwickeln einen Kurs, der zu Ihrer Branche, Ihrem Ausgangsniveau und den für Sie wirklich relevanten Anwendungsfällen passt.',
@@ -104,7 +103,7 @@ return [
     'quote3_text' => 'Das Modul für Führungskräfte hat uns geholfen, schon vor unseren ersten KI-Projekten einen klaren Rahmen zu setzen.',
     'quote3_name' => 'Sophie B.', 'quote3_role' => 'Geschäftsführerin',
 
-    'pc_teaser_eyebrow' => 'Auch bei Slapia',
+    'pc_teaser_eyebrow' => 'Auch bei SlapIa',
     'pc_teaser_title' => 'Ein gut gewählter PC zählt genauso viel wie eine gute Schulung',
     'pc_teaser_note' => 'Zusammenbau nach Maß, Angebote vor dem Kauf und klare Beratung, für Privatpersonen und Unternehmen.',
     'pc_card1_title' => 'Zusammenbau nach Maß', 'pc_card1_text' => 'Ein Desktop-PC, zusammengebaut und eingerichtet für Ihren tatsächlichen Bedarf, nicht für das beeindruckendste Datenblatt.',
@@ -122,7 +121,7 @@ return [
       'num' => '01', 'anchor' => 'niveau-1',
       'title' => 'Grundlagen & Prompting',
       'teaser' => 'KI verstehen, Ideen strukturieren, prompten lernen und die bewährten Praktiken beherrschen.',
-      'tools' => ['ChatGPT', 'Notion'],
+      'tools' => ['LLM', 'Notion'],
       'detail_title' => 'Einführung & Grundlagen im Prompting und in der alltäglichen KI-Nutzung',
       'detail_subtitle' => 'Das „Warum" und das „Was" verstehen. Die Bausteine der KI entdecken und lernen, sie zu nutzen.',
       'modules' => [
@@ -136,7 +135,7 @@ return [
       'num' => '02', 'anchor' => 'niveau-2',
       'title' => 'KI-Agenten & Automatisierung',
       'teaser' => 'KI-Agenten erstellen, ihre Grenzen verstehen und komplette Prozesse automatisieren.',
-      'tools' => ['ChatGPT', 'Notion', 'Logic'],
+      'tools' => ['LLM', 'Notion', 'KI-Agent'],
       'detail_title' => 'KI-Agenten und das Konzept der Automatisierung',
       'detail_subtitle' => 'Systeme schaffen, die für Sie arbeiten und die Aufgaben ohne Ihren eigenen Mehraufwand erledigen.',
       'modules' => [
@@ -148,7 +147,7 @@ return [
     ],
     [
       'num' => '03', 'anchor' => 'niveau-3',
-      'title' => 'Fortgeschrittenes n8n & Make',
+      'title' => 'Workflow',
       'teaser' => 'End-to-End-Workflows bauen, APIs verbinden und das richtige Tool wählen.',
       'tools' => ['n8n', 'Make'],
       'detail_title' => 'Fortgeschrittene KI-Automatisierung',
@@ -164,7 +163,7 @@ return [
 
   'courses_page' => [
     'meta_title' => 'Schulungen',
-    'meta_description' => 'Der Slapia-Schulungsweg in 3 Stufen: Grundlagen & Prompting, KI-Agenten & Automatisierung, fortgeschrittenes n8n & Make — mit optionalem Mentoring.',
+    'meta_description' => 'Der SlapIa-Schulungsweg in 3 Stufen: Grundlagen & Prompting, KI-Agenten & Automatisierung, fortgeschrittenes n8n & Make — mit optionalem Mentoring.',
     'eyebrow' => 'Weg',
     'title_pre' => 'Drei Stufen, um zum ',
     'title_mark' => 'Experten',
@@ -186,6 +185,7 @@ return [
     'vip_f2_title' => 'Technische Hilfe', 'vip_f2_text' => 'Wir schauen auf Ihren Bildschirm und lösen es gemeinsam.',
     'vip_f3_title' => 'Individueller Weg', 'vip_f3_text' => 'Wir passen das Programm an Ihre konkreten Ziele an.',
     'vip_f4_title' => 'Intensives Mentoring', 'vip_f4_text' => 'Für alle, die sofort Ergebnisse wollen.',
+    'vip_kicker' => 'Einzelbetreuung',
     'vip_price_name' => 'Intensives Mentoring',
     'vip_price' => '60 €',
     'vip_unit' => 'pro Sitzung · 1 Std. täglich',
@@ -235,7 +235,7 @@ return [
 
   'pricing' => [
     'meta_title' => 'Preise',
-    'meta_description' => 'Preise für Slapia-Schulungen und PC-Service: Schulungssitzungen, Zusammenbau nach Maß, Angebote und Kaufberatung.',
+    'meta_description' => 'Preise für SlapIa-Schulungen und PC-Service: Schulungssitzungen, Zusammenbau nach Maß, Angebote und Kaufberatung.',
     'eyebrow' => 'Preise',
     'title_pre' => 'Ein ',
     'title_mark' => 'einfacher',
@@ -245,6 +245,7 @@ return [
     'formations_eyebrow' => 'Schulungen',
     'formations_title' => 'Ein maßgeschneidertes Modell',
 
+    'tier3_kicker' => 'Team-Programm',
     'tier3_name' => 'Unternehmen', 'tier3_desc' => 'Für ein maßgeschneidertes Programm mit mehreren Teams oder Sitzungen.',
     'tier3_price' => 'Auf Anfrage', 'tier3_unit' => 'je nach Anzahl Teams und Module',
     'tier3_f1' => 'Weg, der mehrere Katalogmodule kombiniert', 'tier3_f2' => 'Mehrere Teams oder Standorte',
@@ -292,12 +293,12 @@ return [
 
   'about' => [
     'meta_title' => 'Über uns',
-    'meta_description' => 'Slapia schult Teams und Führungskräfte in künstlicher Intelligenz und berät außerdem Privatpersonen und Unternehmen bei ihrer PC-Hardware. Methode, Philosophie und Werdegang.',
+    'meta_description' => 'SlapIa schult Teams und Führungskräfte in künstlicher Intelligenz und berät außerdem Privatpersonen und Unternehmen bei ihrer PC-Hardware. Methode, Philosophie und Werdegang.',
     'eyebrow' => 'Über uns',
     'title_pre' => 'Eine KI-Schulung sollte ',
     'title_mark' => 'Ihre Arbeitsweise verändern',
     'title_post' => ' — nicht nur einen Kalender füllen',
-    'lede' => 'Slapia entstand aus einer einfachen Beobachtung: Die meisten KI-Schulungen sprechen über Technologie, kaum eine über die echte Arbeit der Teams, die sie nutzen werden.',
+    'lede' => 'SlapIa entstand aus einer einfachen Beobachtung: Die meisten KI-Schulungen sprechen über Technologie, kaum eine über die echte Arbeit der Teams, die sie nutzen werden.',
 
     'stat1_num' => '40+', 'stat1_label' => 'begleitete Unternehmen',
     'stat2_num' => '500+', 'stat2_label' => 'geschulte Fachkräfte',
@@ -318,10 +319,10 @@ return [
     'cert1_meta' => 'Hoshin Partners · Stufe 1 · 4. Dezember 2025',
     'cert2_title' => 'Intelligence Artificielle « Entreprise Augmentée »',
     'cert2_meta' => 'Hoshin Partners · Stufe 2 · 4. Dezember 2025',
-    'founder_bio' => 'Thomas entwickelt und leitet die Schulungen von Slapia mit einer Überzeugung: Ein guter KI-Trainer verbringt mehr Zeit damit, der echten Nutzung eines Teams zuzuhören, als Folien zu präsentieren. Jedes Programm wird laufend anhand der Rückmeldungen aus der Praxis angepasst. Neben den Schulungen berät er außerdem Privatpersonen und Unternehmen bei der Wahl, dem Zusammenbau und der Wartung ihrer Computer-Hardware.',
+    'founder_bio' => 'Thomas entwickelt und leitet die Schulungen von SlapIa mit einer Überzeugung: Ein guter KI-Trainer verbringt mehr Zeit damit, der echten Nutzung eines Teams zuzuhören, als Folien zu präsentieren. Jedes Programm wird laufend anhand der Rückmeldungen aus der Praxis angepasst. Neben den Schulungen berät er außerdem Privatpersonen und Unternehmen bei der Wahl, dem Zusammenbau und der Wartung ihrer Computer-Hardware.',
 
     'timeline_eyebrow' => 'Werdegang',
-    'timeline_title' => 'Die wichtigsten Etappen von Slapia',
+    'timeline_title' => 'Die wichtigsten Etappen von SlapIa',
     'tl1_year' => '2023', 'tl1_title' => 'Erste Sitzungen', 'tl1_text' => 'Die ersten Workshops zu generativer KI für kleine Teams, in kurzem, praxisnahem Format.',
     'tl2_year' => '2024', 'tl2_title' => 'Erweiterung des Katalogs', 'tl2_text' => 'Ergänzung um fortgeschrittenes Prompt Engineering, Automatisierung und KI für Führungskräfte.',
     'tl3_year' => '2025', 'tl3_title' => 'Erste individuelle Programme', 'tl3_text' => 'Entwicklung interner Schulungswege, die mehrere Module je nach den Bedürfnissen der jeweiligen Organisation kombinieren.',
@@ -333,7 +334,7 @@ return [
 
   'contact' => [
     'meta_title' => 'Kontakt',
-    'meta_description' => 'Kontaktieren Sie Slapia, um eine KI-Schulung für Ihr Team oder Unternehmen zu organisieren.',
+    'meta_description' => 'Kontaktieren Sie SlapIa, um eine KI-Schulung für Ihr Team oder Unternehmen zu organisieren.',
     'eyebrow' => 'Kontakt',
     'title_pre' => 'Sprechen wir über ',
     'title_mark' => 'Ihr Team',
@@ -547,7 +548,7 @@ return [
 
   'legal_mentions' => [
     'meta_title' => 'Impressum',
-    'meta_description' => 'Impressum der Slapia-Website: Herausgeber, Hosting und Unternehmensangaben.',
+    'meta_description' => 'Impressum der SlapIa-Website: Herausgeber, Hosting und Unternehmensangaben.',
     'title' => 'Impressum',
     'h1' => '1. Herausgeber der Website',
     'row_denomination' => 'Bezeichnung', 'row_forme' => 'Rechtsform', 'row_siren' => 'SIREN', 'row_siret' => 'SIRET',
@@ -570,7 +571,7 @@ return [
 
   'legal_privacy' => [
     'meta_title' => 'Datenschutzerklärung',
-    'meta_description' => 'Datenschutzerklärung und Schutz personenbezogener Daten (DSGVO) der Slapia-Website.',
+    'meta_description' => 'Datenschutzerklärung und Schutz personenbezogener Daten (DSGVO) der SlapIa-Website.',
     'title' => 'Datenschutzerklärung',
     'lede' => 'Ihre Privatsphäre hat für uns oberste Priorität. Diese Seite erklärt einfach, welche Daten wir erheben, warum, und wie Sie Ihre Rechte durchsetzen können.',
     'h1' => '1. Verantwortlicher für die Verarbeitung',

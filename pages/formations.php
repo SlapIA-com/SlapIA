@@ -16,7 +16,7 @@ $jsonld = json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'Course',
     '@id' => 'https://www.slapia.com/formations.php#course',
-    'name' => 'Formation IA Slapia — Parcours en 3 niveaux',
+    'name' => 'Formation IA SlapIa — Parcours en 3 niveaux',
     'description' => t('courses_page.meta_description'),
     'provider' => ['@id' => 'https://www.slapia.com/#organization'],
     'hasPart' => $level_courses,

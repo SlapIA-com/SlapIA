@@ -34,17 +34,16 @@ return [
     'courses_all' => 'All courses',
     'course_link_1' => 'Foundations & Prompting',
     'course_link_2' => 'AI Agents & Automation',
-    'course_link_3' => 'Advanced n8n & Make',
+    'course_link_3' => 'Workflow (Advanced n8n & Make)',
     'services_heading' => 'PC Services',
     'service_link_1' => 'Custom PC building',
     'service_link_2' => 'Quotes & buying advice',
     'service_link_3' => 'Diagnostics & upgrades',
-    'company_heading' => 'Slapia',
+    'company_heading' => 'SlapIa',
     'link_about' => 'About',
     'link_pricing' => 'Pricing',
     'link_contact' => 'Contact',
     'contact_heading' => 'Contact',
-    'phone' => '+33 1 00 00 00 00',
     'copyright' => 'SlapIA. All rights reserved.',
     'legal_mentions' => 'Legal notice',
     'legal_privacy' => 'Privacy',
@@ -53,23 +52,23 @@ return [
 
   'home' => [
     'meta_title' => 'AI training courses for teams and leaders',
-    'meta_description' => "Slapia trains your teams in generative AI, prompt engineering and automation, and also helps with PC building, quotes and buying advice.",
+    'meta_description' => "SlapIa trains your teams in generative AI, prompt engineering and automation, and also helps with PC building, quotes and buying advice.",
 
     'hero_eyebrow' => 'Artificial intelligence training',
     'hero_title_line1' => 'Your team is already using AI.',
     'hero_title_mark' => 'Time they learned to use it well.',
-    'hero_lede' => "Slapia designs practical AI training for teams and leaders who want measurable results, not marketing slogans.",
+    'hero_lede' => "SlapIa designs practical AI training for teams and leaders who want measurable results, not marketing slogans.",
     'cta_primary' => 'See the courses',
     'cta_secondary' => 'Discuss your needs',
 
     'stat1_num' => '40+', 'stat1_label' => 'companies trained',
-    'stat2_num' => '500+', 'stat2_label' => 'professionals coached',
+    'stat2_num' => '500+', 'stat2_label' => 'people coached',
     'stat3_num' => '4.8/5', 'stat3_label' => 'average satisfaction',
 
     'panel_label' => 'The 3-level path',
-    'panel1_tag' => 'Level 01', 'panel1_title' => 'Foundations & Prompting', 'panel1_meta' => 'ChatGPT · Notion',
-    'panel2_tag' => 'Level 02', 'panel2_title' => 'AI Agents & Automation', 'panel2_meta' => 'ChatGPT · Notion · Logic',
-    'panel3_tag' => 'Level 03', 'panel3_title' => 'Advanced n8n & Make', 'panel3_meta' => 'n8n · Make',
+    'panel1_tag' => 'Level 01', 'panel1_title' => 'Foundations & Prompting', 'panel1_meta' => 'LLM · Notion',
+    'panel2_tag' => 'Level 02', 'panel2_title' => 'AI Agents & Automation', 'panel2_meta' => 'LLM · Notion · AI Agent',
+    'panel3_tag' => 'Level 03', 'panel3_title' => 'Workflow', 'panel3_meta' => 'n8n · Make',
 
     'problem_eyebrow' => 'The reality',
     'problem_title' => 'Most teams already use AI tools every day. Few have had real training to make the most of them.',
@@ -87,7 +86,7 @@ return [
     'catalogue_link' => 'See the programme',
 
     'method_eyebrow' => 'Method',
-    'method_title' => 'How a Slapia course comes together',
+    'method_title' => 'How a SlapIa course comes together',
     'method_note' => 'Four steps, in this order, every time — whether it\'s an open session or an in-house programme.',
     'method1_title' => 'Diagnosis', 'method1_text' => 'We discuss your current tools, your teams\' real usage, and the concrete goals to reach.',
     'method2_title' => 'Custom programme', 'method2_text' => "We build a course tailored to your industry, your starting level, and the use cases that actually matter to you.",
@@ -104,7 +103,7 @@ return [
     'quote3_text' => 'The leadership module let us set a clear framework even before launching our first AI projects.',
     'quote3_name' => 'Sophie B.', 'quote3_role' => 'CEO',
 
-    'pc_teaser_eyebrow' => 'Also at Slapia',
+    'pc_teaser_eyebrow' => 'Also at SlapIa',
     'pc_teaser_title' => 'A well-chosen PC matters as much as good training',
     'pc_teaser_note' => 'Custom builds, quotes before you buy, and clear advice, for individuals and businesses alike.',
     'pc_card1_title' => 'Custom builds', 'pc_card1_text' => 'A desktop assembled and configured for how you actually use it, not the flashiest spec sheet.',
@@ -122,7 +121,7 @@ return [
       'num' => '01', 'anchor' => 'niveau-1',
       'title' => 'Foundations & Prompting',
       'teaser' => 'Understand AI, organise your ideas, learn to prompt, and master the fundamentals.',
-      'tools' => ['ChatGPT', 'Notion'],
+      'tools' => ['LLM', 'Notion'],
       'detail_title' => 'Onboarding & foundations in prompting and everyday AI use',
       'detail_subtitle' => 'Understand the "why" and the "what". Discover the building blocks of AI and learn to use them.',
       'modules' => [
@@ -136,7 +135,7 @@ return [
       'num' => '02', 'anchor' => 'niveau-2',
       'title' => 'AI Agents & Automation',
       'teaser' => 'Build AI agents, understand their limits, and automate complete processes.',
-      'tools' => ['ChatGPT', 'Notion', 'Logic'],
+      'tools' => ['LLM', 'Notion', 'AI Agent'],
       'detail_title' => 'AI agents and the concept of automation',
       'detail_subtitle' => 'Build systems that work for you and handle the tasks that add no value for you to do yourself.',
       'modules' => [
@@ -148,7 +147,7 @@ return [
     ],
     [
       'num' => '03', 'anchor' => 'niveau-3',
-      'title' => 'Advanced n8n & Make',
+      'title' => 'Workflow',
       'teaser' => 'Build end-to-end workflows, connect APIs, and choose the right tool.',
       'tools' => ['n8n', 'Make'],
       'detail_title' => 'Advanced AI automation',
@@ -164,7 +163,7 @@ return [
 
   'courses_page' => [
     'meta_title' => 'Courses',
-    'meta_description' => 'The Slapia training path in 3 levels: foundations & prompting, AI agents & automation, advanced n8n & Make — with optional mentoring.',
+    'meta_description' => 'The SlapIa training path in 3 levels: foundations & prompting, AI agents & automation, advanced n8n & Make — with optional mentoring.',
     'eyebrow' => 'Path',
     'title_pre' => 'Three levels to become an ',
     'title_mark' => 'expert',
@@ -186,6 +185,7 @@ return [
     'vip_f2_title' => 'Technical help', 'vip_f2_text' => 'We look at your screen and fix it together.',
     'vip_f3_title' => 'Personalised path', 'vip_f3_text' => 'We adapt the programme to your specific goals.',
     'vip_f4_title' => 'Intensive mentoring', 'vip_f4_text' => 'For those who want results right away.',
+    'vip_kicker' => 'One-on-one coaching',
     'vip_price_name' => 'Intensive mentoring',
     'vip_price' => '€60',
     'vip_unit' => 'per session · 1h a day',
@@ -235,7 +235,7 @@ return [
 
   'pricing' => [
     'meta_title' => 'Pricing',
-    'meta_description' => 'Pricing for Slapia\'s AI courses and PC services: training sessions, custom builds, quotes and buying advice.',
+    'meta_description' => 'Pricing for SlapIa\'s AI courses and PC services: training sessions, custom builds, quotes and buying advice.',
     'eyebrow' => 'Pricing',
     'title_pre' => 'One ',
     'title_mark' => 'simple',
@@ -245,6 +245,7 @@ return [
     'formations_eyebrow' => 'Courses',
     'formations_title' => 'A tailor-made formula',
 
+    'tier3_kicker' => 'Team programme',
     'tier3_name' => 'Enterprise', 'tier3_desc' => 'For a custom, multi-team or multi-session programme.',
     'tier3_price' => 'Custom quote', 'tier3_unit' => 'depending on teams and modules',
     'tier3_f1' => 'A path combining several catalogue modules', 'tier3_f2' => 'Several teams or several sites',
@@ -292,12 +293,12 @@ return [
 
   'about' => [
     'meta_title' => 'About',
-    'meta_description' => 'Slapia trains teams and leaders in artificial intelligence, and also helps individuals and businesses with their PC hardware. Method, philosophy and history.',
+    'meta_description' => 'SlapIa trains teams and leaders in artificial intelligence, and also helps individuals and businesses with their PC hardware. Method, philosophy and history.',
     'eyebrow' => 'About',
     'title_pre' => 'AI training should ',
     'title_mark' => 'change how you work',
     'title_post' => ' — not just fill a calendar',
-    'lede' => 'Slapia was born from a simple observation: most AI courses talk about technology, very few talk about the real work of the teams who will actually use it.',
+    'lede' => 'SlapIa was born from a simple observation: most AI courses talk about technology, very few talk about the real work of the teams who will actually use it.',
 
     'stat1_num' => '40+', 'stat1_label' => 'businesses supported',
     'stat2_num' => '500+', 'stat2_label' => 'professionals trained',
@@ -318,10 +319,10 @@ return [
     'cert1_meta' => 'Hoshin Partners · Level 1 · December 4, 2025',
     'cert2_title' => 'Intelligence Artificielle « Entreprise Augmentée »',
     'cert2_meta' => 'Hoshin Partners · Level 2 · December 4, 2025',
-    'founder_bio' => "Thomas designs and runs Slapia's courses with one conviction: a good AI trainer spends more time listening to a team's real usage than presenting slides. Every programme is continuously adjusted based on feedback from the field. Alongside training, he also advises individuals and businesses on choosing, building and maintaining their computer hardware.",
+    'founder_bio' => "Thomas designs and runs SlapIa's courses with one conviction: a good AI trainer spends more time listening to a team's real usage than presenting slides. Every programme is continuously adjusted based on feedback from the field. Alongside training, he also advises individuals and businesses on choosing, building and maintaining their computer hardware.",
 
     'timeline_eyebrow' => 'Journey',
-    'timeline_title' => "Slapia's key milestones",
+    'timeline_title' => "SlapIa's key milestones",
     'tl1_year' => '2023', 'tl1_title' => 'First sessions', 'tl1_text' => 'The first generative AI workshops run for small teams, in a short, practical format.',
     'tl2_year' => '2024', 'tl2_title' => 'Catalogue expansion', 'tl2_text' => 'Added advanced prompt engineering, automation, and AI for managers tracks.',
     'tl3_year' => '2025', 'tl3_title' => 'First custom programmes', 'tl3_text' => 'Development of in-house tracks combining several modules based on each organisation\'s needs.',
@@ -333,7 +334,7 @@ return [
 
   'contact' => [
     'meta_title' => 'Contact',
-    'meta_description' => 'Contact Slapia to arrange AI training for your team or business.',
+    'meta_description' => 'Contact SlapIa to arrange AI training for your team or business.',
     'eyebrow' => 'Contact',
     'title_pre' => "Let's talk about ",
     'title_mark' => 'your team',
@@ -547,7 +548,7 @@ return [
 
   'legal_mentions' => [
     'meta_title' => 'Legal notice',
-    'meta_description' => "Legal notice for the Slapia website: publisher, host and company information.",
+    'meta_description' => "Legal notice for the SlapIa website: publisher, host and company information.",
     'title' => 'Legal notice',
     'h1' => '1. Website publisher',
     'row_denomination' => 'Name', 'row_forme' => 'Legal form', 'row_siren' => 'SIREN', 'row_siret' => 'SIRET',
@@ -570,7 +571,7 @@ return [
 
   'legal_privacy' => [
     'meta_title' => 'Privacy policy',
-    'meta_description' => 'Privacy policy and personal data protection (GDPR) for the Slapia website.',
+    'meta_description' => 'Privacy policy and personal data protection (GDPR) for the SlapIa website.',
     'title' => 'Privacy policy',
     'lede' => 'Your privacy is our priority. This page plainly explains what data we collect, why, and how to enforce your rights.',
     'h1' => '1. Data controller',
