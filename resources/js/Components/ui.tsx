@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import type { AnchorHTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 export function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-container px-5 sm:px-8 ${className}`}>{children}</div>;
@@ -59,7 +59,7 @@ export function Button({
   block?: boolean;
   children: ReactNode;
   className?: string;
-} & AnchorHTMLAttributes<HTMLAnchorElement>) {
+} & Omit<ComponentProps<typeof Link>, 'href' | 'children' | 'className'>) {
   return (
     <Link
       href={href}
