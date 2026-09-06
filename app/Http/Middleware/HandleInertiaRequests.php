@@ -36,6 +36,10 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'locale' => app()->getLocale(),
+            // Chat IA (bouton bas gauche, voir ChatWidget.tsx) : partagé
+            // partout, comme sur l'ancien site où il apparaissait sur
+            // toutes les pages.
+            'n8nChatWebhookUrl' => config('services.n8n.chat_webhook_url'),
             // Fusionné sur le FR : si une clé manque (ou n'est pas encore
             // traduite) dans la langue active, on retombe sur sa valeur
             // française plutôt que de renvoyer un tableau incomplet — c'est

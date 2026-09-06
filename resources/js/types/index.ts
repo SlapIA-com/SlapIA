@@ -13,6 +13,7 @@ export interface SharedProps {
   locale: 'fr' | 'en' | 'de';
   translations: Translations;
   flash: { success: string | null; error: string | null };
+  n8nChatWebhookUrl: string | null;
   [key: string]: any;
 }
 
