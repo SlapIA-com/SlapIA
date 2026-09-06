@@ -18,7 +18,7 @@ class BlogArticleController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'excerpt' => ['nullable', 'string', 'max:500'],
+            'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:2048'],
             'published_at' => ['nullable', 'date'],
@@ -48,7 +48,7 @@ class BlogArticleController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'excerpt' => ['nullable', 'string', 'max:500'],
+            'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:2048'],
             'published_at' => ['nullable', 'date'],

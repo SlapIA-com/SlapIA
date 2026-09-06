@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('excerpt')->nullable();
+            $table->text('excerpt')->nullable(); // certains extraits Notion dépassent 255 caractères
             $table->longText('content')->nullable();
             $table->string('image')->nullable();
             $table->timestamp('published_at')->useCurrent();
