@@ -20,7 +20,7 @@ class BlogArticleController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
-            'image' => ['nullable', 'string', 'max:2048'],
+            'image' => ['nullable', 'string', 'max:5000'],
             'published_at' => ['nullable', 'date'],
         ]);
 
@@ -50,7 +50,7 @@ class BlogArticleController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:2000'],
             'content' => ['nullable', 'string'],
-            'image' => ['nullable', 'string', 'max:2048'],
+            'image' => ['nullable', 'string', 'max:5000'],
             'published_at' => ['nullable', 'date'],
         ]);
 

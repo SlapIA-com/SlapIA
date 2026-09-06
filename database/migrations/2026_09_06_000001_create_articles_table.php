@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('excerpt')->nullable(); // certains extraits Notion dépassent 255 caractères
             $table->longText('content')->nullable();
-            $table->string('image')->nullable();
+            $table->text('image')->nullable(); // certaines URLs Notion/S3 signées dépassent largement 255 caractères
             $table->timestamp('published_at')->useCurrent();
             $table->timestamps();
         });
