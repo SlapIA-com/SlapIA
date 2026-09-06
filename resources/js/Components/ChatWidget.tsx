@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 /**
  * Bouton de chat IA en bas à droite, branché sur le webhook n8n
@@ -45,6 +45,56 @@ function getOrCreateSessionId(): string {
     // session ne survit pas à un rechargement, mais le chat reste utilisable.
     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
+}
+
+// Reconnaît trois formats que l'agent peut produire pour un lien :
+// markdown "[texte](url)", URL entre chevrons "<url>" (le format observé
+// dans ses réponses), et une URL brute. Construit des éléments React
+// plutôt que d'injecter du HTML (dangerouslySetInnerHTML) : le texte vient
+// du LLM, donc potentiellement manipulable via une injection de prompt —
+// ici, même dans le pire cas, aucun HTML/script ne peut être rendu, un lien
+// "javascript:" est ignoré (seuls http/https sont acceptés), et le texte
+// autour des liens reste échappé par React comme n'importe quel texte.
+const LINK_REGEX = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|<(https?:\/\/[^\s<>]+)>|(https?:\/\/[^\s<>]+)/g;
+
+function linkifyText(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = LINK_REGEX.exec(text)) !== null) {
+    const [full, mdLabel, mdUrl, angleUrl, bareUrl] = match;
+    let url = mdUrl ?? angleUrl ?? bareUrl ?? '';
+    let matchEnd = match.index + full.length;
+
+    // Une URL brute/en chevrons ne doit pas avaler la ponctuation de fin de
+    // phrase qui la suit (ex. "...voir https://slapia.com.").
+    if (!mdUrl) {
+      const trailing = url.match(/[.,;:!?]+$/);
+      if (trailing) {
+        url = url.slice(0, -trailing[0].length);
+        matchEnd -= trailing[0].length;
+      }
+    }
+    const label = mdLabel ?? url;
+
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index));
+    }
+    nodes.push(
+      <a key={key++} href={url} target="_blank" rel="noopener noreferrer" className="slapia-chat-link">
+        {label}
+      </a>
+    );
+    lastIndex = matchEnd;
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex));
+  }
+
+  return nodes;
 }
 
 export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
@@ -125,7 +175,7 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
             )}
             {messages.map((m) => (
               <div key={m.id} className={`slapia-chat-bubble slapia-chat-bubble--${m.sender}`}>
-                {m.text}
+                {linkifyText(m.text)}
               </div>
             ))}
             {sending && (
@@ -267,6 +317,14 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
           border: 1px solid var(--line, #E1DCEB);
           border-bottom-left-radius: 4px;
         }
+        .slapia-chat-link {
+          color: inherit;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+          font-weight: 600;
+          word-break: break-all;
+        }
+        .slapia-chat-link:hover { opacity: 0.8; }
         .slapia-chat-bubble--typing {
           display: flex;
           gap: 4px;
