@@ -5,9 +5,11 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Unit">
-            <directory>tests/Unit</directory>
-        </testsuite>
+        <!-- Pas de dossier tests/Unit dans ce projet (que des tests
+             Feature) : PHPUnit 11 échoue au démarrage si une testsuite
+             pointe vers un dossier qui n'existe pas ("Test directory
+             ... not found"), donc pas de testsuite "Unit" tant qu'il n'y
+             a pas de test unitaire réel à y mettre. -->
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
