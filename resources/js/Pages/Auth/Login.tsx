@@ -2,10 +2,16 @@ import { Head, useForm } from '@inertiajs/react';
 import { useTranslation } from '../../hooks/useTranslation';
 import AuthLayout from '../../Layouts/AuthLayout';
 import { Link } from '@inertiajs/react';
+import Turnstile from '../../Components/Turnstile';
 
-function Login() {
+function Login({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const { t } = useTranslation();
-  const { data, setData, post, processing, errors } = useForm({ email: '', password: '', remember: false });
+  const { data, setData, post, processing, errors } = useForm({
+    email: '',
+    password: '',
+    remember: false,
+    'cf-turnstile-response': '',
+  });
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,7 +41,18 @@ function Login() {
           <span>{t('auth.remember_me')}</span>
         </label>
 
-        <button type="submit" disabled={processing} className="btn btn--primary btn--block" style={{ marginTop: 20 }}>
+        {turnstileSiteKey && (
+          <div className="contact-turnstile-wrap" style={{ marginTop: 16 }}>
+            <Turnstile siteKey={turnstileSiteKey} onVerify={(token) => setData('cf-turnstile-response', token)} />
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={processing || (!!turnstileSiteKey && !data['cf-turnstile-response'])}
+          className="btn btn--primary btn--block"
+          style={{ marginTop: 20 }}
+        >
           {t('auth.submit_login')}
         </button>
       </form>
