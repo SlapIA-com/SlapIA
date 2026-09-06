@@ -27,7 +27,7 @@ createInertiaApp({
     return page;
   },
   setup({ el, App, props }) {
-    // Chat IA (bas gauche) : partagé sur toutes les pages (voir
+    // Chat IA (bas droite) : partagé sur toutes les pages (voir
     // HandleInertiaRequests::share) et monté une seule fois ici, hors de
     // l'arbre de pages Inertia, pour survivre aux navigations entre pages.
     const webhookUrl = props.initialPage.props.n8nChatWebhookUrl as string | null;

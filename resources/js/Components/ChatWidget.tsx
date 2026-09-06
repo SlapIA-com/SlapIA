@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Bouton de chat IA en bas à gauche, branché sur le webhook n8n
- * (N8N_CHAT_WEBHOOK), comme sur l'ancien site. Monté une seule fois au
+ * Bouton de chat IA en bas à droite, branché sur le webhook n8n
+ * (N8N_CHAT_WEBHOOK). Monté une seule fois au
  * niveau racine (voir app.tsx) pour apparaître sur toutes les pages, quel
  * que soit le layout.
  *
@@ -166,7 +166,7 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
       <style>{`
         .slapia-chat {
           position: fixed;
-          left: 1.25rem;
+          right: 1.25rem;
           bottom: 1.25rem;
           z-index: 9999;
           font-family: var(--font-body, 'IBM Plex Sans', sans-serif);
@@ -192,7 +192,7 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
         .slapia-chat-window {
           position: absolute;
           bottom: 72px;
-          left: 0;
+          right: 0;
           width: min(360px, calc(100vw - 2.5rem));
           height: min(520px, calc(100vh - 140px));
           background: var(--white, #fff);
@@ -328,7 +328,7 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
         }
 
         @media (max-width: 420px) {
-          .slapia-chat { left: 0.75rem; bottom: 0.75rem; }
+          .slapia-chat { right: 0.75rem; bottom: 0.75rem; }
         }
       `}</style>
     </div>
