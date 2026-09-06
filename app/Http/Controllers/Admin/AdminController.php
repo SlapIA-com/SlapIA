@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\AvisClient;
 use App\Models\Client;
 use App\Models\Compte;
@@ -60,6 +61,10 @@ class AdminController extends Controller
 
         $satisfactionMoyenne = AvisClient::where('satisfaction', '>', 0)->avg('satisfaction');
 
+        $articles = Article::orderByDesc('published_at')->get([
+            'id', 'title', 'slug', 'excerpt', 'content', 'image', 'published_at',
+        ]);
+
         return Inertia::render('Admin/Index', [
             'kpis' => [
                 'comptes' => $clients->count(),
@@ -74,6 +79,7 @@ class AdminController extends Controller
             'accounts' => $clients,
             'rssSubscribers' => $rss,
             'reviews' => $reviews,
+            'articles' => $articles,
         ]);
     }
 

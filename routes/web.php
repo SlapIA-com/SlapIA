@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BlogArticleController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\AvatarController;
@@ -89,4 +90,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/comptes/{client}/photo', [AdminController::class, 'uploadPhoto'])->name('accounts.photo');
     Route::post('/abonnes-rss', [AdminController::class, 'storeRssSubscriber'])->name('rss.store');
     Route::delete('/abonnes-rss/{subscriber}', [AdminController::class, 'destroyRssSubscriber'])->name('rss.destroy');
+    Route::post('/articles', [BlogArticleController::class, 'store'])->name('articles.store');
+    Route::patch('/articles/{article}', [BlogArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{article}', [BlogArticleController::class, 'destroy'])->name('articles.destroy');
 });

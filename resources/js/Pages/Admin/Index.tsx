@@ -43,8 +43,18 @@ interface Account {
 }
 
 const STATUTS = ['Facturé', 'Payé', 'En cours', 'En attente', 'Dispensé'];
-const TABS = ['overview', 'accounts', 'rss', 'invoices', 'reviews'] as const;
+const TABS = ['overview', 'accounts', 'rss', 'invoices', 'reviews', 'blog'] as const;
 type Tab = (typeof TABS)[number];
+
+interface BlogArticleRow {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  image: string | null;
+  published_at: string;
+}
 
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
@@ -103,6 +113,7 @@ function AdminIndex({
   accounts,
   rssSubscribers,
   reviews,
+  articles,
 }: {
   kpis: {
     comptes: number;
@@ -117,6 +128,7 @@ function AdminIndex({
   accounts: Account[];
   rssSubscribers: Array<{ id: number; email: string; date_creation: string }>;
   reviews: Array<{ id: number; client_id: number | null; prenom_nom: string; satisfaction: number; commentaire: string; created_at: string }>;
+  articles: BlogArticleRow[];
 }) {
   const { t } = useTranslation();
   const { auth, flash } = usePage<SharedProps>().props;
@@ -284,6 +296,16 @@ function AdminIndex({
               {reviews.length === 0 && <p className="admin-invoice-empty">{t('admin.no_reviews')}</p>}
               {reviews.map((r) => (
                 <ReviewRow key={r.id} review={r} />
+              ))}
+            </div>
+          )}
+
+          {tab === 'blog' && (
+            <div className="admin-tab-panel is-active">
+              <NewArticleForm />
+              {articles.length === 0 && <p className="admin-invoice-empty">{t('admin.no_articles')}</p>}
+              {articles.map((a) => (
+                <ArticleRow key={a.id} article={a} />
               ))}
             </div>
           )}
@@ -641,6 +663,114 @@ function ReviewRow({ review }: { review: { id: number; prenom_nom: string; satis
         <button type="button" onClick={() => router.delete(`/admin/avis/${review.id}`)} className="btn btn--danger">Supprimer</button>
       </div>
     </form>
+  );
+}
+
+function NewArticleForm() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const { data, setData, post, processing, reset, errors } = useForm({
+    title: '', excerpt: '', image: '', published_at: new Date().toISOString().slice(0, 10), content: '',
+  });
+
+  if (!open) {
+    return <button onClick={() => setOpen(true)} className="btn btn--primary" style={{ marginBottom: 20 }}>{t('admin.add_article_btn')}</button>;
+  }
+
+  return (
+    <div className="admin-new-client-panel" style={{ marginBottom: 20 }}>
+      <form onSubmit={(e) => { e.preventDefault(); post('/admin/articles', { onSuccess: () => { reset(); setOpen(false); } }); }}>
+        <div className="admin-prestation-fields">
+          <div className="admin-details-field admin-details-field--wide">
+            <label>{t('admin.label_article_title')}</label>
+            <input required value={data.title} onChange={(e) => setData('title', e.target.value)} />
+          </div>
+          <div className="admin-details-field admin-details-field--wide">
+            <label>{t('admin.label_article_excerpt')}</label>
+            <input value={data.excerpt} onChange={(e) => setData('excerpt', e.target.value)} />
+          </div>
+          <div className="admin-details-field">
+            <label>{t('admin.label_article_image')}</label>
+            <input value={data.image} onChange={(e) => setData('image', e.target.value)} />
+          </div>
+          <div className="admin-details-field">
+            <label>{t('admin.label_article_date')}</label>
+            <input type="date" value={data.published_at} onChange={(e) => setData('published_at', e.target.value)} />
+          </div>
+          <div className="admin-details-field admin-details-field--wide">
+            <label>{t('admin.label_article_content')}</label>
+            <textarea rows={8} className="admin-review-comment" value={data.content} onChange={(e) => setData('content', e.target.value)} />
+          </div>
+        </div>
+        {errors.title && <span className="alert alert--error">{errors.title}</span>}
+        <div className="admin-action-row">
+          <button type="submit" disabled={processing} className="btn btn--primary">{t('admin.save')}</button>
+          <button type="button" onClick={() => setOpen(false)} className="btn btn--ghost">{t('admin.cancel_btn')}</button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function ArticleRow({ article }: { article: BlogArticleRow }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const form = useForm({
+    title: article.title,
+    excerpt: article.excerpt ?? '',
+    image: article.image ?? '',
+    published_at: article.published_at.slice(0, 10),
+    content: article.content ?? '',
+  });
+
+  return (
+    <div className="admin-invoice-card">
+      <div className="admin-inline-avatar" style={{ justifyContent: 'space-between' }}>
+        <div>
+          <strong>{article.title}</strong>
+          <div>{new Date(article.published_at).toLocaleDateString('fr-FR')} — /blog/{article.slug}</div>
+        </div>
+        <div className="admin-action-row">
+          <button onClick={() => setOpen(!open)} className="btn btn--ghost">{open ? t('admin.close_btn') : t('admin.edit_btn')}</button>
+          <button
+            onClick={() => { if (confirm(t('admin.confirm_delete_article'))) router.delete(`/admin/articles/${article.id}`); }}
+            className="btn btn--danger"
+          >
+            {t('admin.delete_btn')}
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <form onSubmit={(e) => { e.preventDefault(); form.patch(`/admin/articles/${article.id}`); }} style={{ marginTop: 16 }}>
+          <div className="admin-prestation-fields">
+            <div className="admin-details-field admin-details-field--wide">
+              <label>{t('admin.label_article_title')}</label>
+              <input required value={form.data.title} onChange={(e) => form.setData('title', e.target.value)} />
+            </div>
+            <div className="admin-details-field admin-details-field--wide">
+              <label>{t('admin.label_article_excerpt')}</label>
+              <input value={form.data.excerpt} onChange={(e) => form.setData('excerpt', e.target.value)} />
+            </div>
+            <div className="admin-details-field">
+              <label>{t('admin.label_article_image')}</label>
+              <input value={form.data.image} onChange={(e) => form.setData('image', e.target.value)} />
+            </div>
+            <div className="admin-details-field">
+              <label>{t('admin.label_article_date')}</label>
+              <input type="date" value={form.data.published_at} onChange={(e) => form.setData('published_at', e.target.value)} />
+            </div>
+            <div className="admin-details-field admin-details-field--wide">
+              <label>{t('admin.label_article_content')}</label>
+              <textarea rows={10} className="admin-review-comment" value={form.data.content} onChange={(e) => form.setData('content', e.target.value)} />
+            </div>
+          </div>
+          <div className="admin-action-row" style={{ marginTop: 10 }}>
+            <button type="submit" disabled={form.processing} className="btn btn--primary">{t('admin.save')}</button>
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
 

@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useReveal } from '../hooks/useReveal';
+import Turnstile from '../Components/Turnstile';
 
 /** Port fidèle de pages/contact.php (mêmes classes CSS legacy/style.css). */
 export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: boolean; subjects: Record<string, string>; turnstileSiteKey: string }) {
@@ -135,11 +136,11 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
 
               {turnstileSiteKey && (
                 <div className="contact-turnstile-wrap">
-                  <div className="cf-turnstile" data-sitekey={turnstileSiteKey} />
+                  <Turnstile siteKey={turnstileSiteKey} onVerify={(token) => setData('cf-turnstile-response', token)} />
                 </div>
               )}
 
-              <button type="submit" disabled={processing} className="btn btn--signal">
+              <button type="submit" disabled={processing || (!!turnstileSiteKey && !data['cf-turnstile-response'])} className="btn btn--signal">
                 {t('contact.submit')} <span className="btn__arrow">→</span>
               </button>
             </form>

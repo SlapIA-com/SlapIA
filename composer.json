@@ -30,6 +30,7 @@
         }
     },
     "scripts": {
+        "check-translations": "php scripts/check-translations.php",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

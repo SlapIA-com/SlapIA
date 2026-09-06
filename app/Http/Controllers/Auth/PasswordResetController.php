@@ -25,12 +25,32 @@ class PasswordResetController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('Auth/ForgotPassword');
+        return Inertia::render('Auth/ForgotPassword', [
+            'turnstileSiteKey' => config('services.turnstile.site_key'),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'cf-turnstile-response' => ['nullable', 'string'],
+        ]);
+
+        $secret = config('services.turnstile.secret_key');
+        if ($secret) {
+            $verify = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => $secret,
+                'response' => $data['cf-turnstile-response'] ?? '',
+                'remoteip' => $request->ip(),
+            ])->json();
+
+            if (empty($verify['success'])) {
+                throw ValidationException::withMessages([
+                    'email' => 'Validation de sécurité échouée.',
+                ]);
+            }
+        }
 
         $compte = Compte::where('email', $request->email)->first();
 

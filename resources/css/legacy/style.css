@@ -2,7 +2,11 @@
    Slapia — Formations en intelligence artificielle
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Police Google Fonts : chargée via <link rel="preconnect"> + <link
+   rel="stylesheet"> dans resources/views/app.blade.php (découverte plus
+   rapide par le navigateur qu'un @import CSS, qui bloque la construction
+   du CSSOM) plutôt que par un @import ici — voir app.blade.php pour l'URL
+   exacte (mêmes familles/graisses/italiques que l'ancien site). */
 
 :root {
   /* theme-flippable: page canvas (redefined under [data-theme="dark"]) */
