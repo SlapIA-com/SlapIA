@@ -102,7 +102,10 @@ class AdminContactTest extends TestCase
 
         $admin = $this->actingAsAdmin();
         $existingCompte = Compte::factory()->create(['email' => 'deja-client@example.com']);
-        $existingClient = Client::factory()->for($existingCompte)->create();
+        // type_client défini explicitement (et différent de la valeur envoyée
+        // plus bas) pour que le test prouve vraiment l'absence d'écrasement,
+        // plutôt que de dépendre du défaut de ClientFactory.
+        $existingClient = Client::factory()->for($existingCompte)->entreprise()->create();
 
         $contact = ContactMessage::create([
             'client_id' => $existingClient->id,
@@ -116,11 +119,12 @@ class AdminContactTest extends TestCase
 
         $this->actingAs($admin)->patch("/admin/contacts/{$contact->id}", [
             'prise_de_contact_ok' => true,
-            'type_client' => 'Entreprise',
+            'type_client' => 'Particulier',
         ]);
 
         $this->assertSame(1, Compte::where('email', 'deja-client@example.com')->count());
-        $this->assertNull(
+        $this->assertSame(
+            'Entreprise',
             $existingClient->fresh()->type_client,
             'Le rôle du client déjà lié ne doit pas être écrasé par le popup entreprise/particulier.'
         );
