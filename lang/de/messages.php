@@ -359,6 +359,7 @@ return [
     'label_lastname' => 'Nachname',
     'label_email' => 'Geschäftliche E-Mail',
     'label_company' => 'Unternehmen',
+    'label_phone' => 'Telefonnummer',
     'label_subject' => 'Betreff',
     'subject_placeholder' => 'Betreff wählen',
     'subject_1' => 'Einzelsitzung', 'subject_2' => 'Teamschulung', 'subject_3' => 'Individuelles Programm',

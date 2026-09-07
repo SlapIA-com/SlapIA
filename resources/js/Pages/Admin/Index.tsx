@@ -53,6 +53,7 @@ interface ContactMessageRow {
   nom: string | null;
   nom_entreprise: string | null;
   email: string;
+  telephone: string | null;
   sujet: string;
   message: string;
   prise_de_contact_ok: boolean;
@@ -222,6 +223,7 @@ function AdminIndex({
                       <th>Nom</th>
                       <th>Entreprise</th>
                       <th>Email</th>
+                      <th>Téléphone</th>
                       <th>Sujet</th>
                       <th>Message</th>
                       <th>Reçu le</th>
@@ -234,7 +236,7 @@ function AdminIndex({
                       <ContactRow key={c.id} contact={c} />
                     ))}
                     {contacts.length === 0 && (
-                      <tr><td colSpan={8} className="admin-invoice-empty">{t('admin.no_contacts')}</td></tr>
+                      <tr><td colSpan={9} className="admin-invoice-empty">{t('admin.no_contacts')}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -757,6 +759,7 @@ function ContactRow({ contact }: { contact: ContactMessageRow }) {
       <td>{contact.prenom} {contact.nom ?? ''}</td>
       <td>{contact.nom_entreprise ?? '—'}</td>
       <td>{contact.email}</td>
+      <td>{contact.telephone ?? '—'}</td>
       <td>{contact.sujet}</td>
       <td style={{ maxWidth: 320, whiteSpace: 'pre-wrap' }}>{contact.message}</td>
       <td>{new Date(contact.date_creation).toLocaleDateString('fr-FR')}</td>

@@ -77,7 +77,7 @@ class AdminController extends Controller
         // de contact (voir ContactController::store et
         // AdminController::updateContactStatus).
         $contacts = ContactMessage::orderByDesc('date_creation')->get([
-            'id', 'client_id', 'prenom', 'nom', 'nom_entreprise', 'email',
+            'id', 'client_id', 'prenom', 'nom', 'nom_entreprise', 'email', 'telephone',
             'sujet', 'message', 'prise_de_contact_ok', 'date_creation',
         ]);
 
@@ -433,6 +433,7 @@ class AdminController extends Controller
                 'compte_id' => $compte->id,
                 'nom_complet' => trim($contact->prenom.' '.($contact->nom ?? '')),
                 'nom_entreprise' => $contact->nom_entreprise,
+                'telephone' => $contact->telephone,
                 'type_client' => $typeClient,
             ]);
 

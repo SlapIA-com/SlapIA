@@ -19,6 +19,7 @@ class ContactMessage extends Model
         'nom',
         'nom_entreprise',
         'email',
+        'telephone',
         'sujet',
         'message',
         'prise_de_contact_ok',

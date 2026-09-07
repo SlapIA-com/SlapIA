@@ -359,6 +359,7 @@ return [
         'label_lastname' => 'Nom',
         'label_email' => 'E-mail',
         'label_company' => 'Entreprise',
+        'label_phone' => 'Téléphone',
         'label_subject' => 'Sujet',
         'subject_placeholder' => 'Choisir un sujet',
         'subject_1' => 'Session individuelle', 'subject_2' => "Formation d'équipe", 'subject_3' => 'Programme sur-mesure',

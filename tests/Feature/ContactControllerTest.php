@@ -22,6 +22,7 @@ class ContactControllerTest extends TestCase
             'firstname' => 'Alice',
             'lastname' => 'Martin',
             'email' => 'alice@example.com',
+            'phone' => '0601020304',
             'company' => 'Acme',
             'subject' => 'subject_1',
             'message' => 'Bonjour, je souhaite un renseignement.',
@@ -37,7 +38,18 @@ class ContactControllerTest extends TestCase
             'prenom' => 'Alice',
             'nom' => 'Martin',
             'email' => 'alice@example.com',
+            'telephone' => '0601020304',
             'prise_de_contact_ok' => false,
+        ]);
+    }
+
+    public function test_store_allows_empty_phone(): void
+    {
+        $this->post('/contact', $this->validPayload(['phone' => '']))->assertRedirect();
+
+        $this->assertDatabaseHas('contact_siteweb', [
+            'email' => 'alice@example.com',
+            'telephone' => null,
         ]);
     }
 

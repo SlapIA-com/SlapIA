@@ -10,6 +10,7 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
     firstname: '',
     lastname: '',
     email: '',
+    phone: '',
     company: '',
     subject: '',
     message: '',
@@ -89,6 +90,15 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
                     required
                     value={data.email}
                     onChange={(e) => setData('email', e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="phone">{t('contact.label_phone')}</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={data.phone}
+                    onChange={(e) => setData('phone', e.target.value)}
                   />
                 </div>
                 <div className="field">
