@@ -6,6 +6,7 @@ use App\Models\AvisClient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -110,6 +111,23 @@ class DashboardController extends Controller
                 'created_at' => now(),
             ]
         );
+
+        // Remplace le déclencheur Notion "NEW Evaluation" : envoie l'email
+        // de remerciement (voir config('services.n8n.avis_webhook_url')).
+        $webhook = config('services.n8n.avis_webhook_url');
+        if ($webhook) {
+            try {
+                Http::timeout(10)->post($webhook, [
+                    'event' => 'review_received',
+                    'email' => $request->user()->email,
+                    'name' => $client->nom_complet,
+                    'satisfaction' => $data['satisfaction'],
+                    'commentaire' => $data['commentaire'],
+                ]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return back()->with('success', trans('messages.dashboard.avis_updated'));
     }

@@ -43,8 +43,21 @@ interface Account {
 }
 
 const STATUTS = ['Facturé', 'Payé', 'En cours', 'En attente', 'Dispensé'];
-const TABS = ['overview', 'accounts', 'rss', 'invoices', 'reviews', 'blog'] as const;
+const TABS = ['overview', 'contacts', 'accounts', 'rss', 'invoices', 'reviews', 'blog'] as const;
 type Tab = (typeof TABS)[number];
+
+interface ContactMessageRow {
+  id: number;
+  client_id: number | null;
+  prenom: string;
+  nom: string | null;
+  nom_entreprise: string | null;
+  email: string;
+  sujet: string;
+  message: string;
+  prise_de_contact_ok: boolean;
+  date_creation: string;
+}
 
 interface BlogArticleRow {
   id: number;
@@ -114,6 +127,7 @@ function AdminIndex({
   rssSubscribers,
   reviews,
   articles,
+  contacts,
 }: {
   kpis: {
     comptes: number;
@@ -122,6 +136,7 @@ function AdminIndex({
     chiffre_affaires: number;
     nouveaux_clients_mois: number;
     satisfaction_moyenne: number | null;
+    contacts_en_attente: number;
   };
   billingBreakdown: Record<string, number>;
   roleBreakdown: { particulier: number; entreprise: number; admin: number };
@@ -129,6 +144,7 @@ function AdminIndex({
   rssSubscribers: Array<{ id: number; email: string; date_creation: string }>;
   reviews: Array<{ id: number; client_id: number | null; prenom_nom: string; satisfaction: number; commentaire: string; created_at: string }>;
   articles: BlogArticleRow[];
+  contacts: ContactMessageRow[];
 }) {
   const { t } = useTranslation();
   const { auth, flash } = usePage<SharedProps>().props;
@@ -170,6 +186,7 @@ function AdminIndex({
                 <Kpi label={t('admin.label_revenue')} value={`${kpis.chiffre_affaires.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €`} />
                 <Kpi label={t('admin.label_new_clients')} value={kpis.nouveaux_clients_mois} />
                 <Kpi label={t('admin.label_avg_satisfaction')} value={kpis.satisfaction_moyenne !== null ? `${kpis.satisfaction_moyenne}/5` : '—'} />
+                <Kpi label={t('admin.label_pending_contacts')} value={kpis.contacts_en_attente} />
               </div>
 
               {auth.user && (
@@ -192,6 +209,34 @@ function AdminIndex({
                     <RoleChart roleBreakdown={roleBreakdown} />
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {tab === 'contacts' && (
+            <div className="admin-tab-panel is-active">
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Entreprise</th>
+                      <th>Email</th>
+                      <th>Sujet</th>
+                      <th>Message</th>
+                      <th>Reçu le</th>
+                      <th>Prise de contact ok</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contacts.map((c) => (
+                      <ContactRow key={c.id} contact={c} />
+                    ))}
+                    {contacts.length === 0 && (
+                      <tr><td colSpan={7} className="admin-invoice-empty">{t('admin.no_contacts')}</td></tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -453,6 +498,20 @@ function AccountRow({ account, expanded, onToggle }: { account: Account; expande
             <div className="admin-details-panel" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
               <h4 className="admin-prestations-title">Informations client</h4>
 
+              <div className="admin-action-row" style={{ marginBottom: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Envoyer une demande d'avis à ${account.email} ?`)) {
+                      router.post(`/admin/comptes/${account.id}/demander-avis`);
+                    }
+                  }}
+                  className="btn btn--ghost"
+                >
+                  Demander un avis
+                </button>
+              </div>
+
               <form
                 className="admin-photo-upload"
                 onSubmit={(e) => {
@@ -663,6 +722,37 @@ function ReviewRow({ review }: { review: { id: number; prenom_nom: string; satis
         <button type="button" onClick={() => router.delete(`/admin/avis/${review.id}`)} className="btn btn--danger">Supprimer</button>
       </div>
     </form>
+  );
+}
+
+function ContactRow({ contact }: { contact: ContactMessageRow }) {
+  const [checked, setChecked] = useState(contact.prise_de_contact_ok);
+
+  return (
+    <tr>
+      <td>{contact.prenom} {contact.nom ?? ''}</td>
+      <td>{contact.nom_entreprise ?? '—'}</td>
+      <td>{contact.email}</td>
+      <td>{contact.sujet}</td>
+      <td style={{ maxWidth: 320, whiteSpace: 'pre-wrap' }}>{contact.message}</td>
+      <td>{new Date(contact.date_creation).toLocaleDateString('fr-FR')}</td>
+      <td>
+        <label className="admin-inline-avatar" style={{ gap: 6, cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => {
+              const value = e.target.checked;
+              setChecked(value);
+              router.patch(`/admin/contacts/${contact.id}`, { prise_de_contact_ok: value }, {
+                onError: () => setChecked(!value),
+              });
+            }}
+          />
+          {checked ? 'Traité' : "À traiter"}
+        </label>
+      </td>
+    </tr>
   );
 }
 

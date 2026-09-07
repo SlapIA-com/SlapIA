@@ -7,11 +7,13 @@ use App\Models\Article;
 use App\Models\AvisClient;
 use App\Models\Client;
 use App\Models\Compte;
+use App\Models\ContactMessage;
 use App\Models\Prestation;
 use App\Models\RssSubscriber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -65,6 +67,14 @@ class AdminController extends Controller
             'id', 'title', 'slug', 'excerpt', 'content', 'image', 'published_at',
         ]);
 
+        // Remplace la base Notion "ERP" : suivi des messages du formulaire
+        // de contact (voir ContactController::store et
+        // AdminController::updateContactStatus).
+        $contacts = ContactMessage::orderByDesc('date_creation')->get([
+            'id', 'client_id', 'prenom', 'nom', 'nom_entreprise', 'email',
+            'sujet', 'message', 'prise_de_contact_ok', 'date_creation',
+        ]);
+
         return Inertia::render('Admin/Index', [
             'kpis' => [
                 'comptes' => $clients->count(),
@@ -73,6 +83,7 @@ class AdminController extends Controller
                 'chiffre_affaires' => $chiffreAffaires,
                 'nouveaux_clients_mois' => $nouveauxClientsMois,
                 'satisfaction_moyenne' => $satisfactionMoyenne !== null ? round((float) $satisfactionMoyenne, 1) : null,
+                'contacts_en_attente' => $contacts->where('prise_de_contact_ok', false)->count(),
             ],
             'billingBreakdown' => $billingBreakdown,
             'roleBreakdown' => $roleBreakdown,
@@ -80,6 +91,7 @@ class AdminController extends Controller
             'rssSubscribers' => $rss,
             'reviews' => $reviews,
             'articles' => $articles,
+            'contacts' => $contacts,
         ]);
     }
 
@@ -305,6 +317,110 @@ class AdminController extends Controller
             $facture->nom_fichier,
             ['Content-Type' => $facture->mime_type, 'Content-Disposition' => 'inline']
         );
+    }
+
+    /**
+     * Coche/décoche "prise de contact ok" sur un message de contact.
+     * Remplace le suivi manuel qui se faisait dans la base Notion "ERP" :
+     * quand la case passe de faux à vrai, on invite automatiquement la
+     * personne à créer son compte (voir sendRegistrationInvite ci-dessous).
+     */
+    public function updateContactStatus(Request $request, ContactMessage $contact): RedirectResponse
+    {
+        $data = $request->validate([
+            'prise_de_contact_ok' => ['required', 'boolean'],
+        ]);
+
+        $wasOk = $contact->prise_de_contact_ok;
+        $contact->update($data);
+
+        if (!$wasOk && $data['prise_de_contact_ok']) {
+            $this->sendRegistrationInvite($contact);
+        }
+
+        return back()->with('success', 'Contact mis à jour.');
+    }
+
+    /**
+     * Crée (si besoin) le compte du contact et lui envoie un lien pour
+     * définir son mot de passe — même mécanisme que "mot de passe oublié"
+     * (voir PasswordResetController), pas d'auto-inscription publique
+     * (règle métier inchangée, voir routes/web.php) : c'est bien l'admin,
+     * en cochant la case, qui déclenche la création du compte.
+     *
+     * Lien valable 7 jours (pas 1h comme un vrai reset) : un prospect
+     * n'ouvre pas forcément l'email dans l'heure qui suit.
+     */
+    private function sendRegistrationInvite(ContactMessage $contact): void
+    {
+        if (!$contact->client_id) {
+            $compte = Compte::firstOrCreate(
+                ['email' => $contact->email],
+                ['mot_de_passe_hash' => Hash::make(Str::random(32))]
+            );
+
+            $client = $compte->client ?? Client::create([
+                'compte_id' => $compte->id,
+                'nom_complet' => trim($contact->prenom.' '.($contact->nom ?? '')),
+                'nom_entreprise' => $contact->nom_entreprise,
+            ]);
+
+            $contact->update(['client_id' => $client->id]);
+        }
+
+        $compte = $contact->client->compte;
+
+        $token = Str::random(64);
+        $compte->forceFill([
+            'reset_token' => $token,
+            'reset_token_expiry' => now()->addDays(7),
+        ])->save();
+
+        $webhook = config('services.n8n.auth_webhook_url');
+        if ($webhook) {
+            try {
+                Http::timeout(10)->post($webhook, [
+                    'event' => 'welcome',
+                    'email' => $compte->email,
+                    'name' => $contact->prenom,
+                    'reset_url' => route('password.edit', [
+                        'token' => $token,
+                        'email' => $compte->email,
+                    ]),
+                ]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+    }
+
+    /**
+     * Bouton "demander un avis" sur la fiche client — remplace le
+     * déclenchement hebdomadaire automatique de l'ancien workflow Notion
+     * (SEND Avis) : c'est désormais Thomas qui décide du bon moment.
+     */
+    public function requestReview(Client $client): RedirectResponse
+    {
+        $webhook = config('services.n8n.avis_webhook_url');
+        if ($webhook) {
+            try {
+                Http::timeout(10)->post($webhook, [
+                    'event' => 'review_requested',
+                    'email' => $client->compte->email,
+                    'name' => $client->nom_complet,
+                    // Remplace l'ancien lien vers le formulaire Notion : le
+                    // client laisse maintenant son avis depuis son espace
+                    // (voir DashboardController::updateReview). S'il n'est
+                    // pas connecté, la route /dashboard le renvoie login
+                    // puis revient ici — comportement standard Laravel.
+                    'dashboard_url' => route('dashboard'),
+                ]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return back()->with('success', "Demande d'avis envoyée.");
     }
 
     public function storeRssSubscriber(Request $request): RedirectResponse

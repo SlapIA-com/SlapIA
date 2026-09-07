@@ -63,7 +63,7 @@ class ContactController extends Controller
 
         $client = Client::whereHas('compte', fn ($q) => $q->where('email', $data['email']))->first();
 
-        ContactMessage::create([
+        $message = ContactMessage::create([
             'client_id' => $client?->id,
             'prenom' => $data['firstname'],
             'nom' => $data['lastname'] ?: null,
@@ -74,6 +74,27 @@ class ContactController extends Controller
             'prise_de_contact_ok' => false,
             'date_creation' => now(),
         ]);
+
+        // Remplace le déclencheur Notion "NEW Contact web" : un seul appel,
+        // le workflow n8n envoie en parallèle l'email pour Thomas et l'email
+        // de confirmation au client (voir config('services.n8n')).
+        $webhook = config('services.n8n.contact_webhook_url');
+        if ($webhook) {
+            try {
+                Http::timeout(10)->post($webhook, [
+                    'event' => 'new_contact',
+                    'prenom' => $message->prenom,
+                    'nom' => $message->nom ?? '',
+                    'nom_entreprise' => $message->nom_entreprise ?? '',
+                    'email' => $message->email,
+                    'sujet' => $message->sujet,
+                    'message' => $message->message,
+                    'date' => $message->date_creation->toIso8601String(),
+                ]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return redirect()->route('contact', ['sent' => 1]);
     }
