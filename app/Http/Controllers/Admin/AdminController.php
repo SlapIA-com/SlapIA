@@ -28,7 +28,13 @@ class AdminController extends Controller
 {
     public function index(): Response
     {
+        // whereHas('compte') : filet de sécurité contre un client orphelin
+        // (compte_id pointant vers un compte déjà supprimé) — accountRow()
+        // plante sinon sur compte->email. Ne devrait plus arriver depuis le
+        // correctif de destroyAccount, mais évite de casser tout le
+        // dashboard si un cas survient quand même.
         $clients = Client::with(['compte', 'prestations', 'factures'])
+            ->whereHas('compte')
             ->orderBy('nom_complet')
             ->get()
             ->map(fn (Client $c) => $this->accountRow($c));
@@ -141,12 +147,17 @@ class AdminController extends Controller
     }
 
     /**
-     * Supprime un compte client depuis le dashboard. Le compte "comptes" est
-     * la source de vérité : sa suppression cascade en base vers clients (voir
-     * clients.compte_id ->cascadeOnDelete) puis vers prestations/factures
-     * (cascadeOnDelete), et met client_id à NULL sur avis_clients et
-     * contact_siteweb (nullOnDelete) pour garder l'historique public des avis
-     * et ne pas casser le suivi des anciennes demandes de contact.
+     * Supprime un compte client depuis le dashboard.
+     *
+     * Attention : on ne compte PAS sur les cascades de clés étrangères
+     * définies dans les migrations (clients.compte_id ->cascadeOnDelete,
+     * etc.) — la base de prod a été reprise de l'ancien site et ces
+     * contraintes n'y sont pas forcément réellement actives. On supprime
+     * donc chaque table explicitement, dans l'ordre (enfants d'abord), pour
+     * ne jamais laisser de client orphelin (compte_id pointant vers un
+     * compte supprimé, qui plantait accountRow() avec compte === null).
+     * avis_clients et contact_siteweb sont détachés (client_id => null)
+     * plutôt que supprimés, pour garder l'historique.
      */
     public function destroyAccount(Request $request, Client $client): RedirectResponse
     {
@@ -164,9 +175,17 @@ class AdminController extends Controller
 
         foreach ($client->factures as $facture) {
             Storage::disk('local')->delete($facture->chemin_fichier);
+            $facture->delete();
         }
 
-        $client->compte->delete();
+        $client->prestations()->delete();
+
+        AvisClient::where('client_id', $client->id)->update(['client_id' => null]);
+        ContactMessage::where('client_id', $client->id)->update(['client_id' => null]);
+
+        $compte = $client->compte;
+        $client->delete();
+        $compte?->delete();
 
         return back()->with('success', 'Compte supprimé.');
     }
