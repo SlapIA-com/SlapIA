@@ -38,5 +38,9 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <!-- Clé bidon utilisée uniquement par les tests de l'API n8n
+             (N8nArticleControllerTest) — jamais utilisée en prod, où la
+             vraie valeur vient du .env du serveur. -->
+        <env name="N8N_ARTICLES_API_KEY" value="test-n8n-key-phpunit"/>
     </php>
 </phpunit>
