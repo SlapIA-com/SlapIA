@@ -77,6 +77,7 @@ Route::middleware(['auth', 'role:particulier,entreprise,admin'])->group(function
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
     Route::patch('/comptes/{client}', [AdminController::class, 'updateAccount'])->name('accounts.update');
+    Route::delete('/comptes/{client}', [AdminController::class, 'destroyAccount'])->name('accounts.destroy');
     Route::patch('/comptes/{client}/profil', [AdminController::class, 'updateProfile'])->name('accounts.profile');
     Route::post('/comptes/reset-password', [AdminController::class, 'resetPassword'])->name('accounts.reset-password');
     Route::post('/comptes', [AdminController::class, 'createClient'])->name('accounts.create');
@@ -91,6 +92,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/abonnes-rss', [AdminController::class, 'storeRssSubscriber'])->name('rss.store');
     Route::delete('/abonnes-rss/{subscriber}', [AdminController::class, 'destroyRssSubscriber'])->name('rss.destroy');
     Route::patch('/contacts/{contact}', [AdminController::class, 'updateContactStatus'])->name('contacts.update');
+    Route::delete('/contacts/{contact}', [AdminController::class, 'destroyContact'])->name('contacts.destroy');
     Route::post('/comptes/{client}/demander-avis', [AdminController::class, 'requestReview'])->name('accounts.request-review');
     Route::post('/articles', [BlogArticleController::class, 'store'])->name('articles.store');
     Route::patch('/articles/{article}', [BlogArticleController::class, 'update'])->name('articles.update');

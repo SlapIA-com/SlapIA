@@ -226,6 +226,7 @@ function AdminIndex({
                       <th>Message</th>
                       <th>Reçu le</th>
                       <th>Prise de contact ok</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -233,7 +234,7 @@ function AdminIndex({
                       <ContactRow key={c.id} contact={c} />
                     ))}
                     {contacts.length === 0 && (
-                      <tr><td colSpan={7} className="admin-invoice-empty">{t('admin.no_contacts')}</td></tr>
+                      <tr><td colSpan={8} className="admin-invoice-empty">{t('admin.no_contacts')}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -510,6 +511,17 @@ function AccountRow({ account, expanded, onToggle }: { account: Account; expande
                 >
                   Demander un avis
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Supprimer définitivement le compte de ${account.nom_complet} (${account.email}) ? Ses prestations et factures seront aussi supprimées.`)) {
+                      router.delete(`/admin/comptes/${account.id}`);
+                    }
+                  }}
+                  className="btn btn--danger"
+                >
+                  Supprimer le compte
+                </button>
               </div>
 
               <form
@@ -727,6 +739,18 @@ function ReviewRow({ review }: { review: { id: number; prenom_nom: string; satis
 
 function ContactRow({ contact }: { contact: ContactMessageRow }) {
   const [checked, setChecked] = useState(contact.prise_de_contact_ok);
+  const [askType, setAskType] = useState(false);
+
+  const confirmType = (typeClient: 'Entreprise' | 'Particulier') => {
+    setAskType(false);
+    setChecked(true);
+    router.patch(`/admin/contacts/${contact.id}`, {
+      prise_de_contact_ok: true,
+      type_client: typeClient,
+    }, {
+      onError: () => setChecked(false),
+    });
+  };
 
   return (
     <tr>
@@ -743,14 +767,62 @@ function ContactRow({ contact }: { contact: ContactMessageRow }) {
             checked={checked}
             onChange={(e) => {
               const value = e.target.checked;
-              setChecked(value);
-              router.patch(`/admin/contacts/${contact.id}`, { prise_de_contact_ok: value }, {
-                onError: () => setChecked(!value),
+              if (value) {
+                // On coche : on demande d'abord Entreprise/Particulier avant
+                // d'envoyer quoi que ce soit (voir AdminController::
+                // updateContactStatus — le champ est obligatoire à la
+                // création du compte).
+                setAskType(true);
+                return;
+              }
+              setChecked(false);
+              router.patch(`/admin/contacts/${contact.id}`, { prise_de_contact_ok: false }, {
+                onError: () => setChecked(true),
               });
             }}
           />
           {checked ? 'Traité' : "À traiter"}
         </label>
+
+        {askType && (
+          <div
+            role="dialog"
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+            }}
+          >
+            <div className="admin-new-client-panel" style={{ maxWidth: 380, textAlign: 'center' }}>
+              <p style={{ marginBottom: 16 }}>
+                {contact.prenom} {contact.nom ?? ''} est-il une entreprise ou un particulier ?
+              </p>
+              <div className="admin-action-row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button type="button" className="btn btn--primary" onClick={() => confirmType('Entreprise')}>
+                  Entreprise
+                </button>
+                <button type="button" className="btn btn--primary" onClick={() => confirmType('Particulier')}>
+                  Particulier
+                </button>
+                <button type="button" className="btn btn--ghost" onClick={() => setAskType(false)}>
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn--danger"
+          onClick={() => {
+            if (confirm(`Supprimer la demande de contact de ${contact.prenom} ${contact.nom ?? ''} ?`)) {
+              router.delete(`/admin/contacts/${contact.id}`);
+            }
+          }}
+        >
+          Supprimer
+        </button>
       </td>
     </tr>
   );

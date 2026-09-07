@@ -140,6 +140,37 @@ class AdminController extends Controller
         return back()->with('success', 'Compte mis à jour.');
     }
 
+    /**
+     * Supprime un compte client depuis le dashboard. Le compte "comptes" est
+     * la source de vérité : sa suppression cascade en base vers clients (voir
+     * clients.compte_id ->cascadeOnDelete) puis vers prestations/factures
+     * (cascadeOnDelete), et met client_id à NULL sur avis_clients et
+     * contact_siteweb (nullOnDelete) pour garder l'historique public des avis
+     * et ne pas casser le suivi des anciennes demandes de contact.
+     */
+    public function destroyAccount(Request $request, Client $client): RedirectResponse
+    {
+        if ($client->compte_id === $request->user()->id) {
+            return back()->with('error', 'Impossible de supprimer son propre compte.');
+        }
+
+        if ($client->role() === 'admin' && Client::whereNull('type_client')->count() <= 1) {
+            return back()->with('error', 'Impossible de supprimer le dernier compte admin.');
+        }
+
+        if ($client->photo_path) {
+            Storage::disk('local')->delete($client->photo_path);
+        }
+
+        foreach ($client->factures as $facture) {
+            Storage::disk('local')->delete($facture->chemin_fichier);
+        }
+
+        $client->compte->delete();
+
+        return back()->with('success', 'Compte supprimé.');
+    }
+
     public function updateProfile(Request $request, Client $client): RedirectResponse
     {
         $data = $request->validate([
@@ -329,16 +360,32 @@ class AdminController extends Controller
     {
         $data = $request->validate([
             'prise_de_contact_ok' => ['required', 'boolean'],
+            // Obligatoire quand on coche : sans ça, le compte auto-créé se
+            // retrouve avec type_client = NULL, ce qui équivaut à "admin"
+            // dans Client::role() — faille corrigée ici (voir aussi
+            // sendRegistrationInvite ci-dessous).
+            'type_client' => ['required_if:prise_de_contact_ok,true', 'nullable', 'in:Entreprise,Particulier'],
         ]);
 
         $wasOk = $contact->prise_de_contact_ok;
-        $contact->update($data);
+        $contact->update(['prise_de_contact_ok' => $data['prise_de_contact_ok']]);
 
         if (!$wasOk && $data['prise_de_contact_ok']) {
-            $this->sendRegistrationInvite($contact);
+            $this->sendRegistrationInvite($contact, $data['type_client']);
         }
 
         return back()->with('success', 'Contact mis à jour.');
+    }
+
+    /**
+     * Supprime une demande de contact (bouton "Supprimer" de l'onglet
+     * Contacts). Ne touche pas au compte/client déjà créé le cas échéant.
+     */
+    public function destroyContact(ContactMessage $contact): RedirectResponse
+    {
+        $contact->delete();
+
+        return back()->with('success', 'Message de contact supprimé.');
     }
 
     /**
@@ -351,7 +398,7 @@ class AdminController extends Controller
      * Lien valable 7 jours (pas 1h comme un vrai reset) : un prospect
      * n'ouvre pas forcément l'email dans l'heure qui suit.
      */
-    private function sendRegistrationInvite(ContactMessage $contact): void
+    private function sendRegistrationInvite(ContactMessage $contact, string $typeClient): void
     {
         if (!$contact->client_id) {
             $compte = Compte::firstOrCreate(
@@ -359,10 +406,15 @@ class AdminController extends Controller
                 ['mot_de_passe_hash' => Hash::make(Str::random(32))]
             );
 
+            // $typeClient (Entreprise/Particulier, choisi par l'admin dans le
+            // popup de l'onglet Contacts) n'est utilisé que si on crée
+            // vraiment un nouveau client : si un compte/client existait déjà
+            // pour cet email, on ne touche pas à son rôle actuel.
             $client = $compte->client ?? Client::create([
                 'compte_id' => $compte->id,
                 'nom_complet' => trim($contact->prenom.' '.($contact->nom ?? '')),
                 'nom_entreprise' => $contact->nom_entreprise,
+                'type_client' => $typeClient,
             ]);
 
             $contact->update(['client_id' => $client->id]);
