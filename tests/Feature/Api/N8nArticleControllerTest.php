@@ -108,6 +108,19 @@ class N8nArticleControllerTest extends TestCase
         $response->assertJsonCount(20);
     }
 
+    public function test_recent_is_throttled_after_thirty_requests_per_minute(): void
+    {
+        // Endpoint public sans clé (voir routes/api.php) : seule protection
+        // contre un robot ou un script qui la bombarderait.
+        for ($i = 0; $i < 30; $i++) {
+            $this->getJson('/api/n8n/articles/recent')->assertOk();
+        }
+
+        $response = $this->getJson('/api/n8n/articles/recent');
+
+        $response->assertStatus(429);
+    }
+
     // ------------------------------------------------------------------
     // POST /api/n8n/articles — protégée par X-N8N-Key
     // ------------------------------------------------------------------
