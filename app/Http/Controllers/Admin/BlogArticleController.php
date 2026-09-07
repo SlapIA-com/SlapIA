@@ -24,17 +24,9 @@ class BlogArticleController extends Controller
             'published_at' => ['nullable', 'date'],
         ]);
 
-        $slug = Article::slugify($data['title']);
-        $base = $slug;
-        $i = 2;
-        while (Article::where('slug', $slug)->exists()) {
-            $slug = "{$base}-{$i}";
-            $i++;
-        }
-
         Article::create([
             'title' => $data['title'],
-            'slug' => $slug,
+            'slug' => Article::uniqueSlugFor($data['title']),
             'excerpt' => $data['excerpt'] ?? null,
             'content' => $data['content'] ?? null,
             'image' => $data['image'] ?? null,

@@ -1,0 +1,678 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## #1 Generate Article",
+        "height": 272,
+        "width": 1956
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "058b8cee-c088-4d78-af0d-9622477d8a05",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## #4 Send to Subscribers",
+        "height": 240,
+        "width": 880,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        640
+      ],
+      "typeVersion": 1,
+      "id": "8194b4be-ab41-4a53-bcc5-d2783d1872c8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://image.pollinations.ai/prompt/' + encodeURIComponent($json.ai.image_prompt) + '?width=1200&height=630&nologo=true&model=flux&enhance=true&seed=' + Math.floor(Math.random() * 1000000) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -288,
+        192
+      ],
+      "id": "667767bf-f3ea-424c-af8b-ea16b465b272",
+      "name": "Generate Image",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const imageUrl = $json.secure_url || '';\n\nconst previous = $('Article JSON').first().json;\n\nreturn [{\n  json: {\n    ...previous,\n    image_url: imageUrl,\n    notion: {\n      ...previous.notion,\n      image: imageUrl\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        192
+      ],
+      "id": "c2918190-1968-46a2-93ed-7449940dd343",
+      "name": "Inject Image URL"
+    },
+    {
+      "parameters": {
+        "content": "## #2 Image Generation",
+        "height": 240,
+        "width": 576,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "bab60c4d-e361-40d6-ac94-52df317d68e8",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## #3 Split & Publish",
+        "height": 224,
+        "width": 1024,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "3963c6ce-16e1-433a-a4e9-39bff6e7b415",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.slapia.com/api/n8n/articles/recent?limit=6",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "bb41a674-5889-4a81-b3db-ee4301390ee3",
+      "name": "Fetch Last 6 Articles"
+    },
+    {
+      "parameters": {
+        "jsCode": "// L'API Laravel (/api/n8n/articles/recent) renvoie un tableau JSON.\n// Selon la config du nœud HTTP Request, n8n peut le livrer soit comme un\n// seul item dont json est ce tableau, soit déjà \"splitté\" en plusieurs\n// items (un par article) — on gère les deux cas.\nconst raw = (items.length === 1 && Array.isArray(items[0].json))\n  ? items[0].json\n  : items.map(i => i.json);\n\nif (!raw.length) {\n  return [{\n    json: {\n      topics_log: [],\n      last_titles: [],\n      last_title_1: '',\n      last_title_2: '',\n      last_subject: ''\n    }\n  }];\n}\n\n// Tri par date décroissante (sécurité au cas où l'API ne trierait pas)\nraw.sort((a, b) => (a.published_at < b.published_at ? 1 : -1));\n\nconst last6 = raw.slice(0, 6);\n\nconst last_titles = last6\n  .map(p => String(p.title || '').trim())\n  .filter(Boolean);\n\nconst topics_log = last6\n  .map(p => {\n    const t = String(p.title || '').trim();\n    const c = String(p.excerpt || '').trim();\n    return `${t}\\n${c}`.trim();\n  })\n  .filter(Boolean);\n\nconst last_subject = (last_titles[0] || '')\n  .split(/\\s+/)\n  .slice(0, 3)\n  .join(' ')\n  .trim();\n\nreturn [\n  {\n    json: {\n      topics_log,\n      last_titles,\n      last_title_1: last_titles[0] || '',\n      last_title_2: last_titles[1] || '',\n      last_subject\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "72a8cfb4-1458-493f-80d0-a8fe37e63700",
+      "name": "Title History"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        -176
+      ],
+      "id": "0cec0c8d-e177-4120-ae0e-6f4af0238019",
+      "name": "TechCrunch"
+    },
+    {
+      "parameters": {
+        "url": "https://www.actuia.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        -48
+      ],
+      "id": "d0a54258-e367-409e-bea6-64a55daa6e9c",
+      "name": "ActuIA"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        592,
+        -80
+      ],
+      "id": "c4c3fe10-9dc3-49f0-b796-d8c5b19746ce",
+      "name": "RSS Feeds"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupère tous les items des 3 flux RSS\nconst allNews = $input.all().map(item => ({\n  title: String(item.json.title || '').trim(),\n  summary: String(item.json.contentSnippet || item.json.content || '')\n    .replace(/<[^>]*>/g, '')  // strip HTML\n    .replace(/\\s+/g, ' ')\n    .trim()\n    .slice(0, 280),\n  date: item.json.isoDate || item.json.pubDate || '',\n  source: item.json.link || ''\n}));\n\n// Tri par date décroissante, déduplique sur le titre\nconst seen = new Set();\nconst sorted = allNews\n  .filter(n => n.title && !seen.has(n.title) && seen.add(n.title))\n  .sort((a, b) => new Date(b.date) - new Date(a.date))\n  .slice(0, 8); // Top 8 actus\n\n// Récupère aussi le contexte historique du nœud précédent\nconst ctx = $('Title History').first().json;\n\nreturn [{\n  json: {\n    last_titles: ctx.last_titles || [],\n    last_subject: ctx.last_subject || '',\n    news_block: sorted.map((n, i) => \n      `[${i+1}] ${n.title}\\n    ${n.summary}`\n    ).join('\\n\\n'),\n    news_count: sorted.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -80
+      ],
+      "id": "ef7dc584-4f5f-487c-a1f1-a7ffe47ddbe4",
+      "name": "Top 8 News"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8449c80f-bd6b-4b04-874d-7940742de3bb",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        -80
+      ],
+      "id": "7ba9244c-097a-4808-86da-389d81cfc136",
+      "name": "Raw Gemini Text"
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nconst MAX_NOTION_PROP = 1800;\n\nfunction clamp(text, maxLen) {\n  const t = String(text || \"\").trim();\n  if (t.length <= maxLen) return t;\n  return t.slice(0, maxLen - 1).trimEnd() + \"…\";\n}\n\n/**\n * Extrait le premier objet JSON complet du texte\n * (brace matching hors strings)\n */\nfunction extractFirstJsonObject(raw) {\n  let inString = false;\n  let escaped = false;\n  let depth = 0;\n  let start = -1;\n\n  for (let i = 0; i < raw.length; i++) {\n    const ch = raw[i];\n\n    if (inString) {\n      if (escaped) {\n        escaped = false;\n        continue;\n      }\n      if (ch === \"\\\\\") {\n        escaped = true;\n        continue;\n      }\n      if (ch === \"\\\"\") {\n        inString = false;\n        continue;\n      }\n      continue;\n    } else {\n      if (ch === \"\\\"\") {\n        inString = true;\n        continue;\n      }\n      if (ch === \"{\") {\n        if (depth === 0) start = i;\n        depth++;\n        continue;\n      }\n      if (ch === \"}\") {\n        if (depth > 0) depth--;\n        if (depth === 0 && start !== -1) {\n          return raw.slice(start, i + 1);\n        }\n      }\n    }\n  }\n\n  throw new Error(\"La sortie IA ne contient pas un objet JSON complet repérable (brace matching).\");\n}\n\n/**\n * Répare les caractères de contrôle + guillemets non échappés DANS les strings JSON\n * Heuristique: si on voit un \" dans une string et que le prochain char non-espace\n * n'est pas , } ] : (ou fin), alors on considère que c'est un guillemet interne → on l'échappe.\n */\nfunction repairJsonText(jsonText) {\n  let res = \"\";\n  let inString = false;\n  let escaped = false;\n\n  for (let i = 0; i < jsonText.length; i++) {\n    const ch = jsonText[i];\n\n    if (!inString) {\n      if (ch === \"\\\"\") inString = true;\n      res += ch;\n      continue;\n    }\n\n    // inString === true\n    if (escaped) {\n      res += ch;\n      escaped = false;\n      continue;\n    }\n\n    if (ch === \"\\\\\") {\n      res += ch;\n      escaped = true;\n      continue;\n    }\n\n    if (ch === \"\\\"\") {\n      // lookahead\n      let j = i + 1;\n      while (j < jsonText.length && /\\s/.test(jsonText[j])) j++;\n      const nxt = (j < jsonText.length) ? jsonText[j] : \"\";\n\n      const isLikelyClosing = (nxt === \":\" || nxt === \",\" || nxt === \"}\" || nxt === \"]\" || nxt === \"\");\n      if (isLikelyClosing) {\n        res += ch;\n        inString = false;\n      } else {\n        // guillemet interne non échappé → on l'échappe\n        res += \"\\\\\\\"\";\n      }\n      continue;\n    }\n\n    // Caractères de contrôle interdits dans une string JSON\n    if (ch === \"\\n\") { res += \"\\\\n\"; continue; }\n    if (ch === \"\\r\") { res += \"\\\\r\"; continue; }\n    if (ch === \"\\t\") { res += \"\\\\t\"; continue; }\n    if (ch === \"\\b\") { res += \"\\\\b\"; continue; }\n    if (ch === \"\\f\") { res += \"\\\\f\"; continue; }\n\n    const code = ch.charCodeAt(0);\n    if (code < 32) {\n      res += \"\\\\u\" + code.toString(16).padStart(4, \"0\");\n      continue;\n    }\n\n    res += ch;\n  }\n\n  return res;\n}\n\nfunction normalizeSpaces(s) {\n  return String(s || \"\").trim().replace(/\\s+/g, \" \");\n}\n\nfor (const item of items) {\n  const raw = String(\n    item.json.text ??\n    item.json.candidates?.[0]?.content?.parts?.[0]?.text ??\n    \"\"\n  ).trim();\n\n  const jsonChunk = extractFirstJsonObject(raw);\n  const fixed = repairJsonText(jsonChunk);\n\n  let data;\n  try {\n    data = JSON.parse(fixed);\n  } catch (e) {\n    // extra debug: contexte autour de la position indiquée\n    const m = /position\\s+(\\d+)/i.exec(e.message);\n    const pos = m ? Number(m[1]) : null;\n    const start = pos !== null ? Math.max(0, pos - 120) : 0;\n    const end = pos !== null ? Math.min(fixed.length, pos + 120) : Math.min(fixed.length, 240);\n\n    throw new Error(\n      \"JSON invalide après réparation: \" + e.message +\n      \"\\n--- Contexte ---\\n\" +\n      fixed.slice(start, end) +\n      \"\\n--- Début JSON (200) ---\\n\" +\n      fixed.slice(0, 200)\n    );\n  }\n\n  const title = normalizeSpaces(data.title || \"Post IA\").slice(0, 90);\n  const excerpt = normalizeSpaces(String(data.excerpt || \"\").replace(/\\n+/g, \" \"));\n  const hashtags = Array.isArray(data.hashtags) ? data.hashtags.filter(Boolean) : [];\n\n  const imagePrompt = String(data.image_prompt || \"\").trim();\n  const notionSummary = String(data.notion_summary || \"\").trim();\n  const articleLong = String(data.article_long || \"\").trim();\n\n  // Si tu veux t'assurer que l'article finit bien par la ligne hashtags:\n  const hashtagsLine = hashtags.length ? hashtags.join(\" \") : \"\";\n  let articleFinal = articleLong;\n  if (hashtagsLine) {\n    // on compare en fin en ignorant espaces\n    if (!articleFinal.trimEnd().endsWith(hashtagsLine)) {\n      articleFinal = articleFinal.replace(/\\n{3,}/g, \"\\n\\n\").trimEnd() + \"\\n\\n\" + hashtagsLine;\n    }\n  }\n\n  const contenuForNotion = clamp(notionSummary || excerpt || title, MAX_NOTION_PROP);\n  const nowIso = new Date().toISOString();\n\n  out.push({\n    json: {\n      ai: {\n        title,\n        excerpt,\n        hashtags,\n        image_prompt: imagePrompt,\n        notion_summary: notionSummary,\n        article_long: articleFinal\n      },\n      notion: {\n        titre: title,\n        contenu: contenuForNotion,\n        article_long: articleFinal,\n        publicationDate: nowIso,\n        extrait: excerpt,\n        image: \"\"\n      }\n    }\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        -80
+      ],
+      "id": "c5c9256f-e888-4e99-981a-1ecedb062772",
+      "name": "Article JSON"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\n\nconst title = String(data.notion?.titre || data.ai?.title || '').trim();\nconst excerpt = String(data.notion?.extrait || data.ai?.excerpt || '').trim();\nlet content = String(data.notion?.article_long || data.ai?.article_long || '').trim();\n\n// Le prompt du LLM produit article_long en commençant par le titre\n// (cf. l'exemple de format dans \"Basic LLM Chain\" : \"article_long\":\n// \"TITRE\\n\\nIntro...\"). Sans ça, le titre serait affiché deux fois sur\n// la page (une fois dans le <h1>, une fois en tête du contenu).\nconst firstLine = content.split(/\\n+/)[0]?.trim().toLowerCase() || '';\nif (firstLine && firstLine === title.toLowerCase()) {\n  content = content.split(/\\n+/).slice(1).join('\\n\\n').trim();\n}\n\nreturn [{\n  json: {\n    title,\n    excerpt,\n    content,\n    image: data.image_url || null,\n    published_at: data.notion?.publicationDate || new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        448
+      ],
+      "id": "c07c713d-a7f9-4aae-995f-ae53ac338395",
+      "name": "Prepare Article Payload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.slapia.com/api/n8n/articles",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-Key",
+              "value": "f7fbdd07ccf4d6e8cc532ae3d22d25cf2f4c79f78f36094b7a0763ffaf3a47fb"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"title\": $json.title, \"excerpt\": $json.excerpt, \"content\": $json.content, \"image\": $json.image, \"published_at\": $json.published_at } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -184,
+        448
+      ],
+      "id": "e1a2b3c4-d5e6-4f70-8a9b-1c2d3e4f5a6b",
+      "name": "Create Article (MySQL)",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const created = $json; // {id, slug, title, url} renvoyé par l'API Laravel\nconst payload = $('Prepare Article Payload').first().json;\n\nreturn [{\n  json: {\n    id: created.id,\n    slug: created.slug,\n    url: created.url,\n    name: payload.title,\n    property_titre: payload.title,\n    property_extrait: payload.excerpt\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        448
+      ],
+      "id": "4a5673cd-697a-42df-b646-c465c2fd7ad8",
+      "name": "Create Page"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "32cb2071-3b6f-80df-9294-e394733f4f2f",
+          "mode": "list",
+          "cachedResultName": "RSS Subscriber",
+          "cachedResultUrl": "https://www.notion.so/32cb20713b6f80df9294e394733f4f2f"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        704
+      ],
+      "id": "a5746785-57ae-4cca-8282-5b605d315c5f",
+      "name": "Fetch Subscribers",
+      "credentials": {
+        "notionApi": {
+          "id": "5hBZqEf5Tf55S0Nx",
+          "name": "Notion API SlapIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Agrège toutes les adresses, nettoie, déduplique, et sort une seule payload\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n\nconst emails = $items()\n  .map(item => {\n    const j = item.json;\n    // Priorité à la propriété explicite, sinon fallback sur \"name\"\n    const raw = j.property_email || j.Email || j.name || '';\n    return String(raw).trim().toLowerCase();\n  })\n  // Filtre valeurs vides et invalides\n  .filter(v => v && emailRegex.test(v))\n  // Déduplique\n  .filter((v, i, arr) => arr.indexOf(v) === i);\n\nreturn [\n  {\n    emails,              // tableau : [\"a@b.com\", \"c@d.com\"]\n    emails_csv: emails.join(','), // chaîne : \"a@b.com,c@d.com\"\n    count: emails.length\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        704
+      ],
+      "id": "364f624f-7939-44df-9a80-2acfc3f52e5f",
+      "name": "Dedupe Emails"
+    },
+    {
+      "parameters": {
+        "fromEmail": "SlapIA <system@slapia.com>",
+        "toEmail": "=",
+        "subject": "={{ $('Create Page').item.json.property_titre }}",
+        "html": "=<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n    <title>Nouvel article SlapIA</title>\n  </head>\n\n  <body style=\"margin:0;padding:0;background:#f4f0ff;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;background:#f4f0ff;\">\n      <tr>\n        <td align=\"center\" style=\"padding:32px 14px;\">\n\n          <!-- Preheader invisible -->\n          <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;font-size:1px;line-height:1px;\">\n            Nouvel article SlapIA : {{ $('Create Page').item.json.property_extrait || '' }}\n          </div>\n\n          <!-- Container principal -->\n          <table role=\"presentation\" width=\"680\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:680px;background:#ffffff;border-radius:22px;overflow:hidden;border:1px solid #e6ddff;box-shadow:0 18px 45px rgba(67,24,120,0.12);\">\n\n            <!-- Header -->\n            <tr>\n              <td style=\"background:#14091f;padding:24px 28px;font-family:Arial,Helvetica,sans-serif;\">\n                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                  <tr>\n                    <td align=\"left\" style=\"vertical-align:middle;\">\n                      <a href=\"https://www.slapia.com/\" target=\"_blank\" style=\"text-decoration:none;\">\n                        <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                          <tr>\n                            <td style=\"vertical-align:middle;padding-right:10px;\">\n                              <img src=\"https://www.slapia.com/assets/img/brand/logo.svg\"\n                                   width=\"28\"\n                                   height=\"28\"\n                                   alt=\"SlapIA\"\n                                   style=\"display:block;border:0;outline:none;text-decoration:none;border-radius:6px;\">\n                            </td>\n\n                            <td style=\"vertical-align:middle;font-family:Arial,Helvetica,sans-serif;color:#ffffff;font-size:22px;font-weight:800;line-height:1;\">\n                              SlapIA\n                            </td>\n                          </tr>\n                        </table>\n                      </a>\n                    </td>\n\n                    <td align=\"right\" style=\"vertical-align:middle;\">\n                      <span style=\"display:inline-block;background:#a855f7;color:#ffffff;font-size:12px;font-weight:bold;letter-spacing:.3px;text-transform:uppercase;border-radius:999px;padding:8px 12px;\">\n                        Newsletter IA\n                      </span>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Image de couverture article principal -->\n            <tr>\n              <td style=\"background:#14091f;padding:0 28px 28px 28px;\">\n                <img src=\"{{ $('Inject Image URL').item.json.image_url || 'https://www.slapia.com/assets/img/brand/logo.png' }}\"\n                     alt=\"Illustration de l'article SlapIA\"\n                     width=\"624\"\n                     style=\"display:block;width:100%;max-width:624px;height:auto;border-radius:18px;border:0;outline:none;text-decoration:none;\">\n              </td>\n            </tr>\n\n            <!-- Hero -->\n            <tr>\n              <td style=\"padding:34px 32px 18px 32px;font-family:Arial,Helvetica,sans-serif;color:#1a1026;\">\n                <div style=\"font-size:13px;font-weight:bold;color:#7c3aed;text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;\">\n                  Nouvel article disponible\n                </div>\n\n                <h1 style=\"margin:0;font-size:30px;line-height:1.22;color:#14091f;font-weight:800;\">\n                  {{ $('Create Page').item.json.name }}\n                </h1>\n\n                <p style=\"margin:18px 0 0 0;font-size:16px;line-height:1.75;color:#4b3b5f;\">\n                  Une nouvelle analyse SlapIA vient d’être publiée pour vous aider à mieux comprendre les usages concrets de l’intelligence artificielle en entreprise.\n                </p>\n              </td>\n            </tr>\n\n            <!-- Résumé -->\n            <tr>\n              <td style=\"padding:8px 32px 8px 32px;font-family:Arial,Helvetica,sans-serif;\">\n                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#faf7ff;border:1px solid #eadcff;border-radius:18px;\">\n                  <tr>\n                    <td style=\"padding:22px;\">\n                      <div style=\"font-size:14px;font-weight:bold;color:#7c3aed;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;\">\n                        Ce qu’il faut retenir\n                      </div>\n\n                      <div style=\"font-size:16px;line-height:1.75;color:#2d2140;\">\n                        {{ $('Create Page').item.json.property_extrait || '' }}\n                      </div>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Pourquoi lire -->\n            <tr>\n              <td style=\"padding:18px 32px 8px 32px;font-family:Arial,Helvetica,sans-serif;color:#1a1026;\">\n                <h2 style=\"margin:0 0 12px 0;font-size:20px;line-height:1.35;color:#14091f;font-weight:800;\">\n                  Pourquoi lire cet article ?\n                </h2>\n\n                <p style=\"margin:0;font-size:15px;line-height:1.7;color:#4b3b5f;\">\n                  Ce contenu met en perspective une actualité IA récente avec les réalités des PME : organisation, productivité, automatisation, risques, adoption par les équipes et passage à l’action.\n                </p>\n              </td>\n            </tr>\n\n            <!-- CTA principal -->\n            <tr>\n              <td align=\"center\" style=\"padding:28px 32px 30px 32px;font-family:Arial,Helvetica,sans-serif;\">\n                <a href=\"{{ (() => {\n                  const raw = String($('Create Page').item.json.name || '');\n                  const slug = raw\n                    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n                    .toLowerCase()\n                    .replace(/[^a-z0-9]+/g, '-')\n                    .replace(/-+/g, '-')\n                    .replace(/^-+|-+$/g, '');\n                  return 'https://www.slapia.com/blog/' + slug;\n                })() }}\"\n                  target=\"_blank\"\n                  style=\"display:inline-block;background:#7c3aed;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;text-decoration:none;border-radius:12px;padding:15px 26px;box-shadow:0 10px 22px rgba(124,58,237,.28);\">\n                  Lire l’article complet →\n                </a>\n\n                <div style=\"margin-top:14px;font-size:13px;line-height:1.5;color:#7b6f8f;\">\n                  Lecture rapide, exemples concrets et pistes d’action pour les PME.\n                </div>\n              </td>\n            </tr>\n\n            <!-- Séparateur -->\n            <tr>\n              <td style=\"padding:0 32px;\">\n                <div style=\"height:1px;background:#eee6ff;line-height:1px;font-size:1px;\">&nbsp;</div>\n              </td>\n            </tr>\n\n            <!-- À lire aussi -->\n            <tr>\n              <td style=\"padding:28px 32px 14px 32px;font-family:Arial,Helvetica,sans-serif;\">\n                <h2 style=\"margin:0 0 14px 0;font-size:20px;line-height:1.35;color:#14091f;font-weight:800;\">\n                  À lire aussi\n                </h2>\n\n                <p style=\"margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#4b3b5f;\">\n                  Retrouvez les 2 derniers articles publiés sur le blog SlapIA.\n                </p>\n\n                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                  <tr>\n                    {{\n                      (() => {\n                        const articles = $('Fetch Last 6 Articles').all().slice(0, 2);\n\n                        function esc(value) {\n                          return String(value || '')\n                            .replace(/&/g, '&amp;')\n                            .replace(/</g, '&lt;')\n                            .replace(/>/g, '&gt;')\n                            .replace(/\"/g, '&quot;');\n                        }\n\n                        function slugify(value) {\n                          return String(value || '')\n                            .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n                            .toLowerCase()\n                            .replace(/[^a-z0-9]+/g, '-')\n                            .replace(/-+/g, '-')\n                            .replace(/^-+|-+$/g, '');\n                        }\n\n                        function isImageUrl(url) {\n                          const u = String(url || '').toLowerCase();\n\n                          return (\n                            u.startsWith('http') &&\n                            (\n                              u.includes('.jpg') ||\n                              u.includes('.jpeg') ||\n                              u.includes('.png') ||\n                              u.includes('.webp') ||\n                              u.includes('.gif') ||\n                              u.includes('i.ibb.co') ||\n                              u.includes('ibb.co') ||\n                              u.includes('image') ||\n                              u.includes('notion') ||\n                              u.includes('amazonaws')\n                            )\n                          );\n                        }\n\n                        function findImageUrl(value) {\n                          if (!value) return '';\n\n                          if (typeof value === 'string') {\n                            return isImageUrl(value) ? value : '';\n                          }\n\n                          if (Array.isArray(value)) {\n                            for (const entry of value) {\n                              const found = findImageUrl(entry);\n                              if (found) return found;\n                            }\n                          }\n\n                          if (typeof value === 'object') {\n                            const directCandidates = [\n                              value.url,\n                              value.external?.url,\n                              value.file?.url,\n                              value.files?.[0]?.external?.url,\n                              value.files?.[0]?.file?.url,\n                              value.cover?.external?.url,\n                              value.cover?.file?.url\n                            ];\n\n                            for (const candidate of directCandidates) {\n                              if (isImageUrl(candidate)) return candidate;\n                            }\n\n                            for (const key of Object.keys(value)) {\n                              const keyLower = key.toLowerCase();\n\n                              if (\n                                keyLower.includes('image') ||\n                                keyLower.includes('cover') ||\n                                keyLower.includes('file') ||\n                                keyLower.includes('photo') ||\n                                keyLower.includes('url')\n                              ) {\n                                const found = findImageUrl(value[key]);\n                                if (found) return found;\n                              }\n                            }\n                          }\n\n                          return '';\n                        }\n\n                        function getImageUrl(j) {\n                          const priorityFields = [\n                            j.property_image,\n                            j.property_Image,\n                            j.property_images,\n                            j.property_Images,\n                            j.property_image_url,\n                            j.property_Image_url,\n                            j.property_cover,\n                            j.property_Cover,\n                            j.Image,\n                            j.image,\n                            j.cover\n                          ];\n\n                          for (const field of priorityFields) {\n                            const found = findImageUrl(field);\n                            if (found) return found;\n                          }\n\n                          const foundAnywhere = findImageUrl(j);\n                          if (foundAnywhere) return foundAnywhere;\n\n                          return 'https://www.slapia.com/assets/img/brand/logo.png';\n                        }\n\n                        if (!articles.length) {\n                          return `\n                            <td style=\"font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:#4b3b5f;\">\n                              Aucun autre article à afficher pour le moment.\n                            </td>\n                          `;\n                        }\n\n                        return articles.map((item, index) => {\n                          const j = item.json;\n\n                          const titleRaw = String(j.name || 'Article SlapIA').trim();\n                          const title = esc(titleRaw);\n                          const slug = slugify(titleRaw);\n                          const imageUrl = esc(getImageUrl(j));\n\n                          const spacing = index === 0\n                            ? 'padding-right:8px;'\n                            : 'padding-left:8px;';\n\n                          return `\n                            <td width=\"50%\" style=\"vertical-align:top;${spacing}\">\n                              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#faf7ff;border:1px solid #eadcff;border-radius:18px;overflow:hidden;\">\n\n                                <tr>\n                                  <td style=\"background:#14091f;\">\n                                    <a href=\"https://www.slapia.com/blog/${slug}\" target=\"_blank\" style=\"text-decoration:none;\">\n                                      <img src=\"${imageUrl}\" alt=\"${title}\" width=\"292\" style=\"display:block;width:100%;max-width:292px;height:150px;object-fit:cover;border:0;outline:none;text-decoration:none;\">\n                                    </a>\n                                  </td>\n                                </tr>\n\n                                <tr>\n                                  <td style=\"padding:16px 16px 18px 16px;font-family:Arial,Helvetica,sans-serif;\">\n                                    <h3 style=\"margin:0 0 16px 0;font-size:17px;line-height:1.35;color:#14091f;font-weight:800;\">\n                                      ${title}\n                                    </h3>\n\n                                    <div style=\"text-align:center;\">\n                                      <a href=\"https://www.slapia.com/blog/${slug}\" target=\"_blank\" style=\"display:inline-block;background:#7c3aed;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;border-radius:10px;padding:11px 18px;box-shadow:0 8px 18px rgba(124,58,237,.24);\">\n                                        Lire l’article →\n                                      </a>\n                                    </div>\n                                  </td>\n                                </tr>\n\n                              </table>\n                            </td>\n                          `;\n                        }).join('');\n                      })()\n                    }}\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Signature -->\n            <tr>\n              <td style=\"padding:18px 32px 26px 32px;font-family:Arial,Helvetica,sans-serif;color:#1a1026;\">\n                <p style=\"margin:0;font-size:15px;line-height:1.7;color:#4b3b5f;\">\n                  Bonne lecture,<br>\n                  <strong style=\"color:#14091f;\">L’équipe SlapIA</strong>\n                </p>\n              </td>\n            </tr>\n\n            <!-- Footer -->\n            <tr>\n              <td style=\"background:#14091f;padding:26px 28px;font-family:Arial,Helvetica,sans-serif;\">\n                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n\n                  <tr>\n                    <td style=\"font-size:13px;line-height:1.7;color:#d8c9f5;\">\n                      <strong style=\"color:#ffffff;\">SlapIA</strong><br>\n                      Conseil, automatisation et formation autour de l’intelligence artificielle pour les entreprises.\n                    </td>\n                  </tr>\n\n                  <!-- Liens avec icônes -->\n                  <tr>\n                    <td style=\"padding-top:18px;\">\n                      <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                        <tr>\n\n                          <!-- Site web -->\n                          <td style=\"padding-right:18px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;\">\n                            <a href=\"https://www.slapia.com/\" target=\"_blank\" style=\"color:#c4b5fd;text-decoration:none;\">\n                              <span style=\"display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#7c3aed;color:#ffffff;font-size:9px;font-weight:bold;margin-right:6px;\">\n                                WEB\n                              </span>\n                              Site web\n                            </a>\n                          </td>\n\n                          <!-- LinkedIn -->\n                          <td style=\"padding-right:18px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;\">\n                            <a href=\"https://www.linkedin.com/company/slapia/\" target=\"_blank\" style=\"color:#c4b5fd;text-decoration:none;\">\n                              <span style=\"display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#7c3aed;color:#ffffff;font-size:11px;font-weight:bold;margin-right:6px;\">\n                                in\n                              </span>\n                              LinkedIn\n                            </a>\n                          </td>\n\n                          <!-- Email -->\n                          <td style=\"font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;\">\n                            <a href=\"mailto:contact@slapia.com\" style=\"color:#c4b5fd;text-decoration:none;\">\n                              <span style=\"display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#7c3aed;color:#ffffff;font-size:12px;font-weight:bold;margin-right:6px;\">\n                                @\n                              </span>\n                              contact@slapia.com\n                            </a>\n                          </td>\n\n                        </tr>\n                      </table>\n                    </td>\n                  </tr>\n\n                  <!-- Mention -->\n                  <tr>\n                    <td style=\"padding-top:18px;font-size:11px;line-height:1.6;color:#9788ad;\">\n                      Vous recevez cet email car vous êtes inscrit à la newsletter SlapIA.\n                      Ceci est un email automatique, merci de ne pas répondre directement à ce message.\n                    </td>\n                  </tr>\n\n                </table>\n              </td>\n            </tr>\n\n          </table>\n\n          <!-- Footer externe -->\n          <div style=\"max-width:680px;margin-top:14px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.5;color:#8a7a9e;text-align:center;\">\n            Envoyé automatiquement via votre workflow n8n.\n          </div>\n\n        </td>\n      </tr>\n    </table>\n  </body>\n</html>",
+        "options": {
+          "bccEmail": "={{ $json.emails }}"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        704
+      ],
+      "id": "52b9fd99-4259-406a-8908-1a940df072cb",
+      "name": "Send Newsletter",
+      "webhookId": "c2760773-429d-4d66-9e5d-6fc3d2ab43e7",
+      "credentials": {
+        "smtp": {
+          "id": "Kbat7fe1dYTk7SSw",
+          "name": "system@slapia.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral-large-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        976,
+        128
+      ],
+      "id": "27b897a7-f138-44c9-834e-1f61350c23b2",
+      "name": "Mistral Cloud Chat Model",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "1xcTDq8yekMKQQgO",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "==Tu es rédacteur en chef IA pour SlapIA (https://www.slapia.com), cabinet de conseil qui accompagne les PME françaises dans leur appropriation de l'intelligence artificielle (audit, prototypage, montée en compétences).\n\n# OBJECTIF\nGénérer UN article de fond original, ancré dans l'actualité IA récente, à destination de dirigeants et opérationnels de PME françaises (10 à 250 salariés).\n\n# ACTUALITÉ IA RÉCENTE — TON POINT DE DÉPART OBLIGATOIRE\nVoici 8 actus parues cette semaine. Tu DOIS choisir UNE actu (et UNE SEULE) comme angle principal de l'article. Mentionne explicitement le nom propre concerné (entreprise, modèle, événement, personne) dans le titre ET dans l'intro.\n\n{{ $json.news_block }}\n\n# COMMENT EXPLOITER L'ACTU\n- Si l'actu est anglophone (TechCrunch), traduis-la et adapte au contexte PME française : « Que faut-il en retenir si on dirige une PME en France ? »\n- L'article ne se contente pas de paraphraser l'actu : il l'utilise comme tremplin pour un enseignement utile.\n- Évite les actus trop anecdotiques ou polémiques (vie privée d'un CEO, conflits internes) : préfère les actus produit, technologique, réglementaire, ou business.\n\n# HISTORIQUE — INTERDIT DE REFAIRE\nVoici les 6 derniers articles déjà publiés. Tu ne dois PAS reprendre ces sujets ni leur formulation :\n{{ $json.last_titles }}\n\n# RÈGLES DURES SUR LE TITRE\n- Longueur : 50-75 caractères\n- Le titre DOIT contenir un nom propre tiré de l'actu choisie (entreprise, technologie, lieu, modèle…)\n- INTERDIT de commencer par : « L'IA Générative », « L'Intelligence Artificielle »\n- INTERDIT d'utiliser : « Levier de », « Accélérateur de », « Transformer la », « Maîtriser le », « Décrypter », « Comprendre »\n- INTERDIT de finir par « pour les PME Françaises » ou variantes\n- Préférer des tournures concrètes : question directe, affirmation, chiffre, paradoxe\n- Exemples de structures qui marchent :\n  • « Cohere + Aleph Alpha : l'Europe tente sa riposte face à OpenAI »\n  • « Pourquoi le moratoire data center du Maine concerne aussi nos PME »\n  • « Marketplace d'agents IA : la prochaine couche du e-commerce arrive »\n  • « Anthropic teste un marché où les agents IA négocient seuls »\n\n# STRUCTURE DE L'ARTICLE\nL'article suit une structure claire mais SOUPLE. Pas de moule rigide. Choisis 4 à 6 sections H2 parmi celles ci-dessous (ou crée les tiennes), dans l'ordre qui sert le mieux ton angle :\n\n  • Le contexte de l'actu (ce qui s'est passé, factuellement)\n  • Pourquoi ça change quelque chose pour une PME\n  • Les opportunités concrètes\n  • Les risques et points de vigilance\n  • Comment s'y préparer en pratique (étapes concrètes)\n  • Un mini cas d'usage chiffré et réaliste (PME nommée, secteur, taille)\n  • Conformité, RGPD, AI Act\n  • Conclusion + question ouverte\n\nLes titres de section doivent être éditoriaux (pas génériques type « Impacts et Risques »). Exemples :\n  • « Ce que l'accord Cohere-Aleph Alpha change concrètement »\n  • « Trois scénarios où votre PME peut s'en inspirer dès demain »\n  • « La question que tout dirigeant devrait se poser »\n\n# CONTENU\n- Longueur : 4500 à 7500 caractères pour `article_long`.\n- Intro de 2-3 paragraphes : pose une situation concrète vécue par un dirigeant de PME, puis bascule sur l'actu et son enseignement.\n- Le corps mêle pédagogie + exemples + chiffres réalistes.\n- Inclus AU MOINS UN chiffre ou une donnée crédible. Si tu cites une étude (McKinsey, Bpifrance, INSEE, OCDE, France Num…), reste vague et prudent : « selon une étude récente de Bpifrance », sans inventer de pourcentage précis.\n- Le « cas d'usage » doit être plausible : nommer un secteur (ex : « une PME de 30 salariés dans la métallurgie en Auvergne-Rhône-Alpes »), une fonction (RH, achat, SAV…), un gain estimé.\n\n# MENTIONS SLAPIA\nInclus 2 (et SEULEMENT 2) mentions naturelles de SlapIA dans le corps de l'article, dans des contextes différents. Exemples :\n  • « C'est typiquement le genre de cadrage qu'un audit SlapIA aide à poser. »\n  • « Chez SlapIA, nos sprints de prototypage durent 2 à 4 semaines. »\n  • « La montée en compétences interne, c'est l'angle mort le plus coûteux — un point que SlapIA traite en priorité. »\nSlapIA est un cabinet de conseil, pas un éditeur de logiciel. Pas de promesse miracle.\n\n# STYLE\n- Ton : direct, expert, pédagogique. Phrases courtes. Vocabulaire métier mais accessible.\n- Pas de gras (markdown bold) dans le corps.\n- Pas de listes à puces dans l'intro et la conclusion.\n- Pas plus de 2 sections avec listes à puces dans tout l'article.\n- Emojis : MAXIMUM 5 sur tout l'article, jamais en début de paragraphe ni dans les titres H2.\n- Ne JAMAIS commencer un paragraphe par « En effet », « De plus », « En conclusion ».\n\n# CONCLUSION\nLa conclusion doit :\n  • Résumer en 2 phrases l'enseignement principal\n  • Poser une question ouverte concrète qui invite le lecteur à se positionner\n  • Exemple : « Et vous, quelle est la première fonction de votre entreprise où un agent autonome pourrait commencer à décharger vos équipes ? »\n\n# CONSIGNES POUR `image_prompt` — TRÈS IMPORTANT\nLe champ `image_prompt` sera envoyé à un modèle de génération d'image (Flux). Ce modèle a des limites précises. Tu DOIS produire un prompt qui respecte STRICTEMENT les règles suivantes :\n\nRÈGLES OBLIGATOIRES :\n- Longueur : 40 à 70 mots, en anglais\n- UN SEUL sujet visuel central (un objet, une scène, une métaphore unique)\n- 2 à 3 couleurs maximum, nommées précisément (ex : « deep navy blue, warm terracotta, soft cream »)\n- Style à inclure littéralement : « flat editorial vector illustration », « minimalist », « clean geometric shapes »\n- Une métaphore ABSTRAITE liée au sujet de l'article (objet, scène, situation symbolique)\n- Préciser l'éclairage et l'ambiance : « soft directional light », « warm tones », « subtle paper grain texture », etc.\n- Terminer le prompt par « no text, no letters, no logos, no flags »\n\nINTERDICTIONS ABSOLUES — NE JAMAIS INCLURE :\n- Drapeaux, cartes de pays, symboles nationaux (feuille d'érable, aigle, étoiles européennes, etc.)\n- Logos de marque ou éléments de branding identifiables\n- Texte, lettres, mots, chiffres, labels, légendes\n- Visages ou personnes reconnaissables\n- Compositions chargées avec plusieurs éléments éparpillés (icônes, camions, bâtiments multiples, réseaux de nœuds, cartes)\n- Clichés IA : robots, cerveaux, neurones lumineux, circuits imprimés, mains touchant un écran, code binaire, hologrammes, yeux cybernétiques\n- Plus de 3 objets distincts dans la scène\n\nEXEMPLE DE BON PROMPT (à imiter) :\n« Two large abstract puzzle pieces floating in empty space, one deep teal and one warm terracotta, slowly approaching each other but not yet connected, soft cream background with subtle paper grain texture, soft directional light from the upper-left casting gentle shadows, flat editorial vector illustration, minimalist clean geometric composition, no text, no letters, no logos, no flags »\n\nEXEMPLE DE MAUVAIS PROMPT (à ne JAMAIS produire) :\n« Two puzzle pieces merging, one with Canadian maple leaf and one with German flag, surrounded by small icons of a bakery, a factory and a truck, on a European map background, with digital nodes connecting them » (trop d'éléments, contient drapeaux et symboles nationaux, composition chargée — Flux échouera systématiquement)\n\n# CONTRAINTES JSON STRICTES\n- Aucun texte en dehors du JSON\n- Pas de balises ```json ni ```\n- Sauts de ligne dans `article_long` : utiliser UNIQUEMENT \\\\n\\\\n\n- Aucun caractère \" dans les valeurs : utiliser « » ou ' à la place\n- La toute dernière ligne de `article_long` doit contenir UNIQUEMENT les hashtags (séparés par des espaces)\n\n# FORMAT DE SORTIE (JSON STRICT)\n{\n  \"title\": \"string (50-75 car, avec nom propre de l'actu)\",\n  \"excerpt\": \"string (180-260 car, 1 phrase ramassée, sans emojis, qui donne l'angle de l'article)\",\n  \"hashtags\": [\"#IA\", \"#PME\", \"...\"] (5 à 7 hashtags pertinents et variés, pas tous génériques),\n  \"image_prompt\": \"English prompt (40-70 words) following ALL the rules in the # CONSIGNES POUR image_prompt section above. ONE central abstract subject, 2-3 named colors, flat editorial vector style, no flags, no logos, no text, no national symbols, no busy compositions\",\n  \"angle\": \"actu | tendance | méthode | retour-experience\",\n  \"source_actu\": \"Numéro de l'actu choisie dans la liste ci-dessus, ex: '5'\",\n  \"article_long\": \"TITRE\\\\n\\\\nIntro paragraphe 1...\\\\n\\\\nIntro paragraphe 2...\\\\n\\\\n## Section 1...\\\\n\\\\n...contenu...\\\\n\\\\n## Section 2...\\\\n\\\\n...contenu...\\\\n\\\\n## Conclusion...\\\\n\\\\nQuestion ouverte ?\\\\n\\\\n#hashtag1 #hashtag2 #hashtag3\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        976,
+        -80
+      ],
+      "id": "aa5e14c3-ced5-44ad-9f15-4b2770255b00",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "minutesSaved": 5
+      },
+      "type": "n8n-nodes-base.timeSaved",
+      "typeVersion": 1,
+      "position": [
+        352,
+        704
+      ],
+      "id": "46c59f3f-00c2-45bd-bcaa-1a4999bde9aa",
+      "name": "Time Saved"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 7 */2 * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "e8980641-7cfa-4f15-8281-48142ab80153",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dsgo5yfqm/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8n_upload"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -80,
+        192
+      ],
+      "id": "73510917-29f4-44a7-8756-053507461b75",
+      "name": "Upload Image"
+    }
+  ],
+  "connections": {
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Inject Image URL": {
+      "main": [
+        [
+          {
+            "node": "Prepare Article Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Last 6 Articles": {
+      "main": [
+        [
+          {
+            "node": "Title History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title History": {
+      "main": [
+        [
+          {
+            "node": "TechCrunch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ActuIA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TechCrunch": {
+      "main": [
+        [
+          {
+            "node": "RSS Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActuIA": {
+      "main": [
+        [
+          {
+            "node": "RSS Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS Feeds": {
+      "main": [
+        [
+          {
+            "node": "Top 8 News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 8 News": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Raw Gemini Text": {
+      "main": [
+        [
+          {
+            "node": "Article JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article JSON": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Page": {
+      "main": [
+        [
+          {
+            "node": "Fetch Subscribers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Subscribers": {
+      "main": [
+        [
+          {
+            "node": "Dedupe Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedupe Emails": {
+      "main": [
+        [
+          {
+            "node": "Send Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Newsletter": {
+      "main": [
+        [
+          {
+            "node": "Time Saved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Raw Gemini Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Last 6 Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "Inject Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Article Payload": {
+      "main": [
+        [
+          {
+            "node": "Create Article (MySQL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Article (MySQL)": {
+      "main": [
+        [
+          {
+            "node": "Create Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95df6b1d7d02aa79cb2e7b123477544c5a03fc4b83563aedb33eabaf4b902eb9"
+  }
+}

@@ -31,4 +31,22 @@ class Article extends Model
         $slug = preg_replace('/[^a-z0-9]+/', '-', $slug) ?? '';
         return trim($slug, '-');
     }
+
+    /**
+     * Slug unique dérivé du titre (ajoute -2, -3... en cas de collision).
+     * Utilisé par l'admin (BlogArticleController) et par l'import
+     * automatique n8n (Api\N8nArticleController) — même logique aux deux
+     * endroits plutôt que dupliquée.
+     */
+    public static function uniqueSlugFor(string $title): string
+    {
+        $slug = static::slugify($title);
+        $base = $slug;
+        $i = 2;
+        while (static::where('slug', $slug)->exists()) {
+            $slug = "{$base}-{$i}";
+            $i++;
+        }
+        return $slug;
+    }
 }
