@@ -43,14 +43,13 @@ class ContactControllerTest extends TestCase
         ]);
     }
 
-    public function test_store_allows_empty_phone(): void
+    public function test_store_requires_a_phone_number(): void
     {
-        $this->post('/contact', $this->validPayload(['phone' => '']))->assertRedirect();
+        $this->post('/contact', $this->validPayload(['phone' => '']))->assertSessionHasErrors('phone');
+        $this->assertSame(0, ContactMessage::count());
 
-        $this->assertDatabaseHas('contact_siteweb', [
-            'email' => 'alice@example.com',
-            'telephone' => null,
-        ]);
+        $this->post('/contact', $this->validPayload(['phone' => null]))->assertSessionHasErrors('phone');
+        $this->assertSame(0, ContactMessage::count());
     }
 
     public function test_store_calls_contact_webhook_when_configured(): void

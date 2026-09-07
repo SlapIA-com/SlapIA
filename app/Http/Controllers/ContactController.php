@@ -39,7 +39,7 @@ class ContactController extends Controller
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['required', 'string', 'max:30'],
             'company' => ['nullable', 'string', 'max:255'],
             'subject' => ['required', 'string', 'in:'.implode(',', array_keys(ContactMessage::SUBJECTS))],
             'message' => ['required', 'string', 'max:5000'],

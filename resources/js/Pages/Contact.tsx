@@ -97,6 +97,7 @@ export default function Contact({ sent, subjects, turnstileSiteKey }: { sent: bo
                   <input
                     type="tel"
                     id="phone"
+                    required
                     value={data.phone}
                     onChange={(e) => setData('phone', e.target.value)}
                   />
