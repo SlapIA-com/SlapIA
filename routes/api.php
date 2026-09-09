@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\N8nArticleController;
 use App\Http\Controllers\Api\N8nSubscriberController;
 use App\Http\Middleware\EnsureN8nApiKey;
@@ -27,3 +28,9 @@ Route::prefix('n8n')->group(function () {
     Route::get('/subscribers', [N8nSubscriberController::class, 'index'])
         ->middleware(EnsureN8nApiKey::class);
 });
+
+// Proxy du widget de chat (bouton bas gauche, ChatWidget.tsx) : voir
+// ChatController pour le pourquoi (Private Network Access). Public comme
+// /contact, avec le même genre de garde-fou qu'un formulaire public — le
+// throttle limite un abus (spam vers n8n / coûts LLM), pas un usage normal.
+Route::post('/chat', [ChatController::class, 'send'])->middleware('throttle:20,1');

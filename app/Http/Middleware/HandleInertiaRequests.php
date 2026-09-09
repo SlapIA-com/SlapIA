@@ -38,8 +38,16 @@ class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             // Chat IA (bouton bas gauche, voir ChatWidget.tsx) : partagé
             // partout, comme sur l'ancien site où il apparaissait sur
-            // toutes les pages.
-            'n8nChatWebhookUrl' => config('services.n8n.chat_webhook_url'),
+            // toutes les pages. Seul un booléen est exposé au front — le
+            // widget appelle désormais /api/chat (même origine, voir
+            // ChatController) plutôt que le webhook n8n directement depuis
+            // le navigateur : ce dernier pointait vers le nom d'hôte/port
+            // du NAS, que Chrome/Edge bloquent (Private Network Access)
+            // dès qu'il résout vers une adresse locale — ce qui arrive par
+            // exemple en testant le site depuis le même réseau que le NAS
+            // (DNS "split-horizon" du DDNS Synology). Ça évite aussi
+            // d'exposer cette URL interne dans le JS public.
+            'chatEnabled' => (bool) config('services.n8n.chat_webhook_url'),
             // Fusionné sur le FR : si une clé manque (ou n'est pas encore
             // traduite) dans la langue active, on retombe sur sa valeur
             // française plutôt que de renvoyer un tableau incomplet — c'est

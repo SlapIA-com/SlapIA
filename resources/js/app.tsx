@@ -30,11 +30,13 @@ createInertiaApp({
     // Chat IA (bas droite) : partagé sur toutes les pages (voir
     // HandleInertiaRequests::share) et monté une seule fois ici, hors de
     // l'arbre de pages Inertia, pour survivre aux navigations entre pages.
-    const webhookUrl = props.initialPage.props.n8nChatWebhookUrl as string | null;
+    // Le widget parle toujours à /api/chat (même origine) — chatEnabled ne
+    // sert qu'à savoir si le webhook n8n est configuré côté serveur.
+    const chatEnabled = props.initialPage.props.chatEnabled as boolean;
     createRoot(el).render(
       <>
         <App {...props} />
-        {webhookUrl && <ChatWidget webhookUrl={webhookUrl} />}
+        {chatEnabled && <ChatWidget />}
       </>
     );
   },

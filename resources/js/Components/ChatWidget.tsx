@@ -14,13 +14,14 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
  * Ici : quelques Ko, look 100% intégré au design SlapIA, zéro dépendance
  * supplémentaire.
  *
- * Contrat d'appel identique à celui du widget officiel n8n (Chat Trigger),
- * pour rester compatible avec le workflow n8n déjà en place côté serveur,
- * sans rien changer côté n8n :
- *   POST {webhookUrl}
- *   { action: "sendMessage", sessionId: "<uuid persistant>", chatInput: "<message>" }
- * Réponse attendue : { output } ou { text } (les deux formes que renvoie
- * couramment un nœud "Chat Trigger" / "Respond to Webhook" n8n).
+ * Passe par /api/chat (ChatController), qui relaie côté serveur vers le
+ * webhook n8n — jamais d'appel direct navigateur → webhook n8n : ce
+ * dernier pointe vers le nom d'hôte/port du NAS, que Chrome/Edge bloquent
+ * (Private Network Access) dès qu'il résout vers une adresse locale (ex.
+ * en testant depuis le même réseau que le NAS). Le contrat vu du widget
+ * ({action, sessionId, chatInput} → {output}/{text}) reste identique à
+ * celui du widget officiel n8n (Chat Trigger), ChatController se
+ * contentant de relayer tel quel.
  */
 
 interface ChatMessage {
@@ -97,7 +98,7 @@ function linkifyText(text: string): ReactNode[] {
   return nodes;
 }
 
-export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
+export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -125,7 +126,7 @@ export default function ChatWidget({ webhookUrl }: { webhookUrl: string }) {
     setError(null);
 
     try {
-      const res = await fetch(webhookUrl, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
