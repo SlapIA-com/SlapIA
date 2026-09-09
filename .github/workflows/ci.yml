@@ -6,9 +6,9 @@ name: CI
 # rien dans ce cas).
 on:
   push:
-    branches: [dev, main]
+    branches: [dev, prod, main]
   pull_request:
-    branches: [dev, main]
+    branches: [dev, prod, main]
 
 jobs:
   backend:
@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Installer les dépendances npm
