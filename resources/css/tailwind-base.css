@@ -1,0 +1,11 @@
+/* Directives Tailwind isolées dans leur propre fichier pour pouvoir être
+ * @import-ées EN PREMIER depuis app.css (CSS impose que tout @import précède
+ * le reste des règles — "@tailwind base;" compte comme une règle). Ça
+ * préserve l'ordre de cascade voulu : Tailwind (reset + utilitaires) d'abord,
+ * CSS historique (legacy/*.css) ensuite, pour que le style de l'ancien site
+ * garde la priorité en cas de conflit de spécificité — exactement l'ordre
+ * qu'on avait avec la concaténation manuelle, mais sans la maintenir en double.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

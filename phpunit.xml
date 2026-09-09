@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <!-- Pas de dossier tests/Unit dans ce projet (que des tests
+             Feature) : PHPUnit 11 échoue au démarrage si une testsuite
+             pointe vers un dossier qui n'existe pas ("Test directory
+             ... not found"), donc pas de testsuite "Unit" tant qu'il n'y
+             a pas de test unitaire réel à y mettre. -->
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <!-- Clé bidon valable uniquement pour les tests (jamais utilisée en
+             prod) : évite d'avoir besoin d'un fichier .env ou d'un
+             `artisan key:generate` pour lancer la suite de tests, y compris
+             en CI où aucun .env n'existe. -->
+        <env name="APP_KEY" value="base64:W/IMewBaynG4HWr/WCr7SMMNXnYQGy0osUdy8Y7ygig="/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <!-- Base sqlite en mémoire, jamais la base MySQL "slapia" existante :
+             chaque test tourne sur un schéma vierge recréé à partir des
+             migrations (RefreshDatabase), donc aucun risque de toucher aux
+             vraies données clients. -->
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <!-- Clé bidon utilisée uniquement par les tests de l'API n8n
+             (N8nArticleControllerTest) — jamais utilisée en prod, où la
+             vraie valeur vient du .env du serveur. -->
+        <env name="N8N_ARTICLES_API_KEY" value="test-n8n-key-phpunit"/>
+    </php>
+</phpunit>
