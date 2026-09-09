@@ -1297,6 +1297,13 @@ a.tag--ghost:hover { border-color: var(--forest); color: var(--forest); }
   mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
+/* Pas assez d'avis pour déborder du conteneur (ex. 2 avis aujourd'hui) :
+   pas de fondu sur les bords, sinon la première carte perd en lisibilité
+   pour rien (voir ReviewsCarousel.tsx). */
+.reviews-marquee--fit {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
 .reviews-inner { display: flex; align-items: stretch; width: 100%; }
 .reviews-track { display: flex; align-items: stretch; gap: 24px; flex: 0 0 auto; width: max-content; }
 
@@ -1360,7 +1367,7 @@ a.review-name:hover { color: var(--forest); text-decoration: underline; }
 .review-profession .company-name { color: var(--ink-fade); font-weight: 400; }
 
 .review-content-scroll {
-  max-height: 140px;
+  max-height: 220px;
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: thin;

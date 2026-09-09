@@ -19,6 +19,7 @@ const ReviewsCarousel = forwardRef<ReviewsCarouselHandle, { reviews: PublicRevie
   const trackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const [isOverflowing, setIsOverflowing] = useState(false);
   const autoplayRef = useRef<number | null>(null);
 
   function stepWidth() {
@@ -28,7 +29,19 @@ const ReviewsCarousel = forwardRef<ReviewsCarouselHandle, { reviews: PublicRevie
     return first.getBoundingClientRect().width + gap;
   }
 
+  // Avec peu d'avis (ex. 2 aujourd'hui), toutes les cartes tiennent déjà dans
+  // le conteneur : il n'y a rien à faire défiler. Dans ce cas on n'applique
+  // ni le fondu sur les bords (qui rendait la 1re carte peu lisible) ni le
+  // déplacement du track (qui ne "bouclait" pas vraiment, cf. commentaire
+  // ci-dessus) — dès qu'il y aura assez d'avis pour déborder, tout se
+  // réactive automatiquement.
+  function checkOverflow() {
+    if (!trackRef.current || !containerRef.current) return false;
+    return trackRef.current.scrollWidth > containerRef.current.clientWidth + 1;
+  }
+
   function move(direction: 'next' | 'prev') {
+    if (!checkOverflow()) return;
     setIndex((i) => {
       const max = reviews.length - 1;
       if (direction === 'next') return i >= max ? 0 : i + 1;
@@ -66,18 +79,19 @@ const ReviewsCarousel = forwardRef<ReviewsCarouselHandle, { reviews: PublicRevie
   useEffect(() => {
     function onResize() {
       if (trackRef.current) trackRef.current.style.transform = `translateX(${-(index * stepWidth())}px)`;
+      setIsOverflowing(checkOverflow());
     }
     onResize();
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index]);
+  }, [index, reviews.length]);
 
   if (reviews.length === 0) return null;
 
   return (
     <div
-      className="reviews-marquee"
+      className={`reviews-marquee${isOverflowing ? '' : ' reviews-marquee--fit'}`}
       ref={containerRef}
       onMouseEnter={stopAutoplay}
       onMouseLeave={startAutoplay}

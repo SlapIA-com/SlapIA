@@ -450,7 +450,7 @@ function OwnPhotoForm({ clientId, name }: { clientId: number; name: string }) {
         label={t('dashboard.change_photo')}
         onChange={(f) => { setData('photo', f); setFileName(f?.name ?? null); }}
       />
-      <button type="submit" disabled={processing} className="btn btn--primary">{t('dashboard.change_photo')}</button>
+      <button type="submit" disabled={processing || !fileName} className="btn btn--primary">{t('dashboard.save')}</button>
     </form>
   );
 }
@@ -760,8 +760,8 @@ function ContactRow({ contact }: { contact: ContactMessageRow }) {
       <td>{contact.nom_entreprise ?? '—'}</td>
       <td>{contact.email}</td>
       <td>{contact.telephone ?? '—'}</td>
-      <td>{contact.sujet}</td>
-      <td style={{ maxWidth: 320, whiteSpace: 'pre-wrap' }}>{contact.message}</td>
+      <td style={{ whiteSpace: 'normal', maxWidth: 140 }}>{contact.sujet}</td>
+      <td style={{ maxWidth: 220, whiteSpace: 'pre-wrap' }}>{contact.message}</td>
       <td>{new Date(contact.date_creation).toLocaleDateString('fr-FR')}</td>
       <td>
         <label className="admin-inline-avatar" style={{ gap: 6, cursor: 'pointer' }}>
