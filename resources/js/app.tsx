@@ -38,7 +38,12 @@ createInertiaApp({
       </>
     );
   },
-  progress: {
-    color: '#B36FE0',
-  },
+  // Désactivé : la barre de chargement par défaut d'Inertia (+ son spinner
+  // fixe en haut à droite) reste bloquée affichée en permanence sur iOS
+  // (Safari et Edge, jamais reproduit sur desktop où le chargement est trop
+  // rapide pour la voir) — visible comme un contour/rond parasite autour du
+  // header dès l'ouverture du site, sur toutes les pages. Le site a déjà sa
+  // propre jauge de progression (.rail / .progress-mobile, progression de
+  // lecture), donc pas de perte fonctionnelle à l'éteindre.
+  progress: false,
 });
