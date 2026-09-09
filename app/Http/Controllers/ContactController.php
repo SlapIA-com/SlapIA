@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactMessage;
 use App\Models\Client;
 use App\Models\Compte;
+use App\Services\N8nWebhook;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -83,7 +84,7 @@ class ContactController extends Controller
         $webhook = config('services.n8n.contact_webhook_url');
         if ($webhook) {
             try {
-                Http::timeout(10)->post($webhook, [
+                N8nWebhook::client($webhook, 10)->post($webhook, [
                     'event' => 'new_contact',
                     'prenom' => $message->prenom,
                     'nom' => $message->nom ?? '',

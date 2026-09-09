@@ -10,6 +10,7 @@ use App\Models\Compte;
 use App\Models\ContactMessage;
 use App\Models\Prestation;
 use App\Models\RssSubscriber;
+use App\Services\N8nWebhook;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -451,7 +452,7 @@ class AdminController extends Controller
         $webhook = config('services.n8n.auth_webhook_url');
         if ($webhook) {
             try {
-                Http::timeout(10)->post($webhook, [
+                N8nWebhook::client($webhook, 10)->post($webhook, [
                     'event' => 'welcome',
                     'email' => $compte->email,
                     'name' => $contact->prenom,
@@ -476,7 +477,7 @@ class AdminController extends Controller
         $webhook = config('services.n8n.avis_webhook_url');
         if ($webhook) {
             try {
-                Http::timeout(10)->post($webhook, [
+                N8nWebhook::client($webhook, 10)->post($webhook, [
                     'event' => 'review_requested',
                     'email' => $client->compte->email,
                     'name' => $client->nom_complet,
