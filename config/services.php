@@ -37,6 +37,12 @@ return [
         // envoie l'email de remerciement) et {event: 'review_requested', ...}
         // (AdminController::requestReview, bouton manuel "demander un avis").
         'avis_webhook_url' => env('N8N_AVIS_WEBHOOK_URL'),
+        // Optionnel : IP locale du NAS (ex. 192.168.1.253, déjà utilisée
+        // pour MySQL) pour contourner un NAT en boucle (hairpin) quand le
+        // nom DDNS du webhook n8n résout vers l'IP publique du NAS —
+        // inaccessible depuis l'intérieur du même réseau. Voir
+        // App\Services\N8nWebhook. Laisser vide si non concerné.
+        'internal_ip' => env('N8N_INTERNAL_IP'),
     ],
 
 ];

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\N8nWebhook;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 /**
  * Proxy serveur pour le widget de chat (ChatWidget.tsx). Le navigateur
@@ -32,7 +32,7 @@ class ChatController extends Controller
         }
 
         try {
-            $response = Http::timeout(20)->post($webhook, [
+            $response = N8nWebhook::client($webhook, 20)->post($webhook, [
                 'action' => 'sendMessage',
                 'sessionId' => $data['sessionId'],
                 'chatInput' => $data['chatInput'],
