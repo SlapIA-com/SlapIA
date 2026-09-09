@@ -258,10 +258,18 @@ mark.is-marked, .mark.is-marked { background-size: 100% 55%; }
   top: 0;
   z-index: 50;
   background: var(--header-tint);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.25s var(--ease), background 0.25s var(--ease);
   height: var(--header-h);
+  /* iOS Safari (uniquement, jamais reproduit en émulation desktop) a un bug
+     de rendu connu sur les éléments position:sticky + backdrop-filter : sans
+     sa propre couche de composition GPU, le flou repeint parfois un cercle/
+     une bordure fantôme autour des boutons du header au premier rendu ou
+     après un scroll. translateZ(0) force cette couche dédiée et supprime
+     l'artefact. */
+  transform: translateZ(0);
 }
 .site-header.is-scrolled { border-bottom-color: var(--line); }
 
