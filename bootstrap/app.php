@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -17,6 +18,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Le site est servi en HTTPS via Cloudflare/Caddy, mais si
+        // TRUSTED_PROXIES (juste en dessous) n'est pas — ou mal — configuré
+        // côté prod, Laravel ne sait pas que la requête d'origine était en
+        // HTTPS et régénère ses redirections/URLs en http:// — le
+        // navigateur bloque alors ces requêtes comme "contenu mixte" (ex:
+        // après l'envoi du formulaire de contact, redirect()->route(...)
+        // vers une URL http:// sur une page chargée en https://). Filet de
+        // sécurité indépendant de la config proxy : on force explicitement
+        // le schéma https dès que l'environnement n'est pas local.
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
+
         $middleware->web(append: [
             SetLocale::class,
             HandleInertiaRequests::class,
