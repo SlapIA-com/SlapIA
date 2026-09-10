@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Http;
  * Petit helper partagé par tous les appels serveur → webhook n8n
  * (ChatController, ContactController, AdminController,
  * PasswordResetController...). Résout le problème de NAT en boucle
- * (hairpin) : depuis le conteneur applicatif, appeler le nom DDNS public du
- * NAS (ex. synologynasthomas.synology.me) revient à sortir vers Internet
- * puis rentrer sur la même machine par son adresse publique — beaucoup de
+ * (hairpin) : avec l'ancien montage en redirection de port, appeler depuis
+ * le conteneur applicatif le nom DDNS public du NAS (ex.
+ * synologynasthomas.synology.me) revenait à sortir vers Internet puis
+ * rentrer sur la même machine par son adresse publique — beaucoup de
  * routeurs refusent ce trajet, ce qui échoue immédiatement (cURL error 7).
  * Si N8N_INTERNAL_IP est renseigné dans .env (l'IP locale du NAS, celle
  * déjà utilisée pour MySQL), on force cURL à s'y connecter directement pour
@@ -19,7 +20,10 @@ use Illuminate\Support\Facades\Http;
  * — le certificat continue donc à être validé normalement, et le routage
  * par Host header côté reverse-proxy n8n n'est pas affecté. Sans la
  * variable (dev, ou une prod qui n'a pas ce souci), aucun changement de
- * comportement.
+ * comportement. Depuis le passage de n8n derrière un tunnel
+ * (n8n.javabien.ovh), ce contournement n'est probablement plus nécessaire
+ * — la variable N8N_INTERNAL_IP peut être vidée une fois confirmé, sans
+ * avoir à toucher ce fichier.
  */
 class N8nWebhook
 {
